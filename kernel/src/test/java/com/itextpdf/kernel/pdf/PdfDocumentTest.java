@@ -391,7 +391,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
 
     @Test
     public void fullCompressionAppendMode() throws IOException, InterruptedException {
-        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "fullCompressionAppendMode.pdf",
+        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "fullCompressionAppendMode.pdf",
                 new WriterProperties()
                         .setFullCompressionMode(true)
                         .setCompressionLevel(CompressionConstants.NO_COMPRESSION));
@@ -411,7 +411,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "fullCompressionAppendMode.pdf",
                 SOURCE_FOLDER + "cmp_fullCompressionAppendMode.pdf", DESTINATION_FOLDER, "diff_"));
 
-        PdfDocument assertDoc = new PdfDocument(CompareTool.createOutputReader(DESTINATION_FOLDER + "fullCompressionAppendMode.pdf"));
+        PdfDocument assertDoc = new PdfDocument(new PdfReader(DESTINATION_FOLDER + "fullCompressionAppendMode.pdf"));
         Assertions.assertTrue(assertDoc.getPdfObject(9).isStream());
         Assertions.assertEquals(1, ((PdfDictionary) assertDoc.getPdfObject(9)).getAsNumber(PdfName.N).intValue());
     }
@@ -671,7 +671,7 @@ public class PdfDocumentTest extends ExtendedITextTest {
         String outputPdf = "pdfDocWithAAndUaMetadata.pdf";
         final WriterProperties writerProperties = new WriterProperties().addPdfAXmpMetadata(PdfAConformance.PDF_A_3A)
                 .addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1);
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + outputPdf, writerProperties));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outputPdf, writerProperties));
         doc.addNewPage();
         doc.close();
 

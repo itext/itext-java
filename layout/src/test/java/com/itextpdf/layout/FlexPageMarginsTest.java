@@ -52,14 +52,13 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Tag("IntegrationTest")
 public class FlexPageMarginsTest extends ExtendedITextTest {
@@ -80,7 +79,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createRowFlexContainer();
@@ -103,7 +102,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createRowFlexContainer();
@@ -128,7 +127,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex1 = createRowFlexContainer();
@@ -164,7 +163,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createRowFlexContainer();
@@ -194,7 +193,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 == 0,
@@ -228,7 +227,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> {
@@ -270,7 +269,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 == 0,
@@ -301,7 +300,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createRowFlexContainer();
@@ -327,7 +326,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 == 0,
@@ -372,7 +371,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setMargins(80, 80, 80, 80);
@@ -400,7 +399,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(1, new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
@@ -427,7 +426,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div outer1 = createColumnFlexContainer();
@@ -460,7 +459,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 != 0,
@@ -506,7 +505,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createRowFlexContainer();
@@ -528,7 +527,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createRowFlexContainer();
@@ -556,7 +555,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createColumnFlexContainer();
@@ -588,7 +587,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 == 0,
@@ -615,7 +614,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createColumnFlexContainer();
@@ -642,7 +641,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 != 0,
@@ -683,7 +682,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 == 0,
@@ -723,7 +722,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 == 0,
@@ -748,7 +747,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 == 0,
@@ -786,7 +785,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> pageNum % 2 == 0,
@@ -825,7 +824,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setMargins(80, 80, 80, 80);
@@ -859,7 +858,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(3, new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
@@ -893,7 +892,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex1 = createColumnFlexContainer();
@@ -930,7 +929,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div flex = createRowFlexContainer();

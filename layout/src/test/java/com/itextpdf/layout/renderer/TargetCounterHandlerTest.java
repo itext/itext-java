@@ -28,7 +28,6 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
@@ -47,6 +46,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -61,6 +61,11 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -159,7 +164,7 @@ public class TargetCounterHandlerTest extends ExtendedITextTest {
     public void targetCounterHandlerEndToEndLayoutTest() throws IOException, InterruptedException {
         String targetPdf = DESTINATION_FOLDER + "targetCounterHandlerEndToEndLayoutTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_targetCounterHandlerEndToEndLayoutTest.pdf";
-        Document document = new Document(new PdfDocument(new PdfWriter(targetPdf)),
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(targetPdf)),
                 PageSize.A4, false);
 
         Text pageNumPlaceholder = new Text("x");

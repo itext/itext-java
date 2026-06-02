@@ -30,7 +30,6 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -52,6 +51,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -68,11 +68,16 @@ public class PositioningTest extends ExtendedITextTest {
        createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void relativePositioningTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "relativePositioningTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_relativePositioningTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -95,7 +100,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void relativePositioningTest02() throws IOException, InterruptedException{
         String outFileName = destinationFolder + "relativePositioningTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_relativePositioningTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -119,7 +124,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void relativePositioningTable01Test() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "relativePositioningTable01Test.pdf";
         String cmpFileName = sourceFolder + "cmp_relativePositioningTable01Test.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -139,7 +144,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void fixedPositioningTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositioningTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositioningTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -161,7 +166,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void fixedPositioningTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositioningTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositioningTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         document.getPdfDocument().addNewPage();
@@ -183,7 +188,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void fixedPositioningTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositioningTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositioningTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         document.getPdfDocument().addNewPage();
@@ -209,7 +214,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void fixedPositioningTest04() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "fixedPositioningTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_fixedPositioningTest04.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         document.getPdfDocument().addNewPage();
@@ -235,7 +240,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void showTextAlignedTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "showTextAlignedTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_showTextAlignedTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDocument);
 
         pdfDocument.addNewPage();
@@ -296,7 +301,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void showTextAlignedTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "showTextAlignedTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_showTextAlignedTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDocument);
 
         String watermarkText = "WATERMARK";
@@ -321,7 +326,7 @@ public class PositioningTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "showTextAlignedTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_showTextAlignedTest03.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Image img = new Image(ImageDataFactory.create(sourceFolder + "bruno.jpg"));
@@ -345,7 +350,7 @@ public class PositioningTest extends ExtendedITextTest {
     public void showTextAlignedOnFlushedPageTest01() throws IOException {
         String outFileName = destinationFolder + "showTextAlignedOnFlushedPageTest01.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document doc = new Document(pdfDoc)) {
 
             Paragraph p = new Paragraph();

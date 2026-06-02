@@ -30,7 +30,6 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
@@ -51,6 +50,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -68,13 +68,18 @@ public class LargeElementTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void largeTableTest01() throws IOException, InterruptedException {
         String testName = "largeTableTest01.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -106,7 +111,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(5), true).
@@ -137,7 +142,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -169,7 +174,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -194,7 +199,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -223,7 +228,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -255,7 +260,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -291,7 +296,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -326,7 +331,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String testName = "largeTableWithHeaderFooterTest01C.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A6.rotate());
         Table table = new Table(UnitValue.createPercentArray(5), true);
         doc.add(table);
@@ -350,7 +355,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String testName = "largeTableWithHeaderFooterTest01CForcedPlacement.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A6.rotate());
 
         // separate
@@ -396,7 +401,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String testName = "largeTableWithHeaderFooterTest01D.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A6.rotate());
         Table table = new Table(UnitValue.createPercentArray(5), true);
         table.setSkipLastFooter(true);
@@ -421,7 +426,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String testName = "largeTableWithHeaderFooterTest01DSeparated.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A6.rotate());
         Table table = new Table(UnitValue.createPercentArray(5), true);
         table.setBorderCollapse(BorderCollapsePropertyValue.SEPARATE);
@@ -448,7 +453,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -484,7 +489,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -523,7 +528,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -557,7 +562,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -591,7 +596,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5), true);
@@ -622,7 +627,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A1.rotate());
 
         float[] colWidths = new float[]{300, 150, 50, 100};
@@ -659,7 +664,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A1.rotate());
 
         float[] colWidths = new float[]{300, 150, 50, 100};
@@ -696,7 +701,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         float[] colWidths = new float[]{200, 1, 2, 4};
@@ -727,7 +732,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         float[] colWidths = new float[]{200, -1, 20, 40};
@@ -814,7 +819,7 @@ public class LargeElementTest extends ExtendedITextTest {
     }
 
     private void largeTableSplitTest(String outFileName, float pageHeight, float rowsNumber, boolean addFooter, boolean separate) throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, pageHeight));
 
         float[] colWidths = new float[]{200, -1, 20, 40};
@@ -853,7 +858,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 100));
 
         float[] colWidths = new float[]{200, -1, 20, 40};
@@ -885,7 +890,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 100));
 
         Table table = new Table(2, true);
@@ -910,7 +915,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         float[] colWidths = new float[]{30, 30, 30};
@@ -946,7 +951,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 100));
 
         float[] colWidths = new float[]{200, -1, 20, 40};
@@ -978,7 +983,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 100));
 
         float[] colWidths = new float[]{200, 40};
@@ -1004,7 +1009,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(2, true);
@@ -1032,7 +1037,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 400));
 
         float[] colWidths = new float[]{100};
@@ -1060,7 +1065,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(1, true);
@@ -1087,7 +1092,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 900));
 
         addSpecificTableConsideringFlushes(doc, false, false);
@@ -1112,7 +1117,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 400));
 
         float[] colWidths = new float[]{100};
@@ -1136,7 +1141,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setRenderer(new DifferentPagesDocumentRenderer(doc));
 
@@ -1169,7 +1174,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setRenderer(new DifferentPagesDocumentRenderer(doc));
 
@@ -1199,7 +1204,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         float[] colWidths = new float[]{200, -1, 20, 40};
@@ -1231,7 +1236,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setRenderer(new DifferentPagesDocumentRenderer(doc));
 
@@ -1262,7 +1267,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         float[] colWidths = new float[]{200, -1, 20, 40};
@@ -1314,7 +1319,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String testName = "largeEmptyTableTest.pdf";
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         Table table = new Table(UnitValue.createPercentArray(1), true);
         doc.add(table);
@@ -1332,7 +1337,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(3), true);
@@ -1406,7 +1411,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(3), true);
@@ -1482,7 +1487,7 @@ public class LargeElementTest extends ExtendedITextTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 100));
 
         Table table = new Table(1, true);

@@ -24,7 +24,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
 import com.itextpdf.kernel.pdf.canvas.draw.ILineDrawer;
 import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
@@ -37,6 +36,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -53,11 +53,16 @@ public class LineSeparatorTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void lineSeparatorWidthPercentageTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "lineSeparatorWidthPercentageTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_lineSeparatorWidthPercentageTest01.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf);
 
         ILineDrawer line1 = new SolidLine();
@@ -75,7 +80,7 @@ public class LineSeparatorTest extends ExtendedITextTest {
     public void lineSeparatorBackgroundTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "lineSeparatorBackgroundTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_lineSeparatorBackgroundTest01.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf);
 
         Style style = new Style();
@@ -95,7 +100,7 @@ public class LineSeparatorTest extends ExtendedITextTest {
     public void rotatedLineSeparatorTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "rotatedLineSeparatorTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_rotatedLineSeparatorTest01.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf);
 
         document.add(new LineSeparator(new DashedLine()).setBackgroundColor(ColorConstants.RED).setRotationAngle(Math.PI / 2));
@@ -109,7 +114,7 @@ public class LineSeparatorTest extends ExtendedITextTest {
     public void rotatedLineSeparatorTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "rotatedLineSeparatorTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_rotatedLineSeparatorTest02.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf);
 
         document.add(new Paragraph("Hello"));

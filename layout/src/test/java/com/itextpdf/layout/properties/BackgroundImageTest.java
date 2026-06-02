@@ -22,7 +22,6 @@
  */
 package com.itextpdf.layout.properties;
 
-import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -33,7 +32,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -55,6 +53,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -69,6 +68,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -219,7 +223,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageForText.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageForText.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
 
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
@@ -242,7 +246,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPercentWidth.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPercentWidth.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -263,7 +267,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPercentHeight.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPercentHeight.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -284,7 +288,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPercentHeightAndWidth.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPercentHeightAndWidth.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -306,7 +310,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPointWidth.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPointWidth.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -327,7 +331,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPointHeight.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPointHeight.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -348,7 +352,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPointHeightAndWidth.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPointHeightAndWidth.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -370,7 +374,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithLowWidthAndHeight.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithLowWidthAndHeight.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -448,7 +452,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String fileName = filename + ".pdf";
         String outFileName = DESTINATION_FOLDER + fileName;
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(createFormXObject(pdfDocument, "itis.jpg")).build();
 
             Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
@@ -465,7 +469,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String fileName = filename + ".pdf";
         String outFileName = DESTINATION_FOLDER + fileName;
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             BackgroundImage backgroundImage = new BackgroundImage.Builder()
                     .setImage(createFormXObject(pdfDocument, "itis.jpg"))
                     .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.REPEAT)).build();
@@ -484,7 +488,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String fileName = filename + ".pdf";
         String outFileName = DESTINATION_FOLDER + fileName;
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             BackgroundImage backgroundImage = new BackgroundImage
                     .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg"))
                     .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.REPEAT, BackgroundRepeatValue.NO_REPEAT)).build();
@@ -503,7 +507,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String fileName = filename + ".pdf";
         String outFileName = DESTINATION_FOLDER + fileName;
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             BackgroundImage backgroundImage = new BackgroundImage
                     .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg"))
                     .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).build();
@@ -523,7 +527,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
 
             Document doc = new Document(pdfDocument);
 
@@ -565,7 +569,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
 
             Document doc = new Document(pdfDocument);
 
@@ -786,7 +790,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + filename + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +

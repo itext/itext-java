@@ -24,7 +24,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -95,7 +94,7 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
         String fileName = "footnoteNumberingType_" + numberingType.toString();
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             document.setFootnotesProperties(new FootnotesProperties()
@@ -163,7 +162,7 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         FootnoteNumberingType numberingType = FootnoteNumberingType.DECIMAL;
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             document.setFootnotesProperties(new FootnotesProperties()
@@ -231,7 +230,7 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         FootnoteNumberingType numberingType = FootnoteNumberingType.DECIMAL;
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             document.setFootnotesProperties(new FootnotesProperties()
@@ -294,7 +293,7 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         FootnoteNumberingType numberingType = FootnoteNumberingType.DECIMAL;
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDocument)) {
 
             document.setFootnotesProperties(new FootnotesProperties()
@@ -342,7 +341,7 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
         String fileName = "footnoteNumberingConfig_" + numberingConfig.toString();
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             document.setFootnotesProperties(new FootnotesProperties()
@@ -377,7 +376,7 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
         String fileName = "footnoteCustomStyle";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             pdfDocument.setTagged();
 
@@ -416,7 +415,7 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
         String fileName = "footnoteCustomStyleSectionBreak";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             pdfDocument.setTagged();
 
@@ -451,7 +450,7 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
         String fileName = "defaultFootnoteStyle";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             pdfDocument.setTagged();
 
@@ -506,7 +505,7 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
 
     private static void setFootnotePropertiesForFootnotes(String outFileName, FootnoteNumberingConfig initialNumConfig)
             throws IOException {
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             pdfDocument.setTagged();
 

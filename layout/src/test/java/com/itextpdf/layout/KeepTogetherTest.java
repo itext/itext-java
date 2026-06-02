@@ -58,6 +58,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -90,12 +91,17 @@ public class KeepTogetherTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void keepTogetherParagraphTest01() throws IOException, InterruptedException {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherParagraphTest01.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherParagraphTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
 
 
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -141,7 +147,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherParagraphTest02.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherParagraphTest02.pdf";
 
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
 
 
         PdfDocument pdfDoc = new PdfDocument(writer);
@@ -169,7 +175,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherListTest01.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherListTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         for (int i = 0; i < 28; i++) {
@@ -188,7 +194,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherDivTest01.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherDivTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
@@ -215,7 +221,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherMinHeightTest.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherMinHeightTest.pdf";
 
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
@@ -245,7 +251,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherDivTest02.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherDivTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         Rectangle[] columns = {new Rectangle(100, 100, 100, 500), new Rectangle(400, 100, 100, 500)};
@@ -267,7 +273,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherDivWithInnerClearDiv.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherDivWithInnerClearDiv.pdf";
 
-        try (PdfWriter pdfWriter = new PdfWriter(outFile);
+        try (PdfWriter pdfWriter = CompareTool.createTestPdfWriter(outFile);
                 PdfDocument pdfDoc = new PdfDocument(pdfWriter);
                 Document doc = new Document(pdfDoc)) {
 
@@ -335,7 +341,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherDefaultTest01.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherDefaultTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         Div div = new KeepTogetherDiv();
@@ -355,7 +361,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherInlineDiv01.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherInlineDiv01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
 
@@ -380,7 +386,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherInlineDiv02.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherInlineDiv02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
 
@@ -408,7 +414,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table tbl = new Table(UnitValue.createPointArray(new float[]{30.0F, 30.0F, 30.0F, 30.0F}));
@@ -443,7 +449,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setRenderer(new SpecialOddPagesDocumentRenderer(doc, new PageSize(102.0F, 132.0F)));
 
@@ -481,7 +487,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setRenderer(new SpecialOddPagesDocumentRenderer(doc, new PageSize(102.0F, 102.0F)));
 
@@ -520,7 +526,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDoc.setDefaultPageSize(new PageSize(102.0F, 102.0F));
         Document doc = new Document(pdfDoc);
 
@@ -553,7 +559,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDoc.setDefaultPageSize(PageSize.A7);
         Document doc = new Document(pdfDoc);
 
@@ -581,7 +587,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_fixedHeightOverflowTest01.pdf";
         String outFile = DESTINATION_FOLDER + "fixedHeightOverflowTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Paragraph("first string"));
@@ -609,7 +615,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_marginCollapseKeptTogetherDivGoesBackTest01.pdf";
         String outFile = DESTINATION_FOLDER + "marginCollapseKeptTogetherDivGoesBackTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
@@ -642,7 +648,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_marginCollapseKeptTogetherDivGoesBackTest02.pdf";
         String outFile = DESTINATION_FOLDER + "marginCollapseKeptTogetherDivGoesBackTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
@@ -673,7 +679,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherNotEmptyPageTest.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherNotEmptyPageTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
@@ -704,7 +710,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherOnFirstInnerElementNotEmptyPageTest.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherOnFirstInnerElementNotEmptyPageTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         // Make page not empty to trigger KEEP_TOGETHER actual processing
@@ -735,7 +741,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_marginCollapseKeptTogetherGoesOnNextAreaTest01.pdf";
         String outFile = DESTINATION_FOLDER + "marginCollapseKeptTogetherGoesOnNextAreaTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
@@ -764,7 +770,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_marginCollapseKeptTogetherGoesOnNextAreaTest02.pdf";
         String outFile = DESTINATION_FOLDER + "marginCollapseKeptTogetherGoesOnNextAreaTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
@@ -796,7 +802,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
     public void keepTogetherOnSecondInnerElementNotEmptyPageTest() throws IOException, InterruptedException {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherOnSecondInnerElementNotEmptyPageTest.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherOnSecondInnerElementNotEmptyPageTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         // Make page not empty to trigger KEEP_TOGETHER actual processing
@@ -831,7 +837,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_smallFloatInsideKeptTogetherDivTest01.pdf";
         String outFile = DESTINATION_FOLDER + "smallFloatInsideKeptTogetherDivTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         // specifying height definitely bigger than page height
@@ -850,7 +856,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_smallFloatInsideKeptTogetherDivTest02.pdf";
         String outFile = DESTINATION_FOLDER + "smallFloatInsideKeptTogetherDivTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         // add some content, so that the following kept together div will be forced to move forward (and then forced to move back)
@@ -872,7 +878,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_smallFloatInsideKeptTogetherParagraphTest01.pdf";
         String outFile = DESTINATION_FOLDER + "smallFloatInsideKeptTogetherParagraphTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         // specifying height definitely bigger than page height
@@ -891,7 +897,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_smallFloatInsideKeptTogetherParagraphTest02.pdf";
         String outFile = DESTINATION_FOLDER + "smallFloatInsideKeptTogetherParagraphTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         // add some content, so that the following kept together div will be forced to move forward (and then forced to move back)
@@ -914,7 +920,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherOnInnerElementTestEmptyPageTest.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherOnInnerElementTestEmptyPageTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
 
@@ -939,7 +945,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherOnInnerElementMargin01EmptyPageTest.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherOnInnerElementMargin01EmptyPageTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
 
@@ -967,7 +973,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherOnInnerElementMargin02EmptyPageTest.pdf";
         String outFile = DESTINATION_FOLDER + "keepTogetherOnInnerElementMargin02EmptyPageTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
 
@@ -994,7 +1000,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_smallFloatInsideKeptTogetherTableTest01.pdf";
         String outFile = DESTINATION_FOLDER + "smallFloatInsideKeptTogetherTableTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         // specifying num of rows which will definitely occupy more space than page height
@@ -1014,7 +1020,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_smallFloatInsideKeptTogetherTableTest02.pdf";
         String outFile = DESTINATION_FOLDER + "smallFloatInsideKeptTogetherTableTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         // add some content, so that the following kept together div will be forced to move forward (and then forced to move back)
@@ -1037,7 +1043,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String outFile = DESTINATION_FOLDER + filename;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename;
 
-        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFile)))) {
+        try (Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)))) {
             doc.getPdfDocument().addNewPage(PageSize.A5.rotate());
 
             Div main = new Div();
@@ -1069,7 +1075,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String outFile = DESTINATION_FOLDER + filename;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename;
 
-        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFile)))) {
+        try (Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)))) {
             doc.getPdfDocument().addNewPage(PageSize.A5.rotate());
 
             Div main = new Div();
@@ -1104,7 +1110,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String outFile = DESTINATION_FOLDER + filename;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename;
 
-        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFile)))) {
+        try (Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)))) {
             doc.getPdfDocument().addNewPage(PageSize.A5.rotate());
 
             Div main = new Div();
@@ -1138,7 +1144,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String outFile = DESTINATION_FOLDER + filename;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename;
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile))) {
             PdfPage page = pdfDoc.addNewPage(PageSize.A5.rotate());
             Rectangle rectangle = new Rectangle(10, 10, 500, 350);
             PdfCanvas pdfCanvas = new PdfCanvas(page);
@@ -1173,7 +1179,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String outFile = DESTINATION_FOLDER + filename;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename;
 
-        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFile)))) {
+        try (Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)))) {
             doc.getPdfDocument().addNewPage(PageSize.A5.rotate());
 
             Div main = new Div().setKeepTogether(true);
@@ -1212,7 +1218,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_floatingElementsInDivAndKeepTogetherElem.pdf";
         String outFile = DESTINATION_FOLDER + "floatingElementsInDivAndKeepTogetherElem.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         pdfDoc.addNewPage();
 
         Document doc = new Document(pdfDoc);
@@ -1252,7 +1258,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_floatingEmptyElementsInDivAndKeepTogetherElem.pdf";
         String outFile = DESTINATION_FOLDER + "floatingEmptyElementsInDivAndKeepTogetherElem.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         pdfDoc.addNewPage(PageSize.A5.rotate());
 
         Document doc = new Document(pdfDoc);
@@ -1291,7 +1297,7 @@ public class KeepTogetherTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_floatingEmptyElementsAndKeepTogetherElem.pdf";
         String outFile = DESTINATION_FOLDER + "floatingEmptyElementsAndKeepTogetherElem.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         pdfDoc.addNewPage(PageSize.A5.rotate());
 
         Document doc = new Document(pdfDoc);

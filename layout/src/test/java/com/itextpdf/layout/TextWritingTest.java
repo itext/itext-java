@@ -46,6 +46,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -63,12 +64,17 @@ public class TextWritingTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void textRiseTest01() throws IOException, InterruptedException {
         // CountryChunks example
         String outFileName = DESTINATION_FOLDER + "textRiseTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_textRiseTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -94,7 +100,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void textRenderingModeTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "textRenderingModeTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_textRenderingModeTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -148,7 +154,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void textStrokeTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "textStrokeTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_textStrokeTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDocument)) {
             Text text1 = new Text("Red stroke text via color setter")
                     .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.STROKE)
@@ -187,7 +193,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void textFillStrokeTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "textFillStrokeTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_textFillStrokeTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             Text text1 = new Text("Pink text with null stroke color (so font color is used)")
                     .setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE)
@@ -220,7 +226,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void leadingTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "leadingTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_leadingTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -246,7 +252,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void leadingTest02() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "leadingTest02.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_leadingTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -263,7 +269,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void firstLineIndentTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "firstLineIndentTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_firstLineIndentTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         document.setProperty(Property.FIRST_LINE_INDENT, 25);
@@ -309,7 +315,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void charSpacingTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "charSpacingTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_charSpacingTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -332,7 +338,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void wordSpacingTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "wordSpacingTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_wordSpacingTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -356,7 +362,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void fontStyleSimulationTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "fontStyleSimulationTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_fontStyleSimulationTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -378,7 +384,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void bigWordTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "bigWordTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_bigWordTest01.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Paragraph p = new Paragraph();
@@ -420,7 +426,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void underlineTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "underline.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_underline.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -440,7 +446,7 @@ public class TextWritingTest extends ExtendedITextTest {
     public void strokedUnderlineTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "strokedUnderline.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_strokedUnderline.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             Paragraph p = new Paragraph("Yellow text with pink stroked dashed underline.")
@@ -484,7 +490,7 @@ public class TextWritingTest extends ExtendedITextTest {
         //TODO: update after DEVSIX-2623 fix
         String outFileName = DESTINATION_FOLDER + "lineThrough.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_lineThrough.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         Text textUp = new Text("textRise10f_with_lineThrough");
@@ -513,7 +519,7 @@ public class TextWritingTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "leadingAndFloatInText.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_leadingAndFloatInText.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -536,7 +542,7 @@ public class TextWritingTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "textWrappingEpsilon.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_textWrappingEpsilon.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document document = new Document(pdfDoc);
 

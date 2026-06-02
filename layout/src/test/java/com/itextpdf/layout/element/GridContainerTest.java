@@ -24,7 +24,6 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -50,6 +49,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -65,6 +65,11 @@ public class GridContainerTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void basicThreeColumnsTest() throws IOException, InterruptedException {
         String filename = DESTINATION_FOLDER + "basicThreeColumnsTest.pdf";
@@ -76,7 +81,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(150.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             for (int i = 0; i < 5; ++i) {
@@ -96,7 +101,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(150.0f));
         templateColumns.add(new PointValue(150.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             Paragraph child = new Paragraph("First");
@@ -117,7 +122,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(150.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             grid.add(new Paragraph("One").setBorder(border));
@@ -140,7 +145,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateRows.add(new PointValue(150.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_ROWS, templateRows);
             grid.setProperty(Property.GRID_FLOW, GridFlow.COLUMN);
@@ -160,7 +165,7 @@ public class GridContainerTest extends ExtendedITextTest {
         String cmpName = SOURCE_FOLDER + "cmp_basicAutoColumnsTest.pdf";
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_AUTO_COLUMNS, new PointValue(150.0f));
             for (int i = 0; i < 5; ++i) {
@@ -177,7 +182,7 @@ public class GridContainerTest extends ExtendedITextTest {
         String cmpName = SOURCE_FOLDER + "cmp_basicAutoRowsTest.pdf";
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_AUTO_ROWS, new PointValue(70.0f));
             grid.add(new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
@@ -203,7 +208,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             Paragraph paragraph1 = new Paragraph("One").setBorder(border);
@@ -232,7 +237,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             Paragraph paragraph1 = new Paragraph("One").setBorder(border);
@@ -261,7 +266,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             Paragraph paragraph1 = new Paragraph("One").setBorder(border);
@@ -294,7 +299,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         templateColumns.add(new PointValue(100.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
@@ -331,7 +336,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             Paragraph paragraph1 = new Paragraph("One").setBorder(border);
@@ -359,7 +364,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         templateColumns.add(new PointValue(100.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
@@ -389,7 +394,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         templateColumns.add(new PointValue(100.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
@@ -427,7 +432,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         templateColumns.add(new PointValue(100.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
@@ -463,7 +468,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         templateColumns.add(new PointValue(100.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
@@ -512,7 +517,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(MinContentValue.VALUE);
         templateColumns.add(MinContentValue.VALUE);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
@@ -549,7 +554,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(MinContentValue.VALUE);
         templateColumns.add(MinContentValue.VALUE);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
@@ -586,7 +591,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PercentValue(50.0f));
         templateColumns.add(new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             for (int i = 0; i < 5; ++i) {
@@ -608,7 +613,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(200.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             for (int i = 0; i < 5; ++i) {
@@ -629,7 +634,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         templateColumns.add(new PointValue(100.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
@@ -664,7 +669,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         templateColumns.add(new PointValue(100.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setBackgroundColor(ColorConstants.GREEN);
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
@@ -695,7 +700,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         templateColumns.add(new PointValue(100.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
@@ -727,7 +732,7 @@ public class GridContainerTest extends ExtendedITextTest {
         java.util.List<TemplateValue> templateColumns = new ArrayList<>();
         templateColumns.add(MinContentValue.VALUE);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             grid.add(new Paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
@@ -746,7 +751,7 @@ public class GridContainerTest extends ExtendedITextTest {
         template.add(new PointValue(50.0f));
         template.add(new PointValue(50.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, template);
             grid.setProperty(Property.GRID_TEMPLATE_ROWS, template);
@@ -777,7 +782,7 @@ public class GridContainerTest extends ExtendedITextTest {
         java.util.List<TemplateValue> rowsTemplate = new ArrayList<>();
         rowsTemplate.add(new AutoRepeatValue(true, Collections.singletonList((GridValue) new PointValue(100.0f))));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, columnsTemplate);
             grid.setProperty(Property.GRID_TEMPLATE_ROWS, rowsTemplate);
@@ -809,7 +814,7 @@ public class GridContainerTest extends ExtendedITextTest {
         rowsTemplate.add(new AutoRepeatValue(true, Collections.singletonList((GridValue) new PointValue(100.0f))));
         rowsTemplate.add(new PointValue(200.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setHeight(500.0f);
             grid.setBackgroundColor(ColorConstants.GREEN);
@@ -830,7 +835,7 @@ public class GridContainerTest extends ExtendedITextTest {
         java.util.List<TemplateValue> rowsTemplate = new ArrayList<>();
         rowsTemplate.add(new AutoRepeatValue(true, Collections.singletonList((GridValue) new PointValue(100.0f))));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setBackgroundColor(ColorConstants.GREEN);
             grid.setHeight(500.0f);
@@ -850,7 +855,7 @@ public class GridContainerTest extends ExtendedITextTest {
         template.add(new PointValue(50.0f));
         template.add(new PointValue(50.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, template);
             grid.setProperty(Property.GRID_TEMPLATE_ROWS, template);
@@ -889,7 +894,7 @@ public class GridContainerTest extends ExtendedITextTest {
         template.add(new PointValue(50.0f));
         template.add(new PointValue(50.0f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_FLOW, GridFlow.COLUMN);
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, template);
@@ -929,7 +934,7 @@ public class GridContainerTest extends ExtendedITextTest {
         template.add(new FlexValue(1f));
         template.add(new FlexValue(3f));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_ROWS, template);
             grid.setProperty(Property.ROW_GAP, 20.0f);
@@ -952,7 +957,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new FlexValue(3f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             grid.add(new Paragraph("Test1").setBorder(border));
@@ -979,7 +984,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new FitContentValue(UnitValue.createPercentValue(5.0f)));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             grid.add(new Paragraph("Test1").setBorder(border));
@@ -1006,7 +1011,7 @@ public class GridContainerTest extends ExtendedITextTest {
         templateColumns.add(new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, templateColumns);
             Paragraph paragraph1 = new Paragraph("One").setBorder(border);
@@ -1032,7 +1037,7 @@ public class GridContainerTest extends ExtendedITextTest {
         template.add(new PointValue(100.0f));
         SolidBorder border = new SolidBorder(ColorConstants.BLUE, 1);
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setProperty(Property.GRID_TEMPLATE_COLUMNS, template);
             grid.setProperty(Property.GRID_TEMPLATE_ROWS, template);
@@ -1055,7 +1060,7 @@ public class GridContainerTest extends ExtendedITextTest {
         java.util.List<TemplateValue> columnsTemplate = new ArrayList<>();
         columnsTemplate.add(new AutoRepeatValue(true, Arrays.asList((GridValue) new PointValue(200))));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setWidth(420);
             grid.setBorder(new SolidBorder(20));
@@ -1082,7 +1087,7 @@ public class GridContainerTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "marginsCollapsingIssueTest.pdf";
         String cmpName = SOURCE_FOLDER + "cmp_marginsCollapsingIssueTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             Div grid = new GridContainer().setBackgroundColor(ColorConstants.BLUE);
             grid.add(new Paragraph("some grid text"));
             Div div = new Div()
@@ -1103,7 +1108,7 @@ public class GridContainerTest extends ExtendedITextTest {
         java.util.List<TemplateValue> columnsTemplate = new ArrayList<>();
         columnsTemplate.add(new AutoRepeatValue(true, Arrays.asList((GridValue) new PointValue(200))));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setWidth(420);
             grid.setBorder(new SolidBorder(20));
@@ -1137,7 +1142,7 @@ public class GridContainerTest extends ExtendedITextTest {
         java.util.List<TemplateValue> columnsTemplate = new ArrayList<>();
         columnsTemplate.add(new AutoRepeatValue(true, Arrays.asList((GridValue) new PointValue(200))));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setWidth(420);
             grid.setBorder(new SolidBorder(20));
@@ -1174,7 +1179,7 @@ public class GridContainerTest extends ExtendedITextTest {
         java.util.List<TemplateValue> columnsTemplate = new ArrayList<>();
         columnsTemplate.add(new AutoRepeatValue(true, Arrays.asList((GridValue) new PointValue(200))));
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(filename)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(filename)))) {
             GridContainer grid = new GridContainer();
             grid.setWidth(420);
             grid.setBorder(new SolidBorder(20));

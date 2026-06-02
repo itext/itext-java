@@ -407,7 +407,7 @@ public class PdfCopyTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_copyDocWithDDictionary.pdf";
 
         PdfDocument inPdf = new PdfDocument(new PdfReader(sourceFolder + "DocWithDDictionary.pdf"));
-        PdfDocument outPdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument outPdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         inPdf.copyPagesTo(1, 1, outPdf);
 

@@ -26,7 +26,6 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -45,6 +44,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -68,11 +68,16 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void simpleTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "simpleTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_simpleTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -88,7 +93,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "heightPropertyTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_heightPropertyTest.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -105,7 +110,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "smallTrailingElementTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_smallTrailingElementTest.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -127,7 +132,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "splitOverSeveralPagesTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_splitOverSeveralPagesTest.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A6);
 
@@ -144,7 +149,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "keepTogetherIgnoredTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherIgnoredTest.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -162,7 +167,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void simpleWrapTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "simpleWrapTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_simpleWrapTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -178,7 +183,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void simpleWrapStartTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "simpleWrapStartTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_simpleWrapStartTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -196,7 +201,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void simpleWrapEndTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "simpleWrapEndTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_simpleWrapEndTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -214,7 +219,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void reverseWrapStartTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "reverseWrapStartTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_reverseWrapStartTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -232,7 +237,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void rowWrapRtlStartTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "rowWrapRtlStartTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_rowWrapRtlStartTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -251,7 +256,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void reverseRowWrapRtlStartTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "reverseRowWrapRtlStartTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_reverseRowWrapRtlStartTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -271,7 +276,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void reverseWrapEndTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "reverseWrapEndTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_reverseWrapEndTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -289,7 +294,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void reverseWrapStartHeightTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "reverseWrapStartHeightTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_reverseWrapStartHeightTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -308,7 +313,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void reverseWrapEndHeightTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "reverseWrapEndHeightTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_reverseWrapEndHeightTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -327,7 +332,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void simpleWrapCenterTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "simpleWrapCenterTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_simpleWrapCenterTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -345,7 +350,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void tableInFlexOnSplitTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "tableInFlexOnSplitTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "tableInFlexOnSplitTest.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 
@@ -371,7 +376,7 @@ public class FlexContainerSplitTest extends ExtendedITextTest {
     public void tableInFlexOnSplit2Test() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "tableInFlexOnSplit2Test.pdf";
         String cmpFileName = SOURCE_FOLDER + "tableInFlexOnSplitTest2.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDocument);
             pdfDocument.setDefaultPageSize(PageSize.A5);
 

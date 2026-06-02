@@ -27,7 +27,6 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DoubleBorder;
@@ -44,6 +43,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -60,11 +60,16 @@ public class OpacityTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void backgroundOpacityTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "backgroundOpacityTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_backgroundOpacityTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -87,7 +92,7 @@ public class OpacityTest extends ExtendedITextTest {
     public void backgroundOpacityTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "backgroundOpacityTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_backgroundOpacityTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -119,7 +124,7 @@ public class OpacityTest extends ExtendedITextTest {
     public void borderOpacityTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "borderOpacityTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_borderOpacityTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -142,7 +147,7 @@ public class OpacityTest extends ExtendedITextTest {
     public void textOpacityTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOpacityTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textOpacityTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -165,7 +170,7 @@ public class OpacityTest extends ExtendedITextTest {
     public void underlineOpacityTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "underlineOpacityTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_underlineOpacityTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -227,7 +232,7 @@ public class OpacityTest extends ExtendedITextTest {
     private void elementOpacityTest(String elem) throws IOException, InterruptedException {
         String outFileName = destinationFolder + elem + "ElementOpacity01.pdf";
         String cmpFileName = sourceFolder + "cmp_" + elem  + "ElementOpacity01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 

@@ -22,14 +22,12 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFontFamilies;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
@@ -44,10 +42,6 @@ import com.itextpdf.layout.font.selectorstrategy.BestMatchFontSelectorStrategy.B
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,6 +53,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontSelectorTest extends ExtendedITextTest {
@@ -70,6 +69,11 @@ public class FontSelectorTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -85,7 +89,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
@@ -111,7 +115,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
@@ -138,7 +142,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
@@ -165,7 +169,7 @@ public class FontSelectorTest extends ExtendedITextTest {
 
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
@@ -191,7 +195,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assertions.assertTrue(sel.addFont(FONTS_FOLDER + "Puritan-Regular.ttf"));
 
         String s = "Hello мир!";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
@@ -217,7 +221,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         // The provided alias is incorrect. It'll be used as a font's family, but since the name is invalid, the font shouldn't be selected
         sel.getFontSet().addFont(StandardFonts.TIMES_BOLD, null, "Times-Roman Bold");
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
@@ -246,7 +250,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         sel.getFontSet().addFont(StandardFonts.TIMES_ROMAN);
         sel.getFontSet().addFont(StandardFonts.TIMES_BOLD);
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
@@ -274,7 +278,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         // correct alias
         sel.getFontSet().addFont(StandardFonts.TIMES_BOLD);
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
@@ -299,7 +303,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         sel.addStandardPdfFonts();
 
         String s = "Hello world!";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(sel);
 
@@ -429,7 +433,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         provider.addFont(FONTS_FOLDER + "FreeSans.ttf");
 
         String s = "Hello world!";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(provider);
@@ -455,7 +459,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assertions.assertTrue(sel.getFontSet().size() == 2);
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
@@ -484,7 +488,7 @@ public class FontSelectorTest extends ExtendedITextTest {
                 .setFontSize(20);
         Paragraph paragraph = new Paragraph(text);
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document doc = new Document(pdfDoc)) {
             doc.setFontProvider(fontProvider);
             doc.setProperty(Property.FONT, new String[]{"iTextSymbolicFont"});
@@ -504,7 +508,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "NotoSansCJKjp-Bold.otf", null, "FontAlias", new RangeBuilder(117, 117).create())); // just 'u' letter
         Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "FreeSans.ttf", null, "FontAlias", new RangeBuilder(106, 113).create()));// 'j', 'm' and 'p' are in that interval
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
@@ -531,7 +535,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         // 'x', 'y' and 'z' are in that interval
         Assertions.assertTrue(sel.getFontSet().addFont(FONTS_FOLDER + "Puritan-Regular.ttf", null, "FontAlias", new RangeBuilder(120, 122).create()));
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
@@ -557,7 +561,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assertions.assertTrue(sel.getFontSet().size() == 2);
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
@@ -583,7 +587,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         Assertions.assertTrue(sel.getFontSet().size() == 1);
 
         String s = "Hello world! Здравствуй мир! Hello world! Здравствуй мир!";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.setFontProvider(sel);
@@ -1011,7 +1015,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "openSansFontWeightBoldRendering.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_openSansFontWeightBoldRendering.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         FontProvider sel = new FontProvider();
@@ -1047,7 +1051,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "openSansFontWeightNotBoldRendering.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_openSansFontWeightNotBoldRendering.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         FontProvider sel = new FontProvider();

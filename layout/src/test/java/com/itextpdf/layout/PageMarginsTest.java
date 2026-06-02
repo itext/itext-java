@@ -90,7 +90,6 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -104,6 +103,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.xml.sax.SAXException;
+import org.junit.jupiter.api.AfterAll;
 
 @Tag("IntegrationTest")
 public class PageMarginsTest extends ExtendedITextTest {
@@ -116,6 +116,11 @@ public class PageMarginsTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -1591,7 +1596,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
@@ -1631,7 +1636,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
@@ -1672,7 +1677,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();

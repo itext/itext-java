@@ -75,7 +75,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             PageResizer firstPageResizer = new PageResizer(PageSize.A6,
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO);
             firstPageResizer.resize(pdfDocument.getPage(1));
@@ -99,7 +99,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             PageResizer pageResizer = new PageResizer(PageSize.A6,
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO);
             pageResizer.resize(pdfDocument.getPage(1));
@@ -120,7 +120,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
 
             new PageResizer(PageSize.A6, PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
             new PageResizer(PageSize.EXECUTIVE, PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(2));
@@ -150,7 +150,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(PageSize.A6,
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -170,7 +170,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -190,7 +190,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -211,7 +211,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -221,7 +221,7 @@ public class PageResizerTest extends ExtendedITextTest {
 
         // Reverting
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + outFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileNameReverted))) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileNameReverted))) {
             PageResizer resizer = new PageResizer(new PageSize(PageSize.A4), ResizeType.MAINTAIN_ASPECT_RATIO);
             resizer.resize(pdfDocument.getPage(1));
         }
@@ -241,7 +241,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -261,7 +261,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -281,7 +281,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -301,7 +301,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -321,7 +321,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -341,7 +341,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(PageSize.LEDGER,
                     PageResizer.ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
         }
@@ -361,7 +361,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     PageResizer.ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
         }
@@ -381,7 +381,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(PageSize.A6,
                     PageResizer.ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
         }
@@ -401,7 +401,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try ( PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(PageSize.A6,
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -421,7 +421,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(PageSize.A3,
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -441,7 +441,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(PageSize.LEDGER,
                     PageResizer.ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
         }
@@ -461,7 +461,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(PageSize.A6,
                     PageResizer.ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -482,7 +482,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             PageResizer resizer = new PageResizer(new PageSize(PageSize.A5.getHeight(), PageSize.A5.getWidth()),
                     ResizeType.MAINTAIN_ASPECT_RATIO);
             resizer.setHorizontalAnchorPoint(HorizontalAnchorPoint.LEFT);
@@ -505,7 +505,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             PageResizer resizer = new PageResizer(new PageSize(PageSize.A5.getHeight(), PageSize.A5.getWidth()),
                     ResizeType.MAINTAIN_ASPECT_RATIO);
             resizer.setHorizontalAnchorPoint(HorizontalAnchorPoint.CENTER);
@@ -527,7 +527,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             PageResizer resizer = new PageResizer(new PageSize(PageSize.A5.getHeight(), PageSize.A5.getWidth()),
                     ResizeType.MAINTAIN_ASPECT_RATIO);
             resizer.setHorizontalAnchorPoint(HorizontalAnchorPoint.RIGHT);
@@ -549,7 +549,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             PageResizer resizer = new PageResizer(PageSize.A4,
                     ResizeType.MAINTAIN_ASPECT_RATIO);
             resizer.setVerticalAnchorPoint(VerticalAnchorPoint.TOP);
@@ -572,7 +572,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             PageResizer resizer = new PageResizer(PageSize.A4,
                     ResizeType.MAINTAIN_ASPECT_RATIO);
             resizer.setVerticalAnchorPoint(VerticalAnchorPoint.CENTER);
@@ -594,7 +594,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             PageResizer resizer = new PageResizer(PageSize.A4,
                     ResizeType.MAINTAIN_ASPECT_RATIO);
             resizer.setVerticalAnchorPoint(VerticalAnchorPoint.BOTTOM);
@@ -617,7 +617,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             PageResizer resizer = new PageResizer(new PageSize(1200, 1200), ResizeType.DEFAULT);
             resizer.setVerticalAnchorPoint(VerticalAnchorPoint.BOTTOM);
             resizer.resize(pdfDocument.getPage(1));
@@ -636,7 +636,7 @@ public class PageResizerTest extends ExtendedITextTest {
 
         // Reverting
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + outFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileNameReverted))) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileNameReverted))) {
             PageResizer resizer = new PageResizer(new PageSize(PageSize.A4), ResizeType.DEFAULT);
             resizer.setVerticalAnchorPoint(VerticalAnchorPoint.BOTTOM);
             resizer.resize(pdfDocument.getPage(1));
@@ -930,7 +930,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
         }
@@ -950,7 +950,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
         }
@@ -970,7 +970,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }
@@ -990,7 +990,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     ResizeType.DEFAULT).resize(pdfDocument.getPage(1));
         }
@@ -1010,7 +1010,7 @@ public class PageResizerTest extends ExtendedITextTest {
             props.useAppendMode();
         }
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + inFileName),
-                new PdfWriter(DESTINATION_FOLDER + outFileName), props)) {
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + outFileName), props)) {
             new PageResizer(new PageSize(PageSize.A4.getWidth()/2,PageSize.A4.getHeight()),
                     ResizeType.MAINTAIN_ASPECT_RATIO).resize(pdfDocument.getPage(1));
         }

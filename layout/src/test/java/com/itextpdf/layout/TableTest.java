@@ -66,6 +66,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -88,13 +89,18 @@ public class TableTest extends AbstractTableTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+	@AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void simpleTableTest01() throws IOException, InterruptedException {
         String testName = "tableTest01.pdf";
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{50, 50})
@@ -113,7 +119,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{50, 50})
@@ -135,7 +141,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent1 = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -162,7 +168,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{250, 250})
@@ -182,7 +188,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{250, 250})
@@ -202,7 +208,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{250, 250})
@@ -222,7 +228,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{250, 250})
@@ -242,7 +248,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -269,7 +275,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -299,7 +305,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Paragraph("Table 1"));
@@ -341,7 +347,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -375,7 +381,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -417,7 +423,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -449,7 +455,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -482,7 +488,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -518,7 +524,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -544,7 +550,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. "
@@ -579,7 +585,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{50, 50, 50})
@@ -610,7 +616,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Paragraph(TEXT_CONTENT));
@@ -643,7 +649,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{130, 130, 260})
@@ -675,7 +681,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{130, 130, 260})
@@ -703,7 +709,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String shortTextContent = "Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.";
@@ -734,7 +740,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new UnitValue[]{UnitValue.createPointValue(30), UnitValue.createPointValue(30), UnitValue.createPercentValue(30), UnitValue.createPercentValue(30)})
@@ -754,7 +760,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(2)
@@ -802,7 +808,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Div().setHeight(730).setWidth(523));
@@ -825,7 +831,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -853,7 +859,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -881,7 +887,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -906,7 +912,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String middleTextContent = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.\n" +
@@ -934,7 +940,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String longTextContent = "1. " + TEXT_CONTENT + "2. " + TEXT_CONTENT + "3. " + TEXT_CONTENT + "4. " + TEXT_CONTENT
@@ -959,7 +965,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth()
@@ -981,7 +987,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -1013,7 +1019,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        final PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        final PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textContent1 = "Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add. You can also type a keyword to search online for the video that best fits your document.";
@@ -1046,7 +1052,7 @@ public class TableTest extends AbstractTableTest {
         String testName = "extendLastRowTest01.pdf";
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "itext.png")));
@@ -1077,7 +1083,7 @@ public class TableTest extends AbstractTableTest {
         String testName = "toLargeElementWithKeepTogetherPropertyInTableTest01.pdf";
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
@@ -1109,7 +1115,7 @@ public class TableTest extends AbstractTableTest {
         String testName = "toLargeElementInTableTest01.pdf";
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "toLargeElementInTableTest01.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "toLargeElementInTableTest01.pdf"));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(new float[]{5});
@@ -1131,7 +1137,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Cell cell;
@@ -1184,7 +1190,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5)).useAllAvailableWidth();
@@ -1217,7 +1223,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A8.rotate());
 
         Table innerTable = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
@@ -1243,7 +1249,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(300, 98));
 
         doc.add(new Paragraph("Table with setKeepTogether(true):"));
@@ -1283,7 +1289,7 @@ public class TableTest extends AbstractTableTest {
 
         String text = "Make Gretzky Great Again";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth()
@@ -1313,7 +1319,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.createPng(UrlUtil.toURL(SOURCE_FOLDER + "itext.png")));
@@ -1342,7 +1348,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
@@ -1362,7 +1368,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
@@ -1385,7 +1391,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textByron =
@@ -1462,7 +1468,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textByron =
@@ -1563,7 +1569,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textByron =
@@ -1649,7 +1655,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         for (int i = 0; i < 28; i++) {
@@ -1677,7 +1683,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
@@ -1698,7 +1704,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
@@ -1719,7 +1725,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4, false);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{10}));
@@ -1741,7 +1747,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{1.3f, 1f, 1f, 1f, 1f, 1f, 1f}));
         table.setWidth(UnitValue.createPercentValue(100)).setFixedLayout();
@@ -1762,7 +1768,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
@@ -1797,7 +1803,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
@@ -1821,7 +1827,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
@@ -1847,7 +1853,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -1874,7 +1880,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -1899,7 +1905,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth();
@@ -1922,7 +1928,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdf);
 
         // construct a table
@@ -1954,7 +1960,7 @@ public class TableTest extends AbstractTableTest {
 
         String gretzky = "Make Gretzky great again!";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A8.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -1978,7 +1984,7 @@ public class TableTest extends AbstractTableTest {
 
         String gretzky = "Make Gretzky great again!";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -2011,7 +2017,7 @@ public class TableTest extends AbstractTableTest {
 
         String gretzky = "Make Gretzky great again!";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A8.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -2038,7 +2044,7 @@ public class TableTest extends AbstractTableTest {
 
         String gretzky = "Make Gretzky great again!";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -2071,7 +2077,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
@@ -2098,7 +2104,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
@@ -2118,7 +2124,7 @@ public class TableTest extends AbstractTableTest {
 		String outFileName = DESTINATION_FOLDER + testName;
 		String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-		PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+		PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 		Document doc = new Document(pdfDoc);
 
 		Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
@@ -2143,7 +2149,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(3);
@@ -2169,7 +2175,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
@@ -2191,7 +2197,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
@@ -2215,7 +2221,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30, 30}));
@@ -2240,7 +2246,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
@@ -2263,7 +2269,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
@@ -2288,7 +2294,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{30, 30}));
@@ -2311,7 +2317,7 @@ public class TableTest extends AbstractTableTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         //Initialize PDF document
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         // Initialize document
         Document doc = new Document(pdf);
 
@@ -2345,7 +2351,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdf);
 
         doc.add(new Paragraph("Simple cell:"));
@@ -2366,7 +2372,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdf);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{1, 1, 1}));
@@ -2388,7 +2394,7 @@ public class TableTest extends AbstractTableTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         //Initialize PDF document
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         // Initialize document
         Document doc = new Document(pdf);
 
@@ -2411,7 +2417,7 @@ public class TableTest extends AbstractTableTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         //Initialize PDF document
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         // Initialize document
         Document doc = new Document(pdf);
 
@@ -2437,7 +2443,7 @@ public class TableTest extends AbstractTableTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         //Initialize PDF document
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         // Initialize document
         Document doc = new Document(pdf);
 
@@ -2470,7 +2476,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdf);
 
         String text = "abacaba absa ";
@@ -2499,7 +2505,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdf);
 
         String text = "abacaba absa ";
@@ -2525,7 +2531,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{100}));
@@ -2544,7 +2550,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{100}));
@@ -2563,7 +2569,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{100}));
@@ -2582,7 +2588,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(new float[]{100}));
@@ -2601,7 +2607,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         Table table = new Table(UnitValue.createPercentArray(new float[]{2, 1, 1}));
         table.setWidth(UnitValue.createPercentValue(80));
@@ -2625,7 +2631,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
 
@@ -2698,7 +2704,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(2));
@@ -2775,7 +2781,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.addCell(new Cell().add(new Paragraph("Body Cell 1")).setBorder(new SolidBorder(30)));
@@ -2808,7 +2814,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         int n = 4;
         Table table = new Table(UnitValue.createPercentArray(n)).useAllAvailableWidth();
@@ -2843,7 +2849,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDoc.setTagged();
         Document doc = new Document(pdfDoc);
 
@@ -2867,7 +2873,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = createTestTable(2, 3, 3, 3, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
@@ -2910,7 +2916,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = createTestTable(2, 30, 3, 3, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
@@ -2943,7 +2949,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = createTestTable(2, 10, 2, 2, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
@@ -2988,7 +2994,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = createTestTable(2, 10, 2, 2, (UnitValue) null, BorderCollapsePropertyValue.COLLAPSE,
@@ -3012,7 +3018,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = createTestTable(2, 10, 2, 2, (UnitValue) null, BorderCollapsePropertyValue.SEPARATE,
@@ -3096,7 +3102,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 140));
         Table table = new Table(2);
 
@@ -3122,7 +3128,7 @@ public class TableTest extends AbstractTableTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
         int numRows = 3;
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(numRows);
@@ -3152,7 +3158,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595, 120));
         Table table = new Table(2);
 
@@ -3178,7 +3184,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4);
 
         Table table = new Table(1);
@@ -3211,7 +3217,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4);
 
         Table table = new Table(1);
@@ -3245,7 +3251,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(1)
@@ -3270,7 +3276,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Div div = new Div();
@@ -3310,7 +3316,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Div div = new Div();
@@ -3349,7 +3355,7 @@ public class TableTest extends AbstractTableTest {
     public void inheritHeaderPropsWhileMinMaxWidthCalculationsTest() throws IOException, InterruptedException {
         String filename = "inheritHeaderPropsWhileMinMaxWidthCalculations.pdf";
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         Document document = new Document(pdf);
 
         Paragraph p = new Paragraph("Some text is placed at the beginning"
@@ -3383,7 +3389,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4.rotate());
 
         Table table = new Table(38);
@@ -3419,7 +3425,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A4);
 
         Table table = new Table(4);
@@ -3476,7 +3482,7 @@ public class TableTest extends AbstractTableTest {
     }
 
     private static void bigRowspanTooFar(String filename, boolean addKeepTogether, boolean longLastCell, boolean bigRowspanWithHeight) throws IOException, InterruptedException {
-        PdfDocument pdf = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         Document document = new Document(pdf);
 
         Table table = new Table(2);
@@ -3520,7 +3526,7 @@ public class TableTest extends AbstractTableTest {
     public void setWidthShouldBeRespectedTest() throws IOException, InterruptedException {
         String fileName = "setWidthShouldBeRespectedTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName));
         Document doc = new Document(pdfDocument, new PageSize(842, 1400));
 
         Table table = new Table(2);
@@ -3554,7 +3560,7 @@ public class TableTest extends AbstractTableTest {
     public void preciseFittingItalicBoldSimulatedTextInCellsTest() throws IOException, InterruptedException {
         String fileName = "preciseFittingItalicBoldSimulatedTextInCells.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + fileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName));
             Document doc = new Document(pdfDocument)) {
 
             int numberOfColumns = 9;
@@ -3617,7 +3623,7 @@ public class TableTest extends AbstractTableTest {
         String fileName = "infiniteLoopKeepTogether.pdf";
         float fontSize = 8;
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + fileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + fileName));
                 Document doc = new Document(pdfDoc)) {
             doc.setMargins(138, 20, 75, 20);
 
@@ -3654,7 +3660,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(595.0f, 50.0f));
 
         doc.add(new Table(new float[]{1, 1}).addCell(new Cell().setHeight(10.0f)));
@@ -3765,7 +3771,7 @@ public class TableTest extends AbstractTableTest {
         FontProvider fontProvider = new FontProvider();
         fontProvider.addStandardPdfFonts();
         context.fontProvider = fontProvider;
-        context.pdf = new PdfDocument(new PdfWriter(outFileName));
+        context.pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         context.pdf.setDefaultPageSize(PageSize.A5);
         template.generate(context);
         context.pdf.close();
@@ -3783,7 +3789,7 @@ public class TableTest extends AbstractTableTest {
         String outFileName = DESTINATION_FOLDER + testName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + testName;
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
         Div leftContent = new Div().add(

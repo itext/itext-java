@@ -30,7 +30,6 @@ import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
@@ -54,6 +53,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -69,6 +69,11 @@ public class BorderTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -113,7 +118,7 @@ public class BorderTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "drawBordersByRectangle.pdf";
         String cmpPdf = sourceFolder + "cmp_drawBordersByRectangle.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfPage page = pdfDocument.addNewPage();
             PdfCanvas canvas = new PdfCanvas(page);
 
@@ -343,7 +348,7 @@ public class BorderTest extends ExtendedITextTest {
 
     private static Document createDocument(String fileName) throws IOException {
         String outFileName = destinationFolder + fileName;
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         return new Document(pdfDocument);
     }

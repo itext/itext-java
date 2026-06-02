@@ -24,7 +24,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.ListItem;
@@ -37,6 +36,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -52,12 +52,17 @@ public class CustomCurrentAreaTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void longListItemTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "longListItemTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_longListItemTest.pdf";
         Rectangle customArea = new Rectangle(0, 15, 586, 723);
-        try(PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));Document document = new Document(pdf)) {
+        try(PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));Document document = new Document(pdf)) {
             ClauseRenderer renderer = new ClauseRenderer(document, customArea);
             document.setRenderer(renderer);
 

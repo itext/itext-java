@@ -26,7 +26,6 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
@@ -49,6 +48,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -65,11 +65,16 @@ public class MinWidthTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void paragraphTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "paragraphTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_paragraphTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 
@@ -87,7 +92,7 @@ public class MinWidthTest extends ExtendedITextTest {
     public void divTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 
@@ -107,7 +112,7 @@ public class MinWidthTest extends ExtendedITextTest {
     public void divWithSmallRotatedParagraph() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divSmallRotatedParagraphTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divSmallRotatedParagraphTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 
@@ -130,7 +135,7 @@ public class MinWidthTest extends ExtendedITextTest {
     public void divWithBigRotatedParagraph() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divBigRotatedParagraphTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divBigRotatedParagraphTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 
@@ -151,7 +156,7 @@ public class MinWidthTest extends ExtendedITextTest {
     public void divWithSmallRotatedDiv() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divSmallRotatedDivTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divSmallRotatedDivTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 
@@ -174,7 +179,7 @@ public class MinWidthTest extends ExtendedITextTest {
     public void divWithBigRotatedDiv() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "divBigRotatedDivTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_divBigRotatedDivTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 
@@ -196,7 +201,7 @@ public class MinWidthTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "divPercentImage.pdf";
         String cmpFileName = sourceFolder + "cmp_divPercentImage.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
@@ -223,7 +228,7 @@ public class MinWidthTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "divRotatedPercentImage.pdf";
         String cmpFileName = sourceFolder + "cmp_divRotatedPercentImage.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         PdfImageXObject imageXObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
@@ -249,7 +254,7 @@ public class MinWidthTest extends ExtendedITextTest {
     public void multipleDivTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "multipleDivTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_multipleDivTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
         Border[] borders = {new SolidBorder(ColorConstants.BLUE, 2f), new SolidBorder(ColorConstants.RED, 2f), new SolidBorder(ColorConstants.GREEN, 2f)};
@@ -279,7 +284,7 @@ public class MinWidthTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "simpleTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_simpleTableTest.pdf";
 
-        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
         Cell cell1 = new Cell().add(new Paragraph("I am table"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 60))
                 .setBorderBottom(Border.NO_BORDER)
@@ -320,7 +325,7 @@ public class MinWidthTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "colspanTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_colspanTableTest.pdf";
 
-        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
         Cell bigCell = new Cell(1, 2).add(new Paragraph("I am veryveryvery big cell"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 60))
                 .setBorderBottom(Border.NO_BORDER)
@@ -361,7 +366,7 @@ public class MinWidthTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "colspanRowspanTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_colspanRowspanTableTest.pdf";
 
-        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
         Cell colspanCell = new Cell(1, 2).add(new Paragraph("I am veryveryvery big cell"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 60))
                 .setBorderBottom(Border.NO_BORDER)
@@ -407,7 +412,7 @@ public class MinWidthTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "headerFooterTableTest.pdf";
         String cmpFileName = sourceFolder + "cmp_headerFooterTableTest.pdf";
 
-        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
         Cell bigCell = new Cell().add(new Paragraph("veryveryveryvery big cell"))
                 .setBorder(new SolidBorder(ColorConstants.RED, 40))
                 .setBorderBottom(Border.NO_BORDER)

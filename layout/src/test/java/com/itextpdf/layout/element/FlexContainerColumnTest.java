@@ -26,7 +26,6 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -47,6 +46,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import java.util.Arrays;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -88,6 +88,11 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
         });
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @ParameterizedTest(name = "{index}: align-items: {0}; justify-content: {1}; flex-wrap: {2}; flex-direction: {3}")
     @MethodSource("alignItemsAndJustifyContentProperties")
     public void defaultFlexContainerTest(AlignmentPropertyValue alignItemsValue, JustifyContent justifyContentValue,
@@ -95,7 +100,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "defaultFlexContainerTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_defaultFlexContainerTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -125,7 +130,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerFixedHeightWidthTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerFixedHeightWidthTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -157,7 +162,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -194,7 +199,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenDontFitHorizontallyTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -230,7 +235,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenWithGrowTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenWithGrowTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -272,7 +277,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenWithFlexBasisTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -309,7 +314,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerDifferentChildrenWithFlexShrinkTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -350,7 +355,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerInsideFlexContainerTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -381,7 +386,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_multipleFlexContainersInsideFlexContainerTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -421,7 +426,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerRotationAngleTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -454,7 +459,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexItemBoxSizingTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -504,7 +509,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerBoxSizingTest" + comparisonPdfId + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -536,7 +541,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerPaginationTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerPaginationTest" + comparisonPdfId + ".pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
 
             Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
             flexContainer.deleteOwnProperty(Property.HEIGHT);
@@ -569,7 +574,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerWithFixedHeightPagination" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerWithFixedHeightPagination" + comparisonPdfId + ".pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
 
             Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
             flexContainer.setHeight(1000);
@@ -603,7 +608,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerInsideDivPaginationTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerInsideDivPaginationTest" + comparisonPdfId + ".pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
 
             Div div = new Div().setHeight(1800).setWidth(350).setBorder(new SolidBorder(ColorConstants.RED, 20));
             Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);
@@ -639,7 +644,7 @@ public class FlexContainerColumnTest extends ExtendedITextTest {
             FlexWrapPropertyValue wrapValue, FlexDirectionPropertyValue directionValue, Integer comparisonPdfId) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "flexContainerInsideDivTest" + comparisonPdfId + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexContainerInsideDivTest" + comparisonPdfId + ".pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
 
             Div div = new Div().setHeight(400).setWidth(140).setBorder(new SolidBorder(ColorConstants.PINK, 10));
             Div flexContainer = createFlexContainer(alignItemsValue, justifyContentValue, wrapValue, directionValue);

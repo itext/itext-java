@@ -73,6 +73,11 @@ class MemoryFirstPdfWriter extends PdfWriter {
             throw new IllegalArgumentException("Provided path is null");
         }
 
+        if (MemoryFirstPdfWriter.waitingStreams.remove(path) != null) {
+            // We don't expect to have any other streams with the same path, so we can return here
+            return;
+        }
+
         for (String filePath : MemoryFirstPdfWriter.waitingStreams.keySet()) {
             if (filePath.startsWith(path)) {
                 MemoryFirstPdfWriter.waitingStreams.remove(filePath);

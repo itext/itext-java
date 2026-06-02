@@ -282,7 +282,7 @@ public class PdfEncryptionManuallyPortedTest extends ExtendedITextTest {
         String outFileName = destinationFolder + filename;
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
         Certificate cert = getPublicCertificate(CERT);
-        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName, new WriterProperties()
+        PdfWriter writer = new PdfWriter(outFileName, new WriterProperties()
                 .setPublicKeyEncryption(new Certificate[] {cert}, new int[] {permissions}, encryptionType)
                 .addXmpMetadata());
         writer.setCompressionLevel(compression);

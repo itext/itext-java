@@ -32,7 +32,6 @@ import com.itextpdf.kernel.font.PdfType3Font;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
@@ -48,6 +47,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -85,6 +85,11 @@ public class FontProviderTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void standardAndType3Fonts() throws Exception {
         String fileName = "taggedDocumentWithType3Font";
@@ -96,7 +101,7 @@ public class FontProviderTest extends ExtendedITextTest {
         sel.addStandardPdfFonts();
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(srcFileName)),
-                new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+                CompareTool.createTestPdfWriter(outFileName));
         PdfType3Font pdfType3Font = (PdfType3Font) PdfFontFactory.createFont((PdfDictionary) pdfDoc.getPdfObject(5));
         sel.addPdfFont(pdfType3Font, "CustomFont");
 
@@ -131,7 +136,7 @@ public class FontProviderTest extends ExtendedITextTest {
         // TODO DEVSIX-2119 Update if necessary
         fontProvider.getFontSet().addFont(StandardFonts.TIMES_ROMAN, null, "times");
         fontProvider.getFontSet().addFont(StandardFonts.HELVETICA);
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(fontProvider);
 
@@ -163,7 +168,7 @@ public class FontProviderTest extends ExtendedITextTest {
 
         // TODO DEVSIX-2119 Update if necessary
         fontProvider.getFontSet().addFont(StandardFonts.TIMES_ROMAN, null, "times");
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.setFontProvider(fontProvider);
 
@@ -180,7 +185,7 @@ public class FontProviderTest extends ExtendedITextTest {
     public void fontProviderNotSetExceptionTest() throws Exception {
         String fileName = "fontProviderNotSetExceptionTest.pdf";
         String outFileName = destinationFolder + fileName + ".pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDoc);
 
             Paragraph paragraph = new Paragraph("Hello world!")

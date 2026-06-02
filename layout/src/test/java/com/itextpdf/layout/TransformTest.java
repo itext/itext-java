@@ -25,7 +25,6 @@ package com.itextpdf.layout;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Image;
@@ -40,6 +39,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.util.Arrays;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -90,13 +90,18 @@ public class TransformTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @ParameterizedTest(name = "{1}")
     @MethodSource("transforms")
     public void commonTransformTest(Transform transform, String fileName) throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document doc = new Document(pdfDoc)) {
             doc.add(new Paragraph(TestResourceUtil.getByronStanza()));
 
@@ -119,7 +124,7 @@ public class TransformTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "transformStyle.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_transformStyle.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document doc = new Document(pdfDoc)) {
             doc.add(new Paragraph(TestResourceUtil.getByronStanza()));
 

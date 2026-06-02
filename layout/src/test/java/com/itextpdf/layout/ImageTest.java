@@ -58,7 +58,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import java.net.URL;
-
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -75,13 +75,18 @@ public class ImageTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void imageTest01() throws IOException, InterruptedException {
 
         String outFileName = destinationFolder + "imageTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -107,7 +112,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest02.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -133,7 +138,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest03.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -160,7 +165,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest04.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -187,7 +192,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest05.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest05.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -213,7 +218,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest06.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest06.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -242,7 +247,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest07.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest07.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -265,7 +270,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest08.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest08.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -290,7 +295,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest09.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest09.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc, new PageSize(500, 300));
 
@@ -308,7 +313,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest10.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest10.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc, new PageSize(500, 300));
 
@@ -326,7 +331,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest11.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest11.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -344,7 +349,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest12.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest12.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -363,7 +368,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest13.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest13.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -382,7 +387,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest14.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest14.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -404,7 +409,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest15.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest15.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -423,7 +428,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest16.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest16.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -447,7 +452,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest17.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest17.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -472,7 +477,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest18.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest18.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -497,7 +502,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest19.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest19.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -521,7 +526,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest20.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest20.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -546,7 +551,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest21.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest21.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -580,7 +585,7 @@ public class ImageTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_imageTest22.pdf";
         String outFile = destinationFolder + "imageTest22.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph("Very small paragraph with text."));
 
@@ -600,7 +605,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageTest23.pdf";
         String cmpFileName = sourceFolder + "cmp_imageTest23.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -622,7 +627,7 @@ public class ImageTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_flushOnDrawTest.pdf";
 
         int rowCount = 60;
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
@@ -650,7 +655,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "flushOnDrawCheckCircularReferencesTest.pdf";
         String cmpFileName = sourceFolder + "cmp_flushOnDrawCheckCircularReferencesTest.pdf";
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         //Initialize document
         Document document = new Document(pdf);
 
@@ -687,7 +692,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageBordersTextTest.pdf";
         String cmpFileName = sourceFolder + "cmp_imageBordersTextTest.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -714,7 +719,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageParagraphBorderTest.pdf";
         String cmpFileName = sourceFolder + "cmp_imageParagraphBorderTest.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -740,7 +745,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageRelativePositionTest.pdf";
         String cmpFileName = sourceFolder + "cmp_imageRelativePositionTest.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -766,7 +771,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageInTableTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_imageInTableTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
@@ -796,7 +801,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageInTableTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_imageInTableTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDoc);
         Image img = new Image(ImageDataFactory.create(sourceFolder + "Desert.jpg"));
         Table table = new Table(UnitValue.createPercentArray(1)).useAllAvailableWidth()
@@ -828,7 +833,7 @@ public class ImageTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_fixedPositionImageTest01.pdf";
         String imgPath = sourceFolder + "Desert.jpg";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDoc);
 
         document.add(new Image(ImageDataFactory.create(imgPath), 12, pdfDoc.getDefaultPageSize().getHeight() - 36, 24).setBorder(new SolidBorder(ColorConstants.RED, 5)));
@@ -843,7 +848,7 @@ public class ImageTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "imageWithMinMaxHeightTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_imageWithMinMaxHeightTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -881,7 +886,7 @@ public class ImageTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_precisionTest01.pdf";
         String imageFileName = sourceFolder + "LOGO_PDF_77.jpg";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas currentPdfCanvas = new PdfCanvas(page);
 
@@ -912,7 +917,7 @@ public class ImageTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_imageBorderRadiusTest01.pdf";
         String imageFileName = sourceFolder + "itis.jpg";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Image image = new Image(ImageDataFactory.create(imageFileName));
@@ -935,7 +940,7 @@ public class ImageTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_createTiffImageTest.pdf";
         String imgPath = sourceFolder + "group4Compression.tif";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDoc);
 
         ImageData id = ImageDataFactory.create(imgPath);
@@ -962,7 +967,7 @@ public class ImageTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_tiffImageWithoutCompression.pdf";
         String imgPath = sourceFolder + "no-compression-tag.tiff";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDoc);
 
         ImageData id = ImageDataFactory.create(imgPath);
@@ -984,7 +989,7 @@ public class ImageTest extends ExtendedITextTest {
         String imgPath = sourceFolder + "bee.png";
 
         ImageData imgData = ImageDataFactory.create(imgPath);
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument).add(new Image(imgData));
 
         doc.close();

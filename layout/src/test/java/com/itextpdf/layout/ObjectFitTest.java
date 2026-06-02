@@ -40,6 +40,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -54,6 +55,11 @@ public class ObjectFitTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -118,7 +124,7 @@ public class ObjectFitTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_objectFit_test_scale_down_small_image.pdf";
 
         try(
-                PdfWriter writer = new PdfWriter(outFileName);
+                PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
                 Document doc = new Document(new PdfDocument(writer))
         ) {
             PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(sourceFolder + "itis.jpg"));
@@ -142,7 +148,7 @@ public class ObjectFitTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_objectFit_test_two_objects.pdf";
 
         try(
-                PdfWriter writer = new PdfWriter(outFileName);
+                PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
                 Document doc = new Document(new PdfDocument(writer))
         ) {
 
@@ -173,7 +179,7 @@ public class ObjectFitTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_objectFit_test_with_effects.pdf";
 
         try(
-                PdfWriter writer = new PdfWriter(outFileName);
+                PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
                 Document doc = new Document(new PdfDocument(writer))
         ) {
 
@@ -204,7 +210,7 @@ public class ObjectFitTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_objectFit_test_with_rotation.pdf";
 
         try(
-                PdfWriter writer = new PdfWriter(outFileName);
+                PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
                 Document doc = new Document(new PdfDocument(writer))
         ) {
 
@@ -226,7 +232,7 @@ public class ObjectFitTest extends ExtendedITextTest {
 
     private void generateDocumentWithObjectFit(ObjectFit objectFit, String outFileName) throws IOException {
         try(
-            PdfWriter writer = new PdfWriter(outFileName);
+            PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
             Document doc = new Document(new PdfDocument(writer))
         ) {
 

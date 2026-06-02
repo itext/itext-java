@@ -33,7 +33,6 @@ import com.itextpdf.kernel.pdf.PdfDocumentInfo;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.PdfViewerPreferences;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPConst;
@@ -48,6 +47,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -67,11 +67,16 @@ public class XMPWriterTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void createPdfTest() throws IOException, XMPException {
         String fileName = "xmp_metadata.pdf";
         // step 1
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "xmp_metadata.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "xmp_metadata.pdf"));
         Document document = new Document(pdfDocument);
         // step 2
 
@@ -96,7 +101,7 @@ public class XMPWriterTest extends ExtendedITextTest {
     public void addUAXMPMetaDataNotTaggedTest() throws IOException {
         String fileName = "addUAXMPMetaDataNotTaggedTest.pdf";
         WriterProperties writerProperties = new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1);
-        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + fileName, writerProperties));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName, writerProperties));
         manipulatePdf(pdf, false);
         Assertions.assertNull(new CompareTool().compareXmp(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, true));
     }
@@ -105,7 +110,7 @@ public class XMPWriterTest extends ExtendedITextTest {
     public void addUAXMPMetaDataTaggedTest() throws IOException {
         String fileName = "addUAXMPMetaDataTaggedTest.pdf";
         WriterProperties writerProperties = new WriterProperties().addPdfUaXmpMetadata(PdfUAConformance.PDF_UA_1);
-        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + fileName, writerProperties));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName, writerProperties));
         manipulatePdf(pdf, true);
         Assertions.assertNull(new CompareTool().compareXmp(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, true));
     }
@@ -113,7 +118,7 @@ public class XMPWriterTest extends ExtendedITextTest {
     @Test
     public void doNotAddUAXMPMetaDataTaggedTest() throws IOException {
         String fileName = "doNotAddUAXMPMetaDataTaggedTest.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + fileName, new WriterProperties().addXmpMetadata()));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + fileName, new WriterProperties().addXmpMetadata()));
         manipulatePdf(pdf, true);
         Assertions.assertNull(new CompareTool().compareXmp(destinationFolder + fileName, sourceFolder + "cmp_" + fileName, true));
     }

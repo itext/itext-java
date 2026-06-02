@@ -29,7 +29,6 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -47,6 +46,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -63,11 +63,16 @@ public class OverflowTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void textOverflowTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -88,7 +93,7 @@ public class OverflowTest extends ExtendedITextTest {
     public void textOverflowTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -107,7 +112,7 @@ public class OverflowTest extends ExtendedITextTest {
     public void textOverflowTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -126,7 +131,7 @@ public class OverflowTest extends ExtendedITextTest {
     public void textOverflowTest04() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "textOverflowTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_textOverflowTest04.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -142,7 +147,7 @@ public class OverflowTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "alignedInlineContentOverflowHiddenTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_alignedInlineContentOverflowHiddenTest01.pdf";
         String imgPath = sourceFolder + "itis.jpg";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -171,7 +176,7 @@ public class OverflowTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "alignedInlineContentOverflowHiddenTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_alignedInlineContentOverflowHiddenTest02.pdf";
         String imgPath = sourceFolder + "itis.jpg";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -195,7 +200,7 @@ public class OverflowTest extends ExtendedITextTest {
     public void overflowHiddenOnCanvasTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "overflowHiddenOnCanvasTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_overflowHiddenOnCanvasTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         PdfPage page = pdfDocument.addNewPage();
         Canvas canvas = new Canvas(new PdfCanvas(page), page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
@@ -212,7 +217,7 @@ public class OverflowTest extends ExtendedITextTest {
     public void overflowHiddenOnCanvasTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "overflowHiddenOnCanvasTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_overflowHiddenOnCanvasTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         PdfPage page = pdfDocument.addNewPage();
         Canvas canvas = new Canvas(page, page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
@@ -229,7 +234,7 @@ public class OverflowTest extends ExtendedITextTest {
     public void overflowVisibleOnCanvasTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "overflowVisibleOnCanvasTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_overflowVisibleOnCanvasTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         PdfPage page = pdfDocument.addNewPage();
         Canvas canvas = new Canvas(new PdfCanvas(page), page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
@@ -246,7 +251,7 @@ public class OverflowTest extends ExtendedITextTest {
     public void overflowVisibleOnCanvasTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "overflowVisibleOnCanvasTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_overflowVisibleOnCanvasTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         PdfPage page = pdfDocument.addNewPage();
         Canvas canvas = new Canvas(page, page.getPageSize().clone().applyMargins(36, 36, 36, 36, false));
@@ -277,7 +282,7 @@ public class OverflowTest extends ExtendedITextTest {
     public void forcedPlacementTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "forcedPlacementTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_forcedPlacementTest01.pdf";
-        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
 
         String text = "Text that is not fitting into single line, but requires several of them. " +
                 "It should be repeated twice and all of it should be shown in the document. ";
@@ -309,7 +314,7 @@ public class OverflowTest extends ExtendedITextTest {
     public void forcedPlacementTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "forcedPlacementTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_forcedPlacementTest02.pdf";
-        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
 
         String text = "Text that is not fitting into single line, but requires several of them. " +
                 "It should be repeated twice and all of it should be shown in the document. ";

@@ -28,7 +28,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
@@ -54,6 +53,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import java.util.Arrays;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -62,19 +62,24 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class GridContainerLayoutTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/GridContainerTest/";
+    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/GridContainerLayoutTest/";
 
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/GridContainerTest/";
+    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/GridContainerLayoutTest/";
 
     @BeforeAll
     public static void setup() {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void simpleBorderBoxSizingTestTest() throws IOException, InterruptedException {
         String fileName = DESTINATION_FOLDER + "border.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(fileName));
         Document document = new Document(pdfDocument);
 
         GridContainer gridcontainer0 = createGridBoxWithText();
@@ -98,7 +103,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
     @Test
     public void simpleMarginTest() throws IOException, InterruptedException {
         String fileName = DESTINATION_FOLDER + "margin.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(fileName));
         Document document = new Document(pdfDocument);
         document.add(new Paragraph("Margin "));
         GridContainer gridcontainer0 = createGridBoxWithText();
@@ -118,7 +123,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
     @Test
     public void simplePaddingTest() throws IOException, InterruptedException {
         String fileName = DESTINATION_FOLDER + "padding.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(fileName));
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph("Padding "));
@@ -139,7 +144,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
     @Test
     public void simpleBackGroundTest() throws IOException, InterruptedException {
         String fileName = DESTINATION_FOLDER + "background.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(fileName));
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph("Background "));
@@ -157,7 +162,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
     @Test
     public void backgroundWithImageTest() throws IOException, InterruptedException {
         String fileName = DESTINATION_FOLDER + "backgroundWithImage.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(fileName));
         Document document = new Document(pdfDocument);
 
         document.add(new Paragraph("Background with image "));
@@ -182,7 +187,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
     @Test
     public void emptyGridContainerTest() throws IOException, InterruptedException {
         String fileName = DESTINATION_FOLDER + "emptyGridContainer.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(fileName));
         Document document = new Document(pdfDocument);
 
         GridContainer gridcontainer0 = new GridContainer();
@@ -206,7 +211,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
     @Test
     public void overflowGridContainerTest() throws IOException, InterruptedException {
         String fileName = DESTINATION_FOLDER + "overflowGridContainer.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(fileName));
         Document document = new Document(pdfDocument);
 
         GridContainer gridcontainer0 = createGridBoxWithText();
@@ -233,7 +238,7 @@ public class GridContainerLayoutTest extends ExtendedITextTest {
                     LogLevelConstants.WARN)})
     public void nothingResultTest() throws IOException, InterruptedException {
         String fileName = DESTINATION_FOLDER + "nothingResult.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(fileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(fileName));
         Document document = new Document(pdfDocument);
 
         GridContainer gridcontainer = new GridContainer();

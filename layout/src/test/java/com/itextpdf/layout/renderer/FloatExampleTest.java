@@ -47,6 +47,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -68,6 +69,11 @@ public class FloatExampleTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void floatMaxWidthTest01() throws IOException, InterruptedException {
         /* This test illustrate behaviour of images with different width and mas_width properties, that have
@@ -82,7 +88,7 @@ public class FloatExampleTest extends ExtendedITextTest {
         int lastImage = 1;
 
         //Initialize PDF writer
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
 
         //Initialize PDF document
         PdfDocument pdf = new PdfDocument(writer);
@@ -160,7 +166,7 @@ public class FloatExampleTest extends ExtendedITextTest {
         int lastImage = 2;
 
         //Initialize PDF writer
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
 
         //Initialize PDF document with non-default size
         PdfDocument pdf = new PdfDocument(writer);

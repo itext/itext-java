@@ -29,7 +29,6 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.DottedBorder;
@@ -48,6 +47,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -63,6 +63,11 @@ public class TableBorderTest extends AbstractTableTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -320,7 +325,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "wideBorderTest02.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument, new PageSize(902, 842));
 
@@ -435,7 +440,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "wideBorderTest03.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument, new PageSize(842, 400));
 
@@ -475,7 +480,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "wideBorderTest04.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument, new PageSize(200, 150));
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -503,7 +508,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "borderCollapseTest01.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -526,7 +531,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "borderCollapseTest02.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Cell cell;
@@ -561,7 +566,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "borderCollapseTest02A.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Cell cell;
@@ -594,7 +599,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "borderCollapseTest03.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Cell cell;
@@ -630,7 +635,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "separatedBorderTest01A.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -652,7 +657,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "separatedBorderTest01B.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -674,7 +679,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "separatedBorderTest01C.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -1436,7 +1441,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "tableWithHeaderFooterTest06A.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument, PageSize.A6.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5)).useAllAvailableWidth();
@@ -1465,7 +1470,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "verticalBordersInfluenceHorizontalTopAndbottomBordersTest.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument, PageSize.A6.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5)).useAllAvailableWidth();
@@ -1494,7 +1499,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "tableWithHeaderFooterTest06B.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument, PageSize.A6.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(5)).useAllAvailableWidth();
@@ -1524,7 +1529,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "tableWithHeaderFooterTest07.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth()
@@ -1550,7 +1555,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "tableWithHeaderFooterTest08.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, PageSize.A7.rotate());
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -1578,7 +1583,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "tableWithHeaderFooterTest09.pdf";
         String outFileName = destinationFolder + fileName;
 
-        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)), PageSize.A3.rotate());
+        Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)), PageSize.A3.rotate());
         Cell headerCell1 = new Cell().add(new Paragraph("I am header"))
                 .setBorder(new SolidBorder(ColorConstants.GREEN, 30))
                 .setBorderBottom(Border.NO_BORDER)
@@ -1660,7 +1665,7 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "tableWithHeaderFooterTest10.pdf";
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc, new PageSize(380, 300));
 
         Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
@@ -1727,7 +1732,7 @@ public class TableBorderTest extends AbstractTableTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + cmpPrefix + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(3)).useAllAvailableWidth();
@@ -2356,7 +2361,7 @@ public class TableBorderTest extends AbstractTableTest {
         String outFileName = destinationFolder + testName;
         String cmpFileName = sourceFolder + cmpPrefix + testName;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
@@ -2380,7 +2385,7 @@ public class TableBorderTest extends AbstractTableTest {
     private static Document createDocument(String fileName) throws IOException {
         String outFileName = destinationFolder + fileName;
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         return new Document(pdfDocument);
     }

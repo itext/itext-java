@@ -23,7 +23,6 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.commons.datastructures.Tuple2;
-import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -33,7 +32,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfVersion;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
@@ -56,14 +54,14 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 @Tag("IntegrationTest")
 public class LinkTest extends ExtendedITextTest {
@@ -83,12 +81,17 @@ public class LinkTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void linkTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "linkTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
@@ -106,7 +109,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "linkTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         doc.add(new AreaBreak()).add(new AreaBreak());
 
@@ -127,7 +130,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "linkTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_linkTest03.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         PdfArray array = new PdfArray();
@@ -153,7 +156,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "borderedLinkTest.pdf";
         String cmpFileName = sourceFolder + "cmp_borderedLinkTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Link link = new Link("Link with orange border", PdfAction.createURI("http://itextpdf.com"));
@@ -177,7 +180,7 @@ public class LinkTest extends ExtendedITextTest {
     public void testCreateLocalLinkInRotatedCell() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "linkInRotatedCell.pdf";
         String cmpFileName = sourceFolder + "cmp_linkInRotatedCell.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDocument);
         Table table = new Table(UnitValue.createPercentArray(new float[]{1, 2}));
 
@@ -198,7 +201,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "rotatedLinkAtFixedPosition.pdf";
         String cmpFileName = sourceFolder + "cmp_rotatedLinkAtFixedPosition.pdf";
 
-        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
 
@@ -216,7 +219,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "rotatedLinkInnerRotation.pdf";
         String cmpFileName = sourceFolder + "cmp_rotatedLinkInnerRotation.pdf";
 
-        Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
 
@@ -235,7 +238,7 @@ public class LinkTest extends ExtendedITextTest {
     public void simpleMarginsTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "simpleMarginsTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_simpleMarginsTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
@@ -256,7 +259,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "multiLineLinkTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_multiLineLinkTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
@@ -278,7 +281,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tableHeaderLinkTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_tableHeaderLinkTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com/", false);
@@ -308,7 +311,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "linkWithCustomRectangleTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_linkWithCustomRectangleTest01.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         String text = "Hello World";
@@ -337,7 +340,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "splitLinkTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_splitLinkTest01.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
         pdfDocument.setTagged();
 
@@ -361,8 +364,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "linkAnnotationOnDivSplitTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_linkAnnotationOnDivSplitTest01.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName,
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         Document doc = new Document(pdfDocument);
         pdfDocument.setTagged();
 
@@ -386,7 +388,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "linkActionOnDivSplitTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_linkActionOnDivSplitTest01.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         PdfAction action = PdfAction.createURI("http://itextpdf.com");
@@ -408,8 +410,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "intraForwardLink.pdf";
         String cmpFileName = sourceFolder + "cmp_intraForwardLink.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName,
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDoc.setTagged();
         Document doc = new Document(pdfDoc);
 
@@ -442,8 +443,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "intraBackwardLink.pdf";
         String cmpFileName = sourceFolder + "cmp_intraBackwardLink.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName,
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDoc.setTagged();
         Document doc = new Document(pdfDoc);
 
@@ -478,7 +478,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "linkWithSetDestination.pdf";
         String cmpFileName = sourceFolder + "cmp_linkWithSetDestination.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Link link = new Link("link", PdfAction.createGoTo("destination"));
             document.add(new Paragraph().add(link));
             document.add(new AreaBreak());
@@ -495,8 +495,7 @@ public class LinkTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "destinationToFlushedPage.pdf";
         String cmpFileName = sourceFolder + "cmp_destinationToFlushedPage.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName,
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0))); Document doc = new Document(pdfDoc)) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0))); Document doc = new Document(pdfDoc)) {
             pdfDoc.setTagged();
             doc.add(new Paragraph("text")).add(new AreaBreak());
             pdfDoc.getPage(1).flush();

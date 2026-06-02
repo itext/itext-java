@@ -26,7 +26,6 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.List;
@@ -39,6 +38,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -72,11 +72,16 @@ public class KeepWithNextTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void keepWithNextTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "keepWithNextTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest01.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         for (int i = 0; i < 28; i++) {
@@ -98,7 +103,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
     public void keepWithNextTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "keepWithNextTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest02.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         for (int i = 0; i < 28; i++) {
@@ -118,7 +123,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
     public void keepWithNextTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "keepWithNextTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest03.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         for (int i = 0; i < 27; i++) {
@@ -138,7 +143,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
     public void keepWithNextTest04() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "keepWithNextTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest04.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         for (int i = 0; i < 22; i++) {
@@ -159,7 +164,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
     public void keepWithNextTest05() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "keepWithNextTest05.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest05.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         for (int i = 0; i < 22; i++) {
@@ -181,7 +186,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
     public void keepWithNextTest06() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "keepWithNextTest06.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest06.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         document.add(new Paragraph(LONG_TEXT).setKeepWithNext(true));
@@ -195,7 +200,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
     public void keepWithNextTest07() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "keepWithNextTest07.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest07.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         document.setProperty(Property.FIRST_LINE_INDENT, 20f);
@@ -211,7 +216,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
     public void keepWithNextTest08() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "keepWithNextTest08.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest08.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         for (int i = 0; i < 25; i++) {
@@ -234,7 +239,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
     public void keepWithNextTest09() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "keepWithNextTest09.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest09.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         for (int i = 0; i < 28; i++) {
@@ -256,7 +261,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
     public void keepWithNextTest10() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "keepWithNextTest10.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest10.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         for (int i = 0; i < 25; i++) {
@@ -279,7 +284,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "keepWithNextTest11.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest11.pdf";
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf);
 
         Style style = new Style();
@@ -302,7 +307,7 @@ public class KeepWithNextTest extends ExtendedITextTest {
         //if we have multiple objects with keepWithNext in a row only the last one seems to follow to the next page
         String outFileName = destinationFolder + "keepWithNextTest12.pdf";
         String cmpFileName = sourceFolder + "cmp_keepWithNextTest12.pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf, PageSize.A4);
 
         for (int i = 0; i < 27; i++) {

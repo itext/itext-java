@@ -26,7 +26,6 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
@@ -46,6 +45,7 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -61,11 +61,16 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void collapsingMarginsTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "collapsingMarginsTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         drawPageBorders(pdfDocument, 4);
 
@@ -103,7 +108,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
     public void collapsingMarginsTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "collapsingMarginsTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         drawPageBorders(pdfDocument, 3);
 
@@ -147,7 +152,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
     public void collapsingMarginsTest03() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "collapsingMarginsTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         drawPageBorders(pdfDocument, 3);
 
@@ -188,7 +193,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
     public void collapsingMarginsTest04() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "collapsingMarginsTest04.pdf";
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest04.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         drawPageBorders(pdfDocument, 3);
 
@@ -234,7 +239,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
     public void collapsingMarginsTest05() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "collapsingMarginsTest05.pdf";
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest05.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         drawPageBorders(pdfDocument, 2);
 
@@ -263,7 +268,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
     public void collapsingMarginsTest06() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "collapsingMarginsTest06.pdf";
         String cmpFileName = sourceFolder + "cmp_collapsingMarginsTest06.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         drawPageBorders(pdfDocument, 1);
 
@@ -294,7 +299,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
     public void elementCollapsingMarginsTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "elementCollapsingMarginsTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_elementCollapsingMarginsTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         drawPageBorders(pdfDocument, 1);
 
@@ -342,7 +347,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
     public void columnRendererTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "columnRendererTest.pdf";
         String cmpFileName = sourceFolder + "cmp_columnRendererTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         try (Document doc = new Document(pdfDocument)) {
             doc.setProperty(Property.COLLAPSING_MARGINS, true);

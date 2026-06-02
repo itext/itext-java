@@ -26,7 +26,6 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -46,6 +45,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -62,12 +62,17 @@ public class FloatBlockTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void floatImageInDivClearNoneTest() throws IOException, InterruptedException,
             ParserConfigurationException, SAXException {
         String dest = destinationFolder + "floatImageInDivClearNone.pdf";
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(dest));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(dest));
         Document document = new Document(pdf);
         pdf.setTagged();
 
@@ -75,10 +80,10 @@ public class FloatBlockTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool()
-                .compareByContent(dest, sourceFolder + "cmp_floatImageInDivClearNone.pdf", destinationFolder));
         Assertions.assertNull(
                 new CompareTool().compareTagStructures(dest, sourceFolder + "cmp_floatImageInDivClearNone.pdf"));
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(dest, sourceFolder + "cmp_floatImageInDivClearNone.pdf", destinationFolder));
     }
 
     @Test
@@ -86,7 +91,7 @@ public class FloatBlockTest extends ExtendedITextTest {
             ParserConfigurationException, SAXException {
         String dest = destinationFolder + "floatImageInDivClearBoth.pdf";
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(dest));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(dest));
         Document document = new Document(pdf);
         pdf.setTagged();
 
@@ -94,10 +99,10 @@ public class FloatBlockTest extends ExtendedITextTest {
 
         document.close();
 
-        Assertions.assertNull(new CompareTool()
-                .compareByContent(dest, sourceFolder + "cmp_floatImageInDivClearBoth.pdf", destinationFolder));
         Assertions.assertNull(
                 new CompareTool().compareTagStructures(dest, sourceFolder + "cmp_floatImageInDivClearBoth.pdf"));
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(dest, sourceFolder + "cmp_floatImageInDivClearBoth.pdf", destinationFolder));
     }
 
     @Test
@@ -106,7 +111,7 @@ public class FloatBlockTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatImageDifferentSizeInDiv.pdf";
         String outFile = destinationFolder + "floatImageInDiv.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
         pdfDoc.setTagged();
 
@@ -142,8 +147,8 @@ public class FloatBlockTest extends ExtendedITextTest {
 
         doc.close();
 
-        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
         Assertions.assertNull(new CompareTool().compareTagStructures(outFile, cmpFileName));
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, destinationFolder));
     }
 
     private static void addFloatingImagesInDivs(Document document, UnitValue width, ClearPropertyValue clearValue)

@@ -431,7 +431,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
 
         String outFileName = destinationFolder + filename;
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
-        PdfWriter writer = new PdfWriter(outFileName,
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setStandardEncryption(PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.OWNER, permissions,
                         encryptionType).addXmpMetadata().setPdfVersion(PdfVersion.PDF_2_0)
         );
@@ -657,7 +657,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         if (isPdf2) {
             writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         }
-        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + filename,
+        PdfWriter writer = new PdfWriter(destinationFolder + filename,
                 writerProperties.addXmpMetadata());
         writer.setCompressionLevel(compression);
         PdfDocument document = new PdfDocument(writer);
@@ -679,7 +679,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
             throws IOException, InterruptedException {
         String outFileName = destinationFolder + filename;
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS;
-        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName,
+        PdfWriter writer = new PdfWriter(outFileName,
                 new WriterProperties()
                         .setStandardEncryption(PdfEncryptionTestUtils.USER, PdfEncryptionTestUtils.OWNER, permissions, encryptionType)
                         .addXmpMetadata()

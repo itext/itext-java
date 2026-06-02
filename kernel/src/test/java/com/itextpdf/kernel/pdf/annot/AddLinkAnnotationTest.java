@@ -34,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -282,7 +283,7 @@ public class AddLinkAnnotationTest extends ExtendedITextTest {
 
     @Test
     public void addAndGetLinkAnnotations() throws Exception {
-        PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "linkAnnotation03.pdf"));
+        PdfDocument document = new PdfDocument(new PdfWriter(destinationFolder + "linkAnnotation03.pdf"));
 
         PdfPage page = document.addNewPage();
 

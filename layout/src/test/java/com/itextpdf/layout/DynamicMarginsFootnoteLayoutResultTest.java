@@ -115,7 +115,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float largeTop = A4_HEIGHT * 0.55f;
@@ -138,7 +138,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float largeTop = A4_HEIGHT * 0.55f;
@@ -161,7 +161,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float largeTop = A4_HEIGHT * 0.50f;
@@ -182,7 +182,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> {
@@ -223,7 +223,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float footnoteHeight = A4_HEIGHT * 0.55f;
@@ -246,7 +246,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float footnoteHeight = A4_HEIGHT * 0.55f;
@@ -285,7 +285,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float footnoteHeight = A4_HEIGHT * 0.55f;
@@ -385,7 +385,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float hugeTop = A4_HEIGHT - 30f;
@@ -407,7 +407,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float hugeFootnote = A4_HEIGHT - 30f;
@@ -429,7 +429,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float hugeMargin = (A4_HEIGHT - 10f) / 2f;
@@ -456,7 +456,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float hugeFootnote = A4_HEIGHT - 30f;
@@ -563,7 +563,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
             float largeTop = A4_HEIGHT * 0.55f;
 
@@ -588,7 +588,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
             float largeBottom = A4_HEIGHT * 0.55f;
 
@@ -613,7 +613,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             float top = A4_HEIGHT * 0.35f;

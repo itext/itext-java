@@ -175,7 +175,17 @@ public class CompareTool {
     }
 
     /**
-     * Create {@link PdfWriter} optimized for tests.
+     * Creates {@link PdfWriter} optimized for tests that generate output PDF files
+     * for comparison with reference files.
+     * <p>
+     * Use this method for output PDFs that are later passed to {@link CompareTool}
+     * comparison methods. If a test needs to read the generated output PDF, use
+     * {@link #createOutputReader(String)} instead of creating {@link PdfReader}
+     * directly.
+     * <p>
+     * Use regular {@link PdfWriter} instead when the test verifies writer behavior,
+     * stream handling, file-system output, or requires the output file to exist on disk
+     * immediately.
      *
      * @param filename File to write to when necessary.
      * @return {@link PdfWriter} to be used in tests.
@@ -188,7 +198,17 @@ public class CompareTool {
     }
 
     /**
-     * Create {@link PdfWriter} optimized for tests.
+     * Creates {@link PdfWriter} optimized for tests that generate output PDF files
+     * for comparison with reference files.
+     * <p>
+     * Use this method for output PDFs that are later passed to {@link CompareTool}
+     * comparison methods. If a test needs to read the generated output PDF, use
+     * {@link #createOutputReader(String, ReaderProperties)} instead of creating
+     * {@link PdfReader} directly.
+     * <p>
+     * Use regular {@link PdfWriter} instead when the test verifies writer behavior,
+     * stream handling, file-system output, or requires the output file to exist on disk
+     * immediately.
      *
      * @param filename File to write to when necessary.
      * @param properties {@link WriterProperties} to use.
@@ -207,7 +227,8 @@ public class CompareTool {
     }
 
     /**
-     * Create {@link PdfReader} out of the data created recently or read from disk.
+     * Creates {@link PdfReader} for an output PDF created by {@link #createTestPdfWriter(String, WriterProperties)}.
+     * The reader uses the in-memory output data when available and falls back to reading from disk otherwise.
      *
      * @param filename File to read the data from when necessary.
      * @param properties {@link ReaderProperties} to use.
@@ -224,7 +245,8 @@ public class CompareTool {
     }
 
     /**
-     * Create {@link PdfReader} out of the data created recently or read from disk.
+     * Creates {@link PdfReader} for an output PDF created by {@link #createTestPdfWriter(String)}.
+     * The reader uses the in-memory output data when available and falls back to reading from disk otherwise.
      *
      * @param filename File to read the data from when necessary.
      * @return {@link PdfReader} to be used in tests.
@@ -1780,6 +1802,10 @@ public class CompareTool {
             CompareTool.writeOnDisk(outPdf);
             CompareTool.writeOnDiskIfNotExists(cmpPdf);
             throw e;
+        } finally {
+            // Normally it is the last operation with an output file in a test
+            // So we can remove it from memory
+            CompareTool.cleanup(outPdf);
         }
     }
 

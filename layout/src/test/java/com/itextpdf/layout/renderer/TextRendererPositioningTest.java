@@ -24,7 +24,6 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -36,6 +35,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -51,11 +51,16 @@ public class TextRendererPositioningTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void marginTopTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "marginTopTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_marginTopTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Text text1 = new Text("Text1");
@@ -79,7 +84,7 @@ public class TextRendererPositioningTest extends ExtendedITextTest {
     public void marginBottomTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "marginBottomTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_marginBottomTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Text text1 = new Text("Text1");
@@ -103,7 +108,7 @@ public class TextRendererPositioningTest extends ExtendedITextTest {
     public void marginTopBottomTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "marginTopBottomTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_marginTopBottomTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Text text1 = new Text("Text1");
@@ -128,7 +133,7 @@ public class TextRendererPositioningTest extends ExtendedITextTest {
     public void diffFontSizeTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "diffFontSizeTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_diffFontSizeTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Text text1 = new Text("Text1");
@@ -153,7 +158,7 @@ public class TextRendererPositioningTest extends ExtendedITextTest {
     public void marginAndPaddingTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "marginAndPaddingTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_marginAndPaddingTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Text text1 = new Text("Text1");

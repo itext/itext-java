@@ -809,9 +809,9 @@ public class PdfStructElemTest extends ExtendedITextTest {
         String outPdf = destinationFolder + outFileName;
         String cmpPdf = sourceFolder + cmpFileName;
 
+        String taggedStructureDifferences = compareTool.compareTagStructures(outPdf, cmpPdf);
         String contentDifferences = compareTool.compareByContent(outPdf,
                 cmpPdf, destinationFolder);
-        String taggedStructureDifferences = compareTool.compareTagStructures(outPdf, cmpPdf);
 
         String errorMessage = "";
         errorMessage += taggedStructureDifferences == null ? "" : taggedStructureDifferences + "\n";

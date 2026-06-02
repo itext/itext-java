@@ -27,7 +27,6 @@ import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.draw.DashedLine;
 import com.itextpdf.kernel.pdf.canvas.draw.DottedLine;
@@ -49,6 +48,7 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -88,12 +88,17 @@ public class TabsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void chunkEndsAfterOrBeforeTabPosition() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "chunkEndsAfterOrBeforeTabPosition.pdf";
         String cmpFileName = sourceFolder + "cmp_chunkEndsAfterOrBeforeTabPosition.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         String textBeforeTab = "a";
@@ -122,7 +127,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "defaultTabTest.pdf";
         String cmpFileName = sourceFolder + "cmp_defaultTabTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Paragraph p = new Paragraph();
@@ -301,7 +306,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tabPositionAbsoluteValue.pdf";
         String cmpFileName = sourceFolder + "cmp_tabPositionAbsoluteValue.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         
         Document doc = new Document(pdfDoc);
         doc.add(new Paragraph("x-coordinate = 100").setFontColor(ColorConstants.RED)
@@ -370,7 +375,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "outOfPageBoundsTest.pdf";
         String cmpFileName = sourceFolder + "cmp_outOfPageBoundsTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
 
@@ -432,7 +437,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tabsInParagraphTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_tabsInParagraphTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         float tabWidth = pdfDoc.getDefaultPageSize().getWidth() - doc.getLeftMargin() - doc.getRightMargin();
@@ -489,7 +494,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tabsAnchorSemicolonTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_tabsAnchorSemicolonTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDoc);
 
         float w = document.getPageEffectiveArea(PageSize.A4).getWidth();
@@ -514,7 +519,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tabsAnchorSemicolonTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_tabsAnchorSemicolonTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDoc);
 
         float w = document.getPageEffectiveArea(PageSize.A4).getWidth();
@@ -540,7 +545,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tabsAnchorSemicolonTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_tabsAnchorSemicolonTest03.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDoc);
 
         float w = document.getPageEffectiveArea(PageSize.A4).getWidth();
@@ -565,7 +570,7 @@ public class TabsTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "fillParagraphWithTabsDifferently.pdf";
         String cmpFileName = sourceFolder + "cmp_fillParagraphWithTabsDifferently.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         doc.add(new Paragraph("a\tb"));
@@ -582,7 +587,7 @@ public class TabsTest extends ExtendedITextTest {
     }
 
     private Document initDocument(String outFileName, boolean tagged) throws IOException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         if (tagged) {
             pdfDoc.setTagged();
         }

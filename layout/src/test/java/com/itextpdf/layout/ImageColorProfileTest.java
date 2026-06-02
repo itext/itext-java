@@ -28,7 +28,6 @@ import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.test.ExtendedITextTest;
@@ -39,6 +38,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -53,6 +53,11 @@ public class ImageColorProfileTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -133,7 +138,7 @@ public class ImageColorProfileTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + pdfName;
         String diff = "diff_" + pdfName + "_";
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdf);
         ImageData imageData = ImageDataFactory.create(sourceFolder + imageName);
         if (customImageAttribute != null) {

@@ -27,7 +27,6 @@ import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -44,11 +43,11 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-
-import java.io.IOException;
-
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+
+import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -64,6 +63,11 @@ public class InlineBlockTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void inlineTableTest01() throws IOException, InterruptedException {
         // TODO DEVSIX-1967
@@ -71,7 +75,7 @@ public class InlineBlockTest extends ExtendedITextTest {
         String outFileName = destinationFolder + name;
         String cmpFileName = sourceFolder + "cmp_" + name;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
 
@@ -113,7 +117,7 @@ public class InlineBlockTest extends ExtendedITextTest {
         String outFileName = destinationFolder + name;
         String cmpFileName = sourceFolder + "cmp_" + name;
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Color[] colors = new Color[]{ColorConstants.BLUE, ColorConstants.RED, ColorConstants.LIGHT_GRAY, ColorConstants.ORANGE};
@@ -153,7 +157,7 @@ public class InlineBlockTest extends ExtendedITextTest {
         String output = destinationFolder + name;
         String cmp = sourceFolder + "cmp_" + name;
 
-        try (Document doc = new Document(new PdfDocument(new PdfWriter(output)))) {
+        try (Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(output)))) {
             Div floatingDiv = new Div()
                     .setWidth(UnitValue.createPercentValue(100))
                     .setHeight(10)
@@ -186,7 +190,7 @@ public class InlineBlockTest extends ExtendedITextTest {
         String name = "areaBreakWithinInlineBlockTest.pdf";
         String output = destinationFolder + name;
         String cmp = sourceFolder + "cmp_" + name;
-        try (Document doc = new Document(new PdfDocument(new PdfWriter(output)))) {
+        try (Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(output)))) {
             AnonymousInlineBox root = new AnonymousInlineBox();
             Div container = new Div();
             container.add(new AreaBreak());

@@ -54,7 +54,7 @@ public class PdfMergerTest extends ExtendedITextTest {
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(destinationFolder);
     }
 
     @AfterAll
@@ -244,8 +244,8 @@ public class PdfMergerTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = "";
-        String contentErrorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult03.pdf", destinationFolder, "diff_");
         String tagStructErrorMessage = compareTool.compareTagStructures(resultFile, sourceFolder + "cmp_mergedResult03.pdf");
+        String contentErrorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult03.pdf", destinationFolder, "diff_");
 
         errorMessage += tagStructErrorMessage == null ? "" : tagStructErrorMessage + "\n";
         errorMessage += contentErrorMessage == null ? "" : contentErrorMessage;
@@ -291,8 +291,8 @@ public class PdfMergerTest extends ExtendedITextTest {
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = "";
-        String contentErrorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult04.pdf", destinationFolder, "diff_");
         String tagStructErrorMessage = compareTool.compareTagStructures(resultFile, sourceFolder + "cmp_mergedResult04.pdf");
+        String contentErrorMessage = compareTool.compareByContent(resultFile, sourceFolder + "cmp_mergedResult04.pdf", destinationFolder, "diff_");
 
         errorMessage += tagStructErrorMessage == null ? "" : tagStructErrorMessage + "\n";
         errorMessage += contentErrorMessage == null ? "" : contentErrorMessage;

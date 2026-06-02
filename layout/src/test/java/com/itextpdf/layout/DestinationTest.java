@@ -24,7 +24,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
@@ -35,6 +34,7 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -51,12 +51,17 @@ public class DestinationTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void destinationTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "destinationTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_destinationTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
         Text text = new Text(MessageFormatUtil.format("Page {0}", 10));
         Set<Object> destinations = new HashSet<>();

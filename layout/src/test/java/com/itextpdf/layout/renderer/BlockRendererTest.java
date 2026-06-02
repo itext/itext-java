@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -74,6 +75,11 @@ public class BlockRendererTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -133,7 +139,7 @@ public class BlockRendererTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_parentBoxWrapAroundChildBoxes.pdf";
         String outFile = DESTINATION_FOLDER + "parentBoxWrapAroundChildBoxes.pdf";
         int enoughDivsToOccupyWholePage = 30;
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div div = new Div();
         div.setBackgroundColor(ColorConstants.CYAN);
@@ -223,7 +229,7 @@ public class BlockRendererTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_enableForcePlacementIfCauseOfNothingNotInOverflowTree.pdf";
         String outFile = DESTINATION_FOLDER + "enableForcePlacementIfCauseOfNothingNotInOverflowTree.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         // In this test we use custom DivRenderer implementation to break parent tree of cause of nothing element to
@@ -258,7 +264,7 @@ public class BlockRendererTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_absolutePositionedChildIsNotDroppedWhenParentSplits.pdf";
         String outFile = DESTINATION_FOLDER + "absolutePositionedChildIsNotDroppedWhenParentSplits.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
                 Document doc = new Document(pdfDoc)) {
             Div tocEntry = new Div();
             tocEntry.setProperty(Property.POSITION, LayoutPosition.RELATIVE);

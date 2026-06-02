@@ -169,13 +169,13 @@ public class PdfOutlineTest extends ExtendedITextTest {
 
         pdfDoc.close();
         CompareTool compareTool = new CompareTool();
+        String diffTags = compareTool.compareTagStructures(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename);
         String diffContent = compareTool.compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename,
                 DESTINATION_FOLDER, "diff_");
-        String diffTags = compareTool.compareTagStructures(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename);
         if (diffContent != null || diffTags != null) {
-            diffContent = diffContent != null ? diffContent : "";
             diffTags = diffTags != null ? diffTags : "";
-            Assertions.fail(diffContent + diffTags);
+            diffContent = diffContent != null ? diffContent : "";
+            Assertions.fail(diffTags + diffContent);
         }
     }
 

@@ -26,7 +26,6 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Div;
@@ -41,14 +40,15 @@ import com.itextpdf.layout.testutil.PageMarginsTestUtil;
 import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
@@ -63,13 +63,18 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void collapsingMarginsWithSectionBreakTest() throws IOException, InterruptedException {
         String fileName = "collapsingMarginsSectionBreak";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -92,7 +97,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -117,7 +122,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             Div collapsing = new Div();
@@ -147,7 +152,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -175,7 +180,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -197,7 +202,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -220,7 +225,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -247,7 +252,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -270,7 +275,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -294,7 +299,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -325,7 +330,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -348,7 +353,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -376,7 +381,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String fileName = "collapsingOnVsOff";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setPageMargins(pageNum -> Boolean.TRUE,
@@ -404,7 +409,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);
@@ -433,7 +438,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
             document.setProperty(Property.COLLAPSING_MARGINS, Boolean.TRUE);

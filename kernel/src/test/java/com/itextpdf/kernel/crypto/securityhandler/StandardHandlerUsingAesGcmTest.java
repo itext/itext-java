@@ -107,7 +107,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
         int perms = EncryptionConstants.ALLOW_PRINTING | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
         WriterProperties wProps = new WriterProperties()
                 .setStandardEncryption(USER_PASSWORD, OWNER_PASSWORD, perms, EncryptionConstants.ENCRYPTION_AES_GCM);
-        PdfDocument ignored = new PdfDocument(new PdfReader(srcFile), new PdfWriter(outFile, wProps));
+        PdfDocument ignored = new PdfDocument(new PdfReader(srcFile), CompareTool.createTestPdfWriter(outFile, wProps));
         ignored.close();
         new CToolNoDeveloperExtension().compareByContent(outFile, srcFile, DEST, "diff", USER_PASSWORD, null);
     }
@@ -118,7 +118,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
         String outFile = DEST + "encryptedDocument.pdf";
         String cmpFile = SRC + "simpleDocument.pdf";
         try (PdfDocument ignored = new PdfDocument(new PdfReader(srcFile,
-                new ReaderProperties().setPassword(OWNER_PASSWORD)), new PdfWriter(outFile))) {
+                new ReaderProperties().setPassword(OWNER_PASSWORD)), CompareTool.createTestPdfWriter(outFile))) {
             // We need to copy the source file to the destination folder to be able to compare pdf files in android.
         }
         new CompareTool().compareByContent(outFile, cmpFile, DEST, "diff", USER_PASSWORD, null);
@@ -255,7 +255,8 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
 
     private void assertTampered(String outFile) throws IOException {
         try (PdfDocument pdfDoc =
-                     new PdfDocument(new PdfReader(outFile, new ReaderProperties().setPassword(USER_PASSWORD)))) {
+                     new PdfDocument(CompareTool.createOutputReader(outFile,
+                             new ReaderProperties().setPassword(USER_PASSWORD)))) {
             PdfObject obj = pdfDoc.getPdfObject(14);
             if (obj != null && obj.isStream()) {
                 // Get decoded stream bytes.

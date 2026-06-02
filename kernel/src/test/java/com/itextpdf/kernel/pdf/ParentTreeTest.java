@@ -405,7 +405,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "allObjRefDontHaveStructParent.pdf";
         String cmpPdf = sourceFolder + "cmp_allObjRefDontHaveStructParent.pdf";
 
-        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         taggedPdf.close();
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
@@ -419,7 +419,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "xObjDoesntHaveStructParentTest.pdf";
         String cmpPdf = sourceFolder + "cmp_xObjDoesntHaveStructParentTest.pdf";
 
-        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), new PdfWriter(outPdf));
+        PdfDocument taggedPdf = new PdfDocument(new PdfReader(pdf), CompareTool.createTestPdfWriter(outPdf));
         taggedPdf.close();
         Assertions.assertNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder, "diff"));
     }
@@ -468,7 +468,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "xObjNoStructParentNoModification.pdf";
 
         PdfReader reader = new PdfReader(pdf).setStrictnessLevel(PdfReader.StrictnessLevel.CONSERVATIVE);
-        PdfDocument doc = new PdfDocument(reader, new PdfWriter(outPdf));
+        PdfDocument doc = new PdfDocument(reader, CompareTool.createTestPdfWriter(outPdf));
         PdfObject obj =  doc.getCatalog().getPdfObject().getAsDictionary(PdfName.StructTreeRoot)
                 .getAsDictionary(PdfName.ParentTree).getAsArray(PdfName.Nums).get(1);
         PdfStream xObj = ((PdfDictionary) ((PdfArray) obj).get(0)).getAsDictionary(PdfName.K).getAsStream(PdfName.Stm);

@@ -51,6 +51,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.function.Consumer;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -70,6 +71,11 @@ public class MulticolContainerTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -106,7 +112,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "columnedDivInsideTableTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_columnedDivInsideTableTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Table table = new Table(2);
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 3);
@@ -459,7 +465,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "singleParagraphMultiPageTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_singleParagraphMultiPageTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             document.add(createFirstPageFiller());
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 3);
@@ -483,7 +489,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "singleParagraphWithBorderMultiPageTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_singleParagraphWithBorderMultiPageTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             document.add(createFirstPageFiller());
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 3);
@@ -509,7 +515,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "paragraphWithImagesMultiPageTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithImagesMultiPageTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             document.add(createFirstPageFiller());
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 3);
@@ -651,7 +657,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "overflowingDivWithParagraphMultipageTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_overflowingDivWithParagraphMultipageTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             document.add(createFirstPageFiller());
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 3);
@@ -682,7 +688,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "marginCantFitCurrentPageTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_marginCantFitCurrentPageTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             document.add(createFirstPageFiller());
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 3);
@@ -714,7 +720,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "paddingCantFitCurrentPageTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paddingCantFitCurrentPageTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             document.add(createFirstPageFiller());
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 3);
@@ -747,7 +753,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "keepTogetherBlockingLayoutTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_keepTogetherBlockingLayoutTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             document.add(createFirstPageFiller());
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 3);
@@ -1009,7 +1015,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "paragraphWithColumnWidthTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithColumnWidthTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_WIDTH, 200.0f);
             Paragraph paragraph = createDummyParagraph();
@@ -1025,7 +1031,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "paragraphWithColumnWidthAndColumnCountTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithColumnWidthAndColumnCountTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div columnContainer = new MulticolContainer();
             //column width is ignored in this case, because column-count requires higher width
             columnContainer.setProperty(Property.COLUMN_WIDTH, 100.0f);
@@ -1058,7 +1064,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "paragraphWithColumnWidthAndGapTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithColumnWidthAndGapTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_WIDTH, 100.0f);
             columnContainer.setProperty(Property.COLUMN_GAP, 100.0f);
@@ -1074,7 +1080,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "paragraphWithColumnCountAndGapTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithColumnCountAndGapTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 5);
             columnContainer.setProperty(Property.COLUMN_GAP, 50.0f);
@@ -1090,7 +1096,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "paragraphWithSimpleStyledColumnGapTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithSimpleStyledColumnGapTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 5);
             columnContainer.setProperty(Property.COLUMN_GAP, 50.0f);
@@ -1108,7 +1114,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "divWithSimpleStyledColumnGapTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_divWithSimpleStyledColumnGapTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 5);
             columnContainer.setProperty(Property.COLUMN_GAP, 50.0f);
@@ -1129,7 +1135,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "paragraphWithNegativeValueSolidColumnGapTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithNegativeValueSolidColumnGapTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 5);
             columnContainer.setProperty(Property.COLUMN_GAP_BORDER, new SolidBorder(0));
@@ -1145,7 +1151,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "paragraphWithBiggerValueSolidColumnGapTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithBiggerValueSolidColumnGapTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 5);
             columnContainer.setProperty(Property.COLUMN_GAP_BORDER, new SolidBorder(600));
@@ -1162,7 +1168,7 @@ public class MulticolContainerTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "paragraphWithNullValueSolidColumnGapTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paragraphWithNullValueSolidColumnGapTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div columnContainer = new MulticolContainer();
             columnContainer.setProperty(Property.COLUMN_COUNT, 5);
             columnContainer.setProperty(Property.COLUMN_GAP_BORDER, null);
