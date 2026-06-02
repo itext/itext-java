@@ -70,7 +70,7 @@ public class PdfWriter extends PdfOutputStream {
     /**
      * Is used in smart mode to serialize and store serialized objects content.
      */
-    private final SmartModePdfObjectsSerializer smartModeSerializer = new SmartModePdfObjectsSerializer();
+    private SmartModePdfObjectsSerializer smartModeSerializer;
     private OutputStream originalOutputStream;
 
     /**
@@ -330,6 +330,10 @@ public class PdfWriter extends PdfOutputStream {
         SerializedObjectContent serializedContent = null;
         if (properties.smartMode && tryToFindDuplicate && !checkTypeOfPdfDictionary(obj, PdfName.Page) &&
                 !checkTypeOfPdfDictionary(obj, PdfName.OCG) && !checkTypeOfPdfDictionary(obj, PdfName.OCMD)) {
+            if (smartModeSerializer == null) {
+                smartModeSerializer = new SmartModePdfObjectsSerializer();
+            }
+
             serializedContent = smartModeSerializer.serializeObject(obj);
             PdfIndirectReference objectRef = smartModeSerializer.getSavedSerializedObject(serializedContent);
             if (objectRef != null) {

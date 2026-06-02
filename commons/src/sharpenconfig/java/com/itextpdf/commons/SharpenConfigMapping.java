@@ -331,7 +331,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
                 MemberKind.Method);
 
         configurator.removeMethod("java.security.Security.addProvider");
-        configurator.mapStringLiteral("com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT", "Either itext.bouncy-castle-adapter or itext.bouncy-castle-fips-adapter dependency must be added in order to use BouncyCastleFactoryCreator");
 
         configurator.mapMemberToInvocationsChain("org.bouncycastle.asn1.esf.SigPolicyQualifiers.SigPolicyQualifiers" + "(org.bouncycastle.asn1.esf.SigPolicyQualifierInfo[])", "", MemberKind.Method);
 
