@@ -22,6 +22,8 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.io.image.WebPLogMessageConstant;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
@@ -31,6 +33,7 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -205,5 +208,16 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void imageBase64WithUrlTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(sourceFolder, destinationFolder, "base64Image", properties);
+    }
+
+    @Test
+    // TODO DEVSIX-10012 Extra misleading log messages are produced when WebP module is missing
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = WebPLogMessageConstant.WEBP_NOT_FOUND),
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI)
+    })
+    public void webPImageWithoutWebPModuleTest() throws IOException {
+        convertToSinglePage(new File(sourceFolder + "webPImageWithoutWebPModule.svg"),
+                new File(destinationFolder + "webPImageWithoutWebPModule.pdf"), properties);
     }
 }
