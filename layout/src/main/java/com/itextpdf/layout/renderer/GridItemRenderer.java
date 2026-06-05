@@ -59,12 +59,8 @@ class GridItemRenderer extends BlockRenderer {
      */
     @Override
     public void addChild(IRenderer renderer) {
-        if (renderer instanceof AreaBreakRenderer || renderer instanceof SectionBreakRenderer) {
-            LOGGER.warn(LayoutLogMessageConstant.GRID_ITEM_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK);
-        } else {
-            this.renderer = renderer;
-            super.addChild(renderer);
-        }
+        this.renderer = renderer;
+        super.addChild(renderer);
     }
 
     /**

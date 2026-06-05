@@ -70,6 +70,13 @@ public final class LayoutLogMessageConstant {
             + "which was implicitly required by {0}. "
             + "See https://itextpdf.com/products/pdfcalligraph for more information.";
 
+    public static final String SECTION_BREAK_IGNORED =
+            "Section break has been ignored. Most likely it was put inside an element that does not support it.";
+
+    public static final String AREA_BREAK_IGNORED =
+            "Area break has been ignored. Most likely it was put inside an element that does not support it.";
+
+
     private LayoutLogMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly.
     }

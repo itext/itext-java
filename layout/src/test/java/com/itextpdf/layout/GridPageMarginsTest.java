@@ -533,10 +533,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_IGNORED)})
     public void areaBreakInsideNestedGridCellWithDocumentMarginsTest()
             throws IOException, InterruptedException {
         String fileName = "nestedGridCellAreaBreakDocMargins";
@@ -724,10 +721,8 @@ public class GridPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate =
+            LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)})
     public void areaBreakDirectlyInsideGridContainerTest() throws IOException, InterruptedException {
         String fileName = "areaBreakDirectlyInsideGridContainer";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -789,9 +784,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
-    })
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_IGNORED)})
     public void sectionBreakInsideNestedGridCellTest() throws IOException, InterruptedException {
         String fileName = "sectionBreakInNestedGrid";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -826,10 +819,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_IGNORED)})
     public void areaBreakInsideNestedGridCellTest() throws IOException, InterruptedException {
         String fileName = "areaBreakInNestedGrid";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -913,10 +903,9 @@ public class GridPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-10004: Update test after fix.
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED, count = 5),
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED, count = 21)})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_IGNORED, count = 5),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_IGNORED, count = 5)})
     public void gridWithTableHeaderAndFooterWithAreaBreakAndSectionBreakTest() throws IOException, InterruptedException {
         String fileName = "gridWithTableHeaderAndFooter";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";

@@ -498,9 +498,8 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
+    @LogMessages(messages = {@LogMessage(messageTemplate =
+            LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
     })
     public void sectionBreakInsideFlexContainerTest() throws IOException, InterruptedException {
         String fileName = "sectionBreakInsideFlexContainer";
@@ -523,10 +522,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_IGNORED)})
     public void sectionBreakOnFlexItemChildTest() throws IOException, InterruptedException {
         String fileName = "sectionBreakOnFlexItemChild";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -554,10 +550,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_IGNORED)})
     public void areaBreakOnFlexItemChildTest() throws IOException, InterruptedException {
         String fileName = "flexItemChildAreaBreak";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -587,10 +580,8 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate =
+            LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)})
     public void areaBreakInFlexWithDocumentMarginsTest()
             throws IOException, InterruptedException {
         String fileName = "flexAreaBreakDocMargins";
@@ -616,10 +607,8 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate =
+            LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)})
     public void areaBreakInFlexThenSectionBreakTest()
             throws IOException, InterruptedException {
         String fileName = "flexAreaBreakThenSectionBreak";
@@ -644,10 +633,8 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK,
-                    count = 2)
+    @LogMessages(messages = {@LogMessage(messageTemplate =
+            LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK, count = 2)
     })
     public void multipleAreaBreaksInNestedFlexWithDocumentMarginsTest()
             throws IOException, InterruptedException {
@@ -689,10 +676,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_IGNORED)})
     public void areaBreakOnNestedFlexItemWithDocumentMarginsTest()
             throws IOException, InterruptedException {
         String fileName = "nestedFlexItemAreaBreakDocMargins";
@@ -731,10 +715,8 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate =
-                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate =
+            LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK)})
     public void areaBreakWithPageSizeInFlexWithDocumentMarginsTest()
             throws IOException, InterruptedException {
         String fileName = "flexAreaBreakPageSizeDocMargins";
@@ -940,12 +922,9 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-10004: Update test after fix.
-    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA),
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED, count = 3),
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED, count = 11),
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL),
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_LAYOUT_ON_PAGE_0)})
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_IGNORED, count = 4),
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_IGNORED, count = 4)})
     public void flexWithTableHeaderAndFooterWithAreaBreakAndSectionBreakTest() throws IOException, InterruptedException {
         String fileName = "flexWithTableHeaderAndFooter";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";

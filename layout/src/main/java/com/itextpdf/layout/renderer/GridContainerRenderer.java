@@ -58,6 +58,7 @@ public class GridContainerRenderer extends BlockRenderer {
      */
     public GridContainerRenderer(GridContainer modelElement) {
         super(modelElement);
+        setProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS, Boolean.TRUE);
     }
 
     /**
@@ -122,12 +123,6 @@ public class GridContainerRenderer extends BlockRenderer {
             LOGGER.warn(
                     LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK);
             return;
-        }
-
-        // TODO DEVSIX-10004: Remove after the change
-        boolean rendererRemoved = RendererRemovalUtil.removeAreaBreakAndSectionBreakDescendants(renderer);
-        if (rendererRemoved) {
-            LOGGER.warn(LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK);
         }
 
         // The grid's items are not affected by the 'float' and 'clear' properties.

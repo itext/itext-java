@@ -29,8 +29,10 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.AreaBreakType;
@@ -275,6 +277,118 @@ public class AreaBreakTest extends ExtendedITextTest {
         document.add(div);
         document.close();
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, destinationFolder, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_IGNORED)})
+    public void areaBreakInsideTableHeaderTest() throws IOException, InterruptedException {
+        String fileName = "areaBreakInsideTableHeader";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDoc)) {
+
+            Table table = new Table(4);
+
+            table.addHeaderCell("Header text");
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Div()
+                    .add(new Paragraph("Before area break"))
+                    .add(new AreaBreak(PageSize.A5))
+                    .add(new Paragraph("After area break")));
+            table.addHeaderCell(new Cell());
+
+            table.addCell("Table cell content 1");
+            table.addCell("Table cell content 2");
+            table.addCell("Table cell content 3");
+            table.addCell("Table cell content 4");
+
+            table.addFooterCell("Footer text");
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Cell());
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, destinationFolder, "diff_" + fileName));
+    }
+
+    // TODO DEVSIX-10049 Fix AreaBreak page size change not working
+    @Test
+    public void areaBreakInsideTableBodyTest() throws IOException, InterruptedException {
+        String fileName = "areaBreakInsideTableBody";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDoc)) {
+
+            Table table = new Table(4);
+
+            table.addHeaderCell("Header text");
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Cell());
+
+            table.addCell("Table cell content 1");
+            table.addCell("Table cell content 2");
+            table.addCell(new Div()
+                    .add(new Paragraph("Before area break"))
+                    .add(new AreaBreak(PageSize.A5))
+                    .add(new Paragraph("After area break"))
+            );
+            table.addCell("Table cell content 4");
+
+            table.addFooterCell("Footer text");
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Cell());
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, destinationFolder, "diff_" + fileName));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.AREA_BREAK_IGNORED)})
+    public void areaBreakInsideTableFooterTest() throws IOException, InterruptedException {
+        String fileName = "areaBreakInsideTableFooter";
+        String outFileName = destinationFolder + fileName + ".pdf";
+        String cmpFileName = sourceFolder + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDoc)) {
+
+            Table table = new Table(4);
+
+            table.addHeaderCell("Header text");
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Cell());
+
+            table.addCell("Table cell content 1");
+            table.addCell("Table cell content 2");
+            table.addCell("Table cell content 3");
+            table.addCell("Table cell content 4");
+
+            table.addFooterCell("Footer text");
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Div()
+                    .add(new Paragraph("Before area break"))
+                    .add(new AreaBreak(PageSize.A5))
+                    .add(new Paragraph("After area break")));
+            table.addFooterCell(new Cell());
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, destinationFolder, "diff_" + fileName));
     }
 
     private static class DivRendererWithAreas extends DivRenderer {

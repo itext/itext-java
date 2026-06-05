@@ -22,15 +22,15 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
+import com.itextpdf.layout.properties.Property;
 
-import java.util.Collections;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +38,10 @@ import org.slf4j.LoggerFactory;
  * Renderer for the {@link AreaBreak} layout element. Will terminate the
  * current content area and initialize a new one.
  */
-public class AreaBreakRenderer implements IRenderer {
+public class AreaBreakRenderer extends AbstractBreakRenderer {
 
     protected AreaBreak areaBreak;
+    protected LayoutArea occupiedArea;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AreaBreakRenderer.class);
 
@@ -54,101 +55,60 @@ public class AreaBreakRenderer implements IRenderer {
     }
 
     /**
-     * Throws an UnsupportedOperationException because instances of this
-     * class are only used for terminating the current content area.
+     * Logs a warning about unexpected use of {@link AreaBreakRenderer} if not ignored,
+     * because instances of this class are only used for terminating the current content area.
      *
      * @param renderer {@inheritDoc}
      */
     @Override
     public void addChild(IRenderer renderer) {
-        LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
+        if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
+            LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
+        }
     }
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS))) {
+            if (occupiedArea == null) {
+                LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_IGNORED);
+            }
+            Rectangle layoutContextAreaBbox = layoutContext.getArea().getBBox();
+            Rectangle occupiedAreaBbox =
+                    new Rectangle(layoutContextAreaBbox.getLeft(), layoutContextAreaBbox.getTop(), 0, 0);
+            occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), occupiedAreaBbox);
+            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, this);
+        }
+
         return new LayoutResult(LayoutResult.NOTHING, null, null, null, this).setAreaBreak(areaBreak);
     }
 
     /**
-     * Throws an UnsupportedOperationException because instances of this
-     * class are only used for terminating the current content area.
+     * Logs a warning about unexpected use of {@link AreaBreakRenderer} if not ignored,
+     * because instances of this class are only used for terminating the current content area.
      *
      * @param drawContext {@inheritDoc}
      */
     @Override
     public void draw(DrawContext drawContext) {
-        LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
+        if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
+            LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
+        }
     }
 
     /**
-     * Throws an UnsupportedOperationException because instances of this
+     * Throws an UnsupportedOperationException if not ignored, because instances of this
      * class are only used for terminating the current content area.
      *
      * @return {@inheritDoc}
      */
     @Override
     public LayoutArea getOccupiedArea() {
+        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS))) {
+            return occupiedArea;
+        }
+
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean hasProperty(int property) {
-        return false;
-    }
-
-    @Override
-    public boolean hasOwnProperty(int property) {
-        return false;
-    }
-
-    @Override
-    public <T1> T1 getProperty(int key) {
-        return (T1) (Object) null;
-    }
-
-    @Override
-    public <T1> T1 getOwnProperty(int property) {
-        return (T1) (Object) null;
-    }
-
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        return (T1) (Object) null;
-    }
-
-    /**
-     * Throws an UnsupportedOperationException because instances of this
-     * class are only used for terminating the current content area.
-     *
-     * @param property {@inheritDoc}
-     * @param defaultValue {@inheritDoc}
-     * @param <T1> {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public <T1> T1 getProperty(int property, T1 defaultValue) {
-        return (T1) (Object) null;
-    }
-
-    /**
-     * Throws an UnsupportedOperationException because instances of this
-     * class are only used for terminating the current content area.
-     *
-     * @param property {@inheritDoc}
-     * @param value {@inheritDoc}
-     */
-    @Override
-    public void setProperty(int property, Object value) {
-        LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
-    }
-
-    @Override
-    public void deleteOwnProperty(int property) {
-    }
-
-    @Override
-    public IRenderer setParent(IRenderer parent) {
-        return this;
     }
 
     @Override
@@ -156,29 +116,18 @@ public class AreaBreakRenderer implements IRenderer {
         return null;
     }
 
-    @Override
-    public IRenderer getParent() { return null; }
-
-    @Override
-    public List<IRenderer> getChildRenderers() {
-        return Collections.<IRenderer>emptyList();
-    }
-
-    @Override
-    public boolean isFlushed() {
-        return false;
-    }
-
     /**
-     * Throws an UnsupportedOperationException because instances of this
-     * class are only used for terminating the current content area.
+     * Logs a warning about unexpected use of {@link AreaBreakRenderer} if not ignored,
+     * because instances of this class are only used for terminating the current content area.
      *
      * @param dx {@inheritDoc}
      * @param dy {@inheritDoc}
      */
     @Override
     public void move(float dx, float dy) {
-        LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
+        if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
+            LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
+        }
     }
 
     @Override

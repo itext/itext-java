@@ -240,13 +240,15 @@ public final class Property {
     public static final int TREAT_AS_CONTINUOUS_CONTAINER = 140;
     public static final int TREAT_AS_CONTINUOUS_CONTAINER_RESULT = 141;
 
+    public static final int IGNORE_AREA_AND_SECTION_BREAKS = 161;
+
     /**
      * Some properties must be passed to {@link IPropertyContainer} objects that
      * are lower in the document's hierarchy. Most inherited properties are
      * related to textual operations. Indicates whether this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 160;
+    private static final int MAX_INHERITED_PROPERTY_ID = 161;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -296,6 +298,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.META_INFO] = true;
         INHERITED_PROPERTIES[Property.ADD_MARKED_CONTENT_TEXT] = true;
         INHERITED_PROPERTIES[Property.TREAT_AS_CONTINUOUS_CONTAINER] = true;
+        INHERITED_PROPERTIES[Property.IGNORE_AREA_AND_SECTION_BREAKS] = true;
     }
 
     private Property() {

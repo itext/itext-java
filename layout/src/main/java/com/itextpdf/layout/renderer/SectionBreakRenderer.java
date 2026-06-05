@@ -35,11 +35,8 @@ import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 
-import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 import static com.itextpdf.layout.renderer.AbstractRenderer.EPS;
 
@@ -47,12 +44,11 @@ import static com.itextpdf.layout.renderer.AbstractRenderer.EPS;
  * Renderer for the {@link com.itextpdf.layout.element.SectionBreak} layout element.
  * Will terminate the current page content if any and start a new page.
  */
-public class SectionBreakRenderer implements IRenderer {
+public class SectionBreakRenderer extends AbstractBreakRenderer {
     private static final Logger LOGGER = LoggerFactory.getLogger(SectionBreakRenderer.class);
 
     private final SectionBreak sectionBreak;
-
-    private IRenderer parent;
+    protected LayoutArea occupiedArea;
 
     /**
      * Creates new {@link SectionBreakRenderer} instance.
@@ -64,18 +60,31 @@ public class SectionBreakRenderer implements IRenderer {
     }
 
     /**
-     * Logs a warning about unexpected use of {@link SectionBreakRenderer}
+     * Logs a warning about unexpected use of {@link SectionBreakRenderer} if not ignored,
      * because instances of this class are only used for terminating the current page content.
      *
      * @param renderer {@inheritDoc}
      */
     @Override
     public void addChild(IRenderer renderer) {
-        LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
+        if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
+            LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
+        }
     }
 
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
+        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS))) {
+            if (occupiedArea == null) {
+                LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_IGNORED);
+            }
+            Rectangle layoutContextAreaBbox = layoutContext.getArea().getBBox();
+            Rectangle occupiedAreaBbox =
+                    new Rectangle(layoutContextAreaBbox.getLeft(), layoutContextAreaBbox.getTop(), 0, 0);
+            occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(), occupiedAreaBbox);
+            return new LayoutResult(LayoutResult.FULL, occupiedArea, null, null, this);
+        }
+
         boolean anythingPlaced = false;
         boolean pageMarginsChanged = false;
         boolean pageSizeChanged = false;
@@ -118,91 +127,31 @@ public class SectionBreakRenderer implements IRenderer {
     }
 
     /**
-     * Logs a warning about unexpected use of {@link SectionBreakRenderer}
+     * Logs a warning about unexpected use of {@link SectionBreakRenderer} if not ignored,
      * because instances of this class are only used for terminating the current page content.
      *
      * @param drawContext {@inheritDoc}
      */
     @Override
     public void draw(DrawContext drawContext) {
-        LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
+        if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
+            LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
+        }
     }
 
     /**
-     * Throws an UnsupportedOperationException because instances of this
+     * Throws an UnsupportedOperationException if not ignored, because instances of this
      * class are only used for terminating the current page content.
-     *
-     * <p>
-     * In case there is no current page content, empty area will be returned.
      *
      * @return {@inheritDoc}
      */
     @Override
     public LayoutArea getOccupiedArea() {
+        if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS))) {
+            return occupiedArea;
+        }
+
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean hasProperty(int property) {
-        return false;
-    }
-
-    @Override
-    public boolean hasOwnProperty(int property) {
-        return false;
-    }
-
-    /**
-     * Always returns <code>null</code> because instances of this
-     * class are only used for terminating the current page content.
-     *
-     * @param property {@inheritDoc}
-     * @param defaultValue {@inheritDoc}
-     * @param <T1> {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public <T1> T1 getProperty(int property, T1 defaultValue) {
-        return (T1) (Object) null;
-    }
-
-    @Override
-    public <T1> T1 getProperty(int key) {
-        return (T1) (Object) null;
-    }
-
-    @Override
-    public <T1> T1 getOwnProperty(int property) {
-        return (T1) (Object) null;
-    }
-
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        return (T1) (Object) null;
-    }
-
-    /**
-     * Logs a warning about unexpected use of {@link SectionBreakRenderer}
-     * because instances of this class are only used for terminating the current page content.
-     *
-     * @param property {@inheritDoc}
-     * @param value {@inheritDoc}
-     */
-    @Override
-    public void setProperty(int property, Object value) {
-        LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
-    }
-
-    @Override
-    public void deleteOwnProperty(int property) {
-        // Do nothing.
-    }
-
-    @Override
-    public IRenderer setParent(IRenderer parent) {
-        this.parent = parent;
-        return this;
     }
 
     @Override
@@ -210,23 +159,8 @@ public class SectionBreakRenderer implements IRenderer {
         return sectionBreak;
     }
 
-    @Override
-    public IRenderer getParent() {
-        return this.parent;
-    }
-
-    @Override
-    public List<IRenderer> getChildRenderers() {
-        return Collections.<IRenderer>emptyList();
-    }
-
-    @Override
-    public boolean isFlushed() {
-        return false;
-    }
-
     /**
-     * Logs a warning about unexpected use of {@link SectionBreakRenderer}
+     * Logs a warning about unexpected use of {@link SectionBreakRenderer} if not ignored,
      * because instances of this class are only used for terminating the current page content.
      *
      * @param dx {@inheritDoc}
@@ -234,7 +168,9 @@ public class SectionBreakRenderer implements IRenderer {
      */
     @Override
     public void move(float dx, float dy) {
-        LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
+        if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
+            LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
+        }
     }
 
     @Override

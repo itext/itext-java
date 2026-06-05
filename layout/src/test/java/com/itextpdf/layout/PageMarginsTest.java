@@ -52,6 +52,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.margins.Footnote;
 import com.itextpdf.layout.properties.margins.FootnoteAnchor;
@@ -66,6 +67,8 @@ import com.itextpdf.layout.testutil.PageMarginsTestUtil;
 import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.Assertions;
@@ -1467,7 +1470,126 @@ public class PageMarginsTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
     }
 
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_IGNORED)})
+    public void sectionBreakInsideTableHeaderTest() throws IOException, InterruptedException {
+        String fileName = "sectionBreakInsideTableHeader";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDoc)) {
+
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
+            SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
+
+            Table table = new Table(4);
+
+            table.addHeaderCell("Header text");
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Div()
+                    .add(new Paragraph("Before section break"))
+                    .add(sectionBreak)
+                    .add(new Paragraph("After section break")));
+            table.addHeaderCell(new Cell());
+
+            table.addCell("Table cell content 1");
+            table.addCell("Table cell content 2");
+            table.addCell("Table cell content 3");
+            table.addCell("Table cell content 4");
+
+            table.addFooterCell("Footer text");
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Cell());
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    // TODO DEVSIX-10049 Fix SectionBreak margins not working
+    @Test
+    public void sectionBreakInsideTableBodyTest() throws IOException, InterruptedException {
+        String fileName = "sectionBreakInsideTableBody";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDoc)) {
+
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
+            SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
+
+            Table table = new Table(4);
+
+            table.addHeaderCell("Header text");
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Cell());
+
+            table.addCell("Table cell content 1");
+            table.addCell("Table cell content 2");
+            table.addCell(new Div()
+                    .add(new Paragraph("Before section break"))
+                    .add(sectionBreak)
+                    .add(new Paragraph("After section break"))
+            );
+            table.addCell("Table cell content 4");
+
+            table.addFooterCell("Footer text");
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Cell());
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.SECTION_BREAK_IGNORED)})
+    public void sectionBreakInsideTableFooterTest() throws IOException, InterruptedException {
+        String fileName = "sectionBreakInsideTableFooter";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDoc)) {
+
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
+            SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
+
+            Table table = new Table(4);
+
+            table.addHeaderCell("Header text");
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Cell());
+            table.addHeaderCell(new Cell());
+
+            table.addCell("Table cell content 1");
+            table.addCell("Table cell content 2");
+            table.addCell("Table cell content 3");
+            table.addCell("Table cell content 4");
+
+            table.addFooterCell("Footer text");
+            table.addFooterCell(new Cell());
+            table.addFooterCell(new Div()
+                    .add(new Paragraph("Before section break"))
+                    .add(sectionBreak)
+                    .add(new Paragraph("After section break")));
+            table.addFooterCell(new Cell());
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
 
     private static Image loadImage() {
         try {

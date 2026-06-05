@@ -87,6 +87,7 @@ public class FlexContainerRenderer extends DivRenderer {
      */
     public FlexContainerRenderer(Div modelElement) {
         super(modelElement);
+        setProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS, Boolean.TRUE);
     }
 
     /**
@@ -566,12 +567,6 @@ public class FlexContainerRenderer extends DivRenderer {
             LOGGER.warn(
                     LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK);
             return;
-        }
-
-        // TODO DEVSIX-10004: Remove after the change
-        boolean rendererRemoved = RendererRemovalUtil.removeAreaBreakAndSectionBreakDescendants(renderer);
-        if (rendererRemoved) {
-            LOGGER.warn(LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK);
         }
 
         // TODO DEVSIX-5087 Since overflow-fit is an internal iText overflow value, we do not need to support if
