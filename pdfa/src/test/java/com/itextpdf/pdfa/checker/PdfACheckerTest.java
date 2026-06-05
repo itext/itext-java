@@ -237,6 +237,11 @@ public class PdfACheckerTest extends ExtendedITextTest {
         }
 
         @Override
+        protected void checkFileSpecEmbeddedStream(PdfStream embeddedFile) {
+
+        }
+
+        @Override
         protected void checkForm(PdfDictionary form) {
 
         }

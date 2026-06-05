@@ -624,6 +624,19 @@ public class PdfA1Checker extends PdfAChecker {
      * {@inheritDoc}
      */
     @Override
+    protected void checkFileSpecEmbeddedStream(PdfStream embeddedFile) {
+        // This method is intended to verify file's specification EF->F stream.
+        // Throw an exception since EF is forbidden for PDF/A-1.
+        if (embeddedFile != null) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_EF_KEY);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected void checkAnnotation(PdfDictionary annotDic) {
         PdfName subtype = annotDic.getAsName(PdfName.Subtype);
 

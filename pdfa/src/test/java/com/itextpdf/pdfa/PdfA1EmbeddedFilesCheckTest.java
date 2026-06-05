@@ -36,13 +36,12 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
@@ -65,8 +64,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         fileNames.put(PdfName.Names, names);
 
         names.add(new PdfString("some/file/path"));
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null);
-        names.add(spec.getPdfObject());
+        names.add(new PdfDictionary());
 
         pdfDocument.addNewPage();
 
@@ -84,8 +82,7 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null);
-        stream.put(PdfName.F, spec.getPdfObject());
+        stream.put(PdfName.F, new PdfDictionary());
 
         pdfDocument.addNewPage();
 
@@ -104,12 +101,32 @@ public class PdfA1EmbeddedFilesCheckTest extends ExtendedITextTest {
         PdfStream stream = new PdfStream();
         pdfDocument.getCatalog().put(new PdfName("testStream"), stream);
 
-        PdfFileSpec spec = PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav", "sample.wav", "sample", null, null);
-        stream.put(new PdfName("fileData"), spec.getPdfObject());
+        PdfDictionary embeddedFile = new PdfDictionary();
+        stream.put(new PdfName("fileData"), embeddedFile);
+
+        embeddedFile.put(PdfName.Type, PdfName.Filespec);
+        embeddedFile.put(PdfName.EF, new PdfDictionary());
 
         pdfDocument.addNewPage();
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> pdfDocument.close());
         Assertions.assertEquals(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_EF_KEY, e.getMessage());
+    }
+
+    @Test
+    public void fileSpecCreationForbiddenTest() throws IOException {
+        try (PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
+                InputStream is = FileUtil.getInputStreamForFile(sourceFolder + "sRGB Color Space Profile.icm")) {
+            PdfOutputIntent outputIntent = new PdfOutputIntent("Custom", "", "http://www.color.org",
+                    "sRGB IEC61966-2.1", is);
+            try (PdfADocument pdfDocument = new PdfADocument(writer, PdfAConformance.PDF_A_1B, outputIntent)) {
+                Exception e = Assertions.assertThrows(PdfAConformanceException.class,
+                        () -> PdfFileSpec.createEmbeddedFileSpec(pdfDocument, sourceFolder + "sample.wav",
+                                "sample.wav", "sample", null, null));
+                Assertions.assertEquals(
+                        PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_NOT_CONTAIN_THE_EF_KEY,
+                        e.getMessage());
+            }
+        }
     }
 }

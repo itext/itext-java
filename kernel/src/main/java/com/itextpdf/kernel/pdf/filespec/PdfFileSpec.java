@@ -37,6 +37,7 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.collection.PdfCollectionItem;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
+import com.itextpdf.kernel.validation.context.PdfFileSpecDataValidationContext;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -215,16 +216,10 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
      * @throws IOException if there are errors while creating an URL from the passed file path.
      */
     public static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, String filePath, String description, String fileDisplay, PdfName mimeType, PdfDictionary fileParameter, PdfName afRelationshipValue) throws IOException {
-        PdfStream stream = new PdfStream(doc, UrlUtil.toURL(filePath).openStream());
-        PdfDictionary params = new PdfDictionary();
-        if (fileParameter != null) {
-            params.mergeDifferent(fileParameter);
+        try (InputStream fileStream = UrlUtil.toURL(filePath).openStream()) {
+            return createEmbeddedFileSpec(doc, fileStream, description, fileDisplay, mimeType,
+                    fileParameter, afRelationshipValue);
         }
-        if (!params.containsKey(PdfName.ModDate)) {
-            params.put(PdfName.ModDate, new PdfDate().getPdfObject());
-        }
-        stream.put(PdfName.Params, params);
-        return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue);
     }
 
     /**
@@ -304,7 +299,8 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
             params.put(PdfName.ModDate, new PdfDate().getPdfObject());
         }
         stream.put(PdfName.Params, params);
-        return createEmbeddedFileSpec(doc, stream, description, fileDisplay, mimeType, afRelationshipValue);
+        return createEmbeddedFileSpec(doc, stream, description, fileDisplay,
+                mimeType, afRelationshipValue);
     }
 
     /**
@@ -367,22 +363,10 @@ public class PdfFileSpec extends PdfObjectWrapper<PdfObject> {
         dict.put(PdfName.EF, ef);
         doc.markStreamAsEmbeddedFile(stream);
 
-        return (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
-    }
-
-    /**
-     * Create an embedded file specification.
-     *
-     * @param doc                 {@link PdfDocument} instance to make this file specification indirect
-     * @param stream              an embedded file stream dictionary
-     * @param fileDisplay         actual file name stored in the pdf
-     * @param afRelationshipValue value that represents the relationship between the component of the passed PDF document that
-     *                            refers to this file specification and the associated file. If <CODE>null</CODE>,
-     *                            {@link PdfName#Unspecified} will be added.
-     * @return {@link PdfFileSpec} containing the file specification of the file
-     */
-    private static PdfFileSpec createEmbeddedFileSpec(PdfDocument doc, PdfStream stream, String description, String fileDisplay, PdfName afRelationshipValue) {
-        return createEmbeddedFileSpec(doc, stream, description, fileDisplay, null, afRelationshipValue);
+        PdfFileSpec resFileSpec = (PdfFileSpec) new PdfFileSpec(dict).makeIndirect(doc);
+        doc.checkIsoConformance(new PdfFileSpecDataValidationContext(stream));
+        stream.flush();
+        return resFileSpec;
     }
 
     public PdfFileSpec setFileIdentifier(PdfArray fileIdentifier) {

@@ -55,6 +55,7 @@ import com.itextpdf.kernel.validation.context.IContentStreamValidationParameter;
 import com.itextpdf.kernel.validation.context.IGraphicStateValidationParameter;
 import com.itextpdf.kernel.validation.context.InlineImageValidationContext;
 import com.itextpdf.kernel.validation.context.PdfDocumentValidationContext;
+import com.itextpdf.kernel.validation.context.PdfFileSpecDataValidationContext;
 import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
 import com.itextpdf.kernel.validation.context.PdfPageValidationContext;
 import com.itextpdf.kernel.validation.context.RenderingIntentValidationContext;
@@ -271,6 +272,10 @@ public abstract class PdfAChecker implements IValidationChecker {
             case FONT:
                 FontValidationContext fontContext = (FontValidationContext) context;
                 checkText(fontContext.getText(), fontContext.getFont());
+                break;
+            case FILE_SPEC_DATA:
+                PdfFileSpecDataValidationContext fileSpecDataContext = (PdfFileSpecDataValidationContext) context;
+                checkFileSpecEmbeddedStream(fileSpecDataContext.getFileSpecDataStream());
                 break;
         }
     }
@@ -652,6 +657,18 @@ public abstract class PdfAChecker implements IValidationChecker {
      * @param fileSpec the {@link PdfDictionary} containing file specification to be checked
      */
     protected abstract void checkFileSpec(PdfDictionary fileSpec);
+
+    /**
+     * Verify the conformity of the file specification embedded file stream.
+     *
+     * @param embeddedFile the {@link PdfStream} containing file specification embedded stream to be checked
+     *
+     * @deprecated will become abstract
+     */
+    @Deprecated
+    protected void checkFileSpecEmbeddedStream(PdfStream embeddedFile) {
+        // Empty implementation. To become abstract with the next major release.
+    }
 
     /**
      * Verify the conformity of the form dictionary.

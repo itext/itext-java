@@ -665,12 +665,23 @@ public class PdfA2Checker extends PdfA1Checker {
             }
 
             PdfDictionary ef = fileSpec.getAsDictionary(PdfName.EF);
-            PdfStream embeddedFile = ef.getAsStream(PdfName.F);
-            if (embeddedFile == null) {
-                throw new PdfAConformanceException(PdfaExceptionMessageConstant.EF_KEY_OF_FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_DICTIONARY_WITH_VALID_F_KEY);
-            }
+            checkFileSpecEmbeddedStream(ef.getAsStream(PdfName.F));
             // iText doesn't check whether provided file is compliant to PDF-A specs.
             logger.warn(PdfAConformanceLogMessageConstant.EMBEDDED_FILE_SHALL_BE_COMPLIANT_WITH_SPEC);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkFileSpecEmbeddedStream(PdfStream embeddedFile) {
+        if (isAlreadyChecked(embeddedFile)) {
+            return;
+        }
+
+        if (embeddedFile == null) {
+            throw new PdfAConformanceException(PdfaExceptionMessageConstant.EF_KEY_OF_FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_DICTIONARY_WITH_VALID_F_KEY);
         }
     }
 
