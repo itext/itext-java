@@ -72,7 +72,6 @@ public class WebPImageData extends ImageData {
             }
 
             BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(this.getData()));
-
             if (bufferedImage == null) {
                 throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.WEBP_IMAGE_EXCEPTION);
             }
@@ -85,15 +84,15 @@ public class WebPImageData extends ImageData {
 
             Graphics2D g = abgr.createGraphics();
             g.setComposite(AlphaComposite.Src);
-            //Whatever image type was there originally, we redraw it as ABGR
+            // Whatever image type was there originally, we redraw it as ABGR
             g.drawImage(bufferedImage, 0, 0, null);
             g.dispose();
 
             byte[] abgrRaster = ((DataBufferByte) abgr.getRaster().getDataBuffer()).getData();
             byte[] alpha = new byte[abgrRaster.length / 4];
             this.data = new  byte[abgrRaster.length / 4 * 3];
-            //Out of ABGR raster we create RGB raster and alpha array
-            for (int i = 0, j = 0, t = 0; i < abgrRaster.length; i +=4, t++) {
+            // Out of ABGR raster we create RGB raster and alpha array
+            for (int i = 0, j = 0, t = 0; i < abgrRaster.length; i += 4, t++) {
                 this.data[j] = abgrRaster[i + 3];
                 ++j;
                 this.data[j] = abgrRaster[i + 2];
@@ -114,7 +113,6 @@ public class WebPImageData extends ImageData {
                 mask.makeMask();
                 this.setImageMask(mask);
             }
-
         } catch (IOException e) {
             throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.WEBP_IMAGE_EXCEPTION, e);
         }

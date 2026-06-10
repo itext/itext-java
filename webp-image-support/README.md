@@ -44,3 +44,5 @@ canvas.release();
 pdfDocument.close();
 // Done!
 ```
+
+Note that the result may have minor differencies across different java versions and operating systems.

@@ -769,10 +769,13 @@
         </fileset>
 
          <!-- webp-image-support -->
-         <fileset reason="Java implementations is based on twelve-monkeys while .Net utilizes Skia, so results may differ">
+         <fileset reason="Java implementations is based on twelve-monkeys while .Net utilizes SkiaSharp, so results may differ">
              <file path="com/itextpdf/webpimagesupport/image/cmp_lossyWebPImagePdf.pdf"/>
              <file path="com/itextpdf/webpimagesupport/image/cmp_animatedWebPImagePdf.pdf"/>
              <file path="com/itextpdf/webpimagesupport/image/cmp_opaqueWebPImagePdf.pdf"/>
+             <file path="com/itextpdf/webpimagesupport/image/cmp_displayP3ProfilePdf.pdf"/>
+             <file path="com/itextpdf/webpimagesupport/image/cmp_linearRGBProfilePdf.pdf"/>
+             <file path="com/itextpdf/webpimagesupport/image/cmp_orientationPdf.pdf"/>
          </fileset>
     </resource>
     <src>
