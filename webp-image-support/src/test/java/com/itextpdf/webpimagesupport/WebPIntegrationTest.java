@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -27,6 +28,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 @Tag("IntegrationTest")
+@DisabledInNativeImage
 public class WebPIntegrationTest extends ExtendedITextTest {
 
     public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/webpimagesupport/WebpIntegrationTest/";
