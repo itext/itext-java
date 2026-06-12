@@ -32,6 +32,7 @@ import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -48,17 +49,6 @@ public class FixedHeightTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FixedHeightTest/";
     private static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FixedHeightTest/";
-
-    private static final String textByron =
-            "When a man hath no freedom to fight for at home,\n" +
-                    "    Let him combat for that of his neighbours;\n" +
-                    "Let him think of the glories of Greece and of Rome,\n" +
-                    "    And get knocked on the head for his labours.\n" +
-                    "\n" +
-                    "To do good to Mankind is the chivalrous plan,\n" +
-                    "    And is always as nobly requited;\n" +
-                    "Then battle for Freedom wherever you can,\n" +
-                    "    And, if not shot or hanged, you'll get knighted.";
 
     @BeforeAll
     public static void beforeClass() {
@@ -81,6 +71,8 @@ public class FixedHeightTest extends ExtendedITextTest {
         Div block = new Div();
         block.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
         block.setHeight(120);
+
+        String textByron = TestResourceUtil.getByronStanza();
 
         for (String line : textByron.split("\n")) {
             Paragraph p = new Paragraph();
@@ -112,6 +104,8 @@ public class FixedHeightTest extends ExtendedITextTest {
         List list = new List();
         list.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
         list.setHeight(120);
+
+        String textByron = TestResourceUtil.getByronStanza();
 
         for (String line : textByron.split("\n")) {
             list.add(line);

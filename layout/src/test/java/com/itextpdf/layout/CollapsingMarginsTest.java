@@ -39,6 +39,7 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DivRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -54,17 +55,7 @@ import org.junit.jupiter.api.Test;
 public class CollapsingMarginsTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/CollapsingMarginsTest/";
     private static final String destinationFolder = TestUtil.getOutputPath() + "/layout/CollapsingMarginsTest/";
-
-    private static final String TEXT_BYRON = "When a man hath no freedom to fight for at home,\n" +
-            "    Let him combat for that of his neighbours;\n" +
-            "Let him think of the glories of Greece and of Rome,\n" +
-            "    And get knocked on the head for his labours.\n" +
-            "\n" +
-            "To do good to Mankind is the chivalrous plan,\n" +
-            "    And is always as nobly requited;\n" +
-            "Then battle for Freedom wherever you can,\n" +
-            "    And, if not shot or hanged, you'll get knighted.";
-
+    
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
@@ -83,9 +74,9 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.add(new Paragraph("marker text").setMargin(0));
 
-        Paragraph p = new Paragraph(TEXT_BYRON);
+        Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
         for (int i = 0; i < 5; i++) {
-            p.add(TEXT_BYRON);
+            p.add(TestResourceUtil.getByronStanza());
         }
 
         Div div1 = new Div();
@@ -121,9 +112,9 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.add(new Paragraph("marker text").setMargin(0));
 
-        Paragraph p = new Paragraph(TEXT_BYRON);
+        Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
         for (int i = 0; i < 3; i++) {
-            p.add(TEXT_BYRON);
+            p.add(TestResourceUtil.getByronStanza());
         }
         p.add("When a man hath no freedom to fight for at home,\n" +
                 "    Let him combat for that of his neighbours;\n" +
@@ -165,9 +156,9 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.add(new Paragraph("marker text").setMargin(0));
 
-        Paragraph p = new Paragraph(TEXT_BYRON);
+        Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
         for (int i = 0; i < 3; i++) {
-            p.add(TEXT_BYRON);
+            p.add(TestResourceUtil.getByronStanza());
         }
         p.add("When a man hath no freedom to fight for at home,\n" +
                 "    Let him combat for that of his neighbours;\n" +
@@ -206,9 +197,9 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
         doc.add(new Paragraph("marker text").setMargin(0));
 
-        Paragraph p = new Paragraph(TEXT_BYRON);
+        Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
         for (int i = 0; i < 3; i++) {
-            p.add(TEXT_BYRON);
+            p.add(TestResourceUtil.getByronStanza());
         }
         p.add("When a man hath no freedom to fight for at home,\n" +
                 "    Let him combat for that of his neighbours;\n" +
@@ -250,9 +241,9 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
         Document doc = new Document(pdfDocument);
         doc.setProperty(Property.COLLAPSING_MARGINS, true);
 
-        Paragraph p = new Paragraph(TEXT_BYRON).setBackgroundColor(ColorConstants.YELLOW);
+        Paragraph p = new Paragraph(TestResourceUtil.getByronStanza()).setBackgroundColor(ColorConstants.YELLOW);
         for (int i = 0; i < 3; i++) {
-            p.add(TEXT_BYRON);
+            p.add(TestResourceUtil.getByronStanza());
         }
         doc.add(p);
 
@@ -313,7 +304,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
                 .setBackgroundColor(new DeviceRgb(65, 151, 29)); // greenish
 
         Div div = new Div();
-        Paragraph p = new Paragraph(TEXT_BYRON);
+        Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
         div.add(p).setBackgroundColor(new DeviceRgb(209,247,29)); // yellowish
         div.setProperty(Property.COLLAPSING_MARGINS, true);
 
@@ -358,7 +349,7 @@ public class CollapsingMarginsTest extends ExtendedITextTest {
 
             Paragraph p = new Paragraph();
             for (int i = 0; i < 10; i++) {
-                p.add(TEXT_BYRON);
+                p.add(TestResourceUtil.getByronStanza());
             }
 
             Div div = new Div().add(p);

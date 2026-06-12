@@ -45,6 +45,7 @@ import com.itextpdf.layout.properties.margins.MarginBoxName;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.testutil.PageMarginsTestUtil;
+import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -67,17 +68,6 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             "./src/test/resources/com/itextpdf/layout/GridPageMarginsTest/";
     private static final String DESTINATION_FOLDER =
             TestUtil.getOutputPath() + "/layout/GridPageMarginsTest/";
-
-    private static final String TEXT_BYRON =
-            "When a man hath no freedom to fight for at home,\n" +
-                    "    Let him combat for that of his neighbours;\n" +
-                    "Let him think of the glories of Greece and of Rome,\n" +
-                    "    And get knocked on the head for his labours.\n" +
-                    "\n" +
-                    "To do good to Mankind is the chivalrous plan,\n" +
-                    "    And is always as nobly requited;\n" +
-                    "Then battle for Freedom wherever you can,\n" +
-                    "    And, if not shot or hanged, you'll get knighted.";
 
     @BeforeAll
     public static void beforeClass() {
@@ -145,7 +135,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             GridContainer grid = createThreeColumnGrid();
             for (int i = 1; i <= 18; i++) {
                 grid.add(new Div()
-                        .add(new Paragraph("ITEM " + i + "\n" + TEXT_BYRON))
+                        .add(new Paragraph("ITEM " + i + "\n" + TestResourceUtil.getByronStanza()))
                         .setBackgroundColor(cellColor(i)));
             }
 
@@ -227,7 +217,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             GridContainer grid = createThreeColumnGrid();
             for (int i = 1; i <= 18; i++) {
                 grid.add(new Div()
-                        .add(new Paragraph("CELL " + i + "\n" + TEXT_BYRON))
+                        .add(new Paragraph("CELL " + i + "\n" + TestResourceUtil.getByronStanza()))
                         .setBackgroundColor(cellColor(i)));
             }
 
@@ -260,7 +250,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             GridContainer grid = createThreeColumnGrid();
             for (int i = 1; i <= 15; i++) {
                 grid.add(new Div()
-                        .add(new Paragraph("CELL " + i + "\n" + TEXT_BYRON))
+                        .add(new Paragraph("CELL " + i + "\n" + TestResourceUtil.getByronStanza()))
                         .setBackgroundColor(cellColor(i)));
             }
 
@@ -287,7 +277,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             GridContainer grid1 = createThreeColumnGrid();
             for (int i = 1; i <= 6; i++) {
                 grid1.add(new Div()
-                        .add(new Paragraph("S1-" + i + "\n" + TEXT_BYRON))
+                        .add(new Paragraph("S1-" + i + "\n" + TestResourceUtil.getByronStanza()))
                         .setBackgroundColor(cellColor(i)));
             }
 
@@ -350,7 +340,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             GridContainer grid = createThreeColumnGrid();
             for (int i = 1; i <= 18; i++) {
                 grid.add(new Div()
-                        .add(new Paragraph("CELL " + i + "\n" + TEXT_BYRON))
+                        .add(new Paragraph("CELL " + i + "\n" + TestResourceUtil.getByronStanza()))
                         .setBackgroundColor(cellColor(i)));
             }
 
@@ -403,36 +393,36 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             GridContainer grid = createThreeColumnGrid();
 
             grid.add(new Div()
-                    .add(new Paragraph("LARGE MARGIN\n" + TEXT_BYRON))
+                    .add(new Paragraph("LARGE MARGIN\n" + TestResourceUtil.getByronStanza()))
                     .setBackgroundColor(new DeviceRgb(65, 151, 29))
                     .setMargins(20, 15, 20, 15));
 
             grid.add(new Div()
-                    .add(new Paragraph("NO MARGIN\n" + TEXT_BYRON))
+                    .add(new Paragraph("NO MARGIN\n" + TestResourceUtil.getByronStanza()))
                     .setBackgroundColor(new DeviceRgb(209, 247, 29))
                     .setMargin(0));
 
             grid.add(new Div()
-                    .add(new Paragraph("LARGE PADDING\n" + TEXT_BYRON))
+                    .add(new Paragraph("LARGE PADDING\n" + TestResourceUtil.getByronStanza()))
                     .setBackgroundColor(new DeviceRgb(78, 151, 205))
                     .setPaddings(20, 20, 20, 20));
 
             grid.add(new Div()
-                    .add(new Paragraph("MIXED\n" + TEXT_BYRON))
+                    .add(new Paragraph("MIXED\n" + TestResourceUtil.getByronStanza()))
                     .setBackgroundColor(new DeviceRgb(255, 165, 0))
                     .setMarginTop(30).setPaddingBottom(30));
 
             grid.add(new Div()
-                    .add(new Paragraph("DEFAULT\n" + TEXT_BYRON))
+                    .add(new Paragraph("DEFAULT\n" + TestResourceUtil.getByronStanza()))
                     .setBackgroundColor(new DeviceRgb(200, 100, 100)));
 
             grid.add(new Div()
-                    .add(new Paragraph("SMALL PADDING\n" + TEXT_BYRON))
+                    .add(new Paragraph("SMALL PADDING\n" + TestResourceUtil.getByronStanza()))
                     .setBackgroundColor(new DeviceRgb(100, 200, 100))
                     .setPadding(5));
 
             document.add(grid);
-            document.add(new Paragraph(repeatString(TEXT_BYRON, 5)));
+            document.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 5)));
         }
 
         Assertions.assertNull(new CompareTool()
@@ -490,12 +480,12 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             grid.setProperty(Property.GRID_FLOW, GridFlow.ROW);
             for (int i = 1; i <= 9; i++) {
                 grid.add(new Div()
-                        .add(new Paragraph("CELL " + i + "\n" + TEXT_BYRON))
+                        .add(new Paragraph("CELL " + i + "\n" + TestResourceUtil.getByronStanza()))
                         .setBackgroundColor(cellColor(i)));
             }
 
             document.add(grid);
-            document.add(new Paragraph(repeatString(TEXT_BYRON, 4)));
+            document.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 4)));
         }
 
         Assertions.assertNull(new CompareTool()
@@ -607,7 +597,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
                 GridContainer inner = createTwoColumnGrid();
                 for (int i = 1; i <= 4; i++) {
                     inner.add(new Div()
-                            .add(new Paragraph("C" + col + "-" + i + "\n" + TEXT_BYRON))
+                            .add(new Paragraph("C" + col + "-" + i + "\n" + TestResourceUtil.getByronStanza()))
                             .setBackgroundColor(cellColor(col * 2 + i)));
                 }
                 outer.add(inner);
@@ -716,7 +706,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
                     GridContainer inner = createTwoColumnGrid();
                     for (int i = 1; i <= 2; i++) {
                         inner.add(new Div()
-                                .add(new Paragraph("O" + o + "M" + m + "I" + i + "\n" + TEXT_BYRON))
+                                .add(new Paragraph("O" + o + "M" + m + "I" + i + "\n" + TestResourceUtil.getByronStanza()))
                                 .setBackgroundColor(cellColor(o * 4 + m * 2 + i)));
                     }
                     mid.add(inner);
@@ -815,7 +805,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
 
             document.add(outer);
 
-            document.add(new Paragraph(repeatString(TEXT_BYRON, 6)));
+            document.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 6)));
             document.add(new Paragraph("Page 2 — PageMargins1 should be active here if SectionBreak was honoured."));
         }
 
@@ -903,7 +893,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
             outer.add(innerRight);
 
             document.add(outer);
-            document.add(new Paragraph(repeatString(TEXT_BYRON, 4)));
+            document.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 4)));
         }
 
         Assertions.assertNull(new CompareTool()
@@ -957,13 +947,5 @@ public class GridPageMarginsTest extends ExtendedITextTest {
                 .setBackgroundColor(color)
                 .setMargin(4)
                 .setPadding(6);
-    }
-
-    private static String repeatString(String s, int n) {
-        StringBuilder sb = new StringBuilder(s.length() * n);
-        for (int i = 0; i < n; i++) {
-            sb.append(s);
-        }
-        return sb.toString();
     }
 }

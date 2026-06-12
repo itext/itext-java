@@ -41,6 +41,7 @@ import com.itextpdf.layout.properties.margins.MarginBoxName;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import org.junit.jupiter.api.Assertions;
@@ -61,17 +62,6 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER =
             TestUtil.getOutputPath() + "/layout/PageMarginLayoutResultTest/";
 
-    private static final String TEXT_BYRON =
-            "When a man hath no freedom to fight for at home,\n" +
-                    "    Let him combat for that of his neighbours;\n" +
-                    "Let him think of the glories of Greece and of Rome,\n" +
-                    "    And get knocked on the head for his labours.\n" +
-                    "\n" +
-                    "To do good to Mankind is the chivalrous plan,\n" +
-                    "    And is always as nobly requited;\n" +
-                    "Then battle for Freedom wherever you can,\n" +
-                    "    And, if not shot or hanged, you'll get knighted.";
-
     private static final float A4_HEIGHT = PageSize.A4.getHeight();
     private static final float A4_WIDTH  = PageSize.A4.getWidth();
 
@@ -87,7 +77,7 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
 
             applyMarginBoxes(document, 100, 100, 0, 0);
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             int status = layoutStatus(p, document, availableRect(100, 100, 0, 0));
 
             Assertions.assertEquals(LayoutResult.FULL, status,
@@ -119,7 +109,7 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
                 Document document = new Document(pdfDoc)) {
 
-            document.add(new Paragraph("Page 1 — no margin boxes.").add(TEXT_BYRON));
+            document.add(new Paragraph("Page 1 — no margin boxes.").add(TestResourceUtil.getByronStanza()));
             document.add(new SectionBreak(marginBoxes(100, 80, 0, 0)));
             document.add(shortContentDiv());
         }
@@ -136,7 +126,7 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
             applyMarginBoxes(document, 250, 200, 0, 0);
 
             Div tall = new Div()
-                    .add(new Paragraph(repeatString(TEXT_BYRON, 4)))
+                    .add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 4)))
                     .setBackgroundColor(new DeviceRgb(65, 151, 29));
 
             int status = layoutStatus(tall, document, availableRect(250, 200, 0, 0));
@@ -159,7 +149,7 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
 
             Div tall = new Div().setBackgroundColor(new DeviceRgb(209, 247, 29));
             for (int i = 0; i < 6; i++) {
-                tall.add(new Paragraph("PARAGRAPH " + i + "\n" + TEXT_BYRON));
+                tall.add(new Paragraph("PARAGRAPH " + i + "\n" + TestResourceUtil.getByronStanza()));
             }
             document.add(tall);
         }
@@ -182,7 +172,7 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
 
             Div tall = new Div().setBackgroundColor(new DeviceRgb(78, 151, 205));
             for (int i = 0; i < 4; i++) {
-                tall.add(new Paragraph("BLOCK " + i + "\n" + TEXT_BYRON));
+                tall.add(new Paragraph("BLOCK " + i + "\n" + TestResourceUtil.getByronStanza()));
             }
 
             document.add(tall);
@@ -203,7 +193,7 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
             applyMarginBoxes(document, hugeMargin, hugeMargin, 0, 0);
 
             Div element = new Div()
-                    .add(new Paragraph(TEXT_BYRON))
+                    .add(new Paragraph(TestResourceUtil.getByronStanza()))
                     .setHeight(100);
 
             int status = layoutStatus(element, document,
@@ -223,7 +213,7 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
             applyMarginBoxes(document, 0, hugeBottom, 0, 0);
 
             Div element = new Div()
-                    .add(new Paragraph(TEXT_BYRON))
+                    .add(new Paragraph(TestResourceUtil.getByronStanza()))
                     .setHeight(80);
 
             int status = layoutStatus(element, document,
@@ -245,7 +235,7 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
             float right  = A4_WIDTH  * 0.40f;
 
             Div element = new Div()
-                    .add(new Paragraph(TEXT_BYRON))
+                    .add(new Paragraph(TestResourceUtil.getByronStanza()))
                     .setHeight(200)
                     .setKeepTogether(true);
 
@@ -313,7 +303,7 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
                 Document document = new Document(pdfDoc)) {
 
             Div element = new Div()
-                    .add(new Paragraph(TEXT_BYRON))
+                    .add(new Paragraph(TestResourceUtil.getByronStanza()))
                     .setHeight(200)
                     .setBackgroundColor(new DeviceRgb(65, 151, 29));
 
@@ -483,7 +473,7 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
     private static Div contentDiv(String label, DeviceRgb color) {
         Div div = new Div().setBackgroundColor(color);
         div.add(new Paragraph(label));
-        div.add(new Paragraph(repeatString(TEXT_BYRON, 2)));
+        div.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 2)));
         return div;
     }
 
@@ -502,13 +492,4 @@ public class PageMarginLayoutResultTest extends ExtendedITextTest {
         };
         return palette[index % palette.length];
     }
-
-    private static String repeatString(String s, int n) {
-        StringBuilder sb = new StringBuilder(s.length() * n);
-        for (int i = 0; i < n; i++) {
-            sb.append(s);
-        }
-        return sb.toString();
-    }
-
 }

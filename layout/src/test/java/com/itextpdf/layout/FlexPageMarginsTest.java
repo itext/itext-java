@@ -45,6 +45,7 @@ import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.renderer.FlexContainerRenderer;
 import com.itextpdf.layout.testutil.PageMarginsTestUtil;
+import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -67,17 +68,6 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             "./src/test/resources/com/itextpdf/layout/FlexPageMarginsTest/";
     private static final String DESTINATION_FOLDER =
             TestUtil.getOutputPath() + "/layout/FlexPageMarginsTest/";
-
-    private static final String TEXT_BYRON =
-            "When a man hath no freedom to fight for at home,\n" +
-                    "    Let him combat for that of his neighbours;\n" +
-                    "Let him think of the glories of Greece and of Rome,\n" +
-                    "    And get knocked on the head for his labours.\n" +
-                    "\n" +
-                    "To do good to Mankind is the chivalrous plan,\n" +
-                    "    And is always as nobly requited;\n" +
-                    "Then battle for Freedom wherever you can,\n" +
-                    "    And, if not shot or hanged, you'll get knighted.";
 
     @BeforeAll
     public static void beforeClass() {
@@ -215,7 +205,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
                 Div row = createRowFlexContainer();
                 for (int j = 0; j < 3; j++) {
                     row.add(new Div()
-                            .add(new Paragraph("R" + i + "C" + j + "\n" + TEXT_BYRON))
+                            .add(new Paragraph("R" + i + "C" + j + "\n" + TestResourceUtil.getByronStanza()))
                             .setWidth(UnitValue.createPercentValue(30))
                             .setBackgroundColor(j % 2 == 0
                                     ? new DeviceRgb(65, 151, 29)
@@ -256,7 +246,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
                 Div row = createRowFlexContainer();
                 for (int j = 0; j < 3; j++) {
                     row.add(new Div()
-                            .add(new Paragraph(TEXT_BYRON))
+                            .add(new Paragraph(TestResourceUtil.getByronStanza()))
                             .setWidth(UnitValue.createPercentValue(30))
                             .setBackgroundColor(j % 2 == 0
                                     ? new DeviceRgb(65, 151, 29)
@@ -289,7 +279,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             Div flex1 = createRowFlexContainer();
             flex1.add(coloredDiv("S1-A", new DeviceRgb(65, 151, 29)));
             flex1.add(coloredDiv("S1-B", new DeviceRgb(209, 247, 29)));
-            flex1.add(new Paragraph(repeatString(TEXT_BYRON, 3)));
+            flex1.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 3)));
 
             Div flex2 = createRowFlexContainer();
             flex2.add(coloredDiv("S2-A", new DeviceRgb(78, 151, 205)));
@@ -346,19 +336,19 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             Div flex = createRowFlexContainer();
 
             Div item1 = new Div()
-                    .add(new Paragraph("LARGE MARGIN\n" + TEXT_BYRON))
+                    .add(new Paragraph("LARGE MARGIN\n" + TestResourceUtil.getByronStanza()))
                     .setBackgroundColor(new DeviceRgb(65, 151, 29))
                     .setWidth(UnitValue.createPercentValue(28))
                     .setMargins(30, 20, 30, 20);
 
             Div item2 = new Div()
-                    .add(new Paragraph("NO MARGIN\n" + TEXT_BYRON))
+                    .add(new Paragraph("NO MARGIN\n" + TestResourceUtil.getByronStanza()))
                     .setBackgroundColor(new DeviceRgb(209, 247, 29))
                     .setWidth(UnitValue.createPercentValue(28))
                     .setMargin(0);
 
             Div item3 = new Div()
-                    .add(new Paragraph("LARGE PADDING\n" + TEXT_BYRON))
+                    .add(new Paragraph("LARGE PADDING\n" + TestResourceUtil.getByronStanza()))
                     .setBackgroundColor(new DeviceRgb(78, 151, 205))
                     .setWidth(UnitValue.createPercentValue(28))
                     .setPaddings(25, 25, 25, 25);
@@ -368,7 +358,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             flex.add(item3);
 
             document.add(flex);
-            document.add(new Paragraph(repeatString(TEXT_BYRON, 8)));
+            document.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 8)));
         }
 
         Assertions.assertNull(new CompareTool()
@@ -395,7 +385,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             document.add(flex);
             document.add(new SectionBreak(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins2())));
             document.add(new Div()
-                    .add(new Paragraph(repeatString(TEXT_BYRON, 3)))
+                    .add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 3)))
                     .setBackgroundColor(new DeviceRgb(255, 165, 0)));
         }
 
@@ -418,7 +408,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             Div flex = createColumnFlexContainer();
             for (int i = 0; i < 3; i++) {
                 flex.add(new Div()
-                        .add(new Paragraph("ITEM " + i + "\n" + TEXT_BYRON))
+                        .add(new Paragraph("ITEM " + i + "\n" + TestResourceUtil.getByronStanza()))
                         .setBackgroundColor(i % 2 == 0
                                 ? new DeviceRgb(65, 151, 29)
                                 : new DeviceRgb(209, 247, 29)));
@@ -484,12 +474,12 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
                     Div innerCol = createColumnFlexContainer();
                     innerCol.setWidth(UnitValue.createPercentValue(45)).setMargin(4);
                     innerCol.add(new Div()
-                            .add(new Paragraph("R" + row + "C" + col + "-TOP\n" + TEXT_BYRON))
+                            .add(new Paragraph("R" + row + "C" + col + "-TOP\n" + TestResourceUtil.getByronStanza()))
                             .setBackgroundColor(col == 0
                                     ? new DeviceRgb(65, 151, 29)
                                     : new DeviceRgb(209, 247, 29)));
                     innerCol.add(new Div()
-                            .add(new Paragraph("R" + row + "C" + col + "-BOT\n" + TEXT_BYRON))
+                            .add(new Paragraph("R" + row + "C" + col + "-BOT\n" + TestResourceUtil.getByronStanza()))
                             .setBackgroundColor(col == 0
                                     ? new DeviceRgb(78, 151, 205)
                                     : new DeviceRgb(255, 165, 0)));
@@ -700,7 +690,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             item.add(new Paragraph("Item content before nested area break."));
             item.add(new Div()
                     .add(new Paragraph("Inner div before break."))
-                    .add(new Paragraph(repeatString(TEXT_BYRON, 5)))
+                    .add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 5)))
                     .add(new AreaBreak())
                     .add(new Paragraph("Inner div after break."))
                     .setBackgroundColor(new DeviceRgb(209, 247, 29)));
@@ -774,7 +764,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             outer.add(inner2);
 
             document.add(outer);
-            document.add(new Paragraph(repeatString(TEXT_BYRON, 6)));
+            document.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 6)));
         }
 
         Assertions.assertNull(new CompareTool()
@@ -808,7 +798,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             rightCol.setWidth(UnitValue.createPercentValue(45)).setMargin(5);
             rightCol.add(coloredDiv("R A", new DeviceRgb(255, 165, 0)));
             rightCol.add(coloredDiv("R B", new DeviceRgb(200, 100, 100)));
-            rightCol.add(new Paragraph(repeatString(TEXT_BYRON, 3)));
+            rightCol.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 3)));
 
             outer.add(leftCol);
             outer.add(rightCol);
@@ -837,7 +827,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
                 Div row = createRowFlexContainer();
                 for (int j = 0; j < 3; j++) {
                     row.add(new Div()
-                            .add(new Paragraph("R" + i + "C" + j + "\n" + TEXT_BYRON))
+                            .add(new Paragraph("R" + i + "C" + j + "\n" + TestResourceUtil.getByronStanza()))
                             .setWidth(UnitValue.createPercentValue(30))
                             .setBackgroundColor(j % 2 == 0
                                     ? new DeviceRgb(65, 151, 29)
@@ -871,7 +861,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
                 Div row = createRowFlexContainer();
                 for (int j = 0; j < 3; j++) {
                     row.add(new Div()
-                            .add(new Paragraph("R" + i + "C" + j + "\n" + TEXT_BYRON))
+                            .add(new Paragraph("R" + i + "C" + j + "\n" + TestResourceUtil.getByronStanza()))
                             .setWidth(UnitValue.createPercentValue(30))
                             .setBackgroundColor(j % 2 == 0
                                     ? new DeviceRgb(65, 151, 29)
@@ -903,14 +893,14 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
             row1.add(coloredDiv("S1 ITEM A", new DeviceRgb(65, 151, 29)));
             row1.add(coloredDiv("S1 ITEM B", new DeviceRgb(209, 247, 29)));
             flex1.add(row1);
-            flex1.add(new Paragraph(repeatString(TEXT_BYRON, 3)));
+            flex1.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 3)));
 
             Div flex2 = createColumnFlexContainer();
             Div row2 = createRowFlexContainer();
             row2.add(coloredDiv("S2 ITEM A", new DeviceRgb(78, 151, 205)));
             row2.add(coloredDiv("S2 ITEM B", new DeviceRgb(255, 165, 0)));
             flex2.add(row2);
-            flex2.add(new Paragraph(repeatString(TEXT_BYRON, 3)));
+            flex2.add(new Paragraph(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 3)));
 
             document.add(flex1);
             document.add(new SectionBreak(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1())));
@@ -938,14 +928,6 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
         flex.setProperty(Property.FLEX_DIRECTION, FlexDirectionPropertyValue.COLUMN);
         flex.setProperty(Property.FLEX_WRAP, FlexWrapPropertyValue.NOWRAP);
         return flex;
-    }
-
-    private static String repeatString(String s, int n) {
-        StringBuilder sb = new StringBuilder(s.length() * n);
-        for (int i = 0; i < n; i++) {
-            sb.append(s);
-        }
-        return sb.toString();
     }
 
     private static Div coloredDiv(String label, DeviceRgb color) {

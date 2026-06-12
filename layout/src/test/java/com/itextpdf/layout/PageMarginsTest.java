@@ -59,6 +59,7 @@ import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.layout.testutil.PageMarginsTestUtil;
+import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import org.junit.jupiter.api.Assertions;
@@ -77,16 +78,6 @@ import java.util.List;
 public class PageMarginsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PageMarginsTest/";
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/PageMarginsTest/";
-
-    private static final String TEXT_BYRON = "When a man hath no freedom to fight for at home,\n" +
-            "    Let him combat for that of his neighbours;\n" +
-            "Let him think of the glories of Greece and of Rome,\n" +
-            "    And get knocked on the head for his labours.\n" +
-            "\n" +
-            "To do good to Mankind is the chivalrous plan,\n" +
-            "    And is always as nobly requited;\n" +
-            "Then battle for Freedom wherever you can,\n" +
-            "    And, if not shot or hanged, you'll get knighted.";
 
     private static final String DOG = "./src/test/resources/com/itextpdf/layout/PageMarginsTest/DOG.bmp";
 
@@ -113,18 +104,18 @@ public class PageMarginsTest extends ExtendedITextTest {
             footnote3.setBackgroundColor(ColorConstants.RED);
             FootnoteAnchor anchor3 = new FootnoteAnchor("[3]", footnote3);
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             p.add(anchor);
             p.add("\n\n");
-            p.add(TEXT_BYRON);
+            p.add(TestResourceUtil.getByronStanza());
             p.add(anchor2);
             p.add("\n\n");
-            p.add(TEXT_BYRON);
+            p.add(TestResourceUtil.getByronStanza());
             p.add(anchor3);
 
             for (int i = 0; i < 5; i++) {
                 p.add("\n\n");
-                p.add(TEXT_BYRON);
+                p.add(TestResourceUtil.getByronStanza());
             }
 
             SectionBreak sectionBreak = new SectionBreak()
@@ -189,7 +180,7 @@ public class PageMarginsTest extends ExtendedITextTest {
             }
             table.addCell(img);
 
-            document.add(new Paragraph(TEXT_BYRON + "\n\n" + TEXT_BYRON + "\n\n" + "Two more \nlines"));
+            document.add(new Paragraph(TestResourceUtil.getByronStanza() + "\n\n" + TestResourceUtil.getByronStanza() + "\n\n" + "Two more \nlines"));
 
             document.add(table);
         }
@@ -252,7 +243,7 @@ public class PageMarginsTest extends ExtendedITextTest {
                 }
             }
 
-            document.add(new Paragraph(TEXT_BYRON + "\n\n" + TEXT_BYRON + "\n\n" + "Two more \nlines"));
+            document.add(new Paragraph(TestResourceUtil.getByronStanza() + "\n\n" + TestResourceUtil.getByronStanza() + "\n\n" + "Two more \nlines"));
 
             document.add(table);
         }
@@ -314,7 +305,7 @@ public class PageMarginsTest extends ExtendedITextTest {
             }
             table.addCell(img);
 
-            document.add(new Paragraph(TEXT_BYRON + "\n\n" + TEXT_BYRON + "\n\n" + "Two more \nlines"));
+            document.add(new Paragraph(TestResourceUtil.getByronStanza() + "\n\n" + TestResourceUtil.getByronStanza() + "\n\n" + "Two more \nlines"));
 
             document.add(table);
         }
@@ -335,9 +326,9 @@ public class PageMarginsTest extends ExtendedITextTest {
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
             List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             for (int i = 0; i < 5; i++) {
-                p.add(TEXT_BYRON);
+                p.add(TestResourceUtil.getByronStanza());
             }
 
             SectionBreak sectionBreak = new SectionBreak().setPageMargins(new PageMarginBoxes(elements));
@@ -375,9 +366,9 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             for (int i = 0; i < 5; i++) {
-                p.add(TEXT_BYRON);
+                p.add(TestResourceUtil.getByronStanza());
             }
 
             SectionBreak sectionBreak = new SectionBreak().setPageSize(PageSize.A4.rotate());
@@ -417,7 +408,7 @@ public class PageMarginsTest extends ExtendedITextTest {
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
             List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
 
             SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
             SectionBreak sectionBreak2 = new SectionBreak(new PageMarginBoxes(elements2));
@@ -454,7 +445,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
 
             SectionBreak sectionBreak = new SectionBreak(PageSize.A4.rotate());
             SectionBreak sectionBreak2 = new SectionBreak(PageSize.A5.rotate());
@@ -487,7 +478,7 @@ public class PageMarginsTest extends ExtendedITextTest {
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
             List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
 
             SectionBreak sectionBreak = new SectionBreak(PageSize.A4.rotate(), new PageMarginBoxes(elements));
             SectionBreak sectionBreak2 = new SectionBreak(PageSize.A5, new PageMarginBoxes(elements2));
@@ -517,9 +508,9 @@ public class PageMarginsTest extends ExtendedITextTest {
 
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             for (int i = 0; i < 5; i++) {
-                p.add(TEXT_BYRON);
+                p.add(TestResourceUtil.getByronStanza());
             }
 
             SectionBreak sectionBreak = new SectionBreak(PageSize.A3.rotate(), new PageMarginBoxes(elements));
@@ -545,9 +536,9 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             for (int i = 0; i < 5; i++) {
-                p.add(TEXT_BYRON);
+                p.add(TestResourceUtil.getByronStanza());
             }
 
             List<PageMarginContent> pageMargins = PageMarginsTestUtil.getPageMargins1();
@@ -578,7 +569,7 @@ public class PageMarginsTest extends ExtendedITextTest {
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
             List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
 
             SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
             SectionBreak sectionBreak2 = new SectionBreak(PageSize.A4.rotate(), new PageMarginBoxes(elements2));
@@ -622,9 +613,9 @@ public class PageMarginsTest extends ExtendedITextTest {
                     .setBackgroundColor(ColorConstants.CYAN)
                     .setMinHeight(50)));
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             for (int i = 0; i < 5; i++) {
-                p.add(TEXT_BYRON);
+                p.add(TestResourceUtil.getByronStanza());
             }
             Div div1 = new Div();
             Div div2 = new Div();
@@ -671,9 +662,9 @@ public class PageMarginsTest extends ExtendedITextTest {
                 return null;
             });
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             for (int i = 0; i < 5; i++) {
-                p.add(TEXT_BYRON);
+                p.add(TestResourceUtil.getByronStanza());
             }
 
             Div div1 = new Div().add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
@@ -703,14 +694,14 @@ public class PageMarginsTest extends ExtendedITextTest {
             document.setPageMargins(pageNum -> pageNum > 0 && pageNum % 2 == 0, new PageMarginBoxes(elements));
             SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements2));
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             for (int i = 0; i < 7; i++) {
-                p.add(TEXT_BYRON);
+                p.add(TestResourceUtil.getByronStanza());
             }
 
             Div div1 = new Div().add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
             Div div2 = new Div().add(p).setBackgroundColor(new DeviceRgb(209, 247, 29));
-            document.add(new Paragraph(TEXT_BYRON));
+            document.add(new Paragraph(TestResourceUtil.getByronStanza()));
             document.add(sectionBreak);
             document.add(div1);
             document.add(div2);
@@ -731,9 +722,9 @@ public class PageMarginsTest extends ExtendedITextTest {
             SectionBreak sectionBreak = new SectionBreak(PageSize.A5);
             AreaBreak areaBreak = new AreaBreak(PageSize.A5.rotate());
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             for (int i = 0; i < 7; i++) {
-                p.add(TEXT_BYRON);
+                p.add(TestResourceUtil.getByronStanza());
             }
 
             Div div1 = new Div().add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
@@ -758,7 +749,7 @@ public class PageMarginsTest extends ExtendedITextTest {
 
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
 
             SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
 
@@ -786,7 +777,7 @@ public class PageMarginsTest extends ExtendedITextTest {
             pdfDocument.setTagged();
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
 
             SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
 
@@ -812,10 +803,10 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            Footnote footnote = new Footnote(TEXT_BYRON);
+            Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBackgroundColor(ColorConstants.CYAN);
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
 
             Footnote paragraphFootnote = new Footnote("Footnote text");
             paragraphFootnote.setBackgroundColor(ColorConstants.RED);
@@ -823,7 +814,7 @@ public class PageMarginsTest extends ExtendedITextTest {
             p.add(anchor);
 
             for (int i = 0; i < 3; i++) {
-                p.add("\n\n").add(TEXT_BYRON);
+                p.add("\n\n").add(TestResourceUtil.getByronStanza());
             }
 
             PageMarginBoxes pageMarginBoxes = new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1());
@@ -851,15 +842,15 @@ public class PageMarginsTest extends ExtendedITextTest {
              Document document = new Document(pdfDocument)) {
             pdfDocument.setTagged();
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             for (int i = 0; i < 2; i++) {
-                p.add("\n\n").add(TEXT_BYRON);
+                p.add("\n\n").add(TestResourceUtil.getByronStanza());
             }
 
-            Footnote footnote1 = new Footnote(TEXT_BYRON);
+            Footnote footnote1 = new Footnote(TestResourceUtil.getByronStanza());
             footnote1.setBackgroundColor(ColorConstants.YELLOW);
             FootnoteAnchor anchor1 = new FootnoteAnchor("1", footnote1);
-            Footnote footnote2 = new Footnote(TEXT_BYRON);
+            Footnote footnote2 = new Footnote(TestResourceUtil.getByronStanza());
             footnote2.setBackgroundColor(ColorConstants.PINK);
             FootnoteAnchor anchor2 = new FootnoteAnchor("2", footnote2);
             p.add(anchor1).add(anchor2);
@@ -881,14 +872,14 @@ public class PageMarginsTest extends ExtendedITextTest {
              Document document = new Document(pdfDocument)) {
             pdfDocument.setTagged();
 
-            Footnote footnote = new Footnote(TEXT_BYRON);
+            Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
 
             Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bulb.gif"));
             image.setWidth(15);
             FootnoteAnchor anchor = new FootnoteAnchor(image, footnote);
 
-            Paragraph p = new Paragraph(TEXT_BYRON).add(anchor).add(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza()).add(anchor).add(TestResourceUtil.getByronStanza());
 
             Div div = new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 3));
             document.add(div);

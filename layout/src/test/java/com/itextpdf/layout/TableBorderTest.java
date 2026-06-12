@@ -42,6 +42,7 @@ import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -236,16 +237,7 @@ public class TableBorderTest extends AbstractTableTest {
     public void simpleBorderTest04() throws IOException, InterruptedException {
         String fileName = "simpleBorderTest04.pdf";
         Document doc = createDocument(fileName);
-        String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted.";
+
         String textHelloWorld =
                 "Hello World\n" +
                         "Hello World\n" +
@@ -257,9 +249,9 @@ public class TableBorderTest extends AbstractTableTest {
         table.setBorder(new SolidBorder(ColorConstants.RED, 2f));
         table.addCell(new Cell(2, 1).add(new Paragraph(textHelloWorld)));
         for (int i = 0; i < 2; i++) {
-            table.addCell(new Cell().add(new Paragraph(textByron)));
+            table.addCell(new Cell().add(new Paragraph(TestResourceUtil.getByronStanza())));
         }
-        table.addCell(new Cell(1, 2).add(new Paragraph(textByron)));
+        table.addCell(new Cell(1, 2).add(new Paragraph(TestResourceUtil.getByronStanza())));
         doc.add(table);
 
         doc.add(new AreaBreak());
@@ -2167,25 +2159,13 @@ public class TableBorderTest extends AbstractTableTest {
         String fileName = "splitRowspanKeepTogetherTest.pdf";
         Document doc = createDocument(fileName);
 
-        String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted.";
-
-
         Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
         table.setKeepTogether(true);
 
         int bigRowspan = 8;
         table.addCell(new Cell(bigRowspan, 1).add(new Paragraph("Big cell")).setBorder(new SolidBorder(ColorConstants.GREEN, 20)));
         for (int i = 0; i < bigRowspan; i++) {
-            table.addCell(i + " " + textByron);
+            table.addCell(i + " " + TestResourceUtil.getByronStanza());
         }
 
 

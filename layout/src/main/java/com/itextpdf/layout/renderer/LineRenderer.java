@@ -488,6 +488,7 @@ public class LineRenderer extends AbstractRenderer {
             if (shouldBreakLayoutingOnTextRenderer) {
                 boolean isWordHasBeenSplitLayoutRenderingMode = ((TextLayoutResult) childResult).isWordHasBeenSplit()
                         && RenderingMode.HTML_MODE != childRenderingMode
+                        && childRenderer instanceof TextRenderer
                         && !((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true);
                 boolean enableSpecialScriptsWrapping = ((TextRenderer) getChildRenderers().get(childPos))
                         .textContainsSpecialScriptGlyphs(true)

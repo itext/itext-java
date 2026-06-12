@@ -35,6 +35,7 @@ import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.layout.testutil.PageMarginsTestUtil;
+import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -56,17 +57,6 @@ public class PageMarginBoxTagRoleOverrideTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER =
             TestUtil.getOutputPath() + "/layout/PageMarginBoxTagRoleOverrideTest/";
 
-    private static final String TEXT_BYRON =
-            "When a man hath no freedom to fight for at home,\n" +
-            "    Let him combat for that of his neighbours;\n" +
-            "Let him think of the glories of Greece and of Rome,\n" +
-            "    And get knocked on the head for his labours.\n" +
-            "\n" +
-            "To do good to Mankind is the chivalrous plan,\n" +
-            "    And is always as nobly requited;\n" +
-            "Then battle for Freedom wherever you can,\n" +
-            "    And, if not shot or hanged, you'll get knighted.";
-
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
@@ -84,7 +74,7 @@ public class PageMarginBoxTagRoleOverrideTest extends ExtendedITextTest {
 
             pdfDocument.setTagged();
 
-            Paragraph p = new Paragraph(TEXT_BYRON);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
 
             SectionBreak sectionBreak = new SectionBreak(
                     new ParagraphRolePageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));

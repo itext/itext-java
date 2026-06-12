@@ -38,6 +38,7 @@ import com.itextpdf.layout.properties.margins.MarginBoxName;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.testutil.PageMarginsTestUtil;
+import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import org.junit.jupiter.api.Assertions;
@@ -56,17 +57,6 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
             "./src/test/resources/com/itextpdf/layout/MarginsCollapsePageMarginsTest/";
     private static final String DESTINATION_FOLDER =
             TestUtil.getOutputPath() + "/layout/MarginsCollapsePageMarginsTest/";
-
-    private static final String TEXT_BYRON =
-            "When a man hath no freedom to fight for at home,\n" +
-                    "    Let him combat for that of his neighbours;\n" +
-                    "Let him think of the glories of Greece and of Rome,\n" +
-                    "    And get knocked on the head for his labours.\n" +
-                    "\n" +
-                    "To do good to Mankind is the chivalrous plan,\n" +
-                    "    And is always as nobly requited;\n" +
-                    "Then battle for Freedom wherever you can,\n" +
-                    "    And, if not shot or hanged, you'll get knighted.";
 
     @BeforeAll
     public static void beforeClass() {
@@ -289,7 +279,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
 
             for (int i = 0; i < 5; i++) {
                 document.add(marginedDiv("BLOCK " + i, cellColor(i), 50, 50));
-                document.add(new Paragraph(TEXT_BYRON));
+                document.add(new Paragraph(TestResourceUtil.getByronStanza()));
             }
         }
 
@@ -320,7 +310,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
 
             for (int i = 0; i < 8; i++) {
                 document.add(marginedDiv("BLOCK " + i, cellColor(i), 40, 40));
-                document.add(new Paragraph(TEXT_BYRON));
+                document.add(new Paragraph(TestResourceUtil.getByronStanza()));
             }
         }
 
@@ -366,14 +356,14 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
 
             for (int i = 0; i < 3; i++) {
                 document.add(marginedDiv("BLOCK " + i, cellColor(i), 50, 50));
-                document.add(new Paragraph(TEXT_BYRON));
+                document.add(new Paragraph(TestResourceUtil.getByronStanza()));
             }
 
             document.add(new SectionBreak(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1())));
 
             for (int i = 3; i < 6; i++) {
                 document.add(marginedDiv("BLOCK " + i, cellColor(i), 50, 50));
-                document.add(new Paragraph(TEXT_BYRON));
+                document.add(new Paragraph(TestResourceUtil.getByronStanza()));
             }
         }
 
