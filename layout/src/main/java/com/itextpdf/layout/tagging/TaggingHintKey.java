@@ -50,9 +50,9 @@ public final class TaggingHintKey {
     TaggingHintKey(IAccessibleElement elem, boolean createdElementBased) {
         this.elem = elem;
         this.elementBasedFinishingOnly = createdElementBased;
-        if (elem == null){
+        if (elem == null) {
             isAccessible = false;
-        }else{
+        } else {
             isAccessible = elem.getAccessibilityProperties().getRole() != null;
         }
     }

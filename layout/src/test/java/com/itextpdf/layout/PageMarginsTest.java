@@ -41,8 +41,6 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Footnote;
-import com.itextpdf.layout.element.FootnoteAnchor;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.SectionBreak;
@@ -52,6 +50,8 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.margins.Footnote;
+import com.itextpdf.layout.properties.margins.FootnoteAnchor;
 import com.itextpdf.layout.properties.margins.FootnotesUtil;
 import com.itextpdf.layout.properties.margins.MarginBoxName;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
@@ -803,16 +803,12 @@ public class PageMarginsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
-            Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
-            footnote.setBackgroundColor(ColorConstants.CYAN);
-
             Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
 
             Footnote paragraphFootnote = new Footnote("Footnote text");
             paragraphFootnote.setBackgroundColor(ColorConstants.RED);
             FootnoteAnchor anchor = new FootnoteAnchor("1", paragraphFootnote);
             p.add(anchor);
-
             for (int i = 0; i < 3; i++) {
                 p.add("\n\n").add(TestResourceUtil.getByronStanza());
             }
@@ -820,8 +816,11 @@ public class PageMarginsTest extends ExtendedITextTest {
             PageMarginBoxes pageMarginBoxes = new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1());
             SectionBreak sectionBreak = new SectionBreak().setPageMargins(pageMarginBoxes);
 
+            Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
+            footnote.setBackgroundColor(ColorConstants.CYAN);
             // This API is not supposed to be used by the users, but this util class can't be hidden.
-            FootnotesUtil.addFootnotesToPage(1, Collections.singletonList(footnote), pageMarginBoxes);
+            FootnotesUtil.addFootnotesToPage(1, Collections.singletonList(footnote), pageMarginBoxes,
+                    document.getFootnotesProperties());
 
             Div div1 = new Div();
             div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));

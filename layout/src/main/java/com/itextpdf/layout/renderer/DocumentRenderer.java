@@ -42,6 +42,8 @@ import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.Transform;
+import com.itextpdf.layout.properties.margins.FootnoteNumberingConfig;
+import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
@@ -181,7 +183,21 @@ public class DocumentRenderer extends RootRenderer {
 
         if (sectionBreak != null) {
             this.document.setPageMargins(currentPageNumber, sectionBreak.getPageMargins());
+
+            FootnotesProperties sectionBreakFootnotesProperties = sectionBreak.getFootnotesProperties();
+            if (sectionBreakFootnotesProperties != null) {
+                document.setFootnotesProperties(sectionBreakFootnotesProperties);
+            }
         }
+        FootnotesProperties footnotesProperties = document.getFootnotesProperties();
+        FootnoteNumberingConfig footnoteNumberingConfig = footnotesProperties.getFootnoteNumberingConfig();
+        if (sectionBreak != null && FootnoteNumberingConfig.PER_SECTION == footnoteNumberingConfig) {
+            this.latestFootnoteNumber.put(currentPageNumber, 0);
+        } else if (FootnoteNumberingConfig.PER_PAGE != footnoteNumberingConfig) {
+            this.latestFootnoteNumber.put(currentPageNumber,
+                    this.latestFootnoteNumber.getOrDefault(currentPageNumber - 1, 0));
+        }
+
         computeLayoutMargins(currentPageNumber);
         if (sectionBreak != null) {
             // Save section break to apply same page margins for all the following pages

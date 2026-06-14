@@ -294,7 +294,7 @@ final class TextSequenceWordWrapping {
             TextRenderer textRenderer = (TextRenderer) lineRenderer.childRenderers.get(analyzedTextRendererIndex);
             if (analyzedTextRendererIndex != childPos) {
                 fittingLengthWithTrailingRightSideSpaces = textRenderer.length();
-            } else if (childPosLayoutResult.getSplitRenderer() != null) {
+            } else if (childPosLayoutResult.getSplitRenderer() instanceof TextRenderer) {
                 TextRenderer splitTextRenderer = (TextRenderer) childPosLayoutResult.getSplitRenderer();
                 GlyphLine splitText = splitTextRenderer.text;
                 if (splitTextRenderer.length() > 0) {

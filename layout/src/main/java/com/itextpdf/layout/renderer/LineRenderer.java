@@ -486,13 +486,18 @@ public class LineRenderer extends AbstractRenderer {
             boolean forceOverflowForTextRendererPartialResult = false;
 
             if (shouldBreakLayoutingOnTextRenderer) {
+                IRenderer textRenderer = childRenderer;
+                // TODO DEVSIX-10023 Process partial result for FootnoteAnchorRenderer
+                // if (childRenderer instanceof FootnoteAnchorRenderer) {
+                //     textRenderer = ((FootnoteAnchorRenderer) childRenderer).footnoteAnchor;
+                // }
                 boolean isWordHasBeenSplitLayoutRenderingMode = ((TextLayoutResult) childResult).isWordHasBeenSplit()
                         && RenderingMode.HTML_MODE != childRenderingMode
-                        && childRenderer instanceof TextRenderer
-                        && !((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true);
-                boolean enableSpecialScriptsWrapping = ((TextRenderer) getChildRenderers().get(childPos))
-                        .textContainsSpecialScriptGlyphs(true)
-                        && !textSequenceOverflowXProcessing && !newLineOccurred;
+                        && textRenderer instanceof TextRenderer &&
+                        !((TextRenderer) textRenderer).textContainsSpecialScriptGlyphs(true);
+                boolean enableSpecialScriptsWrapping = textRenderer instanceof TextRenderer
+                        && !textSequenceOverflowXProcessing && !newLineOccurred
+                        && ((TextRenderer) textRenderer).textContainsSpecialScriptGlyphs(true);
                 boolean enableTextSequenceWrapping = RenderingMode.HTML_MODE == childRenderingMode && !newLineOccurred
                         && !textSequenceOverflowXProcessing;
 
@@ -666,7 +671,7 @@ public class LineRenderer extends AbstractRenderer {
                 }
 
                 final IRenderer causeOfNothing = childResult.getStatus() == LayoutResult.NOTHING
-                        ? childResult.getCauseOfNothing() : getChildRenderers().get(childPos);
+                        ? childResult.getCauseOfNothing() : childRenderer;
                 if (split[1] == null) {
                     result = new LineLayoutResult(LayoutResult.FULL, occupiedArea, split[0], split[1], causeOfNothing);
                 } else if (anythingPlaced || floatsPlacedInLine) {

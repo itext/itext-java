@@ -23,28 +23,24 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
-import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Footnote;
-import com.itextpdf.layout.element.FootnoteAnchor;
+import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
-import com.itextpdf.layout.properties.BaseDirection;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.margins.Footnote;
+import com.itextpdf.layout.properties.margins.FootnoteAnchor;
+import com.itextpdf.layout.properties.margins.FootnotesUtil;
 
 /**
  * Renderer for {@link FootnoteAnchor} instance representing an anchor for a footnote.
  */
 public class FootnoteAnchorRenderer extends AbstractRenderer {
 
-    private final IRenderer footnoteAnchor;
+    private IRenderer footnoteAnchor;
 
     // Create and store footnote renderer once to save its layout result.
     FootnoteRenderer footnoteRenderer = null;
@@ -66,7 +62,6 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         if (this.footnoteRenderer == null) {
             Footnote footnote = ((FootnoteAnchor) this.modelElement).getFootnote();
-            applyFootnoteAnchor(footnote);
             this.footnoteRenderer = (FootnoteRenderer) footnote.createRendererSubTree().setParent(this);
         }
 
@@ -76,8 +71,9 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         while (parentRenderer != null) {
             if (parentRenderer instanceof DocumentRenderer) {
                 DocumentRenderer documentRenderer = (DocumentRenderer) parentRenderer;
-                float leftMargin = (float) documentRenderer.getPropertyAsFloat(Property.MARGIN_BOTTOM);
-                float rightMargin = (float) documentRenderer.getPropertyAsFloat(Property.MARGIN_TOP);
+                FootnotesUtil.setParentForFootnoteRenderer(this.footnoteRenderer, documentRenderer);
+                float leftMargin = (float) documentRenderer.getPropertyAsFloat(Property.MARGIN_LEFT);
+                float rightMargin = (float) documentRenderer.getPropertyAsFloat(Property.MARGIN_RIGHT);
                 pageRectangle.moveRight(leftMargin).decreaseWidth(leftMargin + rightMargin);
                 break;
             }
@@ -86,10 +82,16 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
 
         this.footnoteRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, pageRectangle)));
 
+        // TODO DEVSIX-10023 Process partial result. Take it into account in line renderer
+        //  and in case of table header/footer or fixed width.
         LayoutResult layoutResult = footnoteAnchor.layout(layoutContext);
         this.occupiedArea = layoutResult.getOccupiedArea();
 
         FootnotesCounterHandler.addFootnoteAnchor(this);
+
+        if (LayoutResult.NOTHING == layoutResult.getStatus()) {
+            return new LayoutResult(LayoutResult.NOTHING, null, null, layoutResult.getOverflowRenderer(), this);
+        }
 
         return layoutResult;
     }
@@ -104,6 +106,21 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         return new FootnoteAnchorRenderer((FootnoteAnchor) modelElement);
     }
 
+    FootnoteAnchorRenderer addSymbolRenderer(IRenderer footnoteNumberingSymbolRenderer) {
+        this.footnoteAnchor = footnoteNumberingSymbolRenderer.setParent(this);
+        setFootnoteAnchor(((FootnoteAnchor) this.modelElement), footnoteNumberingSymbolRenderer.getModelElement());
+        return this;
+    }
+
+    private static void setFootnoteAnchor(FootnoteAnchor footnoteAnchor, IPropertyContainer element) {
+        if (element instanceof Image) {
+            footnoteAnchor.setFootnoteAnchor((Image) element);
+        }
+        if (element instanceof Text) {
+            footnoteAnchor.setFootnoteAnchor((Text) element);
+        }
+    }
+
     private IRenderer createFootnoteAnchorRenderer() {
         IElement footnoteAnchorSymbol = ((FootnoteAnchor) this.modelElement).getFootnoteAnchor();
         if (footnoteAnchorSymbol instanceof Text) {
@@ -114,37 +131,6 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
             return null;
         } else {
             throw new IllegalStateException();
-        }
-    }
-
-    private void applyFootnoteAnchor(Footnote footnote) {
-        if (!footnote.getChildren().isEmpty() && footnote.getChildren().get(0) instanceof Paragraph) {
-            Paragraph paragraph = (Paragraph) footnote.getChildren().get(0);
-            injectFootnoteAnchorIntoParagraph(paragraph);
-        }
-    }
-
-    private void injectFootnoteAnchorIntoParagraph(Paragraph paragraph) {
-        // TODO DEVSIX-9981 Introduce anchor indent property to make it configurable.
-        Div anchorIndent = new Div() {
-            @Override
-            public AccessibilityProperties getAccessibilityProperties() {
-                if (tagProperties == null) {
-                    tagProperties = new DefaultAccessibilityProperties(StandardRoles.ARTIFACT);
-                }
-                return tagProperties;
-            }
-        }.setWidth(5F);
-        IElement footnoteAnchorSymbol = ((FootnoteAnchor) this.modelElement).getFootnoteAnchor();
-        if (!paragraph.getChildren().contains(footnoteAnchorSymbol)) {
-            boolean isRtl = BaseDirection.RIGHT_TO_LEFT == this.<BaseDirection>getProperty(Property.BASE_DIRECTION);
-            if (!isRtl) {
-                paragraph.getChildren().add(0, anchorIndent);
-            }
-            paragraph.getChildren().add(0, footnoteAnchorSymbol);
-            if (isRtl) {
-                paragraph.getChildren().add(0, anchorIndent);
-            }
         }
     }
 }

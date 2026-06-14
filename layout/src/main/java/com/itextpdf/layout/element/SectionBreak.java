@@ -24,6 +24,7 @@ package com.itextpdf.layout.element;
 
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.SectionBreakRenderer;
@@ -43,6 +44,7 @@ import com.itextpdf.layout.renderer.SectionBreakRenderer;
 public class SectionBreak extends AbstractElement<SectionBreak> {
     private PageSize pageSize;
     private PageMarginBoxes pageMarginBoxes;
+    private FootnotesProperties footnotesProperties;
 
     private boolean breakPage;
 
@@ -133,6 +135,27 @@ public class SectionBreak extends AbstractElement<SectionBreak> {
      */
     public SectionBreak setPageMargins(PageMarginBoxes pageMarginBoxes) {
         this.pageMarginBoxes = pageMarginBoxes;
+        return this;
+    }
+
+    /**
+     * Gets {@link FootnotesProperties} specified for the document via {@link SectionBreak} to customize footnotes.
+     *
+     * @return {@link FootnotesProperties} specified for the document
+     */
+    public FootnotesProperties getFootnotesProperties() {
+        return footnotesProperties;
+    }
+
+    /**
+     * Sets {@link FootnotesProperties} for the document.
+     *
+     * @param footnotesProperties {@link FootnotesProperties} to customize footnotes
+     *
+     * @return this same {@link SectionBreak} instance
+     */
+    public SectionBreak setFootnotesProperties(FootnotesProperties footnotesProperties) {
+        this.footnotesProperties = footnotesProperties;
         return this;
     }
 

@@ -22,7 +22,10 @@
  */
 package com.itextpdf.layout.properties.margins;
 
-import com.itextpdf.layout.element.Footnote;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.Style;
+import com.itextpdf.layout.renderer.DocumentRenderer;
+import com.itextpdf.layout.renderer.FootnoteRenderer;
 
 import java.util.List;
 
@@ -41,14 +44,52 @@ public final class FootnotesUtil {
      * @param pageNum page number
      * @param footnotesToAdd list of {@link Footnote} instance to add
      * @param pageMarginBoxes {@link PageMarginBoxes} for the page
+     * @param footnotesProperties {@link FootnotesProperties} to apply for footnotes
      */
-    public static void addFootnotesToPage(int pageNum, List<Footnote> footnotesToAdd, PageMarginBoxes pageMarginBoxes) {
-        // TODO DEVSIX-9981 We want to be able to customize this container by user.
-        FootnotesContainer footnotesContainer = new FootnotesContainer();
+    public static void addFootnotesToPage(int pageNum, List<Footnote> footnotesToAdd, PageMarginBoxes pageMarginBoxes,
+                                          FootnotesProperties footnotesProperties) {
+        FootnotesContainer footnotesContainer = new FootnotesContainer(pageNum);
+        if (footnotesProperties.getFootnotesContainerStyle() != null) {
+            footnotesContainer.addStyle(footnotesProperties.getFootnotesContainerStyle());
+        }
+
         for (Footnote footnote : footnotesToAdd) {
             footnotesContainer.add(footnote);
+            if (footnote.footnoteAnchor != null) {
+                footnote.anchors.put(pageNum, footnote.footnoteAnchor);
+                footnote.resetFootnoteAnchor();
+            }
         }
+
         PageFootnotesContent pageFootnotesContent = new PageFootnotesContent(footnotesContainer).setPageNumber(pageNum);
         pageMarginBoxes.addFootnotes(pageFootnotesContent);
+    }
+
+    /**
+     * Sets parent for footnote renderer in order for it to be layouted with correct properties and styles applied.
+     *
+     * @param footnoteRenderer {@link FootnoteRenderer} to set parent for
+     * @param documentRenderer {@link DocumentRenderer} root renderer, the parent of footnotes container renderer
+     */
+    public static void setParentForFootnoteRenderer(FootnoteRenderer footnoteRenderer,
+                                                    DocumentRenderer documentRenderer) {
+        FootnotesProperties footnotesProperties =
+                ((Document) documentRenderer.getModelElement()).getFootnotesProperties();
+        FootnotesContainer footnotesContainer = new FootnotesContainer(-1);
+        if (footnotesProperties != null && footnotesProperties.getFootnotesContainerStyle() != null) {
+            footnotesContainer.addStyle(footnotesProperties.getFootnotesContainerStyle());
+        }
+        FootnotesContainerRenderer footnotesContainerRenderer = new FootnotesContainerRenderer(footnotesContainer);
+        footnoteRenderer.setParent(footnotesContainerRenderer.setParent(documentRenderer));
+    }
+
+    /**
+     * Applies {@link Style} storing style properties for footnote anchor that is placed inside the footnote.
+     *
+     * @param anchor {@link FootnoteAnchor} to apply style for
+     * @param footnoteAnchorLabelStyle {@link Style} storing properties for footnote anchor inside the footnote
+     */
+    public static void applyFootnoteAnchorStyle(FootnoteAnchor anchor, Style footnoteAnchorLabelStyle) {
+        anchor.setFootnoteAnchorLabelStyle(footnoteAnchorLabelStyle);
     }
 }

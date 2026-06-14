@@ -32,13 +32,17 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Footnote;
-import com.itextpdf.layout.element.FootnoteAnchor;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.SectionBreak;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.margins.Footnote;
+import com.itextpdf.layout.properties.margins.FootnoteAnchor;
+import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.testutil.LayoutResultTestUtil;
 import com.itextpdf.layout.testutil.PageMarginsTestUtil;
 import com.itextpdf.layout.testutil.TestResourceUtil;
@@ -46,7 +50,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -64,7 +67,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
             TestUtil.getOutputPath() + "/layout/HugeFootnoteLayoutResultTest/";
 
     private static final float A4_HEIGHT = PageSize.A4.getHeight();
-    private static final float A4_WIDTH  = PageSize.A4.getWidth();
+    private static final float A4_WIDTH = PageSize.A4.getWidth();
 
     @BeforeAll
     public static void beforeClass() {
@@ -80,7 +83,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             document.add(new SectionBreak(PageMarginsTestUtil.getFootnoteMarginBoxes(A4_HEIGHT)));
 
@@ -97,7 +100,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     @Test
     public void footnoteHeightExactlyPageHeightNothingTest() {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             applyFootnoteMarginBoxes(document, A4_HEIGHT);
 
@@ -122,7 +125,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             document.add(new SectionBreak(PageMarginsTestUtil.getFootnoteMarginBoxes(A4_HEIGHT + 50f)));
 
@@ -139,7 +142,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     @Test
     public void footnoteHeightExceedsPageHeightNothingTest() {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             applyFootnoteMarginBoxes(document, A4_HEIGHT + 50f);
 
@@ -158,7 +161,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     @Test
     public void footnoteDoublePageHeightNothingTest() {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             applyFootnoteMarginBoxes(document, A4_HEIGHT * 2f);
 
@@ -175,7 +178,8 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3))
+    @LogMessages(
+            messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 3))
     public void footnoteExceedsPageHeightMultiplePagesRenderTest()
             throws IOException, InterruptedException {
         String fileName = "footnoteExceedsPageHeightMultiPage";
@@ -183,7 +187,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             applyFootnoteMarginBoxes(document, A4_HEIGHT + 50f);
 
@@ -203,38 +207,102 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-9981: Adapt test after fix
-    public void hugeFontAnchorFootnoteThrowsTest() {
-        Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
-        footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
+    public void hugeParagraphWithFootnoteAnchorInDivTest() throws IOException, InterruptedException {
+        String fileName = "hugeParagraphFontWithFootnoteAnchor";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        Paragraph p = new Paragraph()
-                .add(new FootnoteAnchor("[1]", footnote))
-                .add(" Large anchor text.")
-                .setFontSize(72f);
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Document document = new Document(pdfDoc);
-        Div div = new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 2));
-        Assertions.assertThrows(ClassCastException.class, () -> document.add(div));
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            // TODO DEVSIX-10030 Support forced placement for footnotes to prevent infinite loops.
+            //  Set footnote container font size to 27 to reproduce the issue.
+            document.setFootnotesProperties(new FootnotesProperties()
+                    .setFootnotesContainerStyle(new Style().setFontSize(26f)));
+            Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
+            footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
+
+            Paragraph p = new Paragraph()
+                    .add("Large paragraph text.")
+                    .setFontSize(155f)
+                    .add(new FootnoteAnchor("[1]", footnote));
+
+            Div div = new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 2));
+            document.add(div);
+        }
+        Assertions.assertNull(
+                new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
     }
 
     @Test
-    public void hugeFontAnchorWithMultipleFootnotesRenderTest() {
-        for (int i = 1; i <= 4; i++) {
-            Footnote footnote = new Footnote("Footnote " + i + ": " + TestResourceUtil.getByronStanza());
-            footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 2));
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void hugeParagraphWithFootnoteAnchorTest() throws IOException, InterruptedException {
+        String fileName = "hugeParagraphWithFootnoteAnchor";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
+            footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
+            footnote.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(105));
 
             Paragraph p = new Paragraph()
-                    .add(new FootnoteAnchor(String.valueOf(i), footnote))
-                    .add(" Anchor " + i + " with huge font.")
-                    .setFontSize(48f);
+                    .add("Large paragraph text.")
+                    .setFontSize(105f)
+                    .add(new FootnoteAnchor(new Text("[1]").setFontSize(20).setTextRise(100), footnote));
 
-            PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-            Document document = new Document(pdfDoc);
-            Div div = new Div().add(p)
-                    .setBorder(new SolidBorder(cellColor(i - 1), 2));
-            Assertions.assertThrows(ClassCastException.class, () -> document.add(div));
+            document.add(p);
         }
+        Assertions.assertNull(
+                new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    public void hugeFontAnchorFootnoteTest() throws IOException, InterruptedException {
+        String fileName = "hugeFontAnchorFootnote";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
+            footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
+
+            Paragraph p = new Paragraph()
+                    .add("Paragraph.").setFontSize(30f)
+                    .add(new FootnoteAnchor(new Text("Large anchor text.").setFontSize(80f), footnote));
+
+            Div div = new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 2));
+            document.add(div);
+        }
+        Assertions.assertNull(
+                new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    // TODO DEVSIX-10023 Do not split footnote anchor.
+    public void hugeFontAnchorWithMultipleFootnotesTest() throws IOException, InterruptedException {
+        String fileName = "hugeFontAnchorWithMultipleFootnotes";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            for (int i = 1; i <= 4; i++) {
+                Footnote footnote = new Footnote("Footnote " + i + ": " + TestResourceUtil.getByronStanza());
+                footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 2));
+
+                Paragraph p = new Paragraph()
+                        .add("Paragraph " + i)
+                        .add(new FootnoteAnchor(new Text("Anchor " + i + " with huge font.").setFontSize(48f),
+                                footnote));
+
+                Div div = new Div().add(p).setBorder(new SolidBorder(cellColor(i - 1), 2));
+                document.add(div);
+            }
+        }
+        Assertions.assertNull(
+                new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
     }
 
     @Test
@@ -245,7 +313,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 4));
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -273,7 +341,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote("Footnote for the large image anchor.\n" + TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -298,6 +366,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void smallImageAnchorWithHugeTextFootnoteRenderTest()
             throws IOException, InterruptedException {
         String fileName = "smallImageAnchorHugeTextFootnote";
@@ -305,7 +374,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 8));
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -314,7 +383,8 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
             image.setWidth(15);
             FootnoteAnchor anchor = new FootnoteAnchor(image, footnote);
 
-            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza()).add(anchor).add(TestResourceUtil.getByronStanza());
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza()).add(anchor)
+                    .add(TestResourceUtil.getByronStanza());
             document.add(new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 3)));
         }
 

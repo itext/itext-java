@@ -23,9 +23,20 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.layout.element.Footnote;
-import com.itextpdf.layout.element.FootnoteAnchor;
-import com.itextpdf.layout.layout.RootLayoutArea;
+import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
+import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
+import com.itextpdf.kernel.numbering.RomanNumbering;
+import com.itextpdf.layout.Style;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.margins.Footnote;
+import com.itextpdf.layout.properties.margins.FootnoteAnchor;
+import com.itextpdf.layout.properties.margins.FootnoteNumberingConfig;
+import com.itextpdf.layout.properties.margins.FootnoteNumberingType;
+import com.itextpdf.layout.properties.margins.FootnotesProperties;
+import com.itextpdf.layout.properties.margins.FootnotesUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +50,8 @@ import java.util.Map;
  * Helper handler class to collect and count footnotes placed on the page.
  */
 class FootnotesCounterHandler {
+    private static final int DEFAULT_FONT_SIZE = 6;
+    private static final int DEFAULT_TEXT_RISE = 7;
 
     private final Map<FootnoteAnchor, FootnoteAnchorRenderer> renderers = new HashMap<>();
 
@@ -94,11 +107,11 @@ class FootnotesCounterHandler {
      * Collects footnotes which anchors are placed in the current area
      * in order their anchors are placed on a page from top to bottom and left to right.
      *
-     * @param currentArea {@link RootLayoutArea} area to collect placed footnote anchors
+     * @param currentArea {@link LayoutArea} area to collect placed footnote anchors
      *
      * @return linked map of {@link Footnote} and its height float value
      */
-    Map<Footnote, Float> collectFootnotes(RootLayoutArea currentArea) {
+    Map<Footnote, Float> collectFootnotes(LayoutArea currentArea) {
         footnotes.clear();
         List<FootnoteAnchor> anchors = new ArrayList<>(renderers.keySet());
         Collections.sort(anchors, new FootnoteAnchorComparator());
@@ -111,15 +124,87 @@ class FootnotesCounterHandler {
             }
 
             int expectedPageNumber = currentArea.getPageNumber();
-            Rectangle intersection = renderer.occupiedArea.getBBox().getIntersection(currentArea.getBBox());
+            // Check whether footnote anchor is inside the currentArea (if the overlap is greater than 50 percent).
+            boolean isAnchorInsideCurrentArea = currentArea.getBBox().overlaps(renderer.occupiedArea.getBBox(),
+                    0.5F * Math.min(renderer.occupiedArea.getBBox().getWidth(),
+                            renderer.occupiedArea.getBBox().getHeight()));
 
-            if (expectedPageNumber == renderer.occupiedArea.getPageNumber() && intersection != null
-                    && renderer.occupiedArea.getBBox().equalsWithEpsilon(intersection)) {
+            if (expectedPageNumber == renderer.occupiedArea.getPageNumber() && isAnchorInsideCurrentArea) {
                 footnotes.put(footnoteAnchor.getFootnote(),
                         renderer.footnoteRenderer.getOccupiedArea().getBBox().getHeight());
             }
         }
         return footnotes;
+    }
+
+    /**
+     * Updates footnote anchors using automatic numbering and styles configured via {@link FootnotesProperties}.
+     *
+     * @param footnotesProperties {@link FootnotesProperties} with optional {@link FootnoteNumberingType}
+     * specifying type for numbering of the footnote anchors and optional styles for footnote anchors
+     * @param latestFootnoteNum the number of the previous placed footnote based on {@link FootnoteNumberingConfig}
+     */
+    void updateFootnoteNumberingAndStyles(FootnotesProperties footnotesProperties, int latestFootnoteNum) {
+        if (footnotesProperties == null) {
+            return;
+        }
+        Style footnoteAnchorLabelStyle = footnotesProperties.getFootnoteAnchorLabelStyle();
+        if (footnoteAnchorLabelStyle != null) {
+            for (FootnoteAnchor anchor : renderers.keySet()) {
+                FootnotesUtil.applyFootnoteAnchorStyle(anchor, footnoteAnchorLabelStyle);
+            }
+        }
+        if (footnotesProperties.getFootnoteNumberingType() == null) {
+            return;
+        }
+        FootnoteNumberingType footnoteNumberingType = footnotesProperties.getFootnoteNumberingType();
+        List<FootnoteAnchor> anchors = new ArrayList<>(renderers.keySet());
+        Collections.sort(anchors, new FootnoteAnchorComparator());
+
+        int footnoteNum = latestFootnoteNum + 1;
+        for (FootnoteAnchor anchor : anchors) {
+            FootnoteAnchorRenderer renderer = renderers.get(anchor);
+            IRenderer currentSymbolRenderer = makeFootnoteNumSymbolRenderer(footnoteNum, footnoteNumberingType);
+            ++footnoteNum;
+            renderer.addSymbolRenderer(currentSymbolRenderer);
+        }
+
+    }
+
+    private static IRenderer makeFootnoteNumSymbolRenderer(int index, FootnoteNumberingType numberingType) {
+        String numberText;
+        switch (numberingType) {
+            case DECIMAL:
+                numberText = String.valueOf(index);
+                break;
+            case ROMAN_LOWER:
+                numberText = RomanNumbering.toRomanLowerCase(index);
+                break;
+            case ROMAN_UPPER:
+                numberText = RomanNumbering.toRomanUpperCase(index);
+                break;
+            case ENGLISH_LOWER:
+                numberText = EnglishAlphabetNumbering.toLatinAlphabetNumberLowerCase(index);
+                break;
+            case ENGLISH_UPPER:
+                numberText = EnglishAlphabetNumbering.toLatinAlphabetNumberUpperCase(index);
+                break;
+            case GREEK_LOWER:
+                numberText = GreekAlphabetNumbering.toGreekAlphabetNumber(index, false, true);
+                break;
+            case GREEK_UPPER:
+                numberText = GreekAlphabetNumbering.toGreekAlphabetNumber(index, true, true);
+                break;
+            default:
+                throw new IllegalStateException();
+        }
+        Style defaultStyle = new Style();
+        // TODO DEVSIX-10031 Do not specify constant font size by default,
+        //  it should depend on parent paragraph font size.
+        defaultStyle.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(DEFAULT_FONT_SIZE));
+        defaultStyle.setProperty(Property.TEXT_RISE, DEFAULT_TEXT_RISE);
+        Text textElement = new Text(numberText).addStyle(defaultStyle);
+        return new TextRenderer(textElement);
     }
 
     private final class FootnoteAnchorComparator implements Comparator<FootnoteAnchor> {

@@ -33,11 +33,16 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
 import com.itextpdf.layout.element.SectionBreak;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.margins.FootnoteNumberingConfig;
+import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +62,8 @@ import java.util.function.Predicate;
  * {@link #setRenderer(com.itextpdf.layout.renderer.DocumentRenderer) }.
  */
 public class Document extends RootElement<Document> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Document.class);
+
     private final Map<Integer, PageMarginBoxes> pageMargins = new HashMap<>();
     private final List<Tuple2<Predicate<Integer>, PageMarginBoxes>> pageMarginsRules = new ArrayList<>();
     private final List<Function<Integer, PageMarginBoxes>> pageMarginsFunctions = new ArrayList<>();
@@ -421,6 +428,40 @@ public class Document extends RootElement<Document> {
     }
 
     /**
+     * Gets {@link FootnotesProperties} specified for the document to customize footnotes.
+     *
+     * @return {@link FootnotesProperties} specified for the document
+     */
+    public FootnotesProperties getFootnotesProperties() {
+        FootnotesProperties property = this.<FootnotesProperties>getProperty(Property.FOOTNOTES_PROPERTIES);
+        return property != null ? property :
+                this.<FootnotesProperties>getDefaultProperty(Property.FOOTNOTES_PROPERTIES);
+    }
+
+    /**
+     * Sets {@link FootnotesProperties} for the document.
+     *
+     * @param footnotesProperties {@link FootnotesProperties} to customize footnotes
+     */
+    public void setFootnotesProperties(FootnotesProperties footnotesProperties) {
+        FootnotesProperties currentProperties = this.getFootnotesProperties();
+        FootnoteNumberingConfig footnoteNumberingConfig = currentProperties.getFootnoteNumberingConfig();
+        if (footnotesProperties != null) {
+            if (FootnoteNumberingConfig.PER_DOCUMENT == footnotesProperties.getFootnoteNumberingConfig()) {
+                if (this.hasOwnProperty(Property.FOOTNOTES_PROPERTIES) &&
+                        FootnoteNumberingConfig.PER_DOCUMENT != footnoteNumberingConfig) {
+                    LOGGER.warn(LayoutLogMessageConstant.FOOTNOTE_NUM_PER_DOCUMENT_SHOULD_BE_FIRST);
+                    footnotesProperties.setFootnoteNumberingConfig(footnoteNumberingConfig);
+                }
+            } else if (FootnoteNumberingConfig.PER_DOCUMENT == footnoteNumberingConfig) {
+                LOGGER.warn(LayoutLogMessageConstant.FOOTNOTE_NUM_PER_DOCUMENT_CANNOT_BE_CHANGED);
+                footnotesProperties.setFootnoteNumberingConfig(FootnoteNumberingConfig.PER_DOCUMENT);
+            }
+        }
+        this.setProperty(Property.FOOTNOTES_PROPERTIES, footnotesProperties);
+    }
+
+    /**
      * Returns the area that will actually be used to write on the page, given
      * the current margins. Does not have any side effects on the document.
      *
@@ -436,7 +477,6 @@ public class Document extends RootElement<Document> {
         return new Rectangle(x, y, width, height);
     }
 
-
     @Override
     public <T1> T1 getDefaultProperty(int property) {
         switch (property) {
@@ -450,6 +490,8 @@ public class Document extends RootElement<Document> {
             case Property.MARGIN_RIGHT:
             case Property.MARGIN_TOP:
                 return (T1) (Object) 36f;
+            case Property.FOOTNOTES_PROPERTIES:
+                return (T1) (Object) new FootnotesProperties();
             default:
                 return super.<T1>getDefaultProperty(property);
         }

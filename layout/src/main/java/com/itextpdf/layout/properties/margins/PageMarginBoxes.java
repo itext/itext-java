@@ -8,7 +8,6 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Footnote;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -153,11 +152,8 @@ public class PageMarginBoxes {
             PageFootnotesContent existing = this.footnotes.get(pageNum);
             IElement existingFootnotes = existing.getContent();
             IElement newFootnotes = content.getContent();
-            // TODO DEVSIX-9981 We want to be able to customize this container by user.
-            FootnotesContainer combined = new FootnotesContainer();
-            collectFootnotes(combined, existingFootnotes);
-            collectFootnotes(combined, newFootnotes);
-            content = new PageFootnotesContent(combined).setPageNumber(pageNum);
+            content = new PageFootnotesContent(collectFootnotes(existingFootnotes, newFootnotes))
+                    .setPageNumber(pageNum);
         }
         this.footnotes.put(pageNum, content);
         return this;
@@ -330,14 +326,17 @@ public class PageMarginBoxes {
         }
     }
 
-    private static void collectFootnotes(FootnotesContainer container, IElement footnotes) {
-        if (footnotes instanceof FootnotesContainer) {
-            for (IElement element : ((FootnotesContainer) footnotes).getChildren()) {
-                if (element instanceof Footnote) {
-                    container.add((Footnote) element);
-                }
+    private static FootnotesContainer collectFootnotes(IElement existingFootnotes, IElement newFootnotes) {
+        if (!(existingFootnotes instanceof FootnotesContainer) || !(newFootnotes instanceof FootnotesContainer)) {
+            throw new IllegalArgumentException("Footnotes must be a FootnotesContainer!");
+        }
+        FootnotesContainer container = (FootnotesContainer) existingFootnotes;
+        for (IElement element : ((FootnotesContainer) newFootnotes).getChildren()) {
+            if (element instanceof Footnote) {
+                container.add((Footnote) element);
             }
         }
+        return container;
     }
 
     private PageFootnotesContent getFootnotes(int pageNumber) {

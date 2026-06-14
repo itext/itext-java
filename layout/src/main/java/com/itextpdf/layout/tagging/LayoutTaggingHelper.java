@@ -38,6 +38,8 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.SectionBreakRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,9 +50,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The class is a helper which is used to correctly create structure
@@ -143,7 +142,7 @@ public class LayoutTaggingHelper {
 
         List<TaggingHintKey> newKidsKeys = new ArrayList<>();
         for (IPropertyContainer kid : newKids) {
-            if (kid instanceof AreaBreakRenderer) {
+            if (kid instanceof AreaBreakRenderer || kid instanceof SectionBreakRenderer) {
                 return;
             }
             newKidsKeys.add(getOrCreateHintKey(kid));

@@ -26,21 +26,24 @@ import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.element.BlockElement;
-import com.itextpdf.layout.element.Footnote;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.renderer.IRenderer;
 
 /**
  * Class representing container to store {@link Footnote} instances.
  */
 class FootnotesContainer extends BlockElement<FootnotesContainer> {
+    private final int pageNumber;
 
     protected DefaultAccessibilityProperties tagProperties;
 
     /**
      * Creates new {@link FootnotesContainer} instance.
+     *
+     * @param pageNum number of the page to which this container will be added
      */
-    public FootnotesContainer() {
-        // Empty constructor.
+    public FootnotesContainer(int pageNum) {
+        this.pageNumber = pageNum;
     }
 
     /**
@@ -53,6 +56,24 @@ class FootnotesContainer extends BlockElement<FootnotesContainer> {
     public FootnotesContainer add(Footnote footnote) {
         this.childElements.add(footnote);
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public IRenderer createRendererSubTree() {
+        IRenderer rendererRoot = getRenderer();
+        for (IElement child : childElements) {
+            if (child instanceof Footnote) {
+                Footnote footnote = (Footnote) child;
+                footnote.applyFootnoteAnchor(this.pageNumber);
+            }
+            rendererRoot.addChild(child.createRendererSubTree());
+        }
+        return rendererRoot;
     }
 
     /**

@@ -32,7 +32,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.IPropertyContainer;
-import com.itextpdf.layout.element.Footnote;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
@@ -45,6 +44,9 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.margins.Footnote;
+import com.itextpdf.layout.properties.margins.FootnoteNumberingConfig;
+import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.properties.margins.FootnotesUtil;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
@@ -55,6 +57,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +76,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     protected RootLayoutArea currentArea;
     protected List<IRenderer> waitingDrawingElements = new ArrayList<>();
     List<Rectangle> floatRendererAreas;
+    Map<Integer, Integer> latestFootnoteNumber = new HashMap<>();
     private final List<IRenderer> waitingNextPageRenderers = new ArrayList<>();
     private IRenderer keepWithNextHangingRenderer;
     private LayoutResult keepWithNextHangingRendererLayoutResult;
@@ -294,16 +298,33 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
 
         // Process footnotes that were collected during renderer layout.
-        Map<Footnote, Float> footnotes = footnotesCounterHandler.collectFootnotes(currentArea);
+        Map<Footnote, Float> footnotes = footnotesCounterHandler.collectFootnotes(
+                layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
         int footnoteAnchorsNum = footnotes.size();
         if (footnoteAnchorsNum == 0) {
             return layoutResult;
+        }
+
+        int pageNum = currentArea.getPageNumber();
+        PageMarginBoxes pageMarginBoxes = null;
+        Document document = new Document(this.getPdfDocument());
+        if (this instanceof DocumentRenderer) {
+            document = (Document) this.getModelElement();
+            pageMarginBoxes = document.getPageMargins(currentArea.getPageNumber());
+        }
+
+        FootnotesProperties footnotesProperties = document.getFootnotesProperties();
+        FootnoteNumberingConfig footnoteNumberingConfig = footnotesProperties.getFootnoteNumberingConfig();
+        if (FootnoteNumberingConfig.PER_PAGE != footnoteNumberingConfig &&
+                !latestFootnoteNumber.containsKey(pageNum) && latestFootnoteNumber.containsKey(pageNum - 1)) {
+            latestFootnoteNumber.put(pageNum, latestFootnoteNumber.get(pageNum - 1));
         }
 
         boolean footnotesPlaced = false;
         float decreasedHeight = 0;
         boolean footnotesNumDefined = false;
         int footnotesNum = 0;
+        // TODO DEVSIX-10030 Support forced placement for footnotes to prevent infinite loops
         while (!footnotesPlaced) {
             if (footnotesNumDefined) {
                 decreasedHeight = 0;
@@ -319,11 +340,15 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
             }
 
+            footnotesCounterHandler.updateFootnoteNumberingAndStyles(footnotesProperties,
+                    (int) latestFootnoteNumber.getOrDefault(pageNum, 0));
+
             footnotesCounterHandler.reset();
             layoutResult = renderer.setParent(this)
                     .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas));
 
-            footnotes = footnotesCounterHandler.collectFootnotes(currentArea);
+            footnotes = footnotesCounterHandler.collectFootnotes(
+                    layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
             footnoteAnchorsNum = footnotes.size();
 
             // Number of the placed anchors == number of footnotes we reserved the space for before the layout
@@ -331,35 +356,19 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (footnoteAnchorsNum > footnotesNum) {
                 footnotesNumDefined = true;
                 // Decrease current area from the bottom until extra anchor will be moved to the next page.
+                // TODO DEVSIX-10030 This logic can be improved.
                 currentArea.getBBox().moveUp(1).decreaseHeight(1);
             }
         }
 
-        PageMarginBoxes pageMarginBoxes = null;
-        Document document = new Document(this.getPdfDocument());
-        DocumentRenderer documentRenderer = new DocumentRenderer(document);
-        if (this instanceof DocumentRenderer) {
-            documentRenderer = (DocumentRenderer) this;
-            document = (Document) documentRenderer.getModelElement();
-            pageMarginBoxes = document.getPageMargins(currentArea.getPageNumber());
-        }
-
-        List<Footnote> footnotesContainer = new ArrayList<>();
-        float footnotesHeight = 0;
-        for (Map.Entry<Footnote, Float> entry : footnotes.entrySet()) {
-            Footnote footnote = entry.getKey();
-            footnotesContainer.add(footnote);
-            footnotesHeight += (float) entry.getValue();
-        }
-        int pageNum = currentArea.getPageNumber();
         if (pageMarginBoxes == null) {
             pageMarginBoxes = new PageMarginBoxes(Collections.<PageMarginContent>emptyList());
             document.setPageMargins(currentArea.getPageNumber(), pageMarginBoxes);
         }
-        FootnotesUtil.addFootnotesToPage(pageNum, footnotesContainer, pageMarginBoxes);
-
-        documentRenderer.setProperty(Property.MARGIN_BOTTOM,
-                documentRenderer.getPropertyAsFloat(Property.MARGIN_BOTTOM) + footnotesHeight);
+        FootnotesUtil.addFootnotesToPage(pageNum,
+                new ArrayList<>(footnotes.keySet()), pageMarginBoxes, footnotesProperties);
+        latestFootnoteNumber.put(pageNum, latestFootnoteNumber.containsKey(pageNum) ?
+                (latestFootnoteNumber.get(pageNum) + footnotes.size()) : footnotes.size());
 
         return layoutResult;
     }

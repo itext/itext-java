@@ -117,6 +117,7 @@ public final class Property {
      */
     public static final int FONT_SET = 98;
     public static final int FONT_SIZE = 24;
+    public static final int FOOTNOTES_PROPERTIES = 160;
     public static final int FORCED_PLACEMENT = 26;
     public static final int FULL = 25;
     public static final int GRID_COLUMN_END = 147;
@@ -245,7 +246,7 @@ public final class Property {
      * related to textual operations. Indicates whether this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 157;
+    private static final int MAX_INHERITED_PROPERTY_ID = 160;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -267,6 +268,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.FONT_SIZE] = true;
         INHERITED_PROPERTIES[Property.FONT_STYLE] = true;
         INHERITED_PROPERTIES[Property.FONT_WEIGHT] = true;
+        INHERITED_PROPERTIES[Property.FOOTNOTES_PROPERTIES] = true;
         INHERITED_PROPERTIES[Property.FORCED_PLACEMENT] = true;
         INHERITED_PROPERTIES[Property.HYPHENATION] = true;
         INHERITED_PROPERTIES[Property.ITALIC_SIMULATION] = true;

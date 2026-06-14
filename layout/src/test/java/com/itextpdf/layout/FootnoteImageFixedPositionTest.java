@@ -31,20 +31,19 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.element.Footnote;
-import com.itextpdf.layout.element.FootnoteAnchor;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.margins.Footnote;
+import com.itextpdf.layout.properties.margins.FootnoteAnchor;
 import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Tag("IntegrationTest")
@@ -56,7 +55,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
             TestUtil.getOutputPath() + "/layout/FootnoteImageFixedPositionTest/";
 
     private static final float A4_HEIGHT = PageSize.A4.getHeight();
-    private static final float A4_WIDTH  = PageSize.A4.getWidth();
+    private static final float A4_WIDTH = PageSize.A4.getWidth();
 
     @BeforeAll
     public static void beforeClass() {
@@ -71,7 +70,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -95,7 +94,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -111,19 +110,26 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO DEVSIX-9981: Adapt test after fix
-    public void fixedPositionOnTextFootnoteHugeContentThrowsTest() {
-        Footnote footnote = new Footnote(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 6));
-        footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
-        footnote.setFixedPosition(36, 100, A4_WIDTH - 72f);
+    @Disabled("TODO DEVSIX-10030 Support forced placement for footnotes to prevent infinite loops")
+    public void fixedPositionOnTextFootnoteHugeContentTest() throws IOException, InterruptedException {
+        String fileName = "fixedPositionOnTextFootnoteHugeContent";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
-        Paragraph p = new Paragraph(TestResourceUtil.getByronStanza()).add(anchor);
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            Footnote footnote = new Footnote(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 6));
+            footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
+            footnote.setFixedPosition(36, 100, A4_WIDTH - 72f);
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        Document document = new Document(pdfDoc);
-        Div div = new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 2));
-        Assertions.assertThrows(ClassCastException.class, () -> document.add(div));
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza()).add(anchor);
+
+            Div div = new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 2));
+            document.add(div);
+        }
+        Assertions.assertNull(
+                new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
     }
 
     @Test
@@ -134,7 +140,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bee.png"));
             image.setWidth(80);
@@ -161,7 +167,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bee.png"));
             image.setWidth(A4_WIDTH * 0.70f);
@@ -188,7 +194,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -213,7 +219,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -237,7 +243,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -263,7 +269,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -291,7 +297,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -320,7 +326,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
-                Document document = new Document(pdfDoc)) {
+             Document document = new Document(pdfDoc)) {
 
             Image footnoteImage = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bee.png"));
             footnoteImage.setWidth(120);

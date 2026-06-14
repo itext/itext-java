@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.layout.element.Footnote;
+import com.itextpdf.layout.properties.margins.Footnote;
 
 /**
  * Renderer for {@link Footnote} representing a footnote placed at the bottom of the page.
