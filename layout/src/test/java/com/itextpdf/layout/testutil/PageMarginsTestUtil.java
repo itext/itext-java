@@ -145,4 +145,33 @@ public final class PageMarginsTestUtil {
         }
         return new PageMarginBoxes(elements);
     }
+
+    /**
+     * Creates a PageMarginBox with given content on each side.
+     * Null sides are omitted.
+     *
+     * @param top content for the top margin box
+     * @param bottom content for the bottom margin box
+     * @param left content for the left margin box
+     * @param right content for the right margin box
+     * @return a PageMarginBox containing the specified margin box sides
+     */
+    public static PageMarginBoxes getMarginBoxesWithContent(Div top, Div bottom,
+            Div left, Div right) {
+        List<PageMarginContent> elements = new ArrayList<>();
+        if (top != null) {
+            elements.add(new PageMarginContent(MarginBoxName.TOP, top));
+        }
+        if (bottom != null) {
+            elements.add(new PageMarginContent(MarginBoxName.BOTTOM, bottom));
+        }
+        if (left != null) {
+            elements.add(new PageMarginContent(MarginBoxName.LEFT, left));
+        }
+        if (right != null) {
+            elements.add(new PageMarginContent(MarginBoxName.RIGHT, right));
+        }
+        return new PageMarginBoxes(elements);
+    }
+
 }

@@ -235,10 +235,10 @@ public class PageMarginBoxes {
         float rightMargin = rightMinMaxWidth == null ? document.getRightMargin() : rightMinMaxWidth.getMinWidth();
         Rectangle topBBox = top == null ? new Rectangle(0,
                 pageSize.getTop() - document.getTopMargin(), pageSize.getWidth(), document.getTopMargin())
-                : top.getOccupiedArea().getBBox();
+                : (top.getOccupiedArea() == null ? new Rectangle(0, 0) : top.getOccupiedArea().getBBox());
         Rectangle bottomBBox = bottom == null ?
                 new Rectangle(0, 0, pageSize.getWidth(), document.getBottomMargin())
-                : bottom.getOccupiedArea().getBBox();
+                : (bottom.getOccupiedArea() == null ? new Rectangle(0, 0) : bottom.getOccupiedArea().getBBox());
 
         if (topM != null) {
             topM.setRectangle(new Rectangle(leftMargin, topBBox.getY(),
