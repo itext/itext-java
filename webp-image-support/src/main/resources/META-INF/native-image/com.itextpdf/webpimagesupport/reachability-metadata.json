@@ -1,0 +1,837 @@
+{
+  "reflection": [
+    {
+      "type": "java.lang.Module",
+      "methods": [
+        {
+          "name": "getDescriptor",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "com.itextpdf.webpimagesupport.WebPLoader",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.AWTEvent",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.AlphaComposite",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.Color",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.Component",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.Font",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.Insets",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.Toolkit",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.desktop.UserSessionEvent$Reason",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.event.InputEvent",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.geom.AffineTransform",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.geom.Path2D",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.geom.Path2D$Float",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.image.BufferedImage",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.image.ColorConvertOp",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.image.ColorModel",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.image.IndexColorModel",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.image.Raster",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.image.SampleModel",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.image.SinglePixelPackedSampleModel",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.SunHints",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.Win32GraphicsEnvironment",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.image.BufImgSurfaceData$ICMColorData",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.image.ByteComponentRaster",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.image.IntegerComponentRaster",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.image.SunVolatileImage",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.image.VolatileSurfaceManager",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.windows.WComponentPeer",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.windows.WDesktopPeer",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.windows.WObjectPeer",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.awt.windows.WToolkit",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.Disposer",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.InvalidPipeException",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.NullSurfaceData",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.SunGraphics2D",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.SurfaceData",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.Blit",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.BlitBg",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.CompositeType",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.DrawGlyphList",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.DrawGlyphListAA",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.DrawGlyphListLCD",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.DrawLine",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.DrawParallelogram",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.DrawPath",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.DrawPolygons",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.DrawRect",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.FillParallelogram",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.FillPath",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.FillRect",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.FillSpans",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.GraphicsPrimitive",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.GraphicsPrimitiveMgr",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.GraphicsPrimitive[]",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.MaskBlit",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.MaskFill",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.ScaledBlit",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.SurfaceType",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.TransformHelper",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.loops.XORComposite",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.marlin.DMarlinRenderingEngine",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.pipe.Region",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.pipe.RegionIterator",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.java2d.windows.WindowsFlags",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "sun.launcher.LauncherHelper",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "com.twelvemonkeys.imageio.color.ProfileDeferralActivator$Spi",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "com.twelvemonkeys.imageio.stream.BufferedFileImageInputStreamSpi",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "com.twelvemonkeys.imageio.stream.BufferedInputStreamImageInputStreamSpi",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "com.twelvemonkeys.imageio.stream.BufferedRAFImageInputStreamSpi",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.awt.GraphicsEnvironment",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.lang.Boolean",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.lang.Class",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.lang.Module",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.lang.System",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.util.concurrent.ForkJoinPool",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.util.function.Consumer",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "java.util.stream.Stream",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "javax.imageio.spi.ImageReaderSpi",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    },
+    {
+      "type": "javax.imageio.spi.ImageWriterSpi",
+      "allDeclaredMethods": true,
+      "allDeclaredFields": true,
+      "allDeclaredConstructors": true,
+      "jniAccessible": true,
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      }
+    }
+  ],
+
+  "resources": [
+    {
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      },
+      "module": "java.desktop",
+      "glob": "sun/java2d/cmm/profiles/LINEAR_RGB.pf"
+    },
+    {
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      },
+      "module": "java.desktop",
+      "glob": "sun/java2d/cmm/profiles/sRGB.pf"
+    },
+    {
+      "condition": {
+        "typeReached": "com.itextpdf.webpimagesupport.WebPImageData"
+      },
+      "bundle": "sun.awt.resources.awt"
+    }
+  ]
+
+}
