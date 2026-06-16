@@ -22,11 +22,11 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
-import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
  * <h2>How it is configured</h2>
  * <p>A configured handler can be set on {@link ReaderProperties} and will be used by {@link PdfReader} when opening
  * a document.
+ *
+ * <p>Note that {@link MemoryLimitsAwareHandler} must not be shared between different {@link PdfDocument} instances.
  *
  * @see ReaderProperties#setMemoryLimitsAwareHandler(MemoryLimitsAwareHandler)
  * @see MemoryLimitsAwareException
@@ -80,7 +82,7 @@ public class MemoryLimitsAwareHandler {
      * Creates a {@link MemoryLimitsAwareHandler} with calculated memory limits
      * for decompression and xref structures based on the provided document size.
      *
-     * @param documentSize the size of the document (in bytes).
+     * @param documentSize the size of the document (in bytes)
      */
     public MemoryLimitsAwareHandler(long documentSize) {
         this((int) calculateDefaultParameter(documentSize, SINGLE_SCALE_COEFFICIENT,
@@ -100,7 +102,7 @@ public class MemoryLimitsAwareHandler {
      * Creates a new instance of {@link MemoryLimitsAwareHandler} by copying settings from this instance
      * of {@link MemoryLimitsAwareHandler}.
      *
-     * @return a new instance of {@link MemoryLimitsAwareHandler}.
+     * @return a new instance of {@link MemoryLimitsAwareHandler}
      */
     public MemoryLimitsAwareHandler createNewInstance() {
         MemoryLimitsAwareHandler to = new MemoryLimitsAwareHandler();
@@ -118,22 +120,23 @@ public class MemoryLimitsAwareHandler {
     /**
      * Returns the maximum allowed size (in bytes) of a single decompressed PDF stream.
      *
-     * @return maximum allowed size of a single decompressed stream in bytes.
+     * @return maximum allowed size of a single decompressed stream in bytes
      */
     public int getMaxSizeOfSingleDecompressedPdfStream() {
         return maxSizeOfSingleDecompressedPdfStream;
     }
 
     /**
-     * Sets the maximum allowed size which can be occupied by a single decompressed pdf stream.
+     * Sets the maximum allowed size which can be occupied by a single decompressed PDF stream.
      * This value correlates with maximum heap size. This value should not exceed limit of the heap size.
      *
-     * <p>iText will throw an exception if during decompression a pdf stream which was identified as
+     * <p>iText will throw an exception if during decompression a PDF stream which was identified as
      * requiring memory limits awareness occupies more memory than allowed.
      *
      * @param maxSizeOfSingleDecompressedPdfStream the maximum allowed size which can be occupied by a single
-     *                                             decompressed pdf stream.
-     * @return this {@link MemoryLimitsAwareHandler} instance.
+     *                                             decompressed PDF stream
+     *
+     * @return this {@link MemoryLimitsAwareHandler} instance
      * @see MemoryLimitsAwareHandler#isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray)
      */
     public MemoryLimitsAwareHandler setMaxSizeOfSingleDecompressedPdfStream(int maxSizeOfSingleDecompressedPdfStream) {
@@ -142,7 +145,7 @@ public class MemoryLimitsAwareHandler {
     }
 
     /**
-     * Gets the maximum allowed size which can be occupied by all decompressed pdf streams.
+     * Gets the maximum allowed size which can be occupied by all decompressed PDF streams.
      *
      * @return the maximum allowed size value which streams may occupy
      */
@@ -151,16 +154,20 @@ public class MemoryLimitsAwareHandler {
     }
 
     /**
-     * Sets the maximum allowed size which can be occupied by all decompressed pdf streams.
+     * Sets the maximum allowed size which can be occupied by all decompressed PDF streams.
      * This value can be limited by the maximum expected PDF file size when it's completely decompressed.
      * Setting this value correlates with the maximum processing time spent on document reading
      *
-     * <p>iText will throw an exception if during decompression pdf streams which were identified as
+     * <p>iText will throw an exception if during decompression of PDF streams which were identified as
      * requiring memory limits awareness occupy more memory than allowed.
      *
-     * @param maxSizeOfDecompressedPdfStreamsSum he maximum allowed size which can be occupied by all decompressed pdf
-     *                                           streams.
-     * @return this {@link MemoryLimitsAwareHandler} instance.
+     * <p>
+     * Note that if a PDF stream is decompressed multiple times, it is counted multiple times for this limit.
+     *
+     * @param maxSizeOfDecompressedPdfStreamsSum he maximum allowed size which can be occupied by all decompressed PDF
+     *                                           streams
+     *
+     * @return this {@link MemoryLimitsAwareHandler} instance
      * @see MemoryLimitsAwareHandler#isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray)
      */
     public MemoryLimitsAwareHandler setMaxSizeOfDecompressedPdfStreamsSum(long maxSizeOfDecompressedPdfStreamsSum) {
@@ -173,24 +180,20 @@ public class MemoryLimitsAwareHandler {
      * memory limits awareness during decompression.
      *
      * @param filters is an {@link PdfArray} of names of filters
-     * @return true if PDF stream is suspicious and false otherwise
+     *
+     * @return {@code true} if PDF stream is suspicious and {@code false} otherwise
+     *
+     * @deprecated to be made protected and accept stream dictionary instead of {@link PdfArray} of filters
      */
+    @Deprecated
     public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
-        final HashSet<PdfName> filterSet = new HashSet<>();
-        for (int index = 0; index < filters.size(); index++) {
-            final PdfName filterName = filters.getAsName(index);
-            if (!filterSet.add(filterName)) {
-                return true;
-            }
-        }
-
-        return false;
+        return true;
     }
 
     /**
      * Gets maximum number of elements in xref structure.
      *
-     * @return maximum number of elements in xref structure.
+     * @return maximum number of elements in xref structure
      */
     public int getMaxNumberOfElementsInXrefStructure() {
         return maxNumberOfElementsInXrefStructure;
@@ -199,8 +202,11 @@ public class MemoryLimitsAwareHandler {
     /**
      * Gets maximum page size.
      *
-     * @return maximum page size.
+     * @return maximum page size
+     *
+     * @deprecated in favor of {@link MemoryLimitsAwareHandler#setMaxSizeOfDecompressedPdfStreamsSum}
      */
+    @Deprecated
     public long getMaxXObjectsSizePerPage() {
         return maxXObjectsSizePerPage;
     }
@@ -208,8 +214,11 @@ public class MemoryLimitsAwareHandler {
     /**
      * Sets maximum page size.
      *
-     * @param maxPageSize maximum page size.
+     * @param maxPageSize maximum page size
+     *
+     * @deprecated in favor of {@link MemoryLimitsAwareHandler#setMaxSizeOfDecompressedPdfStreamsSum}
      */
+    @Deprecated
     public void setMaxXObjectsSizePerPage(long maxPageSize) {
         this.maxXObjectsSizePerPage = maxPageSize;
     }
@@ -217,7 +226,7 @@ public class MemoryLimitsAwareHandler {
     /**
      * Sets maximum number of elements in xref structure.
      *
-     * @param maxNumberOfElementsInXrefStructure maximum number of elements in xref structure.
+     * @param maxNumberOfElementsInXrefStructure maximum number of elements in xref structure
      */
     public void setMaxNumberOfElementsInXrefStructure(int maxNumberOfElementsInXrefStructure) {
         this.maxNumberOfElementsInXrefStructure = maxNumberOfElementsInXrefStructure;
@@ -226,7 +235,7 @@ public class MemoryLimitsAwareHandler {
     /**
      * Performs a check of possible extension of xref structure.
      *
-     * @param requestedCapacity capacity to which we need to expand xref array.
+     * @param requestedCapacity capacity to which we need to expand xref array
      */
     public void checkIfXrefStructureExceedsTheLimit(int requestedCapacity) {
         // Objects in xref structures are using 1-based indexes, so to store maxNumberOfElementsInXrefStructure
@@ -236,8 +245,17 @@ public class MemoryLimitsAwareHandler {
         }
     }
 
-    public void checkIfPageSizeExceedsTheLimit(long totalXObjectsSize) {
-        if (totalXObjectsSize > maxXObjectsSizePerPage) {
+    /**
+     * Checks if page size limit is exceeded.
+     *
+     * @param totalPageSize total size of the read page content
+     *
+     * @deprecated in favor of {@link MemoryLimitsAwareHandler#setMaxSizeOfDecompressedPdfStreamsSum}. Also get rid of
+     * its usage in {@link com.itextpdf.kernel.pdf.canvas.parser.PdfCanvasProcessor}
+     */
+    @Deprecated
+    public void checkIfPageSizeExceedsTheLimit(long totalPageSize) {
+        if (totalPageSize > maxXObjectsSizePerPage) {
             throw new MemoryLimitsAwareException(KernelExceptionMessageConstant.TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT);
         }
     }
@@ -245,9 +263,9 @@ public class MemoryLimitsAwareHandler {
     /**
      * Calculate max number of elements allowed in xref table based on the size of the document, achieving max limit at 100MB.
      *
-     * @param documentSizeInBytes document size in bytes.
+     * @param documentSizeInBytes document size in bytes
      *
-     * @return calculated limit.
+     * @return calculated limit
      */
     protected static int calculateMaxElementsInXref(long documentSizeInBytes) {
         final int maxDocSizeForMaxLimit = MAX_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE / MIN_LIMIT_FOR_NUMBER_OF_ELEMENTS_IN_XREF_STRUCTURE;
@@ -256,10 +274,11 @@ public class MemoryLimitsAwareHandler {
     }
 
     /**
-     * Considers the number of bytes which are occupied by the decompressed pdf stream.
+     * Considers the number of bytes which are occupied by the decompressed PDF stream.
      * If memory limits have not been faced, throws an exception.
      *
-     * @param numOfOccupiedBytes the number of bytes which are occupied by the decompressed pdf stream.
+     * @param numOfOccupiedBytes the number of bytes which are occupied by the decompressed PDF stream
+     *
      * @return this {@link MemoryLimitsAwareHandler} instance.
      * @see MemoryLimitsAwareException
      */
@@ -267,17 +286,18 @@ public class MemoryLimitsAwareHandler {
         if (considerCurrentPdfStream && memoryUsedForCurrentPdfStreamDecompression < numOfOccupiedBytes) {
             memoryUsedForCurrentPdfStreamDecompression = numOfOccupiedBytes;
             if (memoryUsedForCurrentPdfStreamDecompression > maxSizeOfSingleDecompressedPdfStream) {
-                throw new MemoryLimitsAwareException(
-                        KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED);
+                throw new MemoryLimitsAwareException(MessageFormatUtil.format(
+                        KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                        maxSizeOfSingleDecompressedPdfStream / 1024 / 1024 + "MB"));
             }
         }
         return this;
     }
 
     /**
-     * Begins handling of current pdf stream decompression.
+     * Begins handling of current PDF stream decompression.
      *
-     * @return this {@link MemoryLimitsAwareHandler} instance.
+     * @return this {@link MemoryLimitsAwareHandler} instance
      */
     MemoryLimitsAwareHandler beginDecompressedPdfStreamProcessing() {
         ensureCurrentStreamIsReset();
@@ -289,14 +309,15 @@ public class MemoryLimitsAwareHandler {
      * Ends handling of current pdf stream decompression.
      * If memory limits have not been faced, throws an exception.
      *
-     * @return this {@link MemoryLimitsAwareHandler} instance.
+     * @return this {@link MemoryLimitsAwareHandler} instance
      * @see MemoryLimitsAwareException
      */
     MemoryLimitsAwareHandler endDecompressedPdfStreamProcessing() {
         allMemoryUsedForDecompression += memoryUsedForCurrentPdfStreamDecompression;
         if (allMemoryUsedForDecompression > maxSizeOfDecompressedPdfStreamsSum) {
-            throw new MemoryLimitsAwareException(
-                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED);
+            throw new MemoryLimitsAwareException(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                    maxSizeOfDecompressedPdfStreamsSum / 1024 / 1024 + "MB"));
         }
         ensureCurrentStreamIsReset();
         considerCurrentPdfStream = false;

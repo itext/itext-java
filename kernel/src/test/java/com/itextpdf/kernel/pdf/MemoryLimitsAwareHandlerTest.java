@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -70,15 +71,15 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
         MemoryLimitsAwareHandler customHandler = new MemoryLimitsAwareHandler() {
             @Override
             public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
-                return true;
+                return false;
             }
         };
 
         PdfArray filters = new PdfArray();
         filters.add(PdfName.FlateDecode);
 
-        Assertions.assertFalse(defaultHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters));
-        Assertions.assertTrue(customHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters));
+        Assertions.assertTrue(defaultHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters));
+        Assertions.assertFalse(customHandler.isMemoryLimitsAwarenessRequiredOnDecompression(filters));
     }
 
     @Test
@@ -220,7 +221,9 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
     }
 
     private static void testSingleStream(MemoryLimitsAwareHandler handler) {
-        String expectedExceptionMessage = KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED;
+        String expectedExceptionMessage = MessageFormatUtil.format(
+                KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                handler.getMaxSizeOfSingleDecompressedPdfStream() / 1024 / 1024 + "MB");
         int expectedFailureIndex = 10;
         String occuredExceptionMessage = null;
 
@@ -243,7 +246,9 @@ public class MemoryLimitsAwareHandlerTest extends ExtendedITextTest {
     }
 
     private static void testMultipleStreams(MemoryLimitsAwareHandler handler) {
-        String expectedExceptionMessage = KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED;
+        String expectedExceptionMessage = MessageFormatUtil.format(
+                KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                handler.getMaxSizeOfDecompressedPdfStreamsSum() / 1024 / 1024 + "MB");
         int expectedFailureIndex = 10;
         String occuredExceptionMessage = null;
 

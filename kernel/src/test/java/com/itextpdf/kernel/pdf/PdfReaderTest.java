@@ -333,14 +333,18 @@ public class PdfReaderTest extends ExtendedITextTest {
     public void exponentialXObjectLoopTest() throws IOException {
         String fileName = SOURCE_FOLDER + "exponentialXObjectLoop.pdf";
         MemoryLimitsAwareHandler memoryLimitsAwareHandler = new MemoryLimitsAwareHandler();
-        //setting the limit to 25mb for xobjects
-        memoryLimitsAwareHandler.setMaxXObjectsSizePerPage(10*1024L*256L);
+
+        // This is a real integration test which will produce the same error on default limits.
+        // The only reason to set a smaller limit here is to speed up the test because
+        // on default 100MB it takes 5s+ to execute it.
+        memoryLimitsAwareHandler.setMaxSizeOfDecompressedPdfStreamsSum(2 * 1024 * 1024);
         PdfReader pdfReader = new PdfReader(fileName, new ReaderProperties().setMemoryLimitsAwareHandler(memoryLimitsAwareHandler));
         PdfDocument document = new PdfDocument(pdfReader);
         Exception exception = Assertions.assertThrows(MemoryLimitsAwareException.class,
                 () -> PdfTextExtractor.getTextFromPage(document.getPage(1)));
-        Assertions.assertEquals(KernelExceptionMessageConstant.TOTAL_XOBJECT_SIZE_ONE_PAGE_EXCEEDED_THE_LIMIT,
-                exception.getMessage());
+        Assertions.assertEquals(MessageFormatUtil.format(
+                KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                memoryLimitsAwareHandler.getMaxSizeOfDecompressedPdfStreamsSum() / 1024 / 1024 + "MB"), exception.getMessage());
     }
 
     @Test

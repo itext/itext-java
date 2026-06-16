@@ -165,12 +165,12 @@ public final class KernelExceptionMessageConstant {
     public static final String DOCUMENT_HAS_NO_PDF_CATALOG_OBJECT = "Document has no PDF Catalog object.";
     public static final String DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY = "Document does not contain valid lang entry.";
     public static final String DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED = ""
-            + "During decompression multiple streams in sum occupied more memory than allowed. Please either check "
-            + "your pdf or increase the allowed single decompressed pdf stream maximum size value by setting "
+            + "During decompression multiple streams in sum occupied more memory than allowed ({0}). Please either check "
+            + "your pdf or increase the allowed multiple decompressed pdf streams maximum size value by setting "
             + "the appropriate parameter of ReaderProperties's MemoryLimitsAwareHandler.";
     public static final String DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED = "During "
-            + "decompression a single stream occupied more memory than allowed. Please either check your pdf or "
-            + "increase the allowed multiple decompressed pdf streams maximum size value by setting the appropriate "
+            + "decompression a single stream occupied more memory than allowed ({0}). Please either check your pdf or "
+            + "increase the allowed single decompressed pdf stream maximum size value by setting the appropriate "
             + "parameter of ReaderProperties's MemoryLimitsAwareHandler.";
     public static final String DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_THAN_MAX_INTEGER_VALUE = "During "
             + "decompression a single stream occupied more than a maximum integer value. Please check your pdf.";

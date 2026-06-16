@@ -23,9 +23,11 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.utils.FileUtil;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -132,70 +134,9 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assertions.assertThrows(MemoryLimitsAwareException.class,
                     () -> PdfReader.decodeBytes(b, stream)
             );
-            Assertions.assertEquals(KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
-        }
-    }
-
-    @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE)
-    })
-    public void oneFilterCustomMemoryHandlerSingleTest() throws IOException {
-        MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler();
-        handler.setMaxSizeOfSingleDecompressedPdfStream(20);
-
-        try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(SOURCE_FOLDER + "timing.pdf",
-                        new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
-                new PdfWriter(new ByteArrayOutputStream()))) {
-
-            PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
-            byte[] b = stream.getBytes(false);
-
-            PdfArray array = new PdfArray();
-            stream.put(PdfName.Filter, array);
-
-            // Limit is reached, but the stream has no filters. Therefore, we don't consider it to be suspicious.
-            Assertions.assertEquals(51, PdfReader.decodeBytes(b, stream).length);
-
-            // Limit is reached, but the stream has only one filter. Therefore, we don't consider it to be suspicious.
-            array.add(PdfName.Fl);
-            Assertions.assertEquals(40, PdfReader.decodeBytes(b, stream).length);
-        }
-    }
-
-    @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.INVALID_INDIRECT_REFERENCE),
-            @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE)
-    })
-    public void overriddenMemoryHandlerAllStreamsAreSuspiciousTest() throws IOException {
-        MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler() {
-            @Override
-            public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
-                return true;
-            }
-        };
-        handler.setMaxSizeOfSingleDecompressedPdfStream(20);
-
-        try (PdfDocument pdfDocument = new PdfDocument(
-                new PdfReader(SOURCE_FOLDER + "timing.pdf",
-                        new ReaderProperties().setMemoryLimitsAwareHandler(handler)),
-                new PdfWriter(new ByteArrayOutputStream()))) {
-
-            PdfStream stream = pdfDocument.getFirstPage().getContentStream(0);
-            byte[] b = stream.getBytes(false);
-
-            PdfArray array = new PdfArray();
-            stream.put(PdfName.Filter, array);
-            array.add(PdfName.Fl);
-
-            // Limit is reached, and the stream with one filter is considered to be suspicious.
-            Exception e = Assertions.assertThrows(MemoryLimitsAwareException.class,
-                    () -> PdfReader.decodeBytes(b, stream)
-            );
-            Assertions.assertEquals(KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
+            Assertions.assertEquals(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                    handler.getMaxSizeOfSingleDecompressedPdfStream() / 1024 / 1024 + "MB"), e.getMessage());
         }
     }
 
@@ -205,7 +146,6 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE)
     })
     public void overriddenMemoryHandlerNoStreamsAreSuspiciousTest() throws IOException {
-
         MemoryLimitsAwareHandler handler = new MemoryLimitsAwareHandler() {
             @Override
             public boolean isMemoryLimitsAwarenessRequiredOnDecompression(PdfArray filters) {
@@ -268,7 +208,10 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assertions.assertThrows(MemoryLimitsAwareException.class,
                     () -> PdfReader.decodeBytes(b, stream)
             );
-            Assertions.assertEquals(KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
+            Assertions.assertEquals(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                    handler.getMaxSizeOfDecompressedPdfStreamsSum() / 1024 / 1024 + "MB"),
+                    e.getMessage());
         }
     }
 
@@ -289,7 +232,9 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assertions.assertThrows(MemoryLimitsAwareException.class,
                     () -> pdfDocument.getFirstPage().getContentBytes()
             );
-            Assertions.assertEquals(KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
+            Assertions.assertEquals(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_MULTIPLE_STREAMS_IN_SUM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                    handler.getMaxSizeOfDecompressedPdfStreamsSum() / 1024 / 1024 + "MB"), e.getMessage());
         }
     }
 
@@ -310,7 +255,35 @@ public class PdfReaderDecodeTest extends ExtendedITextTest {
             Exception e = Assertions.assertThrows(MemoryLimitsAwareException.class,
                     () -> pdfDocument.getFirstPage().getContentBytes()
             );
-            Assertions.assertEquals(KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED, e.getMessage());
+            Assertions.assertEquals(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                    handler.getMaxSizeOfSingleDecompressedPdfStream() / 1024 / 1024 + "MB"), e.getMessage());
+        }
+    }
+
+    @Test
+    public void pngDecodeStreamTest() throws IOException {
+        // This test demonstrates a possible false positive
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "png5000x5000.pdf"))) {
+            PdfImageXObject imageXObject = pdfDoc.getPage(1).getResources().getImage(new PdfName("Im0"));
+            Exception e = Assertions.assertThrows(MemoryLimitsAwareException.class,
+                    () -> imageXObject.getImageBytes());
+            Assertions.assertEquals(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                          "20MB"),
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void flateBombTest() throws IOException {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pageStreamFlateBomb.pdf"))) {
+            Exception e = Assertions.assertThrows(MemoryLimitsAwareException.class,
+                    () -> pdfDoc.getPage(1).getContentBytes());
+            Assertions.assertEquals(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                            "23MB"),
+                    e.getMessage());
         }
     }
 }

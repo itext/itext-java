@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 
@@ -102,16 +103,21 @@ class MemoryLimitsAwareOutputStream extends ByteArrayOutputStream {
                     KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_THAN_MAX_INTEGER_VALUE);
         }
         if (minCapacity > maxStreamSize) {
-            throw new MemoryLimitsAwareException(
-                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED);
+            throw new MemoryLimitsAwareException(MessageFormatUtil.format(
+                    KernelExceptionMessageConstant.DURING_DECOMPRESSION_SINGLE_STREAM_OCCUPIED_MORE_MEMORY_THAN_ALLOWED,
+                    maxStreamSize / 1024 / 1024 + "MB"));
         }
 
         // calculate new capacity
-        int oldCapacity = buf.length;
-        int newCapacity = oldCapacity << 1;
-        if (newCapacity < 0 || newCapacity - minCapacity < 0) {
-            // overflow
-            newCapacity = minCapacity;
+        int newCapacity = buf.length;
+        // Here we "predict" how buf is going to grow in ByteArrayOutputStream
+        // to not allow it to grow over maxStreamSize
+        if (newCapacity < minCapacity) {
+            newCapacity = buf.length << 1;
+            if (newCapacity < 0 || newCapacity - minCapacity < 0) {
+                // overflow
+                newCapacity = minCapacity;
+            }
         }
 
         if (newCapacity - maxStreamSize > 0) {

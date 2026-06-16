@@ -63,6 +63,7 @@ public class ReaderProperties {
      * This could be either user or owner password.
      *
      * @param password the password to use in order to open the document
+     *
      * @return this {@link ReaderProperties} instance
      */
     public ReaderProperties setPassword(byte[] password) {
@@ -73,7 +74,7 @@ public class ReaderProperties {
 
     /**
      * Defines the certificate which will be used if the document is encrypted with public key
-     * encryption (see Pdf 1.7 specification, 7.6.4. Public-Key Security Handlers)
+     * encryption (see Pdf 1.7 specification, 7.6.4. Public-Key Security Handlers).
      *
      * @param certificate               the recipient {@link Certificate},
      *                                  serves as recipient identifier
@@ -81,6 +82,7 @@ public class ReaderProperties {
      * @param certificateKeyProvider    the certificate key provider id
      *                                  for {@link java.security.Security#getProvider(String)}
      * @param externalDecryptionProcess the external decryption process to be used
+     *
      * @return this {@link ReaderProperties} instance
      */
     public ReaderProperties setPublicKeySecurityParams(Certificate certificate, Key certificateKey,
@@ -96,11 +98,12 @@ public class ReaderProperties {
 
     /**
      * Defines the certificate which will be used if the document is encrypted with public key
-     * encryption (see Pdf 1.7 specification, 7.6.4. Public-Key Security Handlers)
+     * encryption (see Pdf 1.7 specification, 7.6.4. Public-Key Security Handlers).
      *
      * @param certificate               the recipient {@link Certificate},
      *                                  serves as recipient identifier
      * @param externalDecryptionProcess the external decryption process to be used
+     *
      * @return this {@link ReaderProperties} instance
      */
     public ReaderProperties setPublicKeySecurityParams(Certificate certificate,
@@ -115,7 +118,11 @@ public class ReaderProperties {
     /**
      * Sets the memory handler which will be used to handle decompressed PDF streams.
      *
+     * <p>
+     * Note that {@link MemoryLimitsAwareHandler} must not be shared between different {@link PdfDocument} instances.
+     *
      * @param memoryLimitsAwareHandler the memory handler which will be used to handle decompressed PDF streams
+     *
      * @return this {@link ReaderProperties} instance
      */
     public ReaderProperties setMemoryLimitsAwareHandler(MemoryLimitsAwareHandler memoryLimitsAwareHandler) {

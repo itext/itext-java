@@ -76,6 +76,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -150,6 +151,9 @@ public class CompareTool {
 
     private String gsExec;
     private String compareExec;
+
+    // Cache with the streams for out and cmp documents
+    private final Map<PdfStream, byte[]> decompressedStreams = new IdentityHashMap<>();
 
     static {
         MEMORY_FIRST_WRITER_DISABLED = "true".equalsIgnoreCase(
@@ -1814,8 +1818,18 @@ public class CompareTool {
     private boolean compareStreamsExtended(PdfStream outStream, PdfStream cmpStream, ObjectPath currentPath, CompareResult compareResult) {
         final boolean toDecodeOut = PdfName.FlateDecode.equals(outStream.get(PdfName.Filter));
         final boolean toDecodeCmp = PdfName.FlateDecode.equals(cmpStream.get(PdfName.Filter));
-        byte[] outStreamBytes = outStream.getBytes(toDecodeOut);
-        byte[] cmpStreamBytes = cmpStream.getBytes(toDecodeCmp);
+
+        byte[] outStreamBytes = decompressedStreams.get(outStream);
+        if (outStreamBytes == null) {
+            outStreamBytes = outStream.getBytes(toDecodeOut);
+            decompressedStreams.put(outStream, outStreamBytes);
+        }
+        byte[] cmpStreamBytes = decompressedStreams.get(cmpStream);
+        if (cmpStreamBytes == null) {
+            cmpStreamBytes = cmpStream.getBytes(toDecodeCmp);
+            decompressedStreams.put(cmpStream, cmpStreamBytes);
+        }
+
         if (Arrays.equals(outStreamBytes, cmpStreamBytes)) {
             return compareDictionariesExtended(outStream, cmpStream, currentPath, compareResult);
         } else {
