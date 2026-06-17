@@ -31,7 +31,6 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.GhostscriptHelper;
 import com.itextpdf.io.util.ImageMagickHelper;
 import com.itextpdf.io.util.UrlUtil;
-import com.itextpdf.io.util.XmlUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -2230,7 +2229,7 @@ public class CompareTool {
          *                                      an unrecoverable error occurs during the course of the transformation.
          */
         public void writeReportToXml(OutputStream stream) throws ParserConfigurationException, TransformerException {
-            final Document xmlReport = XmlUtil.initNewXmlDocument();
+            final Document xmlReport = XmlUtils.initNewXmlDocument();
             Element root = xmlReport.createElement("report");
             Element errors = xmlReport.createElement("errors");
             errors.setAttribute("count", String.valueOf(differences.size()));

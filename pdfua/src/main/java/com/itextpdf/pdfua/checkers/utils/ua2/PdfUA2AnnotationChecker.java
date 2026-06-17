@@ -36,7 +36,7 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import com.itextpdf.kernel.utils.XmlProcessorCreator;
+import com.itextpdf.kernel.utils.XmlUtils;
 import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
 import com.itextpdf.pdfua.checkers.utils.ContextAwareTagTreeIteratorHandler;
 import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
@@ -49,7 +49,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -165,9 +164,8 @@ public class PdfUA2AnnotationChecker {
             return richText;
         }
         try {
-            DocumentBuilder db = XmlProcessorCreator.createSafeDocumentBuilder(false, false);
-            return parseRichText(db.parse(new ByteArrayInputStream(
-                    richText.getBytes(StandardCharsets.UTF_8))));
+            return parseRichText(XmlUtils.initXmlDocument(
+                    new ByteArrayInputStream(richText.getBytes(StandardCharsets.UTF_8))));
         } catch (Exception e) {
             throw new PdfException(e.getMessage(), e);
         }
