@@ -27,6 +27,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.element.GridContainer;
 import com.itextpdf.layout.element.List;
 import com.itextpdf.layout.element.ListItem;
 import com.itextpdf.layout.element.Paragraph;
@@ -42,9 +43,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Tag("UnitTest")
 public class ListRendererUnitTest extends RendererUnitTest {
@@ -137,6 +136,50 @@ public class ListRendererUnitTest extends RendererUnitTest {
 
         Assertions.assertEquals(LayoutResult.NOTHING, result.getStatus());
         Assertions.assertNotNull(result.getCauseOfNothing());
+    }
+
+    @Test
+    public void insideListSymbolIsNotDuplicatedOnRepeatedGridLayoutTest() {
+        ListRenderer listRenderer = createInsideListRenderer();
+        GridContainerRenderer gridRenderer = new GridContainerRenderer(new GridContainer());
+        gridRenderer.addChild(listRenderer);
+
+        Document document = createDummyDocument();
+        gridRenderer.setParent(document.getRenderer());
+        gridRenderer.layout(createLayoutContext(500, 500));
+        int childrenCountAfterFirstLayout = getFirstParagraphChildrenCount(listRenderer);
+        gridRenderer.layout(createLayoutContext(500, 500));
+
+        Assertions.assertEquals(childrenCountAfterFirstLayout, getFirstParagraphChildrenCount(listRenderer));
+    }
+
+    @Test
+    public void insideListSymbolIsNotDuplicatedOnRepeatedFlexLayoutTest() {
+        ListRenderer listRenderer = createInsideListRenderer();
+        FlexContainerRenderer flexRenderer = new FlexContainerRenderer(new Div());
+        flexRenderer.addChild(listRenderer);
+
+        Document document = createDummyDocument();
+        flexRenderer.setParent(document.getRenderer());
+        flexRenderer.layout(createLayoutContext(500, 500));
+        int childrenCountAfterFirstLayout = getFirstParagraphChildrenCount(listRenderer);
+        flexRenderer.layout(createLayoutContext(500, 500));
+
+        Assertions.assertEquals(childrenCountAfterFirstLayout, getFirstParagraphChildrenCount(listRenderer));
+    }
+
+    private static ListRenderer createInsideListRenderer() {
+        List list = new List();
+        list.setListSymbol(new Text("*"));
+        list.setProperty(Property.LIST_SYMBOL_POSITION, ListSymbolPosition.INSIDE);
+        list.add((ListItem) new ListItem().add(new Paragraph("List item")));
+        return (ListRenderer) list.createRendererSubTree();
+    }
+
+    private static int getFirstParagraphChildrenCount(ListRenderer listRenderer) {
+        IRenderer listItemRenderer = listRenderer.getChildRenderers().get(0);
+        IRenderer paragraphRenderer = listItemRenderer.getChildRenderers().get(0);
+        return paragraphRenderer.getChildRenderers().size();
     }
 
 
