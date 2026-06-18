@@ -1,0 +1,8 @@
+[
+  {
+    "condition": {
+      "typeReachable": "com.itextpdf.layout.renderer.RootRenderer"
+    },
+    "name": "com.itextpdf.layout.utils.RegisterDefaultDiContainer"
+  }
+]
