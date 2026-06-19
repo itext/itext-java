@@ -226,11 +226,8 @@ public class GridContainerRenderer extends BlockRenderer {
             layoutResult.getOverflowRenderers().add(overflowRenderer);
             layoutResult.setCauseOfNothing(cellResult.getCauseOfNothing());
             return cell.getRowStart();
-        }
-
-        // PARTIAL + FULL result handling
-        layoutResult.getSplitRenderers().add(cell.getValue());
-        if (cellResult.getStatus() == LayoutResult.PARTIAL) {
+        } else if (cellResult.getStatus() == LayoutResult.PARTIAL) {
+            layoutResult.getSplitRenderers().add(cellResult.getSplitRenderer());
             overflowRenderer.setProperty(Property.GRID_COLUMN_START, cell.getColumnStart() + 1);
             overflowRenderer.setProperty(Property.GRID_COLUMN_END, cell.getColumnEnd() + 1);
             int rowStart = cell.getRowStart() + 1;
@@ -259,9 +256,11 @@ public class GridContainerRenderer extends BlockRenderer {
             }
 
             return notLayoutedRow;
+        } else {
+            // FULL result
+            layoutResult.getSplitRenderers().add(cell.getValue());
+            return Integer.MAX_VALUE;
         }
-
-        return Integer.MAX_VALUE;
     }
 
     //Init cell layout context based on a parent context and calculated cell layout area from grid sizing algorithm.
