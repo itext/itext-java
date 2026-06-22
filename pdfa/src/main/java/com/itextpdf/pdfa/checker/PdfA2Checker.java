@@ -31,6 +31,7 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.image.Jpeg2000ImageData;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.font.PdfType3Font;
@@ -172,7 +173,7 @@ public class PdfA2Checker extends PdfA1Checker {
     private boolean currentFillCsIsIccBasedCMYK = false;
     private boolean currentStrokeCsIsIccBasedCMYK = false;
 
-    private final Map<PdfName, PdfArray> separationColorSpaces = new HashMap<>();
+    private final SeparationColorMap separationColorMap = new SeparationColorMap();
 
     /**
      * Creates a PdfA2Checker with the required conformance
@@ -1178,11 +1179,10 @@ public class PdfA2Checker extends PdfA1Checker {
     }
 
     private void checkSeparationCS(PdfArray separation) {
-        if (separationColorSpaces.containsKey(separation.getAsName(0))) {
+        if (separationColorMap.contains(separation)) {
             boolean altCSIsTheSame;
             boolean tintTransformIsTheSame;
-
-            PdfArray sameNameSeparation = separationColorSpaces.get(separation.getAsName(0));
+            PdfArray sameNameSeparation = separationColorMap.get(separation);
             PdfObject cs1 = separation.get(2);
             PdfObject cs2 = sameNameSeparation.get(2);
             altCSIsTheSame = isAltCSIsTheSame(cs1, cs2);
@@ -1201,7 +1201,7 @@ public class PdfA2Checker extends PdfA1Checker {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.TINT_TRANSFORM_AND_ALTERNATE_SPACE_SHALL_BE_THE_SAME_FOR_THE_ALL_SEPARATION_CS_WITH_THE_SAME_NAME);
             }
         } else {
-            separationColorSpaces.put(separation.getAsName(0), separation);
+            separationColorMap.put(separation);
         }
     }
 
@@ -1284,6 +1284,48 @@ public class PdfA2Checker extends PdfA1Checker {
     private static final class UpdateCanvasGraphicsState extends CanvasGraphicsState {
         public UpdateCanvasGraphicsState(PdfDictionary extGStateDict) {
             updateFromExtGState(new PdfExtGState(extGStateDict));
+        }
+    }
+
+    private static final class SeparationColorMap {
+        private final Map<PdfName, PdfArray> separationColorsMap = new HashMap<>();
+
+        public SeparationColorMap() {
+            //empty constructor
+        }
+
+        public boolean contains(PdfArray separationColor) {
+            final PdfName key = getUniqueIdentifierOfSeparation(separationColor);
+            if (key == null) {
+                return false;
+            }
+            return separationColorsMap.containsKey(key);
+        }
+
+        public void put(PdfArray separationColor) {
+            final PdfName key = getUniqueIdentifierOfSeparation(separationColor);
+            if (key == null) {
+                return;
+            }
+            separationColorsMap.put(key, separationColor);
+        }
+
+        public PdfArray get(PdfArray separationColor) {
+            final PdfName key = getUniqueIdentifierOfSeparation(separationColor);
+            if (key == null) {
+                return null;
+            }
+            return separationColorsMap.get(key);
+        }
+
+        private static PdfName getUniqueIdentifierOfSeparation(PdfArray separation) {
+            // From PDF spec
+            // A Separation colour space is defined as follows:
+            // [/Separation name alternateSpace tintTransform]
+            if (separation.size() >= 2) {
+                return separation.getAsName(1);
+            }
+            throw new PdfException(PdfaExceptionMessageConstant.SEPARATION_COLOR_ARRAY_DOES_NOT_ADHERE_TO_PDF_SPEC);
         }
     }
 }
