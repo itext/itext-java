@@ -88,6 +88,8 @@ public final class FormsLogMessageConstants {
 
     public static final String ANNOTATION_WITHOUT_SUBTYPE_NOT_COPIED = "Encountered an annotation without "
             + "a Subtype property: {0}. If there is a corresponding Acroform field, it will not be copied";
+    public static final String FORMFIELD_DOES_NOT_CONTAIN_AS = "Form field {0} does not contain an /AS value. " +
+            "Flattened appearance might be unexpected.";
 
     private FormsLogMessageConstants() {
     }

@@ -773,9 +773,16 @@ public class PdfAcroForm extends PdfObjectWrapper<PdfDictionary> {
                         xObject = new PdfFormXObject((PdfStream) normal);
                     } else if (normal.isDictionary()) {
                         PdfName as = fieldObject.getAsName(PdfName.AS);
-                        if (((PdfDictionary) normal).getAsStream(as) != null) {
-                            xObject = new PdfFormXObject(((PdfDictionary) normal).getAsStream(as));
-                            xObject.makeIndirect(document);
+                        if (as == null) {
+                            LOGGER.warn(MessageFormatUtil.format(FormsLogMessageConstants.FORMFIELD_DOES_NOT_CONTAIN_AS,
+                                    formField.getFieldName()));
+                        } else {
+                            final PdfDictionary normalDict = (PdfDictionary) normal;
+                            final PdfStream asStream = normalDict.getAsStream(as);
+                            if (asStream != null) {
+                                xObject = new PdfFormXObject(asStream);
+                                xObject.makeIndirect(document);
+                            }
                         }
                     }
 
