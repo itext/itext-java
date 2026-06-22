@@ -45,6 +45,7 @@ public final class ImageDataFactory {
     }
 
     static {
+        // Android-Conversion-Skip-Block-Start
         try {
             Class<?> type = getWebPClass(WEBP_PACKAGE + WEBP_APPLIER);
             if (type != null) {
@@ -57,6 +58,7 @@ public final class ImageDataFactory {
         } catch (Exception ignored) {
             // do nothing
         }
+        // Android-Conversion-Skip-Block-End
         if (webpLoader == null) {
             webpLoader = new NoWebPLoader();
         }
