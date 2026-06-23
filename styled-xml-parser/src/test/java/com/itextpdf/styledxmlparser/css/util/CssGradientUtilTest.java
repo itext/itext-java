@@ -2440,9 +2440,9 @@ public class CssGradientUtilTest extends ExtendedITextTest {
         Assertions.assertEquals(isCentralRotationStrategy, builder.isCentralRotationAngleStrategy());
         Assertions.assertEquals(rotateVectorAngle, builder.getRotateVectorAngle(), 1e-10);
         Assertions.assertEquals(gradientStrategy, builder.getGradientStrategy());
-        Assertions.assertEquals(spreadMethod, builder.getSpreadMethod());
+        Assertions.assertEquals(spreadMethod, builder.getSpread());
 
-        List<GradientColorStop> actualStops = builder.getColorStops();
+        List<GradientColorStop> actualStops = builder.getStopColors();
         Assertions.assertEquals(stops.size(), actualStops.size());
         for (int i = 0; i < stops.size(); ++i) {
             Assertions.assertEquals(stops.get(i), actualStops.get(i));

@@ -26,7 +26,6 @@ import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder.GradientStrategy;
@@ -133,57 +132,77 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
     @Test
     public void backgroundImageWithLinearGradientTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder).build();
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder()
+                .setLinearGradientBuilder(gradientBuilder)
+                .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradient", backgroundImage);
     }
 
     @Test
     public void backgroundImageWithLinearGradientAndPositionTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder)
-                .setBackgroundPosition(new BackgroundPosition().setYShift(UnitValue.createPointValue(30)).setXShift(UnitValue.createPointValue(50))).build();
+                .setBackgroundPosition(new BackgroundPosition()
+                        .setYShift(UnitValue.createPointValue(30))
+                        .setXShift(UnitValue.createPointValue(50)))
+                .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndPosition", backgroundImage);
     }
 
     @Test
     public void backgroundImageWithLinearGradientAndRepeatTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage backgroundImage = new BackgroundImage.Builder()
-                .setLinearGradientBuilder(gradientBuilder).setBackgroundRepeat(new BackgroundRepeat()).build();
+                .setLinearGradientBuilder(gradientBuilder)
+                .setBackgroundRepeat(new BackgroundRepeat())
+                .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndRepeat", backgroundImage);
     }
 
     @Test
     public void backgroundImageWithLinearGradientAndPositionAndRepeatTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder).setBackgroundRepeat(new BackgroundRepeat())
-                .setBackgroundPosition(new BackgroundPosition().setYShift(UnitValue.createPointValue(30)).setXShift(UnitValue.createPointValue(50))).build();
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder()
+                .setLinearGradientBuilder(gradientBuilder)
+                .setBackgroundRepeat(new BackgroundRepeat())
+                .setBackgroundPosition(new BackgroundPosition()
+                        .setYShift(UnitValue.createPointValue(30))
+                        .setXShift(UnitValue.createPointValue(50)))
+                .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndPositionAndRepeat", backgroundImage);
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel =
+                    LogLevelConstants.WARN)
     })
     public void backgroundImageWithLinearGradientAndTransformTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder).build();
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder()
+                .setLinearGradientBuilder(gradientBuilder)
+                .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndTransform", backgroundImage, Math.PI / 4);
     }
 
@@ -717,17 +736,24 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     private void blendModeTest(BlendMode blendMode) throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.BLACK.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.WHITE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder).build();
-        AbstractLinearGradientBuilder topGradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .setGradientDirectionAsStrategy(GradientStrategy.TO_RIGHT)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.BLACK.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.WHITE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder()
+                .setLinearGradientBuilder(gradientBuilder)
+                .build();
+        StrategyBasedLinearGradientBuilder topGradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .setGradientDirectionAsStrategy(GradientStrategy.TO_RIGHT)
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage topBackgroundImage =
-                new BackgroundImage.Builder().setLinearGradientBuilder(topGradientBuilder).setBackgroundBlendMode(blendMode).build();
+                new BackgroundImage.Builder()
+                        .setLinearGradientBuilder(topGradientBuilder)
+                        .setBackgroundBlendMode(blendMode)
+                        .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndBlendMode_"
                 + blendMode.getPdfRepresentation().getValue(), Arrays.asList(topBackgroundImage, backgroundImage));
     }

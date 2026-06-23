@@ -132,7 +132,7 @@ public final class CssGradientUtil {
         StrategyBasedLinearGradientBuilder builder = new StrategyBasedLinearGradientBuilder();
 
         GradientSpreadMethod gradientSpreadMethod = isRepeating ? GradientSpreadMethod.REPEAT : GradientSpreadMethod.PAD;
-        builder.setSpreadMethod(gradientSpreadMethod);
+        builder.setSpread(gradientSpreadMethod);
 
         int colorStopListStartIndex;
         String firstArgument = argumentsList.get(0);
@@ -182,7 +182,7 @@ public final class CssGradientUtil {
                                     ? new UnitValue(UnitValue.PERCENT, 100f)
                                     : null;
                     lastCreatedStopColor = createStopColor(rgba, offset);
-                    builder.addColorStop(lastCreatedStopColor);
+                    builder.addStopColor(lastCreatedStopColor);
                 } else {
                     for (int j = 1; j < elementsList.size(); ++j) {
                         if (CssTypesValidationUtils.isNumber(elementsList.get(j))) {
@@ -198,7 +198,7 @@ public final class CssGradientUtil {
                                     .format(StyledXMLParserException.INVALID_GRADIENT_COLOR_STOP_VALUE, argument));
                         }
                         lastCreatedStopColor = createStopColor(rgba, offset);
-                        builder.addColorStop(lastCreatedStopColor);
+                        builder.addStopColor(lastCreatedStopColor);
                     }
                 }
             } else {

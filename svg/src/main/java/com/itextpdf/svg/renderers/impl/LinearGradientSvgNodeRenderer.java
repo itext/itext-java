@@ -60,9 +60,9 @@ public class LinearGradientSvgNodeRenderer extends AbstractGradientSvgNodeRender
         LinearGradientBuilder builder = new LinearGradientBuilder();
 
         for (GradientColorStop stopColor : parseStops(parentOpacity)) {
-            builder.addColorStop(stopColor);
+            builder.addStopColor(stopColor);
         }
-        builder.setSpreadMethod(parseSpreadMethod());
+        builder.setSpread(parseSpreadMethod());
 
         boolean isObjectBoundingBox = isObjectBoundingBoxUnits();
 

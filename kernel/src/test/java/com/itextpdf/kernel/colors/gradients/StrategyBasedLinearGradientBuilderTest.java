@@ -25,6 +25,7 @@ package com.itextpdf.kernel.colors.gradients;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
 import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -47,17 +48,19 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
+    private static final String SOURCE_FOLDER =
+            "./src/test/resources/com/itextpdf/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
+    private static final String DESTINATION_FOLDER =
+            TestUtil.getOutputPath() + "/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        createOrClearDestinationFolder(destinationFolder);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @AfterAll
     public static void afterClass() {
-        CompareTool.cleanup(destinationFolder);
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -69,151 +72,151 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void noRectangleTest() {
         Assertions.assertNull(new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE))
                 .buildColor(null, null, null));
     }
 
     @Test
     public void noStrategyProvidedTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("noStrategyProvided.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderToRightTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_RIGHT)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderToRight.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderToLeftTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_LEFT)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderToLeft.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderToBottomTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderToBottom.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderToBottomRightTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM_RIGHT)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderToBottomRight.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderToBottomLeftTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM_LEFT)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderToBottomLeft.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderToTopTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderToTop.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderToTopRightTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderToTopRight.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderToTopLeftTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_LEFT)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderToTopLeft.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderZeroAngleTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsCentralRotationAngle(0d)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderZeroAngle.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderPositiveAngleTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsCentralRotationAngle(Math.PI/3)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderPositiveAngle.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderNegativeAngleTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsCentralRotationAngle(-Math.PI/3)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("builderNegativeAngle.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderWithNoneSpreadingAndCanvasTransformTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_RIGHT)
-                .setSpreadMethod(GradientSpreadMethod.NONE)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+                .setSpread(GradientSpreadMethod.NONE)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
 
         AffineTransform canvasTransform = AffineTransform.getTranslateInstance(50, -50);
         canvasTransform.scale(0.8, 1.1);
@@ -223,55 +226,55 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderWithToCornerAndInnerStopsAndNoneSpreadingTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT)
-                .setSpreadMethod(GradientSpreadMethod.NONE)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
+                .setSpread(GradientSpreadMethod.NONE)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("toCornerInnerStopsNoneSpreading.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderWithToCornerAndInnerStopsAndPadSpreadingTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT)
-                .setSpreadMethod(GradientSpreadMethod.PAD)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
+                .setSpread(GradientSpreadMethod.PAD)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("toCornerInnerStopsPadSpreading.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderWithToCornerAndInnerStopsAndReflectSpreadingTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT)
-                .setSpreadMethod(GradientSpreadMethod.REFLECT)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
+                .setSpread(GradientSpreadMethod.REFLECT)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("toCornerInnerStopsReflectSpreading.pdf", null, gradientBuilder);
     }
 
     @Test
     public void builderWithToCornerAndInnerStopsAndRepeatSpreadingTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT)
-                .setSpreadMethod(GradientSpreadMethod.REPEAT)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
+                .setSpread(GradientSpreadMethod.REPEAT)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.4, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 0.5d, OffsetType.RELATIVE));
 
         generateAndComparePdfs("toCornerInnerStopsRepeatSpreading.pdf", null, gradientBuilder);
     }
 
     private void generateAndComparePdfs(String fileName, AffineTransform transform,
-            AbstractLinearGradientBuilder gradientBuilder) throws InterruptedException, IOException {
-        String outPdfPath = destinationFolder + fileName;
+            AbstractGradientBuilder<Point> gradientBuilder) throws InterruptedException, IOException {
+        String outPdfPath = DESTINATION_FOLDER + fileName;
         try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdfPath))) {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
@@ -287,6 +290,6 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
         }
 
         Assertions.assertNull(new CompareTool()
-                .compareByContent(outPdfPath, sourceFolder + "cmp_" + fileName, destinationFolder, "diff"));
+                .compareByContent(outPdfPath, SOURCE_FOLDER + "cmp_" + fileName, DESTINATION_FOLDER, "diff"));
     }
 }

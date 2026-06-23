@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.colors.gradients;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -39,6 +40,7 @@ public class LinearGradientBuilder extends AbstractLinearGradientBuilder {
      * Constructs the builder instance
      */
     public LinearGradientBuilder() {
+        // empty constructor
     }
 
     /**
@@ -48,6 +50,7 @@ public class LinearGradientBuilder extends AbstractLinearGradientBuilder {
      * @param y0 the y coordinate of the vector start
      * @param x1 the x coordinate of the vector end
      * @param y1 the y coordinate of the vector end
+     *
      * @return the current builder instance
      */
     public LinearGradientBuilder setGradientVector(double x0, double y0, double x1, double y1) {
@@ -64,6 +67,7 @@ public class LinearGradientBuilder extends AbstractLinearGradientBuilder {
      * color for shapes on PDF canvas). This transformation mainly used for color lines skewing.
      *
      * @param transformation the {@link AffineTransform} representing the transformation to set
+     *
      * @return the current builder instance
      */
     public LinearGradientBuilder setCurrentSpaceToGradientVectorSpaceTransformation(
@@ -72,14 +76,38 @@ public class LinearGradientBuilder extends AbstractLinearGradientBuilder {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Point[] getGradientVector(Rectangle targetBoundingBox, AffineTransform contextTransform) {
-        return new Point[] {this.coordinates[0].getLocation(), this.coordinates[1].getLocation()};
+    protected Tuple2<Point[], AffineTransform> getGradientVectorWithTransform(Rectangle targetBoundingBox,
+            AffineTransform contextTransform) {
+        return new Tuple2<Point[], AffineTransform>(
+                new Point[] {this.coordinates[0].getLocation(), this.coordinates[1].getLocation()},
+                this.transformation
+        );
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated use {@link AbstractGradientBuilder#getGradientVectorWithTransform(Rectangle, AffineTransform)}
+     */
+    @Deprecated
+    @Override
+    public Point[] getGradientVector(Rectangle targetBoundingBox, AffineTransform contextTransform) {
+        return getGradientVectorWithTransform(targetBoundingBox, contextTransform).getFirst();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated use {@link AbstractGradientBuilder#getGradientVectorWithTransform(Rectangle, AffineTransform)}
+     */
+    @Deprecated
     @Override
     public AffineTransform getCurrentSpaceToGradientVectorSpaceTransformation(
             Rectangle targetBoundingBox, AffineTransform contextTransform) {
-        return this.transformation;
+        return getGradientVectorWithTransform(targetBoundingBox, contextTransform).getSecond();
     }
 }
