@@ -239,8 +239,10 @@ public final class Property {
     public static final int ADD_MARKED_CONTENT_TEXT = 137;
     public static final int TREAT_AS_CONTINUOUS_CONTAINER = 140;
     public static final int TREAT_AS_CONTINUOUS_CONTAINER_RESULT = 141;
-
     public static final int IGNORE_AREA_AND_SECTION_BREAKS = 161;
+    public static final int TOP_CALCULATED = 162;
+    public static final int LEFT_CALCULATED = 163;
+    public static final int POSITIONED_ELEMENT_WRAPPED = 164;
 
     /**
      * Some properties must be passed to {@link IPropertyContainer} objects that

@@ -27,6 +27,7 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.TextUtil;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.numbering.EnglishAlphabetNumbering;
@@ -35,6 +36,7 @@ import com.itextpdf.kernel.numbering.RomanNumbering;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -268,8 +270,13 @@ public class ListRenderer extends BlockRenderer {
         ListRenderer newOverflowRenderer = (ListRenderer) createOverflowRenderer(LayoutResult.PARTIAL);
         newOverflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
         // ListItemRenderer for not rendered children of firstListItemRenderer
-        newOverflowRenderer.childRenderers.
-                add(((ListItemRenderer) firstListItemRenderer).createOverflowRenderer(LayoutResult.PARTIAL));
+        if (firstListItemRenderer instanceof ListItemRenderer) {
+            newOverflowRenderer.childRenderers.
+                    add(((ListItemRenderer) firstListItemRenderer).createOverflowRenderer(LayoutResult.PARTIAL));
+        } else {
+            throw new PdfException(MessageFormatUtil.format(
+                    LayoutExceptionMessageConstant.INCORRECT_LIST_CHILD, firstListItemRenderer.getClass()));
+        }
         newOverflowRenderer.childRenderers.
                 addAll(splitRenderer.getChildRenderers().subList(1, splitRenderer.getChildRenderers().size()));
 
@@ -373,7 +380,17 @@ public class ListRenderer extends BlockRenderer {
                 childRenderer.setProperty(marginToSet, UnitValue.createPointValue(calculatedMargin));
 
                 IRenderer symbolRenderer = symbolRenderers.get(listItemNum++);
-                ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
+                if (childRenderer instanceof ListItemRenderer) {
+                    ((ListItemRenderer) childRenderer).addSymbolRenderer(symbolRenderer, maxSymbolWidth);
+                } else if (childRenderer instanceof AbsolutelyPositionedRenderer &&
+                        ((AbsolutelyPositionedRenderer) childRenderer).getWrappedRenderer()
+                                instanceof ListItemRenderer) {
+                    ((ListItemRenderer) ((AbsolutelyPositionedRenderer) childRenderer).getWrappedRenderer())
+                            .addSymbolRenderer(symbolRenderer, maxSymbolWidth);
+                } else {
+                    throw new PdfException(MessageFormatUtil.format(
+                            LayoutExceptionMessageConstant.INCORRECT_LIST_CHILD, childRenderer.getClass()));
+                }
                 if (symbolRenderer != null) {
                     LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
                     if (taggingHelper != null) {

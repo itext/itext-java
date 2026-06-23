@@ -191,6 +191,13 @@ public class LineRenderer extends AbstractRenderer {
             Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(),
                     layoutBox.getWidth() - curWidth, layoutBox.getHeight());
 
+            if (childRenderer instanceof AbsolutelyPositionedRenderer) {
+                childRenderer.layout(new LayoutContext(
+                        new LayoutArea(layoutContext.getArea().getPageNumber(), bbox), wasParentsHeightClipped));
+                ++childPos;
+                continue;
+            }
+
             RenderingMode childRenderingMode = childRenderer.<RenderingMode>getProperty(Property.RENDERING_MODE);
 
             if (TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(childRenderer)

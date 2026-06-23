@@ -193,6 +193,8 @@ public abstract class AbstractRenderer implements IRenderer {
         // https://www.webkit.org/blog/116/webcore-rendering-iii-layout-basics
         // "The rules can be summarized as follows:"...
         Integer positioning = renderer.<Integer>getProperty(Property.POSITION);
+        boolean verticalCoordinateMissing = AbstractRenderer.verticalCoordinateMissingForAbsolutePosition(renderer);
+        boolean horizontalCoordinateMissing = AbstractRenderer.horizontalCoordinateMissingForAbsolutePosition(renderer);
         if (positioning == null || positioning == LayoutPosition.RELATIVE || positioning == LayoutPosition.STATIC) {
             childRenderers.add(renderer);
         } else if (positioning == LayoutPosition.FIXED) {
@@ -206,12 +208,8 @@ public abstract class AbstractRenderer implements IRenderer {
                 root.addChild(renderer);
             }
         } else if (positioning == LayoutPosition.ABSOLUTE) {
-            // For position=absolute, if none of the top, bottom, left, right properties are provided,
-            // the content should be displayed in the flow of the current content, not overlapping it.
-            // The behavior is just if it would be statically positioned except it does not affect other elements
             AbstractRenderer positionedParent = this;
-            boolean noPositionInfo = AbstractRenderer.noAbsolutePositionInfo(renderer);
-            while (!positionedParent.isPositioned() && !noPositionInfo) {
+            while (!positionedParent.isPositioned() && !(verticalCoordinateMissing && horizontalCoordinateMissing)) {
                 IRenderer parent = positionedParent.parent;
                 if (parent instanceof AbstractRenderer) {
                     positionedParent = (AbstractRenderer) parent;
@@ -226,6 +224,21 @@ public abstract class AbstractRenderer implements IRenderer {
             }
         }
 
+        if (positioning != null && positioning == LayoutPosition.ABSOLUTE) {
+            // For position=absolute, if properties for certain coordinates are not provided
+            // (there is no strict coordinates where to place the element),
+            // the content should be displayed as if it's in the flow of the current content.
+            // The behavior is just as if it would be statically positioned except it does not affect other elements.
+            if (!(this instanceof FlexContainerRenderer || this instanceof GridContainerRenderer
+                    || this instanceof GridItemRenderer)) {
+                // Static positioning is different for Flex and Grid layout, that's why for now it's not calculated.
+                if (verticalCoordinateMissing || horizontalCoordinateMissing) {
+                    childRenderers.add(new AbsolutelyPositionedRenderer(
+                            renderer, verticalCoordinateMissing, horizontalCoordinateMissing));
+                }
+            }
+        }
+
         // Fetch positioned renderers from non-positioned child because they might be stuck there
         // because child's parent was null previously
         if (renderer instanceof AbstractRenderer && !((AbstractRenderer) renderer).isPositioned() &&
@@ -236,7 +249,9 @@ public abstract class AbstractRenderer implements IRenderer {
             int pos = 0;
             List<IRenderer> childPositionedRenderers = ((AbstractRenderer) renderer).positionedRenderers;
             while (pos < childPositionedRenderers.size()) {
-                if (AbstractRenderer.noAbsolutePositionInfo(childPositionedRenderers.get(pos))) {
+                if (AbstractRenderer.verticalCoordinateMissingForAbsolutePosition(childPositionedRenderers.get(pos))
+                        && AbstractRenderer.horizontalCoordinateMissingForAbsolutePosition(
+                                childPositionedRenderers.get(pos))) {
                     pos++;
                 } else {
                     positionedRenderers.add(childPositionedRenderers.get(pos));
@@ -329,6 +344,23 @@ public abstract class AbstractRenderer implements IRenderer {
      * {@inheritDoc}
      */
     @Override
+    public <T1> T1 getOwnProperty(int property) {
+        return (T1) properties.get(property);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T1> T1 getProperty(int property, T1 defaultValue) {
+        T1 result = this.<T1>getProperty(property);
+        return result != null ? result : defaultValue;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <T1> T1 getProperty(int key) {
         Object property;
         if ((property = properties.get(key)) != null || properties.containsKey(key)) {
@@ -345,23 +377,6 @@ public abstract class AbstractRenderer implements IRenderer {
             return (T1) property;
         }
         return modelElement != null ? modelElement.<T1>getDefaultProperty(key) : (T1) (Object) null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T1> T1 getOwnProperty(int property) {
-        return (T1) properties.get(property);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T1> T1 getProperty(int property, T1 defaultValue) {
-        T1 result = this.<T1>getProperty(property);
-        return result != null ? result : defaultValue;
     }
 
     /**
@@ -520,38 +535,6 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Apply {@code Property.OPACITY} property if specified by setting corresponding values in graphic state dictionary
-     * opacity will be applied to all elements drawn after calling this method and before
-     * calling {@link AbstractRenderer#endElementOpacityApplying(DrawContext)}.
-     *
-     * @param drawContext the context (canvas, document, etc.) of this drawing operation.
-     */
-    protected void beginElementOpacityApplying(DrawContext drawContext) {
-        Float opacity = this.getPropertyAsFloat(Property.OPACITY);
-        if (opacity != null && opacity < 1f) {
-            PdfExtGState extGState = new PdfExtGState();
-            extGState
-                    .setStrokeOpacity((float) opacity)
-                    .setFillOpacity((float) opacity);
-            drawContext.getCanvas()
-                    .saveState()
-                    .setExtGState(extGState);
-        }
-    }
-
-    /**
-     * {@link AbstractRenderer#beginElementOpacityApplying(DrawContext)}.
-     *
-     * @param drawContext the context (canvas, document, etc.) of this drawing operation.
-     */
-    protected void endElementOpacityApplying(DrawContext drawContext) {
-        Float opacity = this.getPropertyAsFloat(Property.OPACITY);
-        if (opacity != null && opacity < 1f) {
-            drawContext.getCanvas().restoreState();
-        }
-    }
-
-    /**
      * Draws a background layer if it is defined by a key {@link Property#BACKGROUND}
      * in either the layout element or this {@link IRenderer} itself.
      *
@@ -592,6 +575,63 @@ public abstract class AbstractRenderer implements IRenderer {
             if (isTagged) {
                 drawContext.getCanvas().closeTag();
             }
+        }
+    }
+
+    /**
+     * Create a {@link PdfFormXObject} with the given area and containing a linear gradient inside.
+     *
+     * @param linearGradientBuilder the linear gradient builder
+     * @param xObjectArea the result object area
+     * @param document the pdf document
+     *
+     * @return the xObject with a specified area and a linear gradient
+     */
+    public static PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
+                                               Rectangle xObjectArea, PdfDocument document) {
+        Rectangle formBBox = new Rectangle(0, 0, xObjectArea.getWidth(), xObjectArea.getHeight());
+        PdfFormXObject xObject = new PdfFormXObject(formBBox);
+        if (linearGradientBuilder != null) {
+            Color gradientColor = linearGradientBuilder.buildColor(formBBox, null, document);
+            if (gradientColor != null) {
+                new PdfCanvas(xObject, document)
+                        .setColor(gradientColor, true)
+                        .rectangle(formBBox)
+                        .fill();
+            }
+        }
+        return xObject;
+    }
+
+    /**
+     * Apply {@code Property.OPACITY} property if specified by setting corresponding values in graphic state dictionary
+     * opacity will be applied to all elements drawn after calling this method and before
+     * calling {@link AbstractRenderer#endElementOpacityApplying(DrawContext)}.
+     *
+     * @param drawContext the context (canvas, document, etc.) of this drawing operation.
+     */
+    protected void beginElementOpacityApplying(DrawContext drawContext) {
+        Float opacity = this.getPropertyAsFloat(Property.OPACITY);
+        if (opacity != null && opacity < 1f) {
+            PdfExtGState extGState = new PdfExtGState();
+            extGState
+                    .setStrokeOpacity((float) opacity)
+                    .setFillOpacity((float) opacity);
+            drawContext.getCanvas()
+                    .saveState()
+                    .setExtGState(extGState);
+        }
+    }
+
+    /**
+     * {@link AbstractRenderer#beginElementOpacityApplying(DrawContext)}.
+     *
+     * @param drawContext the context (canvas, document, etc.) of this drawing operation.
+     */
+    protected void endElementOpacityApplying(DrawContext drawContext) {
+        Float opacity = this.getPropertyAsFloat(Property.OPACITY);
+        if (opacity != null && opacity < 1f) {
+            drawContext.getCanvas().restoreState();
         }
     }
 
@@ -750,31 +790,6 @@ public abstract class AbstractRenderer implements IRenderer {
             ++counterX;
         }
         while (!backgroundImage.getRepeat().isNoRepeatOnXAxis() && (isCurrentOverlaps || isNextOverlaps));
-    }
-
-    /**
-     * Create a {@link PdfFormXObject} with the given area and containing a linear gradient inside.
-     *
-     * @param linearGradientBuilder the linear gradient builder
-     * @param xObjectArea the result object area
-     * @param document the pdf document
-     *
-     * @return the xObject with a specified area and a linear gradient
-     */
-    public static PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
-                                               Rectangle xObjectArea, PdfDocument document) {
-        Rectangle formBBox = new Rectangle(0, 0, xObjectArea.getWidth(), xObjectArea.getHeight());
-        PdfFormXObject xObject = new PdfFormXObject(formBBox);
-        if (linearGradientBuilder != null) {
-            Color gradientColor = linearGradientBuilder.buildColor(formBBox, null, document);
-            if (gradientColor != null) {
-                new PdfCanvas(xObject, document)
-                        .setColor(gradientColor, true)
-                        .rectangle(formBBox)
-                        .fill();
-            }
-        }
-        return xObject;
     }
 
     /**
@@ -1930,36 +1945,15 @@ public abstract class AbstractRenderer implements IRenderer {
                 reverse);
     }
 
-    /**
-     * Applies the given border box (borders) on the given rectangle
-     *
-     * @param rect a rectangle paddings will be applied on.
-     * @param borders the {@link Border borders} to be applied on the given rectangle
-     * @param reverse indicates whether the border box will be applied
-     * inside (in case of false) or outside (in case of false) the rectangle.
-     *
-     * @return a {@link Rectangle border box} of the renderer
-     */
-    protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
-        float topWidth = borders[0] != null ? borders[0].getWidth() : 0;
-        float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
-        float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
-        float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
-        return rect.applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
-    }
-
     protected void applyAbsolutePosition(Rectangle parentRect) {
         Float top = this.getPropertyAsFloat(Property.TOP);
         Float bottom = this.getPropertyAsFloat(Property.BOTTOM);
         Float left = this.getPropertyAsFloat(Property.LEFT);
         Float right = this.getPropertyAsFloat(Property.RIGHT);
 
-        if (left == null && right == null && BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
+        if (right == null && left == null &&
+                BaseDirection.RIGHT_TO_LEFT == this.<BaseDirection>getProperty(Property.BASE_DIRECTION)) {
             right = 0f;
-        }
-
-        if (top == null && bottom == null) {
-            top = 0f;
         }
 
         try {
@@ -1978,11 +1972,47 @@ public abstract class AbstractRenderer implements IRenderer {
             if (bottom != null) {
                 move(0, parentRect.getBottom() + (float) bottom - occupiedArea.getBBox().getBottom());
             }
+
+            if (left == null && right == null) {
+                Float leftCalculated = this.getPropertyAsFloat(Property.LEFT_CALCULATED);
+                if (leftCalculated == null) {
+                    move(parentRect.getLeft() - occupiedArea.getBBox().getLeft(), 0);
+                } else {
+                    move((float) leftCalculated - occupiedArea.getBBox().getX(), 0);
+                }
+            }
+
+            if (top == null && bottom == null) {
+                Float topCalculated = this.getPropertyAsFloat(Property.TOP_CALCULATED);
+                if (topCalculated == null) {
+                    move(0, parentRect.getTop() - occupiedArea.getBBox().getTop());
+                } else {
+                    move(0, (float) topCalculated - occupiedArea.getBBox().getHeight() - occupiedArea.getBBox().getY());
+                }
+            }
         } catch (Exception exc) {
             Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
             logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
                     "Absolute positioning might be applied incorrectly."));
         }
+    }
+
+    /**
+     * Applies the given border box (borders) on the given rectangle
+     *
+     * @param rect a rectangle paddings will be applied on.
+     * @param borders the {@link Border borders} to be applied on the given rectangle
+     * @param reverse indicates whether the border box will be applied
+     * inside (in case of false) or outside (in case of false) the rectangle.
+     *
+     * @return a {@link Rectangle border box} of the renderer
+     */
+    protected Rectangle applyBorderBox(Rectangle rect, Border[] borders, boolean reverse) {
+        float topWidth = borders[0] != null ? borders[0].getWidth() : 0;
+        float rightWidth = borders[1] != null ? borders[1].getWidth() : 0;
+        float bottomWidth = borders[2] != null ? borders[2].getWidth() : 0;
+        float leftWidth = borders[3] != null ? borders[3].getWidth() : 0;
+        return rect.applyMargins(topWidth, rightWidth, bottomWidth, leftWidth, reverse);
     }
 
     protected void applyRelativePositioningTranslation(boolean reverse) {
@@ -2539,8 +2569,12 @@ public abstract class AbstractRenderer implements IRenderer {
         return dummy.getWidth();
     }
 
-    static boolean noAbsolutePositionInfo(IRenderer renderer) {
-        return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM) && !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
+    static boolean verticalCoordinateMissingForAbsolutePosition(IRenderer renderer) {
+        return !renderer.hasProperty(Property.TOP) && !renderer.hasProperty(Property.BOTTOM);
+    }
+
+    static boolean horizontalCoordinateMissingForAbsolutePosition(IRenderer renderer) {
+        return !renderer.hasProperty(Property.LEFT) && !renderer.hasProperty(Property.RIGHT);
     }
 
     static Float getPropertyAsFloat(IRenderer renderer, int property) {
@@ -2871,6 +2905,19 @@ public abstract class AbstractRenderer implements IRenderer {
         } else {
             return true;
         }
+    }
+
+    boolean isRendererInSplitRendererTree(IRenderer positionedRenderer, IRenderer splitRenderer) {
+        for (IRenderer childRenderer : splitRenderer.getChildRenderers()) {
+            if (childRenderer instanceof AbsolutelyPositionedRenderer &&
+                    ((AbsolutelyPositionedRenderer) childRenderer).getWrappedRenderer() == positionedRenderer) {
+                return true;
+            }
+            if (isRendererInSplitRendererTree(positionedRenderer, childRenderer)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void removeThisFromParent(IRenderer toRemove) {

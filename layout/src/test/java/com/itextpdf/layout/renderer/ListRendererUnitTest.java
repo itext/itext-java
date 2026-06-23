@@ -23,6 +23,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
@@ -166,6 +167,44 @@ public class ListRendererUnitTest extends RendererUnitTest {
         flexRenderer.layout(createLayoutContext(500, 500));
 
         Assertions.assertEquals(childrenCountAfterFirstLayout, getFirstParagraphChildrenCount(listRenderer));
+    }
+
+    @Test
+    public void incorrectChildTypeThrows1Test() {
+        try (Document document = createDummyDocument()) {
+            List list = new List().setListSymbol("*");
+            ListRenderer listRenderer = new ListRenderer(list);
+            listRenderer.addChild(new DivRenderer(new Div()));
+            list.setNextRenderer(listRenderer);
+
+            String text = Assertions.assertThrows(PdfException.class, () -> document.add(list)).getMessage();
+            Assertions.assertTrue(text.contains("All children of a ListRenderer are suppose to be ListItemRenderer instances. Instead it was"));
+        }
+    }
+
+    @Test
+    public void incorrectChildTypeThrows2Test() {
+        try (Document document = createDummyDocument()) {
+            List list = new List().setListSymbol("*");
+            ListRenderer listRenderer = new ListRenderer(list);
+            listRenderer.addChild(new AbsolutelyPositionedRenderer(new DivRenderer(new Div()), false, false));
+            list.setNextRenderer(listRenderer);
+
+            String text = Assertions.assertThrows(PdfException.class, () -> document.add(list)).getMessage();
+            Assertions.assertTrue(text.contains("All children of a ListRenderer are suppose to be ListItemRenderer instances. Instead it was"));
+        }
+    }
+
+    @Test
+    public void incorrectChildTypeDoesntThrowTest() {
+        try (Document document = createDummyDocument()) {
+            List list = new List().setListSymbol("*");
+            ListRenderer listRenderer = new ListRenderer(list);
+            listRenderer.addChild(new AbsolutelyPositionedRenderer(new ListItemRenderer(new ListItem()), false, false));
+            list.setNextRenderer(listRenderer);
+
+            Assertions.assertDoesNotThrow(() -> document.add(list));
+        }
     }
 
     private static ListRenderer createInsideListRenderer() {

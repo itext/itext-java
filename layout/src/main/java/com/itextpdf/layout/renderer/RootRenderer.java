@@ -154,6 +154,8 @@ public abstract class RootRenderer extends AbstractRenderer {
                             currentAreaNeedsToBeUpdated = true;
                         }
                     }
+                    addedPositionedRenderers =
+                            layoutPositionedRenderersInStaticLoop(addedPositionedRenderers, result.getSplitRenderer());
                 } else if (result.getStatus() == LayoutResult.NOTHING && !clearanceOverflowsToNextPage) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         float imgHeight = result.getOverflowRenderer().getOccupiedArea().getBBox().getHeight();
@@ -247,31 +249,52 @@ public abstract class RootRenderer extends AbstractRenderer {
             }
         }
 
-        for (IRenderer addedPositionedRenderer : addedPositionedRenderers) {
-            positionedRenderers.add(addedPositionedRenderer);
-            renderer = positionedRenderers.get(positionedRenderers.size() - 1);
-            Integer positionedPageNumber = renderer.<Integer>getProperty(Property.PAGE_NUMBER);
-            if (positionedPageNumber == null) {
-                positionedPageNumber = currentArea.getPageNumber();
-            }
+        for (IRenderer positionedRenderer : addedPositionedRenderers) {
+            layoutPositionedRenderer(positionedRenderer);
+        }
+    }
 
-            LayoutArea layoutArea;
-            // For position=absolute, if none of the top, bottom, left, right properties are provided,
-            // the content should be displayed in the flow of the current content, not overlapping it.
-            // The behavior is just if it would be statically positioned except it does not affect other elements
-            if (Integer.valueOf(LayoutPosition.ABSOLUTE).equals(renderer.<Integer>getProperty(Property.POSITION)) && AbstractRenderer.noAbsolutePositionInfo(renderer)) {
-                layoutArea = new LayoutArea((int) positionedPageNumber, currentArea.getBBox().clone());
+    private List<IRenderer> layoutPositionedRenderersInStaticLoop(List<IRenderer> addedPositionedRenderers,
+                                                                  IRenderer splitRenderer) {
+        List<IRenderer> remainingAddedPositionedRenderers = new ArrayList<>();
+        for (IRenderer positionedRenderer : addedPositionedRenderers) {
+            if (positionedRenderer.hasProperty(Property.POSITIONED_ELEMENT_WRAPPED)
+                    && isRendererInSplitRendererTree(positionedRenderer, splitRenderer)) {
+                // Positioned renderer wrapper, if exists, was already layouted.
+                // It means we need to layout positioned renderer on the same page.
+                layoutPositionedRenderer(positionedRenderer);
             } else {
-                layoutArea = new LayoutArea((int) positionedPageNumber, initialCurrentArea.getBBox().clone());
+                remainingAddedPositionedRenderers.add(positionedRenderer);
             }
-            Rectangle fullBbox = layoutArea.getBBox().clone();
-            preparePositionedRendererAndAreaForLayout(renderer, fullBbox, layoutArea.getBBox());
-            renderer.layout(new PositionedLayoutContext(new LayoutArea(layoutArea.getPageNumber(), fullBbox), layoutArea));
+        }
+        return remainingAddedPositionedRenderers;
+    }
 
-            if (immediateFlush) {
-                flushSingleRenderer(renderer);
-                positionedRenderers.remove(positionedRenderers.size() - 1);
-            }
+    private void layoutPositionedRenderer(IRenderer positionedRenderer) {
+        positionedRenderers.add(positionedRenderer);
+        Integer positionedPageNumber = positionedRenderer.<Integer>getProperty(Property.PAGE_NUMBER);
+        if (positionedPageNumber == null) {
+            positionedPageNumber = currentArea.getPageNumber();
+        }
+
+        LayoutArea layoutArea;
+        // For position=absolute, if none of the top, bottom, left, right properties are provided,
+        // the content should be displayed in the flow of the current content, not overlapping it.
+        // The behavior is just if it would be statically positioned except it does not affect other elements
+        if (Integer.valueOf(LayoutPosition.ABSOLUTE).equals(positionedRenderer.<Integer>getProperty(Property.POSITION))
+                && AbstractRenderer.horizontalCoordinateMissingForAbsolutePosition(positionedRenderer)
+                && AbstractRenderer.verticalCoordinateMissingForAbsolutePosition(positionedRenderer)) {
+            layoutArea = new LayoutArea((int) positionedPageNumber, currentArea.getBBox().clone());
+        } else {
+            layoutArea = new LayoutArea((int) positionedPageNumber, initialCurrentArea.getBBox().clone());
+        }
+        Rectangle fullBbox = layoutArea.getBBox().clone();
+        preparePositionedRendererAndAreaForLayout(positionedRenderer, fullBbox, layoutArea.getBBox());
+        positionedRenderer.layout(
+                new PositionedLayoutContext(new LayoutArea(layoutArea.getPageNumber(), fullBbox), layoutArea));
+        if (immediateFlush) {
+            flushSingleRenderer(positionedRenderer);
+            positionedRenderers.remove(positionedRenderers.size() - 1);
         }
     }
 
