@@ -32,12 +32,9 @@ public class SharpenConfigCustomMembers {
                         "\n" +
                         "            Assembly ioAssembly = typeof(ImageDataFactory).GetAssembly();\n" +
                         "            try {\n" +
-                        "                Attribute customAttribute = ioAssembly.GetCustomAttribute(typeof( WebpImageSupportVersionAttribute));\n" +
-                        "                if (customAttribute is  WebpImageSupportVersionAttribute) {\n" +
-                        "                    string webPVersion = (( WebpImageSupportVersionAttribute) customAttribute).WebpImageSupportVersion;\n" +
-                        "                    string format = \"{0}, Version={1}, Culture=neutral, PublicKeyToken=8354ae6d2174ddca\";\n" +
-                        "                    classFullName = String.Format(format, partialName, webPVersion);\n" +
-                        "                }\n" +
+                        "                string webPVersion = ioAssembly.GetName().Version.ToString();\n" +
+                        "                string format = \"{0}, Version={1}, Culture=neutral, PublicKeyToken=8354ae6d2174ddca\";\n" +
+                        "                classFullName = String.Format(format, partialName, webPVersion);\n" +
                         "            } catch (Exception ignored) {\n" +
                         "            }\n" +
                         "\n" +
