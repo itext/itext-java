@@ -124,8 +124,9 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     @Override
-    public void close() {
-        super.close();
+    protected void flushOnClose() {
+        super.flushOnClose();
+
         document.getPdfDocument().removeEventHandler(marginBoxesHandler);
         if (!document.getPdfDocument().isClosed()) {
             for (int i = 1; i <= document.getPdfDocument().getNumberOfPages(); ++i) {

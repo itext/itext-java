@@ -28,6 +28,8 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
+import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.tagutils.WaitingTagsManager;
@@ -35,11 +37,10 @@ import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.ILargeElement;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.renderer.AbstractRenderer;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.SectionBreakRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +51,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The class is a helper which is used to correctly create structure
@@ -75,6 +79,22 @@ public class LayoutTaggingHelper {
     private final int RETVAL_NO_PARENT = -1;
     private final int RETVAL_PARENT_AND_KID_FINISHED = -2;
 
+    private int lastId = 0;
+
+    /**
+     * Instantiates a new {@link LayoutTaggingHelper} instance for managing layout-level tagging.
+     *
+     * <p>This helper maintains a tree of tagging hints that represent the logical structure of a PDF document
+     * and coordinates tag creation in the PDF structure tree. It automatically registers default tagging rules
+     * for standard roles (e.g., TABLE, THEAD, TFOOT, TH) based on the PDF version.
+     *
+     * @param document the PDF document being created or modified
+     * @param immediateFlush if {@code true}, parent tags will be flushed as soon as all their children are flushed;
+     *        if {@code false}, tag flushing is deferred until explicitly requested
+     *
+     * @see #releaseFinishedHints()
+     * @see #releaseAllHints()
+     */
     public LayoutTaggingHelper(PdfDocument document, boolean immediateFlush) {
         this.document = document;
         this.context = document.getTagStructureContext();
@@ -90,6 +110,18 @@ public class LayoutTaggingHelper {
         dummiesForPreExistingTags = new LinkedHashMap<>();
     }
 
+    /**
+     * Recursively registers tagging hints from a renderer tree, preserving the logical structure.
+     *
+     * <p>This utility method traverses the renderer hierarchy and calls {@link #addKidsHint(IPropertyContainer, Iterable)}
+     * for each renderer and its children, ensuring all parent-child relationships are captured in the tagging system.
+     *
+     * @param taggingHelper the helper instance managing tags
+     * @param rootRenderer the root renderer of the tree to process recursively
+     *
+     * @see #addKidsHint(IPropertyContainer, Iterable)
+     * @see IRenderer#getChildRenderers()
+     */
     public static void addTreeHints(LayoutTaggingHelper taggingHelper, IRenderer rootRenderer) {
         List<IRenderer> childRenderers = rootRenderer.getChildRenderers();
         if (childRenderers == null) {
@@ -99,17 +131,70 @@ public class LayoutTaggingHelper {
         for (IRenderer childRenderer : childRenderers) {
             addTreeHints(taggingHelper, childRenderer);
         }
+        if (rootRenderer instanceof AbstractRenderer) {
+            taggingHelper.addKidsHint(rootRenderer, ((AbstractRenderer) rootRenderer).getPositionenRenderers());
+            for (IRenderer childRenderer : ((AbstractRenderer) rootRenderer).getPositionenRenderers()) {
+                addTreeHints(taggingHelper, childRenderer);
+            }
+        }
 
     }
 
+    /**
+     * Retrieves an existing tagging hint key for the given container without creating one.
+     *
+     * <p>If no hint key has been created for this container, returns {@code null}.
+     * Use {@link #getOrCreateHintKey(IPropertyContainer)} if you need to ensure a hint exists.
+     *
+     * @param container the element or renderer to retrieve the hint for
+     * @return the {@link TaggingHintKey} associated with the container, or {@code null} if not yet created
+     *
+     * @see #getOrCreateHintKey(IPropertyContainer)
+     * @see Property#TAGGING_HINT_KEY
+     */
     public static TaggingHintKey getHintKey(IPropertyContainer container) {
         return container.<TaggingHintKey>getProperty(Property.TAGGING_HINT_KEY);
     }
 
+    /**
+     * Gets or creates a tagging hint key for the given container.
+     *
+     * <p>If a hint key already exists for this container, returns it. Otherwise, creates a new
+     * {@link TaggingHintKey}, stores it in the container's properties, and returns it.
+     *
+     * <p>For {@link ILargeElement}s that are not yet complete, the hint key is stored on the element itself
+     * rather than on the renderer, to preserve the hint across renderer recreation.
+     *
+     * <p>If the container's role is {@link StandardRoles#ARTIFACT}, the created hint is automatically
+     * marked as artifact and finished.
+     *
+     * @param container the element or renderer to get or create a hint for
+     * @return the existing or newly created {@link TaggingHintKey}
+     *
+     * @see #getHintKey(IPropertyContainer)
+     * @see TaggingHintKey
+     * @see Property#TAGGING_HINT_KEY
+     */
     public static TaggingHintKey getOrCreateHintKey(IPropertyContainer container) {
         return getOrCreateHintKey(container, true);
     }
 
+    /**
+     * Registers child hints for a pre-existing PDF tag (mapped via TagTreePointer).
+     *
+     * <p>This method is used when you have a pre-existing tag structure element (from a PDF that already
+     * contains tags) and need to associate new children with it. The helper creates a {@link TaggingDummyElement}
+     * wrapper to manage the pre-existing tag and adds the new children under it.
+     *
+     * <p>This is useful for merging external PDFs or handling documents that were partially tagged
+     * before layout processing.
+     *
+     * @param parentPointer the {@link TagTreePointer} pointing to the pre-existing parent tag
+     * @param newKids the children to add under the parent tag
+     *
+     * @see TaggingDummyElement
+     * @see WaitingTagsManager#assignWaitingState(TagTreePointer, Object)
+     */
     public void addKidsHint(TagTreePointer parentPointer, Iterable<? extends IPropertyContainer> newKids) {
         PdfDictionary pointerStructElem = context.getPointerStructElem(parentPointer).getPdfObject();
         TaggingDummyElement dummy = dummiesForPreExistingTags.get(pointerStructElem);
@@ -121,10 +206,39 @@ public class LayoutTaggingHelper {
         addKidsHint(dummy, newKids);
     }
 
+    /**
+     * Registers children hints for a parent element or renderer (append mode).
+     *
+     * <p>This method declares that the given children should appear as kids of the parent in the PDF structure tree.
+     * Children are appended to any existing children. This method creates {@link TaggingHintKey}s for each child
+     * if they don't already exist.
+     *
+     * @param parent the parent element or renderer
+     * @param newKids the children to add under the parent (can be elements or renderers)
+     *
+     * @see #addKidsHint(IPropertyContainer, Iterable, int)
+     * @see #finishTaggingHint(IPropertyContainer)
+     */
     public void addKidsHint(IPropertyContainer parent, Iterable<? extends IPropertyContainer> newKids) {
         addKidsHint(parent, newKids, -1);
     }
 
+    /**
+     * Registers children hints for a parent element or renderer (with insert position).
+     *
+     * <p>This method declares that the given children should appear as kids of the parent in the PDF structure tree,
+     * optionally at a specific position. If {@code insertIndex} is negative, children are appended.
+     *
+     * <p>If the parent tag has already been created in the PDF structure tree, this method will relocate
+     * child tags into the parent.
+     *
+     * @param parent the parent element or renderer
+     * @param newKids the children to add under the parent
+     * @param insertIndex the position at which to insert the first child; negative means append at end
+     *
+     * @see #addKidsHint(IPropertyContainer, Iterable)
+     * @see #addKidsHint(TaggingHintKey, Collection, int)
+     */
     public void addKidsHint(IPropertyContainer parent, Iterable<? extends IPropertyContainer> newKids, int insertIndex) {
         if (parent instanceof AreaBreakRenderer || parent instanceof SectionBreakRenderer) {
             return;
@@ -145,19 +259,59 @@ public class LayoutTaggingHelper {
             if (kid instanceof AreaBreakRenderer || kid instanceof SectionBreakRenderer) {
                 return;
             }
-            newKidsKeys.add(getOrCreateHintKey(kid));
+            TaggingHintKey kidHint = getOrCreateHintKey(kid);
+            newKidsKeys.add(kidHint);
         }
         addKidsHint(parentKey, newKidsKeys, insertIndex);
     }
 
+    /**
+     * Registers children hints using {@link TaggingHintKey}s directly (append mode).
+     *
+     * <p>This variant works directly with {@link TaggingHintKey} objects instead of containers,
+     * useful when you already have the hint keys or when working with internal hint manipulation.
+     *
+     * @param parentKey the parent hint key
+     * @param newKidsKeys the hint keys of children to add
+     *
+     * @see #addKidsHint(TaggingHintKey, Collection, int)
+     */
     public void addKidsHint(TaggingHintKey parentKey, Collection<TaggingHintKey> newKidsKeys) {
         addKidsHint(parentKey, newKidsKeys, -1);
     }
 
+    /**
+     * Registers children hints using {@link TaggingHintKey}s directly (with insert position).
+     *
+     * <p>This variant works directly with {@link TaggingHintKey} objects and supports specifying
+     * an insertion position. This is the core method that other {@code addKidsHint} overloads delegate to.
+     *
+     * @param parentKey the parent hint key
+     * @param newKidsKeys the hint keys of children to add
+     * @param insertIndex the position at which to insert the first child; negative means append at end
+     *
+     * @see #addKidsHint(TaggingHintKey, Collection)
+     */
     public void addKidsHint(TaggingHintKey parentKey, Collection<TaggingHintKey> newKidsKeys, int insertIndex) {
         addKidsHint(parentKey, newKidsKeys, insertIndex, false);
     }
 
+    /**
+     * Overrides the PDF role for an element's tag in the structure tree.
+     *
+     * <p>By default, a tag's role is determined from the element's accessibility properties. This method
+     * allows you to override that role at runtime. The override is applied when the tag is created.
+     *
+     * <p><strong>Important:</strong> Apply role overrides <em>before</em>
+     * calling {@link #finishTaggingHint(IPropertyContainer)}.
+     * Once tagging rules have been applied during finishing, re-applying the same rules for a new role will not occur.
+     *
+     * @param hintOwner the element or renderer whose tag role should be overridden
+     * @param role the new PDF role (e.g., {@link StandardRoles#SPAN}, {@link StandardRoles#STRONG})
+     *
+     * @see StandardRoles
+     * @see #finishTaggingHint(IPropertyContainer)
+     */
     public void setRoleHint(IPropertyContainer hintOwner, String role) {
         // It's unclear whether a role of already created tag should be changed
         // in this case. Also concerning rules, they won't be called for the new role
@@ -169,6 +323,25 @@ public class LayoutTaggingHelper {
         getOrCreateHintKey(hintOwner).setOverriddenRole(role);
     }
 
+    /**
+     * Checks whether the given container is marked as an artifact (non-accessible).
+     *
+     * <p>An artifact is content that should not appear in the accessibility tree, such as decorative
+     * elements. Artifacts are not included in the PDF structure tree.
+     *
+     * <p>This method checks:
+     * <ol>
+     *   <li>If a hint exists and is marked as artifact, returns {@code true}
+     *   <li>If the container's accessibility role is {@link StandardRoles#ARTIFACT}, returns {@code true}
+     *   <li>Otherwise returns {@code false}
+     * </ol>
+     *
+     * @param hintOwner the element or renderer to check
+     * @return {@code true} if the container is an artifact, {@code false} otherwise
+     *
+     * @see #markArtifactHint(IPropertyContainer)
+     * @see StandardRoles#ARTIFACT
+     */
     public boolean isArtifact(IPropertyContainer hintOwner) {
         TaggingHintKey key = getHintKey(hintOwner);
         if (key != null) {
@@ -187,11 +360,45 @@ public class LayoutTaggingHelper {
         return false;
     }
 
+    /**
+     * Marks an element or renderer as an artifact (non-accessible content).
+     *
+     * <p>Artifacts are excluded from the PDF accessibility tree and are not exposed to assistive technologies.
+     * Use this for decorative elements, borders, backgrounds, or other non-semantic content.
+     *
+     * <p>This method:
+     * <ul>
+     *   <li>Marks the hint as artifact and finished
+     *   <li>Recursively marks all children as artifacts
+     *   <li>Removes the hint from its parent (orphaning it)
+     *   <li>Logs an error if the artifact tag was already created in the PDF
+     * </ul>
+     *
+     * @param hintOwner the element or renderer to mark as artifact
+     *
+     * @see #markArtifactHint(TaggingHintKey)
+     * @see #isArtifact(IPropertyContainer)
+     */
     public void markArtifactHint(IPropertyContainer hintOwner) {
         TaggingHintKey hintKey = getOrCreateHintKey(hintOwner);
         markArtifactHint(hintKey);
     }
 
+    /**
+     * Marks a hint key as an artifact (non-accessible content).
+     *
+     * <p>This is the core implementation of artifact marking. It:
+     * <ul>
+     *   <li>Sets the artifact and finished flags on the hint
+     *   <li>Recursively marks all children as artifacts
+     *   <li>Removes the hint from its parent
+     *   <li>Flushes the artifact tag pointer if already created
+     * </ul>
+     *
+     * @param hintKey the hint key to mark as artifact
+     *
+     * @see #markArtifactHint(IPropertyContainer)
+     */
     public void markArtifactHint(TaggingHintKey hintKey) {
         hintKey.setArtifact();
         hintKey.setFinished();
@@ -212,6 +419,29 @@ public class LayoutTaggingHelper {
         removeParentHint(hintKey);
     }
 
+    /**
+     * Saves the current auto-tagging pointer position and returns it for temporary use.
+     *
+     * <p>This method is useful when a renderer needs to temporarily modify the auto-tagging pointer
+     * for custom tag creation or structure manipulation. The saved position can be restored later
+     * using {@link #restoreAutoTaggingPointerPosition(IRenderer)}.
+     *
+     * <p><strong>Usage pattern (with try-finally):</strong>
+     * <pre>{@code
+     * TagTreePointer ptr = helper.useAutoTaggingPointerAndRememberItsPosition(renderer);
+     * try {
+     *     ptr.addTag("CustomRole");
+     *     // ... custom operations ...
+     * } finally {
+     *     helper.restoreAutoTaggingPointerPosition(renderer);
+     * }
+     * }</pre>
+     *
+     * @param renderer the renderer whose position should be saved (used as a key for restoration)
+     * @return the current auto-tagging pointer (position at the time of call)
+     *
+     * @see #restoreAutoTaggingPointerPosition(IRenderer)
+     */
     public TagTreePointer useAutoTaggingPointerAndRememberItsPosition(IRenderer renderer) {
         TagTreePointer autoTaggingPointer = context.getAutoTaggingPointer();
         TagTreePointer position = new TagTreePointer(autoTaggingPointer);
@@ -219,6 +449,20 @@ public class LayoutTaggingHelper {
         return autoTaggingPointer;
     }
 
+    /**
+     * Restores the auto-tagging pointer to a previously saved position.
+     *
+     * <p>This method retrieves the pointer position saved by
+     * {@link #useAutoTaggingPointerAndRememberItsPosition(IRenderer)} and moves the auto-tagging pointer back
+     * to that location. If no saved position exists for the renderer, does nothing.
+     *
+     * <p><strong>Important:</strong> Always call this in a finally block or error handling path to ensure
+     * the pointer is restored even if an exception occurs during custom tagging operations.
+     *
+     * @param renderer the renderer whose position should be restored
+     *
+     * @see #useAutoTaggingPointerAndRememberItsPosition(IRenderer)
+     */
     public void restoreAutoTaggingPointerPosition(IRenderer renderer) {
         TagTreePointer autoTaggingPointer = context.getAutoTaggingPointer();
         TagTreePointer position = autoTaggingPointerSavedPosition.remove(renderer);
@@ -227,6 +471,19 @@ public class LayoutTaggingHelper {
         }
     }
 
+    /**
+     * Gets the unmodifiable list of direct children for a parent hint.
+     *
+     * <p>This method returns all direct children hints, including non-accessible intermediate nodes.
+     * For accessible children only, use {@link #getAccessibleKidsHint(TaggingHintKey)}.
+     *
+     * <p>Returns an empty list if the parent has no children.
+     *
+     * @param parent the parent hint key
+     * @return an unmodifiable list of direct child hint keys
+     *
+     * @see #getAccessibleKidsHint(TaggingHintKey)
+     */
     public List<TaggingHintKey> getKidsHint(TaggingHintKey parent) {
         List<TaggingHintKey> kidsHint = kidsHints.get(parent);
         if (kidsHint == null) {
@@ -235,6 +492,23 @@ public class LayoutTaggingHelper {
         return Collections.<TaggingHintKey>unmodifiableList(kidsHint);
     }
 
+    /**
+     * Gets the list of accessible children for a parent hint, flattening non-accessible intermediate nodes.
+     *
+     * <p>This method returns only accessible children (those with a non-null role). Non-accessible
+     * intermediate nodes (grouping nodes) are recursively flattened, and their accessible descendants
+     * are included in the returned list.
+     *
+     * <p>For example, if a parent has a non-accessible child that contains two accessible children,
+     * this method returns those two accessible children directly.
+     *
+     * <p>Returns an empty list if the parent has no accessible children.
+     *
+     * @param parent the parent hint key
+     * @return an unmodifiable list of accessible child hint keys with non-accessible intermediates flattened
+     *
+     * @see #getKidsHint(TaggingHintKey)
+     */
     public List<TaggingHintKey> getAccessibleKidsHint(TaggingHintKey parent) {
         List<TaggingHintKey> kidsHint = kidsHints.get(parent);
         if (kidsHint == null) {
@@ -254,6 +528,18 @@ public class LayoutTaggingHelper {
         return accessibleKids;
     }
 
+    /**
+     * Gets the parent hint of a given element or renderer.
+     *
+     * <p>This method retrieves the direct parent hint for the given container by first obtaining
+     * its hint key and then looking up the parent.
+     *
+     * @param hintOwner the element or renderer whose parent should be retrieved
+     * @return the parent {@link TaggingHintKey}, or {@code null} if this is a root or has no hint
+     *
+     * @see #getParentHint(TaggingHintKey)
+     * @see #getAccessibleParentHint(TaggingHintKey)
+     */
     public TaggingHintKey getParentHint(IPropertyContainer hintOwner) {
         TaggingHintKey hintKey = getHintKey(hintOwner);
         if (hintKey == null) {
@@ -262,10 +548,31 @@ public class LayoutTaggingHelper {
         return getParentHint(hintKey);
     }
 
+    /**
+     * Gets the direct parent hint of a hint key.
+     *
+     * @param hintKey the child hint key
+     * @return the parent {@link TaggingHintKey}, or {@code null} if this is a root
+     *
+     * @see #getParentHint(IPropertyContainer)
+     * @see #getAccessibleParentHint(TaggingHintKey)
+     */
     public TaggingHintKey getParentHint(TaggingHintKey hintKey) {
         return parentHints.get(hintKey);
     }
 
+    /**
+     * Gets the nearest accessible parent hint, skipping non-accessible intermediate nodes.
+     *
+     * <p>This method traverses up the hint tree, skipping non-accessible hints (grouping nodes),
+     * and returns the first accessible parent found. Useful when you need to know the logical
+     * parent regardless of grouping structure.
+     *
+     * @param hintKey the child hint key
+     * @return the nearest accessible parent {@link TaggingHintKey}, or {@code null} if no accessible parent exists
+     *
+     * @see #getParentHint(TaggingHintKey)
+     */
     public TaggingHintKey getAccessibleParentHint(TaggingHintKey hintKey) {
         do {
             hintKey = getParentHint(hintKey);
@@ -273,6 +580,31 @@ public class LayoutTaggingHelper {
         return hintKey;
     }
 
+    /**
+     * Incrementally finalizes and releases finished hints from the tagging structure.
+     *
+     * <p>This method scans all hints and releases those that:
+     * <ul>
+     *   <li>Are marked as finished
+     *   <li>Are accessible (not non-accessible grouping nodes)
+     *   <li>Have no unfinished parents (up the hierarchy)
+     *   <li>Have no unfinished children
+     *   <li>Are not followed by unfinished siblings
+     * </ul>
+     *
+     * <p>When a hint is released:
+     * <ul>
+     *   <li>It is removed from the hint trees
+     *   <li>The associated PDF tag is finalized
+     *   <li>If {@code immediateFlush} is enabled, parent tags are flushed if all kids are flushed
+     * </ul>
+     *
+     * <p>This is an incremental operation useful for memory management. Call this periodically
+     * (e.g., at end of each page or logical boundary) to progressively finalize tags.
+     *
+     * @see #releaseAllHints()
+     * @see #finishTaggingHint(IPropertyContainer)
+     */
     public void releaseFinishedHints() {
         Set<TaggingHintKey> allHints = new HashSet<>();
         for (Map.Entry<TaggingHintKey, TaggingHintKey> entry : parentHints.entrySet()) {
@@ -311,6 +643,24 @@ public class LayoutTaggingHelper {
         }
     }
 
+    /**
+     * Forces finalization and release of all hints, clearing the entire tagging structure.
+     *
+     * <p>This is a comprehensive cleanup operation that:
+     * <ul>
+     *   <li>Finishes all dummy elements (pre-existing tags)
+     *   <li>Recursively finishes all dummy children
+     *   <li>Calls {@link #releaseFinishedHints()} to finalize any now-finished hints
+     *   <li>Releases all remaining unfinished hints (orphaned hints)
+     *   <li>Clears all internal maps
+     * </ul>
+     *
+     * <p>Call this at the end of document layout or when discarding the layout state entirely.
+     * This method should leave all internal structures empty after completion.
+     *
+     * @see #releaseFinishedHints()
+     * @see #finishTaggingHint(IPropertyContainer)
+     */
     public void releaseAllHints() {
         for (TaggingDummyElement dummy : dummiesForPreExistingTags.values()) {
             finishTaggingHint(dummy);
@@ -342,6 +692,23 @@ public class LayoutTaggingHelper {
         assert kidsHints.isEmpty();
     }
 
+    /**
+     * Creates or retrieves a PDF tag for a renderer, ensuring it exists in the structure tree.
+     *
+     * <p>This method is typically called by a renderer before it writes marked content to ensure the tag
+     * is positioned correctly in the PDF structure tree. If the tag already exists, it is not recreated.
+     *
+     * <p>For artifacts, returns {@code false} without creating a tag. For non-accessible hints,
+     * the pointer is positioned at the nearest accessible parent. For accessible hints, a tag is
+     * created with the correct sibling index.
+     *
+     * @param renderer the renderer whose tag should be created
+     * @param tagPointer the tag tree pointer to use for positioning; the pointer may be moved during tag creation
+     * @return {@code true} if a tag was created, {@code false} if one already existed or
+     *         hint is artifact/non-accessible
+     *
+     * @see #createTag(TaggingHintKey, TagTreePointer)
+     */
     public boolean createTag(IRenderer renderer, TagTreePointer tagPointer) {
         TaggingHintKey hintKey = getHintKey(renderer);
 
@@ -357,6 +724,30 @@ public class LayoutTaggingHelper {
         return created;
     }
 
+    /**
+     * Creates a PDF tag for a hint key, ensuring it exists in the structure tree.
+     *
+     * <p>This is the core tag creation method. It:
+     * <ul>
+     *   <li>Returns {@code false} if the hint is an artifact
+     *   <li>Determines the correct parent tag and sibling index
+     *   <li>Creates the tag via {@code tagPointer.addTag(...)}
+     *   <li>Stores the pointer on the hint
+     *   <li>Assigns waiting state to the tag
+     *   <li>Recursively creates tags for dummy children
+     * </ul>
+     *
+     * <p>The pointer may be modified during this method to position it at the correct parent and index.
+     * That's why if auto-tagging pointer is to be used, make sure to rely on
+     * {@link #useAutoTaggingPointerAndRememberItsPosition} and {@link #restoreAutoTaggingPointerPosition}
+     * functionality.
+     *
+     * @param hintKey the hint key to create a tag for
+     * @param tagPointer the tag tree pointer to use for positioning
+     * @return {@code true} if a tag was created, {@code false} if artifact or already exists
+     *
+     * @see #createTag(IRenderer, TagTreePointer)
+     */
     public boolean createTag(TaggingHintKey hintKey, TagTreePointer tagPointer) {
         if (hintKey.isArtifact()) {
             return false;
@@ -375,6 +766,31 @@ public class LayoutTaggingHelper {
         return created;
     }
 
+    /**
+     * Marks an element or renderer as logically complete and applies tagging rules.
+     *
+     * <p>Call this method when an element has finished its layout or rendering and will not
+     * receive new children. This triggers:
+     * <ul>
+     *   <li>Lookup of applicable {@link ITaggingRule}s for the element's role
+     *   <li>Invocation of each rule's {@link ITaggingRule#onTagFinish(LayoutTaggingHelper, TaggingHintKey)} method
+     *   <li>If all rules return {@code true}, the hint is marked as finished
+     *   <li>If any rule returns {@code false}, the hint remains unfinished (rules can block finishing)
+     * </ul>
+     *
+     * <p><strong>Important:</strong> A hint cannot receive new children or be relocated after finishing.
+     * Always try to finish hints in parent-to-child order (or at least ensure children are finished before parents)
+     * if possible.
+     *
+     * <p>For non-accessible hints, rules are bypassed and the hint is marked finished immediately.
+     * For artifacts, this method has no effect.
+     *
+     *
+     * @param hintOwner the element or renderer to finish
+     *
+     * @see ITaggingRule
+     * @see #releaseFinishedHints()
+     */
     public void finishTaggingHint(IPropertyContainer hintOwner) {
         TaggingHintKey rendererKey = getHintKey(hintOwner);
 
@@ -409,6 +825,27 @@ public class LayoutTaggingHelper {
         rendererKey.setFinished();
     }
 
+    /**
+     * Replaces one child hint with multiple new child hints.
+     *
+     * <p>This method is useful when a single renderer needs to expand into multiple child tags.
+     * It removes the old child from its parent and inserts the new children at the same position.
+     *
+     * <p>Errors are logged and the operation fails if:
+     * <ul>
+     *   <li>The child hint is already finished
+     *   <li>Any new child is already finished and either has no parent or the parent is already finished too.
+     * </ul>
+     *
+     * <p>The method returns the index where the replacement occurred, which can be used for
+     * further hint tree manipulation if needed.
+     *
+     * @param kidHintKey the child hint to be replaced
+     * @param newKidsHintKeys the new child hints to insert at the replacement position
+     * @return the index where the old child was removed, or {@code -1} if replacement failed
+     *
+     * @see #moveKidHint(TaggingHintKey, TaggingHintKey)
+     */
     public int replaceKidHint(TaggingHintKey kidHintKey, Collection<TaggingHintKey> newKidsHintKeys) {
         TaggingHintKey parentKey = getParentHint(kidHintKey);
         if (parentKey == null) {
@@ -443,10 +880,44 @@ public class LayoutTaggingHelper {
         return kidIndex;
     }
 
+    /**
+     * Moves a child hint from its current parent to a new parent (appended).
+     *
+     * <p>This method removes a child from its current parent and re-parents it to the new parent,
+     * appending it to the new parent's children list.
+     *
+     * <p>For a specific insertion position in the new parent, use {@link #moveKidHint(TaggingHintKey, TaggingHintKey, int)}.
+     *
+     * @param hintKeyOfKidToMove the child hint to move
+     * @param newParent the new parent hint
+     * @return the index where the child was removed from the old parent, or {@code -1} if move failed
+     *
+     * @see #moveKidHint(TaggingHintKey, TaggingHintKey, int)
+     * @see #replaceKidHint(TaggingHintKey, Collection)
+     */
     public int moveKidHint(TaggingHintKey hintKeyOfKidToMove, TaggingHintKey newParent) {
         return moveKidHint(hintKeyOfKidToMove, newParent, -1);
     }
 
+    /**
+     * Moves a child hint from its current parent to a new parent at a specific position.
+     *
+     * <p>This method is similar to {@link #moveKidHint(TaggingHintKey, TaggingHintKey)} but allows
+     * specifying the insertion index in the new parent's children list. Negative index means append.
+     *
+     * <p>Errors are logged if:
+     * <ul>
+     *   <li>The new parent is already finished
+     *   <li>The child hint is already finished
+     * </ul>
+     *
+     * @param hintKeyOfKidToMove the child hint to move
+     * @param newParent the new parent hint
+     * @param insertIndex the position at which to insert the child; negative means append
+     * @return the index where the child was removed from the old parent, or {@code -1} if move failed
+     *
+     * @see #moveKidHint(TaggingHintKey, TaggingHintKey)
+     */
     public int moveKidHint(TaggingHintKey hintKeyOfKidToMove, TaggingHintKey newParent, int insertIndex) {
         if (newParent.isFinished()) {
             Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
@@ -466,10 +937,42 @@ public class LayoutTaggingHelper {
         return removeRes;
     }
 
+    /**
+     * Created a unique id for a structureElement.
+     *
+     * @param prefix a prefix to prepend to the id
+     *
+     * @return a unique id
+     */
+    public String createStructureElementId(String prefix) {
+        lastId++;
+        return prefix + lastId;
+    }
+
+    /**
+     * Gets the PDF document associated with this helper.
+     *
+     * @return the {@link PdfDocument} passed to the constructor
+     */
     public PdfDocument getPdfDocument() {
         return document;
     }
 
+    /**
+     * Internal implementation of hint key creation/retrieval.
+     *
+     * <p>This method implements the core logic for obtaining or creating hint keys:
+     * <ul>
+     *   <li>Checks for existing hint on the container
+     *   <li>If not found, wraps the container's accessible element
+     *   <li>Automatically marks as artifact if role is ARTIFACT
+     *   <li>Optionally stores the hint on the container
+     * </ul>
+     *
+     * @param hintOwner the element or renderer
+     * @param setProperty if {@code true}, stores the hint in the container's properties
+     * @return the existing or newly created hint key
+     */
     private static TaggingHintKey getOrCreateHintKey(IPropertyContainer hintOwner, boolean setProperty) {
         TaggingHintKey hintKey = hintOwner.<TaggingHintKey>getProperty(Property.TAGGING_HINT_KEY);
         if (hintKey == null) {
@@ -592,11 +1095,13 @@ public class LayoutTaggingHelper {
                 }
             }
 
-            tagPointer.addTag(ind, modelElement.getAccessibilityProperties());
-            hintKey.setTagPointer(new TagTreePointer(tagPointer));
+            AccessibilityProperties props = modelElement.getAccessibilityProperties();
             if (hintKey.getOverriddenRole() != null) {
-                tagPointer.setRole(hintKey.getOverriddenRole());
+                props = new DefaultAccessibilityProperties(props).setRole(hintKey.getOverriddenRole());
             }
+
+            tagPointer.addTag(ind, props);
+            hintKey.setTagPointer(new TagTreePointer(tagPointer));
             waitingTagsManager.assignWaitingState(tagPointer, hintKey);
 
             List<TaggingHintKey> kidsHint = getAccessibleKidsHint(hintKey);
@@ -766,6 +1271,9 @@ public class LayoutTaggingHelper {
             registerSingleRule(StandardRoles.THEAD, priorToOneFiveRule);
             registerSingleRule(StandardRoles.TFOOT, priorToOneFiveRule);
         }
+        FootnoteTaggingRule footnoteRule = new FootnoteTaggingRule();
+        registerSingleRule(StandardRoles.LBL, footnoteRule);
+        registerSingleRule(StandardRoles.REFERENCE, footnoteRule);
     }
 
     private void registerSingleRule(String role, ITaggingRule rule) {
@@ -777,7 +1285,8 @@ public class LayoutTaggingHelper {
         rules.add(rule);
     }
 
-    private int getNearestNextSiblingIndex(WaitingTagsManager waitingTagsManager, TagTreePointer parentPointer, TaggingHintKey parentKey, TaggingHintKey kidKey) {
+    private int getNearestNextSiblingIndex(WaitingTagsManager waitingTagsManager, TagTreePointer parentPointer,
+            TaggingHintKey parentKey, TaggingHintKey kidKey) {
         ScanContext scanContext = new ScanContext();
         scanContext.waitingTagsManager = waitingTagsManager;
         scanContext.startHintKey = kidKey;

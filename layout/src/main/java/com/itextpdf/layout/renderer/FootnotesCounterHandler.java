@@ -55,7 +55,7 @@ class FootnotesCounterHandler {
 
     private final Map<FootnoteAnchor, FootnoteAnchorRenderer> renderers = new HashMap<>();
 
-    private final Map<Footnote, Float> footnotes = new LinkedHashMap<>();
+    private final Map<FootnoteRenderer, Float> footnotes = new LinkedHashMap<FootnoteRenderer, Float>();
 
     /**
      * Creates a new {@link FootnotesCounterHandler} instance.
@@ -111,7 +111,7 @@ class FootnotesCounterHandler {
      *
      * @return linked map of {@link Footnote} and its height float value
      */
-    Map<Footnote, Float> collectFootnotes(LayoutArea currentArea) {
+    Map<FootnoteRenderer, Float> collectFootnotes(LayoutArea currentArea) {
         footnotes.clear();
         List<FootnoteAnchor> anchors = new ArrayList<>(renderers.keySet());
         Collections.sort(anchors, new FootnoteAnchorComparator());
@@ -130,7 +130,7 @@ class FootnotesCounterHandler {
                             renderer.occupiedArea.getBBox().getHeight()));
 
             if (expectedPageNumber == renderer.occupiedArea.getPageNumber() && isAnchorInsideCurrentArea) {
-                footnotes.put(footnoteAnchor.getFootnote(),
+                footnotes.put(renderer.footnoteRenderer,
                         renderer.footnoteRenderer.getOccupiedArea().getBBox().getHeight());
             }
         }

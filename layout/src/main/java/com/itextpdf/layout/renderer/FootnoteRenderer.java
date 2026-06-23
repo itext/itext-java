@@ -22,7 +22,10 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.margins.Footnote;
+import com.itextpdf.layout.tagging.FootnoteTaggingHelper;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 /**
  * Renderer for {@link Footnote} representing a footnote placed at the bottom of the page.
@@ -42,5 +45,19 @@ public class FootnoteRenderer extends BlockRenderer {
     public IRenderer getNextRenderer() {
         logWarningIfGetNextRendererNotOverridden(FootnoteRenderer.class, this.getClass());
         return new FootnoteRenderer((Footnote) modelElement);
+    }
+
+    @Override
+    public void draw(DrawContext drawContext) {
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        FootnoteTaggingHelper.repairFootnoteTagIfNeeded(this, taggingHelper);
+        if (!childRenderers.isEmpty() && !childRenderers.get(0).getChildRenderers().isEmpty()) {
+            IRenderer footnoteParagraphContainer = childRenderers.get(0);
+            IRenderer footnoteAnchorContent = footnoteParagraphContainer.getChildRenderers().get(0);
+
+            FootnoteTaggingHelper.wrapAnchorInsideFootnoteIntoLbl(footnoteAnchorContent, taggingHelper);
+        }
+
+        super.draw(drawContext);
     }
 }

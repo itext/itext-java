@@ -1,0 +1,20 @@
+<root>
+<Document>
+<Div borderColor="[0 1 0 ]" borderStyle="/Solid" borderThickness="2" o="/Layout">
+<P bBox="[38 490.31 557 804 ]" o="/Layout" spaceAfter="4" spaceBefore="4">
+<Span>
+When a man hath no freedom to fight for at home, Let him combat for that of his neighbours; Let him think of the glories of Greece and of Rome, And get knocked on the head for his labours.  To do good to Mankind is the chivalrous plan, And is always as nobly requited; Then battle for Freedom wherever you can, And, if not shot or hanged, you&apos;ll get knighted.</Span>
+<Reference>
+[1]</Reference>
+<Span>
+When a man hath no freedom to fight for at home, Let him combat for that of his neighbours; Let him think of the glories of Greece and of Rome, And get knocked on the head for his labours.  To do good to Mankind is the chivalrous plan, And is always as nobly requited; Then battle for Freedom wherever you can, And, if not shot or hanged, you&apos;ll get knighted.</Span>
+<Note borderColor="[1 1 0 ]" borderStyle="/Dashed" borderThickness="3" o="/Layout" element_id="footnote_1">
+<Lbl>
+[1]</Lbl>
+<Figure bBox="[111.67 156.66 191.67 256.64 ]" height="99.98" o="/Layout" width="80">
+</Figure>
+</Note>
+</P>
+</Div>
+</Document>
+</root>

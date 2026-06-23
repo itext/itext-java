@@ -44,7 +44,6 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.margins.Footnote;
 import com.itextpdf.layout.properties.margins.FootnoteNumberingConfig;
 import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.properties.margins.FootnotesUtil;
@@ -52,6 +51,7 @@ import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import com.itextpdf.layout.utils.LayoutInfiniteLoopResolver;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -298,7 +298,7 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
 
         // Process footnotes that were collected during renderer layout.
-        Map<Footnote, Float> footnotes = footnotesCounterHandler.collectFootnotes(
+        Map<FootnoteRenderer, Float> footnotes = footnotesCounterHandler.collectFootnotes(
                 layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
         int footnoteAnchorsNum = footnotes.size();
         if (footnoteAnchorsNum == 0) {
@@ -402,10 +402,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             keepWithNextHangingRenderer = null;
             addChild(rendererToBeAdded);
         }
-        if (!immediateFlush) {
-            flush();
-        }
-        flushWaitingDrawingElements(true);
+        flushOnClose();
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
         if (taggingHelper != null) {
             taggingHelper.releaseAllHints();
@@ -446,7 +443,21 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
     }
 
+
+    @Deprecated
     protected void flushWaitingDrawingElements() {
+        flushWaitingDrawingElements(true);
+    }
+
+    /**
+     * Draws (flushes) the content, of this element and all its children that were not yet processed.
+     *
+     * @see #draw(DrawContext)
+     */
+    protected void flushOnClose() {
+        if (!immediateFlush) {
+            flush();
+        }
         flushWaitingDrawingElements(true);
     }
 

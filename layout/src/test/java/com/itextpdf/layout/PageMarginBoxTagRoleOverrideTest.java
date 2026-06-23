@@ -69,7 +69,7 @@ public class PageMarginBoxTagRoleOverrideTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             pdfDocument.setTagged();

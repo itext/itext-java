@@ -111,6 +111,33 @@ public class CompareToolTest extends ExtendedITextTest {
     }
 
     @Test
+    public void compareTagStructureAgainstXmlNegative()
+            throws IOException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setCompareByContentErrorsLimit(10);
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        String outPdf = sourceFolder + "tagged_pdf.pdf";
+        String cmpPdf = sourceFolder + "cmp_tagged_xml_neg.xml";
+        String result = compareTool.compareTagStructureAgainstXml(outPdf, cmpPdf);
+        System.out.println("\nRESULT:\n" + result);
+        Assertions.assertNotNull(result, "CompareTool must return differences found between the files");
+        Assertions.assertTrue(result.contains("The tag structures are different."));
+    }
+
+    @Test
+    public void compareTagStructureAgainstXmlPositive()
+            throws IOException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setCompareByContentErrorsLimit(10);
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        String outPdf = sourceFolder + "tagged_pdf.pdf";
+        String cmpXml = sourceFolder + "cmp_tagged_xml_pos.xml";
+        String result = compareTool.compareTagStructureAgainstXml(outPdf, cmpXml);
+        System.out.println("\nRESULT:\n" + result);
+        Assertions.assertNull(result);
+    }
+
+    @Test
     public void compareToolErrorReportTest03()
             throws InterruptedException, IOException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();

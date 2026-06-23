@@ -263,6 +263,15 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
+     * Gets the fixed positioned child {@link IRenderer}s.
+     *
+     * @return a list of direct fixed positioned child {@link IRenderer renderers} of this instance
+     */
+    public Iterable<? extends IRenderer> getPositionenRenderers() {
+        return positionedRenderers;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

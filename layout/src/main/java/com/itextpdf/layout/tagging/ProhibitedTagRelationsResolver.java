@@ -30,6 +30,7 @@ import com.itextpdf.kernel.pdf.tagutils.PdfAllowedTagRelations;
 import com.itextpdf.kernel.pdf.tagutils.TagStructureContext;
 import com.itextpdf.layout.renderer.AreaBreakRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.renderer.SectionBreakRenderer;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -113,7 +114,7 @@ public class ProhibitedTagRelationsResolver {
         }
         final String normalizedParentRole = resolveToFinalRole(taggingHelper, currentThk, false);
         for (IRenderer childRenderer : topRender.getChildRenderers()) {
-            if (childRenderer instanceof AreaBreakRenderer) {
+            if (childRenderer instanceof AreaBreakRenderer || childRenderer instanceof SectionBreakRenderer) {
                 continue;
             }
             final TaggingHintKey kid = LayoutTaggingHelper.getOrCreateHintKey(childRenderer);

@@ -179,7 +179,9 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
      */
     public Image(Image image) {
         this.xObject = image.xObject;
-        this.tagProperties = image.tagProperties;
+        this.tagProperties = image.tagProperties == null
+                ? null
+                : new DefaultAccessibilityProperties(image.tagProperties);
         this.properties = new HashMap<>(image.properties);
         this.styles = image.styles == null ? null : new LinkedHashSet<>(image.styles);
         this.childElements = new ArrayList<>(image.childElements);

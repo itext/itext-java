@@ -42,6 +42,7 @@ public class FootnoteAnchor extends AbstractElement<FootnoteAnchor> implements I
     private static final int DEFAULT_FONT_SIZE = 6;
     private static final int DEFAULT_TEXT_RISE = 7;
 
+    protected DefaultAccessibilityProperties tagProperties;
     private final Footnote footnote;
     private IElement footnoteAnchor;
 
@@ -66,7 +67,7 @@ public class FootnoteAnchor extends AbstractElement<FootnoteAnchor> implements I
     public FootnoteAnchor(String text, Footnote footnote) {
         // TODO DEVSIX-10031 Do not specify constant font size by default,
         //  it should depend on parent paragraph font size.
-        this(new Text(text).setFontSize(DEFAULT_FONT_SIZE).setTextRise(DEFAULT_TEXT_RISE), footnote);
+        this(new Text(text).setFontSize(DEFAULT_FONT_SIZE).setTextRise(DEFAULT_TEXT_RISE).setNeutralRole(), footnote);
     }
 
     /**
@@ -136,6 +137,20 @@ public class FootnoteAnchor extends AbstractElement<FootnoteAnchor> implements I
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.REFERENCE);
+        }
+        return tagProperties;
+    }
+
+
+    /**
      * Gets {@link Style} storing style properties for footnote anchor that is placed inside the footnote.
      *
      * @return {@link Style} storing properties for footnote anchor that is inside the footnote
@@ -155,17 +170,6 @@ public class FootnoteAnchor extends AbstractElement<FootnoteAnchor> implements I
         this.footnoteAnchorLabelStyle = footnoteAnchorLabelStyle;
         this.footnote.applyFootnoteAnchor(this);
         return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public AccessibilityProperties getAccessibilityProperties() {
-        // TODO DEVSIX-9997 Support correct footnotes tagging
-        return new DefaultAccessibilityProperties(StandardRoles.REFERENCE);
     }
 
     /**

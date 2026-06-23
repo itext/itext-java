@@ -30,11 +30,14 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
 import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
+import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.DashedBorder;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -57,11 +60,14 @@ import com.itextpdf.layout.properties.margins.MarginBoxName;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.renderer.DocumentRenderer;
+import com.itextpdf.layout.renderer.FootnoteRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
 import com.itextpdf.layout.testutil.PageMarginsTestUtil;
 import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -73,6 +79,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.xml.sax.SAXException;
 
 @Tag("IntegrationTest")
 public class PageMarginsTest extends ExtendedITextTest {
@@ -91,7 +98,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "footnote";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             Footnote footnote = new Footnote("Footnote text");
@@ -136,7 +143,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "footnoteInTable";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             Footnote footnote = new Footnote("Footnote text");
@@ -190,11 +197,68 @@ public class PageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void footnoteInTableTaggingTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "footnoteInTableTagging";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+                Document document = new Document(pdfDocument)) {
+            pdfDocument.setTagged();
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.PINK);
+            FootnoteAnchor anchor = new FootnoteAnchor(new Text("1").setFontSize(6).setTextRise(7), footnote);
+            Footnote footnote2 = new Footnote("Footnote text 2");
+            footnote2.setBackgroundColor(ColorConstants.YELLOW);
+            FootnoteAnchor anchor2 = new FootnoteAnchor(new Text("2").setFontSize(6).setTextRise(7), footnote2);
+
+            Image img = loadImage();
+            Table table = new Table(4);
+            for (int i = 0; i < 23; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 5) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+            table.addCell(img);
+            document.add(table);
+
+            footnote = new Footnote("Footnote text 3");
+            footnote.setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 2));
+            anchor = new FootnoteAnchor(new Text("3").setFontSize(6).setTextRise(7), footnote);
+            footnote2 = new Footnote("Footnote text 4");
+            footnote2.setBorder(new SolidBorder(ColorConstants.DARK_GRAY, 2));
+            anchor2 = new FootnoteAnchor(new Text("4").setFontSize(6).setTextRise(7), footnote2);
+            table = new Table(4);
+            for (int i = 0; i < 23; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 5) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+            table.addCell(img);
+
+            document.add(new Paragraph(TestResourceUtil.getByronStanza() + "\n\n" + TestResourceUtil.getByronStanza() + "\n\n" + "Two more \nlines"));
+
+            document.add(table);
+        }
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
+    @Test
     public void footnoteInTableFooterTest() throws IOException, InterruptedException {
         String fileName = "footnoteInTableFooter";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             Footnote footnote = new Footnote("Footnote text");
@@ -253,11 +317,74 @@ public class PageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void footnoteInTableFooterTaggingTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "footnoteInTableFooterTagging";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+                Document document = new Document(pdfDocument)) {
+            pdfDocument.setTagged();
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.PINK);
+            FootnoteAnchor anchor = new FootnoteAnchor(new Text("1").setFontSize(6).setTextRise(7), footnote);
+            Footnote footnote2 = new Footnote("Footnote text 2");
+            footnote2.setBackgroundColor(ColorConstants.YELLOW);
+            FootnoteAnchor anchor2 = new FootnoteAnchor(new Text("2").setFontSize(6).setTextRise(7), footnote2);
+
+            Image img = loadImage();
+            Table table = new Table(4);
+            for (int i = 0; i < 23; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 5) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+            table.addCell(img);
+            document.add(table);
+
+            footnote = new Footnote("Footnote text 3");
+            footnote.setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 2));
+            anchor = new FootnoteAnchor(new Text("3").setFontSize(6).setTextRise(7), footnote);
+            footnote2 = new Footnote("Footnote text 4");
+            footnote2.setBorder(new SolidBorder(ColorConstants.DARK_GRAY, 2));
+            anchor2 = new FootnoteAnchor(new Text("4").setFontSize(6).setTextRise(7), footnote2);
+            table = new Table(4);
+            for (int i = 0; i < 24; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 1) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 23) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i < 4) {
+                    table.addHeaderCell(new Cell().add(paragraph).setBorder(new SolidBorder(ColorConstants.CYAN, 2)));
+                } else if (i > 19) {
+                    table.addFooterCell(new Cell().add(paragraph).setBorder(new SolidBorder(ColorConstants.BLUE, 2)));
+                } else {
+                    table.addCell(paragraph);
+                }
+            }
+
+            document.add(new Paragraph(TestResourceUtil.getByronStanza() + "\n\n" + TestResourceUtil.getByronStanza() + "\n\n" + "Two more \nlines"));
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
+    @Test
     public void footnoteInTableHeaderTest() throws IOException, InterruptedException {
         String fileName = "footnoteInTableHeader";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             Footnote footnote = new Footnote("Footnote text");
@@ -315,11 +442,73 @@ public class PageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void footnoteInTableHeaderTaggingTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "footnoteInTableHeaderTagging";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+                Document document = new Document(pdfDocument)) {
+            pdfDocument.setTagged();
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.PINK);
+            FootnoteAnchor anchor = new FootnoteAnchor(new Text("1").setFontSize(6).setTextRise(7), footnote);
+            Footnote footnote2 = new Footnote("Footnote text 2");
+            footnote2.setBackgroundColor(ColorConstants.YELLOW);
+            FootnoteAnchor anchor2 = new FootnoteAnchor(new Text("2").setFontSize(6).setTextRise(7), footnote2);
+
+            Image img = loadImage();
+            Table table = new Table(4);
+            for (int i = 0; i < 23; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 5) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+            table.addCell(img);
+            document.add(table);
+
+            footnote = new Footnote("Footnote text 3");
+            footnote.setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 2));
+            anchor = new FootnoteAnchor(new Text("3").setFontSize(6).setTextRise(7), footnote);
+            footnote2 = new Footnote("Footnote text 4");
+            footnote2.setBorder(new SolidBorder(ColorConstants.DARK_GRAY, 2));
+            anchor2 = new FootnoteAnchor(new Text("4").setFontSize(6).setTextRise(7), footnote2);
+            table = new Table(4);
+            for (int i = 0; i < 23; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 1) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i < 4) {
+                    table.addHeaderCell(new Cell().add(paragraph).setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 2)));
+                } else {
+                    table.addCell(paragraph);
+                }
+            }
+            table.addCell(img);
+
+            document.add(new Paragraph(TestResourceUtil.getByronStanza() + "\n\n" + TestResourceUtil.getByronStanza() + "\n\n" + "Two more \nlines"));
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
+    @Test
     public void pageMarginsComplexTest() throws IOException, InterruptedException {
         String fileName = "pageMargins";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             pdfDocument.addNewPage();
 
@@ -358,12 +547,13 @@ public class PageMarginsTest extends ExtendedITextTest {
                 "diff_" + fileName));
     }
 
+
     @Test
     public void pageSizesTest() throws IOException, InterruptedException {
         String fileName = "pageSizes";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
@@ -402,7 +592,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "sectionBreakAfterAreaBreak";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
@@ -442,7 +632,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "sectionBreakAfterAreaBreakPageSize";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
@@ -472,7 +662,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "twoSectionBreaksInARow";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
@@ -503,7 +693,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "sectionBreakAfterContent";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
@@ -533,7 +723,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "sectionBreakWithSameMarginsAfterContent";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
@@ -563,7 +753,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "differentSectionBreaks";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
@@ -599,7 +789,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "staticMargins";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             // Set static margins
@@ -640,7 +830,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "pageMarginsViaDocument";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
             List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
@@ -686,7 +876,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "pageMarginsViaDocumentAndSectionBreak";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
             List<PageMarginContent> elements2 = PageMarginsTestUtil.getPageMargins2();
@@ -716,7 +906,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "pageSizeViaAreaBreakAndSectionBreak";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             SectionBreak sectionBreak = new SectionBreak(PageSize.A5);
@@ -744,7 +934,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "fixedPosition";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
@@ -772,9 +962,8 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "relativePosition";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            pdfDocument.setTagged();
             List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
 
             Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
@@ -794,13 +983,39 @@ public class PageMarginsTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
                 "diff_" + fileName));
     }
+ @Test
+    public void relativePositionTaggingTest()
+         throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "relativePositionTagging";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            pdfDocument.setTagged();
+            List<PageMarginContent> elements = PageMarginsTestUtil.getPageMargins1();
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
+
+            SectionBreak sectionBreak = new SectionBreak(new PageMarginBoxes(elements));
+
+            Div div1 = new Div().add(p).setBackgroundColor(new DeviceRgb(65, 151, 29));
+            div1.setRelativePosition(50, 50, 0, 0);
+
+            Div div2 = new Div().add(p).setBackgroundColor(new DeviceRgb(209, 247, 29));
+
+            document.add(div1)
+                    .add(sectionBreak)
+                    .add(div2);
+        }
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
 
     @Test
     public void footnoteNotLinkedToElementTest() throws IOException, InterruptedException {
         String fileName = "footnoteNotLinkedToElement";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
 
             Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
@@ -819,7 +1034,7 @@ public class PageMarginsTest extends ExtendedITextTest {
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBackgroundColor(ColorConstants.CYAN);
             // This API is not supposed to be used by the users, but this util class can't be hidden.
-            FootnotesUtil.addFootnotesToPage(1, Collections.singletonList(footnote), pageMarginBoxes,
+            FootnotesUtil.addFootnotesToPage(1, Collections.singletonList((FootnoteRenderer) footnote.createRendererSubTree()), pageMarginBoxes,
                     document.getFootnotesProperties());
 
             Div div1 = new Div();
@@ -837,9 +1052,8 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "footnotesOneByOne";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
-             Document document = new Document(pdfDocument)) {
-            pdfDocument.setTagged();
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+            Document document = new Document(pdfDocument)) {
 
             Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
             for (int i = 0; i < 2; i++) {
@@ -867,9 +1081,8 @@ public class PageMarginsTest extends ExtendedITextTest {
         String fileName = "imageAsFootnoteAnchor";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
-             Document document = new Document(pdfDocument)) {
-            pdfDocument.setTagged();
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+            Document document = new Document(pdfDocument)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -889,6 +1102,31 @@ public class PageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void imageAsFootnoteAnchorTaggingTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "imageAsFootnoteTaggingAnchor";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+            Document document = new Document(pdfDocument)) {
+            pdfDocument.setTagged();
+
+            Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
+            footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
+
+            Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bulb.gif"));
+            image.setWidth(15);
+            FootnoteAnchor anchor = new FootnoteAnchor(image, footnote);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza()).add(anchor).add(TestResourceUtil.getByronStanza());
+
+            Div div = new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 3));
+            document.add(div);
+        }
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
+    @Test
     public void registerPageMarginsHeaderTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);
@@ -902,6 +1140,306 @@ public class PageMarginsTest extends ExtendedITextTest {
         addFooterTable(columnNum, values, document);
         Assertions.assertDoesNotThrow(() -> document.close());
     }
+
+    @Test
+    public void footnoteTaggingPdfV17Test()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "footnoteV17";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        WriterProperties writerProperties = new WriterProperties();
+        writerProperties.setPdfVersion(PdfVersion.PDF_1_7);
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, writerProperties));
+                Document document = new Document(pdfDocument)) {
+
+            pdfDocument.setTagged();
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.CYAN);
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            Footnote footnote2 = new Footnote(new Paragraph("Footnote text 2").setMargin(0));
+            footnote2.setBackgroundColor(ColorConstants.ORANGE);
+            FootnoteAnchor anchor2 = new FootnoteAnchor("[2]", footnote2);
+            Footnote footnote3 = new Footnote("Footnote text 3\nSecond line\nThird line\nFourth line");
+            footnote3.setBackgroundColor(ColorConstants.RED);
+            FootnoteAnchor anchor3 = new FootnoteAnchor("[3]", footnote3);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
+            p.add(anchor);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor2);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor3);
+
+            for (int i = 0; i < 5; i++) {
+                p.add("\n\n");
+                p.add(TestResourceUtil.getByronStanza());
+            }
+
+            SectionBreak sectionBreak = new SectionBreak()
+                    .setPageMargins(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
+
+            Div div1 = new Div();
+            div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));
+            document.add(sectionBreak);
+            document.add(div1);
+        }
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
+
+    @Test
+    public void footnotePdfV17ManualNoteTagIdTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "footnoteV17_ID";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        WriterProperties writerProperties = new WriterProperties();
+        writerProperties.setPdfVersion(PdfVersion.PDF_1_7);
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, writerProperties));
+                Document document = new Document(pdfDocument)) {
+
+            pdfDocument.setTagged();
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.CYAN);
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            Footnote footnote2 = new Footnote(new Paragraph("Footnote text 2").setMargin(0));
+            footnote2.setBackgroundColor(ColorConstants.ORANGE);
+            FootnoteAnchor anchor2 = new FootnoteAnchor("[2]", footnote2);
+            Paragraph fn3p = new Paragraph("Footnote text 3\nSecond line\nThird line\nFourth line");
+
+            Footnote footnote3 = new Footnote(fn3p);
+            footnote3.setBackgroundColor(ColorConstants.RED);
+            footnote3.getAccessibilityProperties().setStructureElementIdString("TEST ID3");
+            FootnoteAnchor anchor3 = new FootnoteAnchor("[3]", footnote3);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
+            p.add(anchor);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor2);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor3);
+
+            for (int i = 0; i < 5; i++) {
+                p.add("\n\n");
+                p.add(TestResourceUtil.getByronStanza());
+            }
+
+            SectionBreak sectionBreak = new SectionBreak()
+                    .setPageMargins(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
+
+            Div div1 = new Div();
+            div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));
+            document.add(sectionBreak);
+            document.add(div1);
+        }
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
+    @Test
+    public void footnotePdfV17ManualTagRoleTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "footnoteV17_Role";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        WriterProperties writerProperties = new WriterProperties();
+        writerProperties.setPdfVersion(PdfVersion.PDF_1_7);
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, writerProperties));
+                Document document = new Document(pdfDocument)) {
+
+            pdfDocument.setTagged();
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.CYAN);
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            anchor.getAccessibilityProperties().setRole(StandardRoles.LBL);
+            Footnote footnote2 = new Footnote(new Paragraph("Footnote text 2").setMargin(0));
+            footnote2.setBackgroundColor(ColorConstants.ORANGE);
+            FootnoteAnchor anchor2 = new FootnoteAnchor("[2]", footnote2);
+            Paragraph fn3p = new Paragraph("Footnote text 3\nSecond line\nThird line\nFourth line");
+
+            Footnote footnote3 = new Footnote(fn3p);
+            footnote3.setBackgroundColor(ColorConstants.RED);
+            footnote3.getAccessibilityProperties().setRole(StandardRoles.QUOTE);
+            FootnoteAnchor anchor3 = new FootnoteAnchor("[3]", footnote3);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
+            p.add(anchor);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor2);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor3);
+
+            for (int i = 0; i < 5; i++) {
+                p.add("\n\n");
+                p.add(TestResourceUtil.getByronStanza());
+            }
+
+            SectionBreak sectionBreak = new SectionBreak()
+                    .setPageMargins(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
+
+            Div div1 = new Div();
+            div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));
+            document.add(sectionBreak);
+            document.add(div1);
+        }
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
+
+    @Test
+    public void footnoteTaggingPdfV20Test()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "footnoteV20";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        WriterProperties writerProperties = new WriterProperties();
+        writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, writerProperties));
+                Document document = new Document(pdfDocument)) {
+
+            pdfDocument.setTagged();
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.CYAN);
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            Footnote footnote2 = new Footnote(new Paragraph("Footnote text 2").setMargin(0));
+            footnote2.setBackgroundColor(ColorConstants.ORANGE);
+            FootnoteAnchor anchor2 = new FootnoteAnchor("[2]", footnote2);
+            Footnote footnote3 = new Footnote("Footnote text 3\nSecond line\nThird line\nFourth line");
+            footnote3.setBackgroundColor(ColorConstants.RED);
+            FootnoteAnchor anchor3 = new FootnoteAnchor("[3]", footnote3);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
+            p.add(anchor);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor2);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor3);
+
+            for (int i = 0; i < 5; i++) {
+                p.add("\n\n");
+                p.add(TestResourceUtil.getByronStanza());
+            }
+
+            SectionBreak sectionBreak = new SectionBreak()
+                    .setPageMargins(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
+
+            Div div1 = new Div();
+            div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));
+            document.add(sectionBreak);
+            document.add(div1);
+        }
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
+    @Test
+    public void footnotePdfV20ManualNoteTagIdTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "footnoteV20_ID";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        WriterProperties writerProperties = new WriterProperties();
+        writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, writerProperties));
+                Document document = new Document(pdfDocument)) {
+
+            pdfDocument.setTagged();
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.CYAN);
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            Footnote footnote2 = new Footnote(new Paragraph("Footnote text 2").setMargin(0));
+            footnote2.setBackgroundColor(ColorConstants.ORANGE);
+            FootnoteAnchor anchor2 = new FootnoteAnchor("[2]", footnote2);
+            Paragraph fn3p = new Paragraph("Footnote text 3\nSecond line\nThird line\nFourth line");
+
+            Footnote footnote3 = new Footnote(fn3p);
+            footnote3.setBackgroundColor(ColorConstants.RED);
+            footnote3.getAccessibilityProperties().setStructureElementIdString("TEST ID3");
+            FootnoteAnchor anchor3 = new FootnoteAnchor("[3]", footnote3);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
+            p.add(anchor);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor2);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor3);
+
+            for (int i = 0; i < 5; i++) {
+                p.add("\n\n");
+                p.add(TestResourceUtil.getByronStanza());
+            }
+
+            SectionBreak sectionBreak = new SectionBreak()
+                    .setPageMargins(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
+
+            Div div1 = new Div();
+            div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));
+            document.add(sectionBreak);
+            document.add(div1);
+        }
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
+    @Test
+    public void footnotePdfV20ManualTagRoleTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "footnoteV20_Role";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+        WriterProperties writerProperties = new WriterProperties();
+        writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, writerProperties));
+                Document document = new Document(pdfDocument)) {
+
+            pdfDocument.setTagged();
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.CYAN);
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            anchor.getAccessibilityProperties().setRole(StandardRoles.LINK);
+            Footnote footnote2 = new Footnote(new Paragraph("Footnote text 2").setMargin(0));
+            footnote2.setBackgroundColor(ColorConstants.ORANGE);
+            FootnoteAnchor anchor2 = new FootnoteAnchor("[2]", footnote2);
+            Paragraph fn3p = new Paragraph("Footnote text 3\nSecond line\nThird line\nFourth line");
+
+            Footnote footnote3 = new Footnote(fn3p);
+            footnote3.setBackgroundColor(ColorConstants.RED);
+            footnote3.getAccessibilityProperties().setRole(StandardRoles.ASIDE);
+            FootnoteAnchor anchor3 = new FootnoteAnchor("[3]", footnote3);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
+            p.add(anchor);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor2);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor3);
+
+            for (int i = 0; i < 5; i++) {
+                p.add("\n\n");
+                p.add(TestResourceUtil.getByronStanza());
+            }
+
+            SectionBreak sectionBreak = new SectionBreak()
+                    .setPageMargins(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
+
+            Div div1 = new Div();
+            div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));
+            document.add(sectionBreak);
+            document.add(div1);
+        }
+        Assertions.assertNull(new CompareTool().compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
+
 
     private static Image loadImage() {
         try {

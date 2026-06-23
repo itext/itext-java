@@ -25,15 +25,22 @@ package com.itextpdf.layout.properties.margins;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
+import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.BlockElement;
 import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.IRenderer;
+import com.itextpdf.layout.tagging.TaggingHintKey;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class representing container to store {@link Footnote} instances.
  */
 class FootnotesContainer extends BlockElement<FootnotesContainer> {
     private final int pageNumber;
+    private final Map<IPropertyContainer, TaggingHintKey> footnoteTaggingHints = new HashMap<>();
 
     protected DefaultAccessibilityProperties tagProperties;
 
@@ -44,7 +51,10 @@ class FootnotesContainer extends BlockElement<FootnotesContainer> {
      */
     public FootnotesContainer(int pageNum) {
         this.pageNumber = pageNum;
+        this.setNeutralRole();
     }
+
+
 
     /**
      * Adds {@link Footnote} to this container.
@@ -53,9 +63,23 @@ class FootnotesContainer extends BlockElement<FootnotesContainer> {
      *
      * @return this same {@link FootnotesContainer} instance
      */
-    public FootnotesContainer add(Footnote footnote) {
+    public FootnotesContainer add(Footnote footnote, TaggingHintKey taggingHint) {
         this.childElements.add(footnote);
+        footnoteTaggingHints.put(footnote, taggingHint);
         return this;
+    }
+
+    /**
+     * Adds footnoted from another FootnotesContainer.
+     *
+     * @param otherContainer the other FootnotesContainer to add the footnotes from
+     */
+    public void addFootnotesFromOtherContainer(FootnotesContainer otherContainer) {
+        for (IElement childElement : otherContainer.childElements) {
+            if (childElement instanceof Footnote) {
+                add((Footnote) childElement, otherContainer.footnoteTaggingHints.get(childElement));
+            }
+        }
     }
 
     /**
@@ -65,13 +89,18 @@ class FootnotesContainer extends BlockElement<FootnotesContainer> {
      */
     @Override
     public IRenderer createRendererSubTree() {
+
         IRenderer rendererRoot = getRenderer();
         for (IElement child : childElements) {
             if (child instanceof Footnote) {
                 Footnote footnote = (Footnote) child;
                 footnote.applyFootnoteAnchor(this.pageNumber);
             }
-            rendererRoot.addChild(child.createRendererSubTree());
+            IRenderer childRenderer = child.createRendererSubTree();
+            if (footnoteTaggingHints.containsKey(child)) {
+                childRenderer.setProperty(Property.TAGGING_HINT_KEY, footnoteTaggingHints.get(child));
+            }
+            rendererRoot.addChild(childRenderer);
         }
         return rendererRoot;
     }

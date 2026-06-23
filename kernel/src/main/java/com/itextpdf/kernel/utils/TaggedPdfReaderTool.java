@@ -172,6 +172,7 @@ public class TaggedPdfReaderTool {
                 out.write(tag);
 
                 inspectAttributes(structElemKid);
+                inspectId(structElemKid);
 
                 out.write(">" + System.lineSeparator());
 
@@ -221,6 +222,25 @@ public class TaggedPdfReaderTool {
                     out.write(attrDict.get(key, false).toString());
                     out.write("\"");
                 }
+            } catch (java.io.IOException e) {
+                throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.UNKNOWN_IO_EXCEPTION, e);
+            }
+        }
+    }
+    /**
+     * Inspects Id property of the StructTreeRoot child.
+     *
+     * @param kid the direct kid of the StructTreeRoot
+     */
+    protected void inspectId(PdfStructElem kid) {
+        if (kid.getStructureElementId() != null) {
+            try {
+                    out.write(' ');
+                    out.write("element_id");
+                    out.write("=\"");
+                    out.write(kid.getStructureElementId().getValue());
+                    out.write("\"");
+
             } catch (java.io.IOException e) {
                 throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.UNKNOWN_IO_EXCEPTION, e);
             }

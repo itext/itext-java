@@ -48,10 +48,9 @@ import java.util.Map;
  */
 public class Footnote extends AbstractElement<Footnote> implements IAccessibleElement {
 
-    protected DefaultAccessibilityProperties tagProperties;
-
     final Map<Integer, IElement> anchors = new HashMap<>();
     IElement footnoteAnchor = null;
+    private DefaultAccessibilityProperties tagProperties;
 
     /**
      * Creates new {@link Footnote} instance with text.
@@ -70,6 +69,20 @@ public class Footnote extends AbstractElement<Footnote> implements IAccessibleEl
     public Footnote(Paragraph paragraph) {
         super();
         childElements.add(paragraph);
+        paragraph.setNeutralRole();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public AccessibilityProperties getAccessibilityProperties() {
+        if (tagProperties == null) {
+            tagProperties = new DefaultAccessibilityProperties(StandardRoles.NOTE);
+        }
+        return tagProperties;
     }
 
     /**
@@ -144,21 +157,6 @@ public class Footnote extends AbstractElement<Footnote> implements IAccessibleEl
         if (this.footnoteAnchor != null) {
             paragraph.getChildren().remove(this.footnoteAnchor);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@inheritDoc}
-     */
-    @Override
-    public AccessibilityProperties getAccessibilityProperties() {
-        if (tagProperties == null) {
-            // Although we mark is as P here, it'll be an artifact due to PageMarginBoxes#setPageMarginTagRole method.
-            // TODO DEVSIX-9997 Support correct footnotes tagging
-            tagProperties = new DefaultAccessibilityProperties(StandardRoles.P);
-        }
-        return tagProperties;
     }
 
     /**

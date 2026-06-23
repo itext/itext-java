@@ -23,6 +23,7 @@ import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.SectionBreakRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -285,10 +286,10 @@ public class PageMarginBoxes {
     public void draw(DocumentRenderer documentRenderer, PdfDocument document, int pageNumber) {
         PageFootnotesContent footnotes = this.getFootnotes(pageNumber);
         if (footnotes != null) {
-            drawPageContent(documentRenderer, document, pageNumber, footnotes);
+            drawPageContent(documentRenderer, document, pageNumber, footnotes, true);
         }
         for (PageMarginContent margin : margins.values()) {
-            drawPageContent(documentRenderer, document, pageNumber, margin);
+            drawPageContent(documentRenderer, document, pageNumber, margin, false);
         }
     }
 
@@ -331,11 +332,7 @@ public class PageMarginBoxes {
             throw new IllegalArgumentException("Footnotes must be a FootnotesContainer!");
         }
         FootnotesContainer container = (FootnotesContainer) existingFootnotes;
-        for (IElement element : ((FootnotesContainer) newFootnotes).getChildren()) {
-            if (element instanceof Footnote) {
-                container.add((Footnote) element);
-            }
-        }
+        container.addFootnotesFromOtherContainer((FootnotesContainer) newFootnotes);
         return container;
     }
 
@@ -344,7 +341,7 @@ public class PageMarginBoxes {
     }
 
     private void drawPageContent(DocumentRenderer documentRenderer, PdfDocument document, int pageNumber,
-                                 AbstractPageContent pageContent) {
+                                 AbstractPageContent pageContent, boolean tagged) {
         Rectangle rect = pageContent.getRectangle();
         if (rect == null) {
             // Margins weren't layouted, we can get here if page is added manually and is empty.
@@ -353,7 +350,10 @@ public class PageMarginBoxes {
             rect = pageContent.getRectangle();
         }
         IElement element = pageContent.getContent();
-        setPageMarginTagRole(element);
+        if (!tagged) {
+            setPageMarginTagRole(element);
+        }
+
         String name = pageContent instanceof PageMarginContent ?
                 (((PageMarginContent) pageContent).getMarginBoxName().name() + " margin box") : "footnotes";
         IRenderer renderer = createRendererFromElement(element, documentRenderer, document);

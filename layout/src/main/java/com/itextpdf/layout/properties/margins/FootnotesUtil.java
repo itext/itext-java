@@ -24,10 +24,10 @@ package com.itextpdf.layout.properties.margins;
 
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.FootnoteRenderer;
-
-import java.util.List;
+import com.itextpdf.layout.tagging.TaggingHintKey;
 
 /**
  * Utility class to process footnotes for internal usage only.
@@ -46,15 +46,16 @@ public final class FootnotesUtil {
      * @param pageMarginBoxes {@link PageMarginBoxes} for the page
      * @param footnotesProperties {@link FootnotesProperties} to apply for footnotes
      */
-    public static void addFootnotesToPage(int pageNum, List<Footnote> footnotesToAdd, PageMarginBoxes pageMarginBoxes,
-                                          FootnotesProperties footnotesProperties) {
+    public static void addFootnotesToPage(int pageNum, Iterable<FootnoteRenderer> footnotesToAdd,
+            PageMarginBoxes pageMarginBoxes, FootnotesProperties footnotesProperties) {
         FootnotesContainer footnotesContainer = new FootnotesContainer(pageNum);
         if (footnotesProperties.getFootnotesContainerStyle() != null) {
             footnotesContainer.addStyle(footnotesProperties.getFootnotesContainerStyle());
         }
 
-        for (Footnote footnote : footnotesToAdd) {
-            footnotesContainer.add(footnote);
+        for (FootnoteRenderer footnoteRederer : footnotesToAdd) {
+            Footnote footnote = (Footnote) footnoteRederer.getModelElement();
+            footnotesContainer.add(footnote, footnoteRederer.<TaggingHintKey>getProperty(Property.TAGGING_HINT_KEY));
             if (footnote.footnoteAnchor != null) {
                 footnote.anchors.put(pageNum, footnote.footnoteAnchor);
                 footnote.resetFootnoteAnchor();

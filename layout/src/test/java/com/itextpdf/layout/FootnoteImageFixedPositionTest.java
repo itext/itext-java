@@ -38,6 +38,8 @@ import com.itextpdf.layout.properties.margins.FootnoteAnchor;
 import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -45,6 +47,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import org.xml.sax.SAXException;
 
 @Tag("IntegrationTest")
 public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
@@ -141,7 +144,6 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
-
             Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bee.png"));
             image.setWidth(80);
 
@@ -157,6 +159,33 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool()
                 .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    public void fixedPositionOnImageFootnoteTaggingTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "fixedPositionOnImageFootnoteTagging";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+                Document document = new Document(pdfDoc)) {
+            pdfDoc.setTagged();
+            Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bee.png"));
+            image.setWidth(80);
+
+            Footnote footnote = new Footnote(new Paragraph().add(image));
+            footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
+            footnote.setFixedPosition(100, 150, 200);
+
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza()).add(anchor)
+                    .add(TestResourceUtil.getByronStanza());
+            document.add(new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareTagStructureAgainstXml(outFileName, cmpFileName));
     }
 
     @Test
@@ -261,6 +290,34 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
                 .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
     }
 
+
+    @Test
+    public void fixedPositionOnTextFootnoteAnchorAndFootnoteTaggingTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "fixedPositionOnBothAnchorAndFootnoteTagging";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDoc)) {
+
+            pdfDoc.setTagged();
+            Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
+            footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
+            footnote.setFixedPosition(50, 200, 250);
+
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            anchor.setFixedPosition(300, A4_HEIGHT * 0.70f, 100);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza()).add(anchor)
+                    .add(TestResourceUtil.getByronStanza());
+            document.add(new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 2)));
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareTagStructureAgainstXml(outFileName, cmpFileName));
+    }
+
     @Test
     public void fixedPositionOnImageFootnoteAnchorRenderTest()
             throws IOException, InterruptedException {
@@ -287,6 +344,34 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
 
         Assertions.assertNull(new CompareTool()
                 .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    public void fixedPositionOnImageFootnoteAnchorTaggingTest()
+            throws IOException, ParserConfigurationException, SAXException {
+        String fileName = "fixedPositionOnImageFootnoteAnchorTagging";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".xml";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            pdfDoc.setTagged();
+            Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
+            footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
+
+            Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bee.png"));
+            image.setWidth(15);
+
+            FootnoteAnchor anchor = new FootnoteAnchor(image, footnote);
+            anchor.setFixedPosition(200, A4_HEIGHT * 0.55f, 80);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza()).add(anchor)
+                    .add(TestResourceUtil.getByronStanza());
+            document.add(new Div().add(p).setBorder(new SolidBorder(ColorConstants.GREEN, 3)));
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareTagStructureAgainstXml(outFileName, cmpFileName));
     }
 
     @Test

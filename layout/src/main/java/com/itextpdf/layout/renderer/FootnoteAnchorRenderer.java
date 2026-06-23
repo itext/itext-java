@@ -23,6 +23,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
@@ -34,6 +35,10 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.margins.Footnote;
 import com.itextpdf.layout.properties.margins.FootnoteAnchor;
 import com.itextpdf.layout.properties.margins.FootnotesUtil;
+import com.itextpdf.layout.tagging.FootnoteTaggingHelper;
+import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+
+import java.util.Collections;
 
 /**
  * Renderer for {@link FootnoteAnchor} instance representing an anchor for a footnote.
@@ -63,6 +68,12 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         if (this.footnoteRenderer == null) {
             Footnote footnote = ((FootnoteAnchor) this.modelElement).getFootnote();
             this.footnoteRenderer = (FootnoteRenderer) footnote.createRendererSubTree().setParent(this);
+            LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper != null) {
+                taggingHelper.addKidsHint(this, Collections.<IRenderer>singletonList(footnoteRenderer));
+                taggingHelper.addKidsHint(this, Collections.<IRenderer>singletonList(footnoteAnchor));
+                LayoutTaggingHelper.addTreeHints(taggingHelper, footnoteAnchor);
+            }
         }
 
         int pageNumber = layoutContext.getArea().getPageNumber();
@@ -98,7 +109,30 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
+        LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+        FootnoteTaggingHelper.repairFootnoteAnchorTagIfNeeded(this, taggingHelper);
+
+        boolean isTagged = drawContext.isTaggingEnabled();
+        if (isTagged) {
+            taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
+            if (taggingHelper == null) {
+                isTagged = false;
+            } else {
+                TagTreePointer tagPointer = taggingHelper.useAutoTaggingPointerAndRememberItsPosition(this);
+                taggingHelper.createTag(this, tagPointer);
+            }
+        }
+
         footnoteAnchor.draw(drawContext);
+
+        if (isTagged) {
+            if (isLastRendererForModelElement) {
+                taggingHelper.finishTaggingHint(this);
+            }
+            taggingHelper.restoreAutoTaggingPointerPosition(this);
+        }
+
+        flushed = true;
     }
 
     @Override

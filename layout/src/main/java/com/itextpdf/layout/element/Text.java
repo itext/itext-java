@@ -63,7 +63,9 @@ public class Text extends AbstractElement<Text> implements ILeafElement, IAccess
      */
     public Text(Text text) {
         this.text = text.text;
-        this.tagProperties = text.tagProperties;
+        this.tagProperties = text.tagProperties == null
+                ? null
+                : new DefaultAccessibilityProperties(text.tagProperties);
         this.properties = new HashMap<>(text.properties);
         this.styles = text.styles == null ? null : new LinkedHashSet<>(text.styles);
         this.childElements = new ArrayList<>(text.childElements);
