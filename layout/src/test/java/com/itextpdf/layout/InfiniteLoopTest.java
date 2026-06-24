@@ -21,12 +21,13 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
+
+import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 @Tag("IntegrationTest")
 public class InfiniteLoopTest extends ExtendedITextTest {
@@ -35,7 +36,13 @@ public class InfiniteLoopTest extends ExtendedITextTest {
 
     @BeforeAll
     public static void beforeClass() {
-        createDestinationFolder(DESTINATION_FOLDER);
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        //We need to clean this because it generate a very big pdf file which is not used.
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
