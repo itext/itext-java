@@ -71,8 +71,8 @@
   </modules>
 
   <scm>
-    <connection>scm:git:ssh://git@git.itextsupport.com:7999/i7j/itextcore.git</connection>
-    <url>https://git.itextsupport.com/projects/I7J/repos/itextcore</url>
+    <connection>scm:git:git@github.com:itext/itext-java.git</connection>
+    <url>https://github.com/itext/itext-java</url>
   </scm>
   <issueManagement>
     <system>jira</system>
