@@ -156,9 +156,22 @@ public class ResourceResolver {
             logger.error(MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI, src));
         } else {
-            logger.error(MessageFormatUtil.format(
-                    StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI,
-                    uriResolver.getBaseUri(), src));
+            byte[] bytes = null;
+            try {
+                bytes = retriever.getByteArrayByUrl(uriResolver.resolveAgainstBaseUri(src));
+            } catch (Exception e) {
+                //ignore exception
+            }
+
+            if (bytes == null) {
+                logger.error(MessageFormatUtil.format(
+                        StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI,
+                        uriResolver.getBaseUri(), src));
+            } else {
+                logger.error(MessageFormatUtil.format(
+                        StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_IMAGE_WITH_GIVEN_BASE_URI,
+                        uriResolver.getBaseUri(), src));
+            }
         }
         return null;
     }

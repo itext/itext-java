@@ -211,10 +211,9 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // TODO DEVSIX-10012 Extra misleading log messages are produced when WebP module is missing
     @LogMessages(messages = {
             @LogMessage(messageTemplate = WebPLogMessageConstant.WEBP_NOT_FOUND),
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI)
+            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_IMAGE_WITH_GIVEN_BASE_URI)
     })
     public void webPImageWithoutWebPModuleTest() throws IOException {
         convertToSinglePage(new File(sourceFolder + "webPImageWithoutWebPModule.svg"),
