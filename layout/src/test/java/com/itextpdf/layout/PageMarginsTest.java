@@ -1077,6 +1077,34 @@ public class PageMarginsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void footnotesOneByOne2Test() throws IOException, InterruptedException {
+        String fileName = "footnotesOneByOne2";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            pdfDocument.setTagged();
+            document.setFontSize(20);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
+
+            Footnote footnote1 = new Footnote(TestResourceUtil.getByronStanza());
+            footnote1.setBackgroundColor(ColorConstants.YELLOW);
+            FootnoteAnchor anchor1 = new FootnoteAnchor("1", footnote1);
+            Footnote footnote2 = new Footnote(TestResourceUtil.getByronStanza());
+            footnote2.setBackgroundColor(ColorConstants.PINK);
+            FootnoteAnchor anchor2 = new FootnoteAnchor("2", footnote2);
+            p.add(anchor1).add(anchor2);
+
+            Div div = new Div().add(p).setBorder(new SolidBorder(ColorConstants.LIGHT_GRAY, 3));
+            document.add(div);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+    @Test
     public void imageAsFootnoteAnchorTest() throws IOException, InterruptedException {
         String fileName = "imageAsFootnoteAnchor";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";

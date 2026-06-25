@@ -210,10 +210,12 @@ class FootnotesCounterHandler {
     private final class FootnoteAnchorComparator implements Comparator<FootnoteAnchor> {
         @Override
         public int compare(FootnoteAnchor o1, FootnoteAnchor o2) {
-            Rectangle rectangle1 = renderers.get(o1).occupiedArea.getBBox();
-            Rectangle rectangle2 = renderers.get(o2).occupiedArea.getBBox();
-            int result = Float.compare(-rectangle1.getY(), -rectangle2.getY());
+            FootnoteAnchorRenderer renderer1 = renderers.get(o1);
+            FootnoteAnchorRenderer renderer2 = renderers.get(o2);
+            int result = Float.compare(-renderer1.yPos, -renderer2.yPos);
             if (result == 0) {
+                Rectangle rectangle1 = renderer1.occupiedArea.getBBox();
+                Rectangle rectangle2 = renderer2.occupiedArea.getBBox();
                 result = Float.compare(rectangle1.getX(), rectangle2.getX());
             }
             return result;

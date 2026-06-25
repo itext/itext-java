@@ -31,6 +31,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.margins.Footnote;
 import com.itextpdf.layout.properties.margins.FootnoteAnchor;
@@ -45,7 +46,9 @@ import java.util.Collections;
  */
 public class FootnoteAnchorRenderer extends AbstractRenderer {
 
-    private IRenderer footnoteAnchor;
+    IRenderer footnoteAnchor;
+
+    float yPos = Float.NaN;
 
     // Create and store footnote renderer once to save its layout result.
     FootnoteRenderer footnoteRenderer = null;
@@ -63,6 +66,9 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         if (this.footnoteRenderer == null) {
@@ -79,6 +85,9 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         int pageNumber = layoutContext.getArea().getPageNumber();
         Rectangle pageRectangle = this.getPdfDocument().getPage(pageNumber).getPageSize();
         IRenderer parentRenderer = getParent();
+        if (parentRenderer instanceof LineRenderer) {
+            this.yPos = ((LineRenderer) parentRenderer).occupiedArea.getBBox().getTop();
+        }
         while (parentRenderer != null) {
             if (parentRenderer instanceof DocumentRenderer) {
                 DocumentRenderer documentRenderer = (DocumentRenderer) parentRenderer;
@@ -93,20 +102,37 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
 
         this.footnoteRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, pageRectangle)));
 
-        // TODO DEVSIX-10023 Process partial result. Take it into account in line renderer
-        //  and in case of table header/footer or fixed width.
         LayoutResult layoutResult = footnoteAnchor.layout(layoutContext);
         this.occupiedArea = layoutResult.getOccupiedArea();
 
-        FootnotesCounterHandler.addFootnoteAnchor(this);
-
         if (LayoutResult.NOTHING == layoutResult.getStatus()) {
-            return new LayoutResult(LayoutResult.NOTHING, null, null, layoutResult.getOverflowRenderer(), this);
+            layoutResult.setOverflowRenderer(this);
+            layoutResult.setCauseOfNothing(this);
+        } else {
+            if (Float.isNaN(this.yPos)) {
+                this.yPos = this.occupiedArea.getBBox().getTop();
+            }
+            FootnotesCounterHandler.addFootnoteAnchor(this);
+        }
+        if (layoutResult.getSplitRenderer() != null) {
+            FootnoteAnchorRenderer splitRenderer = createSplitRenderer(layoutResult);
+            layoutResult.setSplitRenderer(splitRenderer);
         }
 
         return layoutResult;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void move(float dxRight, float dyUp) {
+        footnoteAnchor.move(dxRight, dyUp);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void draw(DrawContext drawContext) {
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
@@ -135,9 +161,56 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         flushed = true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MinMaxWidth getMinMaxWidth() {
+        return getMinMaxWidth(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MinMaxWidth getMinMaxWidth(Float parentBoxWidth) {
+        childRenderers.clear();
+        childRenderers.add(footnoteAnchor);
+        MinMaxWidth res = super.getMinMaxWidth(parentBoxWidth);
+        childRenderers.clear();
+        return res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IRenderer getNextRenderer() {
         return new FootnoteAnchorRenderer((FootnoteAnchor) modelElement);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Float getFirstYLineRecursively() {
+        childRenderers.clear();
+        childRenderers.add(footnoteAnchor);
+        Float res = super.getFirstYLineRecursively();
+        childRenderers.clear();
+        return res;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Float getLastYLineRecursively() {
+        childRenderers.clear();
+        childRenderers.add(footnoteAnchor);
+        Float res = super.getLastYLineRecursively();
+        childRenderers.clear();
+        return res;
     }
 
     FootnoteAnchorRenderer addSymbolRenderer(IRenderer footnoteNumberingSymbolRenderer) {
@@ -166,5 +239,16 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         } else {
             throw new IllegalStateException();
         }
+    }
+
+    private FootnoteAnchorRenderer createSplitRenderer(LayoutResult layoutResult) {
+        FootnoteAnchorRenderer splitRenderer = (FootnoteAnchorRenderer) getNextRenderer();
+        splitRenderer.occupiedArea = occupiedArea.clone();
+        splitRenderer.parent = parent;
+        splitRenderer.footnoteRenderer = footnoteRenderer;
+        splitRenderer.addAllProperties(getOwnProperties());
+        splitRenderer.footnoteAnchor = layoutResult.getSplitRenderer().setParent(splitRenderer);
+
+        return splitRenderer;
     }
 }

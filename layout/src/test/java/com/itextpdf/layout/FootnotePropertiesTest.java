@@ -90,7 +90,6 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("numberingType")
-    // TODO DEVSIX-10023 Process partial result for footnote anchor.
     public void footnoteNumberingTypeTest(FootnoteNumberingType numberingType)
             throws IOException, InterruptedException {
         String fileName = "footnoteNumberingType_" + numberingType.toString();

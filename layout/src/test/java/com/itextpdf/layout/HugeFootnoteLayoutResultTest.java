@@ -207,17 +207,18 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void hugeParagraphWithFootnoteAnchorInDivTest() throws IOException, InterruptedException {
-        String fileName = "hugeParagraphFontWithFootnoteAnchor";
+        String fileName = "hugeParagraphFontWithFootnoteAnchorInDiv";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
-            // TODO DEVSIX-10030 Support forced placement for footnotes to prevent infinite loops.
-            //  Set footnote container font size to 27 to reproduce the issue.
+            pdfDoc.setTagged();
+
             document.setFootnotesProperties(new FootnotesProperties()
-                    .setFootnotesContainerStyle(new Style().setFontSize(26f)));
+                    .setFootnotesContainerStyle(new Style().setFontSize(27f)));
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
 
@@ -280,7 +281,66 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-10023 Do not split footnote anchor.
+    public void hugeFontAnchorWithMultipleFootnotesInDivTest() throws IOException, InterruptedException {
+        String fileName = "hugeFontAnchorWithMultipleFootnotesInDiv";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            pdfDoc.setTagged();
+            for (int i = 1; i <= 2; i++) {
+                Footnote footnote = new Footnote("Footnote " + i + ": " + TestResourceUtil.getByronStanza());
+                footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 2));
+
+                FootnoteAnchor footnoteAnchor = new FootnoteAnchor(new Text("Anchor " + i + " with huge font.")
+                        .setFontSize(47f), footnote);
+                footnoteAnchor.setProperty(Property.FORCED_PLACEMENT, true);
+                footnoteAnchor.setProperty(Property.KEEP_TOGETHER, true);
+                Paragraph p = new Paragraph()
+                        .add("Paragraph " + i)
+                        .add(footnoteAnchor);
+
+                Div div = new Div().add(p).setBorder(new SolidBorder(cellColor(i - 1), 2));
+
+                document.add(div);
+            }
+        }
+        Assertions.assertNull(
+                new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    public void hugeFontAnchorWithMultipleFootnotesInDiv2Test() throws IOException, InterruptedException {
+        String fileName = "hugeFontAnchorWithMultipleFootnotesInDiv2";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            pdfDoc.setTagged();
+            for (int i = 1; i <= 4; i++) {
+                Footnote footnote = new Footnote("Footnote " + i + ": " + TestResourceUtil.getByronStanza());
+                footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 2));
+
+                FootnoteAnchor footnoteAnchor = new FootnoteAnchor(new Text("Anchor " + i + " with huge font.")
+                        .setFontSize(48f), footnote);
+                footnoteAnchor.setProperty(Property.FORCED_PLACEMENT, true);
+                footnoteAnchor.setProperty(Property.KEEP_TOGETHER, true);
+                Paragraph p = new Paragraph()
+                        .add("Paragraph " + i)
+                        .add(footnoteAnchor);
+
+                Div div = new Div().add(p).setBorder(new SolidBorder(cellColor(i - 1), 2));
+
+                document.add(div);
+            }
+        }
+        Assertions.assertNull(
+                new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
     public void hugeFontAnchorWithMultipleFootnotesTest() throws IOException, InterruptedException {
         String fileName = "hugeFontAnchorWithMultipleFootnotes";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -292,13 +352,15 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
                 Footnote footnote = new Footnote("Footnote " + i + ": " + TestResourceUtil.getByronStanza());
                 footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 2));
 
+                FootnoteAnchor footnoteAnchor = new FootnoteAnchor(new Text("Anchor " + i + " with huge font.")
+                        .setFontSize(58f), footnote);
+                footnoteAnchor.setProperty(Property.FORCED_PLACEMENT, true);
+                footnoteAnchor.setProperty(Property.KEEP_TOGETHER, true);
                 Paragraph p = new Paragraph()
                         .add("Paragraph " + i)
-                        .add(new FootnoteAnchor(new Text("Anchor " + i + " with huge font.").setFontSize(48f),
-                                footnote));
+                        .add(footnoteAnchor);
 
-                Div div = new Div().add(p).setBorder(new SolidBorder(cellColor(i - 1), 2));
-                document.add(div);
+                document.add(p);
             }
         }
         Assertions.assertNull(
@@ -306,8 +368,8 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     }
 
     @Test
-    public void largeImageAnchorFootnoteRenderTest()
-            throws IOException, InterruptedException {
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
+    public void largeImageAnchorFootnoteRenderTest() throws IOException, InterruptedException {
         String fileName = "largeImageAnchorFootnote";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
@@ -334,6 +396,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void largeImageAnchorWithNormalContentRenderTest()
             throws IOException, InterruptedException {
         String fileName = "largeImageAnchorNormalContent";

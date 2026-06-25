@@ -232,6 +232,15 @@ public class LayoutResult {
     }
 
     /**
+     * Sets the first renderer to produce {@link LayoutResult#NOTHING} during {@link IRenderer#layout(LayoutContext)}.
+     *
+     * @param causeOfNothing the first renderer to produce {@link LayoutResult#NOTHING} layout result
+     */
+    public void setCauseOfNothing(IRenderer causeOfNothing) {
+        this.causeOfNothing = causeOfNothing;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

@@ -51,7 +51,6 @@ import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import com.itextpdf.layout.utils.LayoutInfiniteLoopResolver;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,15 +138,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             int rendererLayoutCounter = 0;
             while (clearanceOverflowsToNextPage || (currentArea != null && renderer != null
                     && (result = layoutChild(renderer, childMarginsInfo)).getStatus() != LayoutResult.FULL)) {
-                rendererLayoutCounter++;
-                LayoutInfiniteLoopResolver loopResolver =
-                        getPdfDocument().getDiContainer().getInstance(LayoutInfiniteLoopResolver.class);
-                int limit = loopResolver == null ?
-                        MAX_AMOUNT_OF_ELEMENT_LAYOUTS : loopResolver.getMaxPagesCountForSingleElement();
-                if (rendererLayoutCounter > limit) {
-                    throw new PdfException(
-                            MessageFormatUtil.format(LayoutExceptionMessageConstant.INFINITE_LOOP_DETECTED, limit / 3));
-                }
+                rendererLayoutCounter = getRendererLayoutCounter(rendererLayoutCounter);
                 boolean currentAreaNeedsToBeUpdated = false;
                 if (clearanceOverflowsToNextPage) {
                     result = new LayoutResult(LayoutResult.NOTHING, null, null, renderer);
@@ -290,6 +281,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             footnotesCounterHandler.reset();
         }
 
+        boolean isForcedPlacement = Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT));
         LayoutResult layoutResult = renderer.setParent(this)
                 .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas));
 
@@ -320,11 +312,12 @@ public abstract class RootRenderer extends AbstractRenderer {
             latestFootnoteNumber.put(pageNum, latestFootnoteNumber.get(pageNum - 1));
         }
 
+        int rendererAdditionalLayoutCounter = 0;
+
         boolean footnotesPlaced = false;
         float decreasedHeight = 0;
         boolean footnotesNumDefined = false;
         int footnotesNum = 0;
-        // TODO DEVSIX-10030 Support forced placement for footnotes to prevent infinite loops
         while (!footnotesPlaced) {
             if (footnotesNumDefined) {
                 decreasedHeight = 0;
@@ -344,11 +337,18 @@ public abstract class RootRenderer extends AbstractRenderer {
                     (int) latestFootnoteNumber.getOrDefault(pageNum, 0));
 
             footnotesCounterHandler.reset();
+            if (isForcedPlacement) {
+                renderer.setProperty(Property.FORCED_PLACEMENT, true);
+            }
             layoutResult = renderer.setParent(this)
                     .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas));
-
-            footnotes = footnotesCounterHandler.collectFootnotes(
-                    layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
+            if (layoutResult.getStatus() == LayoutResult.NOTHING) {
+                footnotes.clear();
+                footnotesCounterHandler.reset();
+            } else {
+                footnotes = footnotesCounterHandler.collectFootnotes(
+                        layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
+            }
             footnoteAnchorsNum = footnotes.size();
 
             // Number of the placed anchors == number of footnotes we reserved the space for before the layout
@@ -356,9 +356,10 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (footnoteAnchorsNum > footnotesNum) {
                 footnotesNumDefined = true;
                 // Decrease current area from the bottom until extra anchor will be moved to the next page.
-                // TODO DEVSIX-10030 This logic can be improved.
+                // This logic can be improved in the future.
                 currentArea.getBBox().moveUp(1).decreaseHeight(1);
             }
+            rendererAdditionalLayoutCounter = getRendererLayoutCounter(rendererAdditionalLayoutCounter);
         }
 
         if (pageMarginBoxes == null) {
@@ -600,6 +601,19 @@ public abstract class RootRenderer extends AbstractRenderer {
         for (IRenderer renderer : waitingFloatRenderers) {
             addChild(renderer);
         }
+    }
+
+    private int getRendererLayoutCounter(int rendererLayoutCounter) {
+        rendererLayoutCounter++;
+        LayoutInfiniteLoopResolver loopResolver =
+                getPdfDocument().getDiContainer().getInstance(LayoutInfiniteLoopResolver.class);
+        int limit = loopResolver == null ?
+                MAX_AMOUNT_OF_ELEMENT_LAYOUTS : loopResolver.getMaxPagesCountForSingleElement();
+        if (rendererLayoutCounter > limit) {
+            throw new PdfException(
+                    MessageFormatUtil.format(LayoutExceptionMessageConstant.INFINITE_LOOP_DETECTED, limit / 3));
+        }
+        return rendererLayoutCounter;
     }
 
     private boolean updateForcedPlacement(IRenderer currentRenderer, IRenderer overflowRenderer) {
