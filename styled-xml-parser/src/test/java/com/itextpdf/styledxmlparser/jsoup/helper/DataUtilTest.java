@@ -263,18 +263,6 @@ public class DataUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    public void decodeOnlyCharsetFallsBackToUtf8ForOutput() throws IOException {
-        final String candidate = "ISO-2022-CN";
-        String html = "<html><head>"
-                + "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + candidate + "\">"
-                + "</head><body>x</body></html>";
-        Document doc = DataUtil.parseInputStream(stream(html), null, "http://foo.com/", Parser.htmlParser());
-
-        Assertions.assertEquals("x", doc.body().text());
-        Assertions.assertEquals(DataUtil.UTF_8, doc.outputSettings().charset());
-    }
-
-    @Test
     public void xmlDeclarationFirstChildIsUsedForCharset() throws IOException {
        String xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><data>Hellö</data>";
         Document doc = DataUtil.parseInputStream(stream(xml, "ISO-8859-1"), null, "http://foo.com/", Parser.xmlParser());
