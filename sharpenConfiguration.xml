@@ -18,6 +18,10 @@
             <fileset reason="Underlying implementation classes not autoportable (e.g. java.text.MessageFormat, java.util.Locale">
                 <file path="com/itextpdf/commons/utils/MessageFormatUtil.java"/>
             </fileset>
+
+            <fileset reason="Platform dependent configuration">
+                <file path="com/itextpdf/pdftest/Availability.java"/>
+            </fileset>
             <fileset reason="Underlying implementation classes not autoportable (e.g. java.nio.charset.Charset,
         java.nio.charset.CharsetEncoder, java.nio.ByteBuffer">
                 <file path="com/itextpdf/commons/utils/EncodingUtil.java"/>
