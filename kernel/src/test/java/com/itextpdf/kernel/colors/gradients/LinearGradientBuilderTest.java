@@ -28,12 +28,17 @@ import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
+import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
@@ -768,10 +773,110 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
         generateAndComparePdfs("twoStopsOutsideAndNone.pdf", targetBoundingBox, null, gradientBuilder);
     }
 
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.GRADIENT_MAX_COLOR_STOPS,
+                    logLevel = LogLevelConstants.WARN, count = 1)
+    })
+    public void buildStopsDefaultLimitRepeatTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractGradientBuilder<Point> gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getLeft() + 100.15f, targetBoundingBox.getBottom() + 100f)
+                .setSpread(GradientSpreadMethod.REPEAT)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.2d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.YELLOW.getColorValue(), 0.4d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLACK.getColorValue(), 0.6d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.WHITE.getColorValue(), 0.8d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+
+        generateAndComparePdfs("stopsDefaultLimitRepeat.pdf", targetBoundingBox, null, gradientBuilder);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.GRADIENT_MAX_COLOR_STOPS,
+                    logLevel = LogLevelConstants.WARN, count = 1)
+    })
+    public void buildStopsLimitReachedRepeatTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractGradientBuilder<Point> gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getLeft() + 150f, targetBoundingBox.getBottom() + 100f)
+                .setSpread(GradientSpreadMethod.REPEAT)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+
+        GradientPropertiesResolver gradientPropertiesResolver = new GradientPropertiesResolver(10);
+        generateAndComparePdfs("stopsLimitReachedRepeat.pdf", targetBoundingBox, null, gradientBuilder,
+                gradientPropertiesResolver);
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = KernelLogMessageConstant.GRADIENT_MAX_COLOR_STOPS,
+                    logLevel = LogLevelConstants.WARN, count = 1)
+    })
+    public void buildStopsLimitReachedReflectTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractGradientBuilder<Point> gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getLeft() + 150f, targetBoundingBox.getBottom() + 100f)
+                .setSpread(GradientSpreadMethod.REFLECT)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+
+        GradientPropertiesResolver gradientPropertiesResolver = new GradientPropertiesResolver(5);
+        generateAndComparePdfs("stopsLimitReachedReflect.pdf", targetBoundingBox, null, gradientBuilder,
+                gradientPropertiesResolver);
+    }
+
+    @Test
+    public void buildStopsLimitReachedPadTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractGradientBuilder<Point> gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getLeft() + 150f, targetBoundingBox.getBottom() + 100f)
+                .setSpread(GradientSpreadMethod.PAD)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+
+        GradientPropertiesResolver gradientPropertiesResolver = new GradientPropertiesResolver(1);
+        generateAndComparePdfs("stopsLimitReachedPad.pdf", targetBoundingBox, null, gradientBuilder,
+                gradientPropertiesResolver);
+    }
+
+    @Test
+    public void buildStopsLimitReachedNoneTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
+        AbstractGradientBuilder<Point> gradientBuilder = new LinearGradientBuilder()
+                .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f,
+                        targetBoundingBox.getLeft() + 150f, targetBoundingBox.getBottom() + 100f)
+                .setSpread(GradientSpreadMethod.NONE)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
+
+        GradientPropertiesResolver gradientPropertiesResolver = new GradientPropertiesResolver(1);
+        generateAndComparePdfs("stopsLimitReachedNone.pdf", targetBoundingBox, null, gradientBuilder,
+                gradientPropertiesResolver);
+    }
+
     private void generateAndComparePdfs(String fileName, Rectangle toDraw, AffineTransform transform,
             AbstractGradientBuilder<Point> gradientBuilder) throws InterruptedException, IOException {
+        generateAndComparePdfs(fileName, toDraw, transform, gradientBuilder, null);
+    }
+
+    private void generateAndComparePdfs(String fileName, Rectangle toDraw, AffineTransform transform,
+            AbstractGradientBuilder<Point> gradientBuilder,
+            GradientPropertiesResolver gradientPropertiesResolver) throws InterruptedException, IOException {
+        DocumentProperties properties = new DocumentProperties();
+        if (gradientPropertiesResolver != null) {
+            properties.registerDependency(GradientPropertiesResolver.class, () -> gradientPropertiesResolver);
+        }
+
         String outPdfPath = DESTINATION_FOLDER + fileName;
-        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdfPath))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdfPath), properties)) {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
 
             if (transform != null) {

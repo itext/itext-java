@@ -49,6 +49,11 @@ public final class KernelLogMessageConstant {
             "Full compression mode was requested to be switched off in append mode but the original document has "
                     + "cross-reference stream, not cross-reference table. Falling back to cross-reference stream in "
                     + "appended document and switching full compression on";
+
+    public static final String GRADIENT_MAX_COLOR_STOPS = "Maximum number of color stops {0} exceeded for gradient."
+            + "If you need to configure this limit use GradientPropertiesResolver class in"
+            + "DocumentProperties#registerDependency or ConverterProperties#registerDependency methods.";
+
     public static final String JPXDECODE_FILTER_DECODING =
             "JPXDecode filter decoding into the bit map is not supported. The stream data would be left in JPEG2000 "
                     + "format";

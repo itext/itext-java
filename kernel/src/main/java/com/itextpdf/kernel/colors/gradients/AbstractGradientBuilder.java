@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.colors.gradients;
 
 import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.PatternColor;
@@ -32,6 +33,7 @@ import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -171,7 +173,7 @@ public abstract class AbstractGradientBuilder<T> {
         }
 
         AbstractPdfShading pdfShading = constructPdfShading(baseCoordinatesVector, this.stops, this.spreadMethod,
-                targetBoundingBox);
+                targetBoundingBox, document);
         if (pdfShading == null) {
             return null;
         }
@@ -319,33 +321,36 @@ public abstract class AbstractGradientBuilder<T> {
     }
 
     private AbstractPdfShading constructPdfShading(T[] baseCoordinatesVector,
-            List<GradientColorStop> stops, GradientSpreadMethod spreadMethod, Rectangle targetBoundingBox) {
+            List<GradientColorStop> stops, GradientSpreadMethod spreadMethod,
+            Rectangle targetBoundingBox, PdfDocument pdfDocument) {
 
         double baseVectorLength = getBaseVectorLength(baseCoordinatesVector);
 
-        List<GradientColorStop> stopsToConstruct = normalizeStops(stops, baseVectorLength);
+        List<GradientColorStop> normalizedStops = normalizeStops(stops, baseVectorLength);
+        List<GradientColorStop> stopsToConstruct;
         double[] coordinatesDomain = new double[] {0, 1};
         T[] actualCoordinates;
         if (isZero(baseVectorLength)
-                || stopsToConstruct.size() == 1) {
+                || normalizedStops.size() == 1) {
             // single color case
             if (spreadMethod == GradientSpreadMethod.NONE) {
                 return null;
             }
             actualCoordinates = createCoveringCoordinates(targetBoundingBox);
 
-            GradientColorStop lastColorStop = stopsToConstruct.get(stopsToConstruct.size() - 1);
+            GradientColorStop lastColorStop = normalizedStops.get(normalizedStops.size() - 1);
             stopsToConstruct = Arrays.asList(new GradientColorStop(lastColorStop, 0d, OffsetType.RELATIVE),
                     new GradientColorStop(lastColorStop, 1d, OffsetType.RELATIVE));
         } else {
             coordinatesDomain = computeCoveringDomain(baseCoordinatesVector, targetBoundingBox);
             if (spreadMethod == GradientSpreadMethod.REPEAT || spreadMethod == GradientSpreadMethod.REFLECT) {
-                stopsToConstruct = adjustNormalizedStopsToCoverDomain(stopsToConstruct, coordinatesDomain,
-                        spreadMethod);
+                stopsToConstruct = adjustNormalizedStopsToCoverDomain(
+                        normalizedStops, coordinatesDomain, spreadMethod, pdfDocument);
             } else if (spreadMethod == GradientSpreadMethod.PAD) {
-                adjustStopsForPadIfNeeded(stopsToConstruct, coordinatesDomain);
+                stopsToConstruct = adjustStopsForPadIfNeeded(normalizedStops, coordinatesDomain);
             } else {
                 // none case
+                stopsToConstruct = normalizedStops;
                 double firstStopOffset = stopsToConstruct.get(0).getOffset();
                 double lastStopOffset = stopsToConstruct.get(stopsToConstruct.size() - 1).getOffset();
                 if (isZero(lastStopOffset - firstStopOffset)
@@ -363,6 +368,80 @@ public abstract class AbstractGradientBuilder<T> {
 
         return createPdfShading(new PdfDeviceCs.Rgb(), createCoordsDictEntry(actualCoordinates),
                 new PdfArray(coordinatesDomain), constructFunction(stopsToConstruct));
+    }
+
+    private List<GradientColorStop> adjustNormalizedStopsToCoverDomain(List<GradientColorStop> normalizedStops,
+            double[] targetDomain, GradientSpreadMethod spreadMethod, PdfDocument pdfDocument) {
+        List<GradientColorStop> adjustedStops = new ArrayList<>();
+
+        GradientColorStop lastColorStop = normalizedStops.get(normalizedStops.size() - 1);
+        double originalIntervalEnd = lastColorStop.getOffset();
+        double originalIntervalStart = normalizedStops.get(0).getOffset();
+        double originalIntervalLength = originalIntervalEnd - originalIntervalStart;
+
+        if (originalIntervalLength <= ZERO_EPSILON) {
+            return Arrays.asList(new GradientColorStop(lastColorStop, targetDomain[0], OffsetType.RELATIVE),
+                    new GradientColorStop(lastColorStop, targetDomain[1], OffsetType.RELATIVE));
+        }
+
+        double startIntervalsShift = Math.floor((targetDomain[0] - originalIntervalStart) / originalIntervalLength);
+        double iterationOffset = originalIntervalStart + (originalIntervalLength * startIntervalsShift);
+        boolean isIterationInverse =
+                spreadMethod == GradientSpreadMethod.REFLECT && Math.abs(startIntervalsShift) % 2 != 0;
+
+        int currentIterationIndex = isIterationInverse ? normalizedStops.size() - 1 : 0;
+
+        int maxStopCount = getMaxStopCountForRepeatAndReflect(pdfDocument);
+        double lastComputedOffset = iterationOffset;
+        while (lastComputedOffset <= targetDomain[1]) {
+            GradientColorStop currentStop = normalizedStops.get(currentIterationIndex);
+            lastComputedOffset = isIterationInverse ?
+                    iterationOffset + originalIntervalEnd - currentStop.getOffset()
+                    : iterationOffset + currentStop.getOffset() - originalIntervalStart;
+            GradientColorStop computedStop = new GradientColorStop(currentStop, lastComputedOffset,
+                    OffsetType.RELATIVE);
+
+            if (lastComputedOffset < targetDomain[0] && !adjustedStops.isEmpty()) {
+                adjustedStops.set(0, computedStop);
+            } else {
+                adjustedStops.add(computedStop);
+            }
+
+            if (adjustedStops.size() > maxStopCount) {
+                LoggerFactory.getLogger(getClass()).warn(
+                        MessageFormatUtil.format(KernelLogMessageConstant.GRADIENT_MAX_COLOR_STOPS, maxStopCount));
+                return adjustStopsForPadIfNeeded(normalizedStops, targetDomain);
+            }
+
+            if (isIterationInverse) {
+                --currentIterationIndex;
+                if (currentIterationIndex < 0) {
+                    iterationOffset += originalIntervalLength;
+                    isIterationInverse = false;
+                    currentIterationIndex = 1;
+                }
+            } else {
+                ++currentIterationIndex;
+                if (currentIterationIndex == normalizedStops.size()) {
+                    iterationOffset += originalIntervalLength;
+                    isIterationInverse = spreadMethod == GradientSpreadMethod.REFLECT;
+                    currentIterationIndex = isIterationInverse ? normalizedStops.size() - 2 : 0;
+                }
+            }
+            // check the next iteration type to set the correct stop color hint for just added stop
+            if (isIterationInverse) {
+                GradientColorStop nextColor = normalizedStops.get(currentIterationIndex);
+                // this method should be invoked only after the normalization. it means that
+                // the hint offset type for each stop is either relative to colors interval
+                // (i.e. for inverse iteration we need to inverse the hint offset), or is none
+                // (i.e. the hint offset value should be ignored)
+                computedStop.setHint(1 - nextColor.getHintOffset(), nextColor.getHintOffsetType());
+            } else {
+                computedStop.setHint(currentStop.getHintOffset(), currentStop.getHintOffsetType());
+            }
+        }
+
+        return adjustedStops;
     }
 
     // the result list would have the same list of stop colors as the original one
@@ -519,83 +598,23 @@ public abstract class AbstractGradientBuilder<T> {
         return copy;
     }
 
-    private static void adjustStopsForPadIfNeeded(List<GradientColorStop> stopsToConstruct,
+    private static List<GradientColorStop> adjustStopsForPadIfNeeded(List<GradientColorStop> normalizedStops,
             double[] coordinatesDomain) {
-        GradientColorStop firstStop = stopsToConstruct.get(0);
+        List<GradientColorStop> stopsToConstruct = new ArrayList<>(normalizedStops.size() + 2);
+
+        GradientColorStop firstStop = normalizedStops.get(0);
         if (coordinatesDomain[0] < firstStop.getOffset()) {
             stopsToConstruct.add(0, new GradientColorStop(firstStop, coordinatesDomain[0], OffsetType.RELATIVE));
         }
-        GradientColorStop lastStop = stopsToConstruct.get(stopsToConstruct.size() - 1);
+
+        stopsToConstruct.addAll(normalizedStops);
+
+        GradientColorStop lastStop = normalizedStops.get(normalizedStops.size() - 1);
         if (coordinatesDomain[1] > lastStop.getOffset()) {
             stopsToConstruct.add(new GradientColorStop(lastStop, coordinatesDomain[1], OffsetType.RELATIVE));
         }
-    }
 
-    private static List<GradientColorStop> adjustNormalizedStopsToCoverDomain(List<GradientColorStop> normalizedStops,
-            double[] targetDomain, GradientSpreadMethod spreadMethod) {
-        List<GradientColorStop> adjustedStops = new ArrayList<>();
-
-        GradientColorStop lastColorStop = normalizedStops.get(normalizedStops.size() - 1);
-        double originalIntervalEnd = lastColorStop.getOffset();
-        double originalIntervalStart = normalizedStops.get(0).getOffset();
-        double originalIntervalLength = originalIntervalEnd - originalIntervalStart;
-
-        if (originalIntervalLength <= ZERO_EPSILON) {
-            return Arrays.asList(new GradientColorStop(lastColorStop, targetDomain[0], OffsetType.RELATIVE),
-                    new GradientColorStop(lastColorStop, targetDomain[1], OffsetType.RELATIVE));
-        }
-
-        double startIntervalsShift = Math.floor((targetDomain[0] - originalIntervalStart) / originalIntervalLength);
-        double iterationOffset = originalIntervalStart + (originalIntervalLength * startIntervalsShift);
-        boolean isIterationInverse =
-                spreadMethod == GradientSpreadMethod.REFLECT && Math.abs(startIntervalsShift) % 2 != 0;
-
-        int currentIterationIndex = isIterationInverse ? normalizedStops.size() - 1 : 0;
-
-        double lastComputedOffset = iterationOffset;
-        while (lastComputedOffset <= targetDomain[1]) {
-            GradientColorStop currentStop = normalizedStops.get(currentIterationIndex);
-            lastComputedOffset = isIterationInverse ?
-                    iterationOffset + originalIntervalEnd - currentStop.getOffset()
-                    : iterationOffset + currentStop.getOffset() - originalIntervalStart;
-            GradientColorStop computedStop = new GradientColorStop(currentStop, lastComputedOffset,
-                    OffsetType.RELATIVE);
-
-            if (lastComputedOffset < targetDomain[0] && !adjustedStops.isEmpty()) {
-                adjustedStops.set(0, computedStop);
-            } else {
-                adjustedStops.add(computedStop);
-            }
-
-            if (isIterationInverse) {
-                --currentIterationIndex;
-                if (currentIterationIndex < 0) {
-                    iterationOffset += originalIntervalLength;
-                    isIterationInverse = false;
-                    currentIterationIndex = 1;
-                }
-            } else {
-                ++currentIterationIndex;
-                if (currentIterationIndex == normalizedStops.size()) {
-                    iterationOffset += originalIntervalLength;
-                    isIterationInverse = spreadMethod == GradientSpreadMethod.REFLECT;
-                    currentIterationIndex = isIterationInverse ? normalizedStops.size() - 2 : 0;
-                }
-            }
-            // check the next iteration type to set the correct stop color hint for just added stop
-            if (isIterationInverse) {
-                GradientColorStop nextColor = normalizedStops.get(currentIterationIndex);
-                // this method should be invoked only after the normalization. it means that
-                // the hint offset type for each stop is either relative to colors interval
-                // (i.e. for inverse iteration we need to inverse the hint offset), or is none
-                // (i.e. the hint offset value should be ignored)
-                computedStop.setHint(1 - nextColor.getHintOffset(), nextColor.getHintOffsetType());
-            } else {
-                computedStop.setHint(currentStop.getHintOffset(), currentStop.getHintOffsetType());
-            }
-        }
-
-        return adjustedStops;
+        return stopsToConstruct;
     }
 
     private static IPdfFunction constructFunction(List<GradientColorStop> toConstruct) {
@@ -646,5 +665,17 @@ public abstract class AbstractGradientBuilder<T> {
             }
         }
         return new PdfType2Function(new float[] {0f, 1f}, null, fromColor, toColor, exponent);
+    }
+
+    private static int getMaxStopCountForRepeatAndReflect(PdfDocument pdfDocument) {
+        int result = GradientPropertiesResolver.DEFAULT_MAX_COLOR_STOPS;
+        if (pdfDocument != null) {
+            GradientPropertiesResolver gradientPropertiesResolver = pdfDocument.getDiContainer()
+                    .getInstance(GradientPropertiesResolver.class);
+            if (gradientPropertiesResolver != null) {
+                result = gradientPropertiesResolver.getMaxColorStops();
+            }
+        }
+        return result;
     }
 }
