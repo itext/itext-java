@@ -39,7 +39,6 @@ import com.itextpdf.kernel.pdf.layer.PdfOCProperties;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -49,22 +48,32 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfPagesTest extends ExtendedITextTest {
     public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfPagesTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfPagesTest/";
     private static final PdfName PageNum = new PdfName("PageNum");
+
+    private static Collection<Object[]> appendModes() {
+        return Arrays.asList(new Object[][]{
+                {true},
+                {false}
+        });
+    }
 
     @BeforeAll
     public static void setup() {
@@ -81,7 +90,7 @@ public class PdfPagesTest extends ExtendedITextTest {
          PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hugeNumberOfPagesWithOnePage.pdf"),
                  new PdfWriter(new ByteArrayOutputStream()));
          PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
-         AssertUtil.doesNotThrow(() -> pdfDoc.addPage(1, page));
+         Assertions.assertDoesNotThrow(() -> pdfDoc.addPage(1, page));
     }
 
     @Test
@@ -89,7 +98,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "countDontCorrespondToReal.pdf"),
                 new PdfWriter(new ByteArrayOutputStream()));
         PdfPage page = new PdfPage(pdfDoc, pdfDoc.getDefaultPageSize());
-        AssertUtil.doesNotThrow(() -> pdfDoc.addPage(1, page));
+        Assertions.assertDoesNotThrow(() -> pdfDoc.addPage(1, page));
 
         // we don't expect that Count will be different from real number of pages
         Assertions.assertThrows(NullPointerException.class, () -> pdfDoc.close());
@@ -129,11 +138,16 @@ public class PdfPagesTest extends ExtendedITextTest {
         verifyPagesOrder(DESTINATION_FOLDER + filename, pageCount);
     }
 
-    @Test
-    public void reversePagesTest2() throws Exception {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("appendModes")
+    public void reversePagesTest2(boolean appendMode) throws Exception {
         String filename = "1000PagesDocument_reversed.pdf";
+        StampingProperties props = new StampingProperties();
+        if (appendMode) {
+            props.useAppendMode();
+        }
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "1000PagesDocument.pdf"),
-                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
+                CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename), props);
         int n = pdfDoc.getNumberOfPages();
         for (int i = n - 1; i > 0; --i) {
             pdfDoc.movePage(i, n + 1);
@@ -425,6 +439,21 @@ public class PdfPagesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void removePageWithFormFieldsAppendModeTest() throws IOException, InterruptedException {
+        String testName = "docWithFieldsRemovePage.pdf";
+        String outPdf = DESTINATION_FOLDER + testName;
+        String sourceFile = SOURCE_FOLDER + "docWithFieldsIndirectKids.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFile), CompareTool.createTestPdfWriter(outPdf),
+                new StampingProperties().useAppendMode())) {
+            pdfDoc.removePage(1);
+        }
+
+        Assertions.assertNull(
+                new CompareTool().compareByContent(outPdf, SOURCE_FOLDER + "cmp_" + testName, DESTINATION_FOLDER));
+    }
+
+    @Test
     public void getPageSizeWithInheritedMediaBox() throws IOException {
         double eps = 0.0000001;
         String filename = SOURCE_FOLDER + "inheritedMediaBox.pdf";
@@ -586,7 +615,7 @@ public class PdfPagesTest extends ExtendedITextTest {
              PdfWriter writer = new PdfWriter(new ByteArrayOutputStream());
              PdfDocument pdfDocument = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
         ) {
-            AssertUtil.doesNotThrow(() -> pdfDocument.close());
+            Assertions.assertDoesNotThrow(() -> pdfDocument.close());
         }
     }
 
@@ -692,12 +721,19 @@ public class PdfPagesTest extends ExtendedITextTest {
         document.close();
     }
 
-    @Test
-    public void implicitPagesTreeRebuildingTest() throws IOException, InterruptedException {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("appendModes")
+    public void implicitPagesTreeRebuildingTest(boolean appendMode) throws IOException, InterruptedException {
         String inFileName = SOURCE_FOLDER + "implicitPagesTreeRebuilding.pdf";
         String outFileName = DESTINATION_FOLDER + "implicitPagesTreeRebuilding.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_implicitPagesTreeRebuilding.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName), CompareTool.createTestPdfWriter(outFileName));
+
+        StampingProperties props = new StampingProperties();
+        if (appendMode) {
+            props.useAppendMode();
+        }
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(inFileName),
+                CompareTool.createTestPdfWriter(outFileName), props);
         pdfDocument.close();
         Assertions.assertNull(new CompareTool().compareByContent(outFileName,cmpFileName, DESTINATION_FOLDER));
     }
@@ -774,7 +810,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         Assertions.assertEquals(1,
                 pdfDocument.getCatalog().getPageTree().getParents().get(0).getCount());
 
-        AssertUtil.doesNotThrow(() -> pdfDocument.close());
+        Assertions.assertDoesNotThrow(() -> pdfDocument.close());
     }
 
     @Test

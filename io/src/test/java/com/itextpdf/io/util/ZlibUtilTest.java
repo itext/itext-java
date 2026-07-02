@@ -55,7 +55,7 @@ public class ZlibUtilTest extends ExtendedITextTest {
              OutputStream os = FileUtil.getFileOutputStream(DESTINATION_FOLDER + "jzlib.fail")) {
             byte[] buf = new byte[8192];
             int length;
-            while ((length = is.read(buf)) != -1) {
+            while ((length = is.read(buf, 0, buf.length)) > 0) {
                 os.write(buf, 0, length);
             }
         }
@@ -67,7 +67,7 @@ public class ZlibUtilTest extends ExtendedITextTest {
              DeflaterOutputStream zip = new DeflaterOutputStream(os, -1)) {
             byte[] buf = new byte[8192];
             int length;
-            while ((length = is.read(buf)) != -1) {
+            while ((length = is.read(buf, 0, buf.length)) > 0) {
                 zip.write(buf, 0, length);
             }
         }

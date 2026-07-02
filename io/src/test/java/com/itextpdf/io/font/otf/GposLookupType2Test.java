@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 public class GposLookupType2Test extends ExtendedITextTest {
     private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/";
     private static final String DEJAVU_FONT_PATH =FONT_FOLDER + "DejaVuSans.ttf";
+
     @Test
     public void idxEqualToEndLineGpos2Test() throws IOException {
         TrueTypeFont font = new TrueTypeFont(DEJAVU_FONT_PATH);
@@ -68,5 +69,43 @@ public class GposLookupType2Test extends ExtendedITextTest {
 
         boolean transform = lookup.transformOne(gl);
         Assertions.assertFalse(transform);
+    }
+
+    @Test
+    // We test here GPOS Lookup Type 2 (Pair Adjustment) Format 1 (adjustments for glyph pairs)
+    public void subformat1TransformTest() throws IOException {
+        TrueTypeFont font = new TrueTypeFont(FONT_FOLDER + "NotoSansKhmer-Regular.ttf");
+
+        GlyphPositioningTableReader gposTableReader = font.getGposTable();
+        GposLookupType2 lookup = (GposLookupType2) gposTableReader.getLookupTable(31);
+
+
+        List<Glyph> glyphs = Arrays.asList(new Glyph(font.getGlyphByCode(387)), new Glyph(font.getGlyphByCode(434)));
+        GlyphLine gl = new GlyphLine(glyphs);
+        gl.setIdx(0);
+
+        Assertions.assertEquals(0, gl.get(0).getXAdvance());
+        boolean transform = lookup.transformOne(gl);
+        Assertions.assertTrue(transform);
+        Assertions.assertEquals(50, gl.get(0).getXAdvance());
+    }
+
+    @Test
+    // We test here GPOS Lookup Type 2 (Pair Adjustment) Format 1 (class pair adjustment)
+    public void subformat2TransformTest() throws IOException {
+        TrueTypeFont font = new TrueTypeFont(DEJAVU_FONT_PATH);
+
+        GlyphPositioningTableReader gposTableReader = font.getGposTable();
+        GposLookupType2 lookup = (GposLookupType2) gposTableReader.getLookupTable(15);
+
+
+        List<Glyph> glyphs = Arrays.asList(new Glyph(font.getGlyphByCode(4960)), new Glyph(font.getGlyphByCode(4970)));
+        GlyphLine gl = new GlyphLine(glyphs);
+        gl.setIdx(0);
+
+        Assertions.assertEquals(0, gl.get(0).getXAdvance());
+        boolean transform = lookup.transformOne(gl);
+        Assertions.assertTrue(transform);
+        Assertions.assertEquals(-45, gl.get(0).getXAdvance());
     }
 }

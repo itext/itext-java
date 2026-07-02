@@ -55,10 +55,10 @@ public class PdfFormXObject extends PdfXObject {
      */
     public PdfFormXObject(Rectangle bBox) {
         super(new PdfStream());
-        getPdfObject().put(PdfName.Type, PdfName.XObject);
-        getPdfObject().put(PdfName.Subtype, PdfName.Form);
+        put(PdfName.Type, PdfName.XObject);
+        put(PdfName.Subtype, PdfName.Form);
         if (bBox != null) {
-            getPdfObject().put(PdfName.BBox, new PdfArray(bBox));
+            put(PdfName.BBox, new PdfArray(bBox));
         }
     }
 
@@ -72,7 +72,7 @@ public class PdfFormXObject extends PdfXObject {
     public PdfFormXObject(PdfStream pdfStream) {
         super(pdfStream);
         if (!getPdfObject().containsKey(PdfName.Subtype)) {
-            getPdfObject().put(PdfName.Subtype, PdfName.Form);
+            put(PdfName.Subtype, PdfName.Form);
         }
     }
 
@@ -86,7 +86,7 @@ public class PdfFormXObject extends PdfXObject {
         this(page.getCropBox());
         getPdfObject().getOutputStream().writeBytes(page.getContentBytes());
         resources = new PdfResources((PdfDictionary) page.getResources().getPdfObject().clone());
-        getPdfObject().put(PdfName.Resources, resources.getPdfObject());
+        put(PdfName.Resources, resources.getPdfObject());
     }
 
     /**
@@ -206,7 +206,7 @@ public class PdfFormXObject extends PdfXObject {
             PdfDictionary resourcesDict = getPdfObject().getAsDictionary(PdfName.Resources);
             if (resourcesDict == null) {
                 resourcesDict = new PdfDictionary();
-                getPdfObject().put(PdfName.Resources, resourcesDict);
+                put(PdfName.Resources, resourcesDict);
             }
             this.resources = new PdfResources(resourcesDict);
         }

@@ -34,27 +34,46 @@ import com.itextpdf.styledxmlparser.node.INode;
 import java.util.List;
 
 class CssPseudoClassNotSelectorItem extends CssPseudoClassSelectorItem {
-    private ICssSelector argumentsSelector;
+    protected final List<ICssSelector> selectorList;
 
-    CssPseudoClassNotSelectorItem(ICssSelector argumentsSelector) {
-        super(CommonCssConstants.NOT, argumentsSelector.toString());
-        this.argumentsSelector = argumentsSelector;
+    CssPseudoClassNotSelectorItem(List<ICssSelector> selectorList, String argumentsString) {
+        super(CommonCssConstants.NOT, argumentsString);
+        this.selectorList = selectorList;
+    }
+
+    public static CssPseudoClassNotSelectorItem createNotSelectorItem(String arguments) {
+        List<ICssSelector> selectors = parseSelectorListWithoutPseudoElements(arguments, false);
+        if (selectors == null) {
+            return null;
+        }
+        return new CssPseudoClassNotSelectorItem(selectors, arguments);
+    }
+
+    @Override
+    public int getSpecificity() {
+        int max = 0;
+        for (ICssSelector sel : selectorList) {
+            if (sel != null) {
+                max = Math.max(max, sel.calculateSpecificity());
+            }
+        }
+        return max;
     }
 
     public List<ICssSelectorItem> getArgumentsSelector() {
         return CssSelectorParser.parseSelectorItems(arguments);
     }
 
-    // TODO DEVSIX-9069 Add notMatches to ICssSelector interface
     @Override
     public boolean matches(INode node) {
         if (!(node instanceof IElementNode) || node instanceof ICustomElementNode || node instanceof IDocumentNode) {
             return false;
         }
-        if (argumentsSelector instanceof CssSelector){
-            return ((CssSelector) argumentsSelector).notMatches(node);
+        for (ICssSelector selector : selectorList) {
+            if (selector.matches(node)) {
+                return false;
+            }
         }
-
-        return !argumentsSelector.matches(node);
+        return true;
     }
 }

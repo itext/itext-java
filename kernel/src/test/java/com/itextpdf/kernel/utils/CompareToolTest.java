@@ -111,6 +111,33 @@ public class CompareToolTest extends ExtendedITextTest {
     }
 
     @Test
+    public void compareTagStructureAgainstXmlNegative()
+            throws IOException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setCompareByContentErrorsLimit(10);
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        String outPdf = sourceFolder + "tagged_pdf.pdf";
+        String cmpPdf = sourceFolder + "cmp_tagged_xml_neg.xml";
+        String result = compareTool.compareTagStructureAgainstXml(outPdf, cmpPdf);
+        System.out.println("\nRESULT:\n" + result);
+        Assertions.assertNotNull(result, "CompareTool must return differences found between the files");
+        Assertions.assertTrue(result.contains("The tag structures are different."));
+    }
+
+    @Test
+    public void compareTagStructureAgainstXmlPositive()
+            throws IOException, ParserConfigurationException, SAXException {
+        CompareTool compareTool = new CompareTool();
+        compareTool.setCompareByContentErrorsLimit(10);
+        compareTool.setGenerateCompareByContentXmlReport(true);
+        String outPdf = sourceFolder + "tagged_pdf.pdf";
+        String cmpXml = sourceFolder + "cmp_tagged_xml_pos.xml";
+        String result = compareTool.compareTagStructureAgainstXml(outPdf, cmpXml);
+        System.out.println("\nRESULT:\n" + result);
+        Assertions.assertNull(result);
+    }
+
+    @Test
     public void compareToolErrorReportTest03()
             throws InterruptedException, IOException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();
@@ -296,14 +323,12 @@ public class CompareToolTest extends ExtendedITextTest {
     public void convertDocInfoToStringsTest() throws IOException {
         String inPdf = sourceFolder + "test.pdf";
 
-        class TestCompareTool extends CompareTool {
+        CompareTool compareTool = new CompareTool() {
             @Override
             protected String[] convertDocInfoToStrings(PdfDocumentInfo info) {
                 return super.convertDocInfoToStrings(info);
             }
-        }
-
-        CompareTool compareTool = new TestCompareTool();
+        };
         try (PdfReader reader = new PdfReader(inPdf, compareTool.getOutReaderProperties());
                 PdfDocument doc = new PdfDocument(reader)) {
             String[] docInfo = compareTool.convertDocInfoToStrings(doc.getDocumentInfo());
@@ -312,7 +337,7 @@ public class CompareToolTest extends ExtendedITextTest {
             Assertions.assertEquals("test file", docInfo[2]);
             Assertions.assertEquals("new job", docInfo[3]);
             Assertions.assertEquals("Adobe Acrobat Pro DC (64-bit) <version>", docInfo[4]);
-                }
+        }
     }
 
     @Test

@@ -22,25 +22,24 @@
  */
 package com.itextpdf.kernel.font;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfType3FontTest extends ExtendedITextTest {
@@ -215,7 +214,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
         dictionary.put(PdfName.FontMatrix, new PdfArray());
         dictionary.put(PdfName.Widths, new PdfArray());
 
-        AssertUtil.doesNotThrow(() -> new PdfType3Font(dictionary));
+        Assertions.assertDoesNotThrow(() -> new PdfType3Font(dictionary));
     }
 
     @Test
@@ -227,7 +226,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
         dictionary.put(PdfName.CharProcs, charProcs);
         dictionary.put(PdfName.Widths, new PdfArray());
 
-        AssertUtil.doesNotThrow(() -> new PdfType3Font(dictionary));
+        Assertions.assertDoesNotThrow(() -> new PdfType3Font(dictionary));
     }
 
     @Test
@@ -241,7 +240,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
         PdfDictionary encoding = new PdfDictionary();
         dictionary.put(PdfName.Encoding, encoding);
 
-        AssertUtil.doesNotThrow(() -> new PdfType3Font(dictionary));
+        Assertions.assertDoesNotThrow(() -> new PdfType3Font(dictionary));
     }
 
     @Test
@@ -285,7 +284,7 @@ public class PdfType3FontTest extends ExtendedITextTest {
         encoding.put(PdfName.Differences, differences);
         font.put(PdfName.Encoding, encoding);
 
-        AssertUtil.doesNotThrow(() -> new PdfType3Font(font));
+        Assertions.assertDoesNotThrow(() -> new PdfType3Font(font));
     }
 
     private class DisableEnsureUnderlyingObjectHasIndirectReference extends PdfType3Font {

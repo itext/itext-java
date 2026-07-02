@@ -230,6 +230,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         return CssDimensionParsingUtils.parseAbsoluteFontSize(fontSizeAttribute);
     }
 
+    // TODO DEVSIX-9984 Fix the link being lowercase in C#
     /**
      * Gets the viewbox from the first parent element which can define it.
      * <p>

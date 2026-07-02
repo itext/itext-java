@@ -22,20 +22,25 @@
  */
 package com.itextpdf.commons;
 
+import java.io.File;
+import java.lang.reflect.Array;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+
+import sharpen.config.DefaultPathMappings;
 import sharpen.config.MappingConfiguration;
 import sharpen.config.MappingConfigurator;
 import sharpen.config.MemberKind;
 import sharpen.config.ModuleOption;
 import sharpen.config.ModulesConfigurator;
 import sharpen.config.OptionsConfigurator;
+import sharpen.config.PascalCaseNamingStrategy;
 
 public class SharpenConfigMapping implements MappingConfiguration {
     private boolean useBCWrappersConfig = false;
+
     @Override
     public int getMappingPriority() {
         return 100 - 3;
@@ -53,6 +58,25 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapNamespace("property", "Properties");
         configurator.mapNamespace("org.bouncycastle", "Org.BouncyCastle");
         configurator.mapNamespace("xpath", "XPath");
+
+
+        configurator.mapByteToSbyte(false);
+        configurator.addCustomUsingForMethodInvocation("org.slf4j.LoggerFactory.getLogger", Collections.singletonList("Microsoft.Extensions.Logging"));
+        configurator.addIgnoredAnnotations(Arrays.asList("java.lang.Override", "java.lang.SuppressWarnings", "java.lang.SafeVarargs"));
+        configurator.addFullName("System.Drawing.Image");
+        configurator.addFullName("System.Drawing.Color");
+        configurator.addFullName("System.IO.IOException");
+        configurator.ignoreUsing("Java.Util");
+        configurator.ignoreUsing("Java.Text");
+        configurator.ignoreUsing("Java.Util.Concurrent");
+
+        configurator.addIfPreprocessorDirectiveCondition("using System.Drawing", "!NETSTANDARD2_0");
+        configurator.addFullyQualifiedTypeName("Encoding");
+
+        configurator.ignoreSuperInterface("java.io.DataInput");
+        configurator.addFullyQualifiedTypeName("IFileFilter");
+
+
         configurator.mapMethod("org.junit.Assert.assertArrayEquals(double[],double[],double)", "iText.Test.TestUtil.AreEqual");
         configurator.mapMethod("org.junit.Assert.assertArrayEquals(float[],float[],float)", "iText.Test.TestUtil.AreEqual");
         configurator.mapMethod("org.junit.jupiter.api.Assertions.assertArrayEquals(double[],double[],double)", "iText.Test.TestUtil.AreEqual");
@@ -68,10 +92,10 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("java.util.regex.Pattern.split", "iText.Commons.Utils.StringUtil.Split");
         configurator.mapType("java.io.FileFilter", "iText.Commons.Utils.FileUtil.IFileFilter");
         configurator.mapType("java.util.EnumSet<>", "iText.Commons.Utils.Collections.EnumSet");
-        configurator.addCustomUsingForMethodInvocation("java.util.Map.computeIfAbsent",  Collections.singletonList("iText.Commons.Utils.Collections"));
-        configurator.addCustomUsingForMethodInvocation("java.util.Map.getOrDefault",  Collections.singletonList("iText.Commons.Utils.Collections"));
+        configurator.addCustomUsingForMethodInvocation("java.util.Map.computeIfAbsent", Collections.singletonList("iText.Commons.Utils.Collections"));
+        configurator.addCustomUsingForMethodInvocation("java.util.Map.getOrDefault", Collections.singletonList("iText.Commons.Utils.Collections"));
         configurator.mapMethod("java.util.Map.equals", "System.Linq.Enumerable.SequenceEqual", false);
-        configurator.mapMemberToInvocationsChain ("java.util.Map.containsValue", "Values.Contains", MemberKind.Method);
+        configurator.mapMemberToInvocationsChain("java.util.Map.containsValue", "Values.Contains", MemberKind.Method);
         configurator.mapMethod("java.lang.Integer.toHexString", "iText.Commons.Utils.JavaUtil.IntegerToHexString", false);
         configurator.mapMethod("java.lang.Integer.toOctalString", "iText.Commons.Utils.JavaUtil.IntegerToOctalString", false);
         configurator.mapMethod("java.lang.Integer.toString", "iText.Commons.Utils.JavaUtil.IntegerToString", false);
@@ -116,10 +140,12 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("java.util.Arrays.toString", "iText.Commons.Utils.JavaUtil.ArraysToString", false);
         configurator.mapMethod("java.util.Arrays.asList", "iText.Commons.Utils.JavaUtil.ArraysAsList", false);
         configurator.mapMethod("java.util.Arrays.<>asList", "iText.Commons.Utils.JavaUtil.ArraysAsList", false);
-        configurator.mapMethod("java.util.Arrays.binarySearch", "iText.Commons.Utils.JavaUtil.ArraysBinarySearch", false);
+        configurator.mapMethod("java.util.Arrays.binarySearch", "iText.Commons.Utils.JavaUtil.ArraysBinarySearch",
+                false);
         configurator.mapMethod("java.util.Arrays.fill", "iText.Commons.Utils.JavaUtil.Fill", false);
         configurator.mapMethod("java.util.Arrays.sort", "iText.Commons.Utils.JavaUtil.Sort", false);
-        configurator.mapMethod("java.lang.Character.isValidCodePoint", "iText.Commons.Utils.JavaUtil.IsValidCodePoint", false);
+        configurator.mapMethod("java.lang.Character.isValidCodePoint", "iText.Commons.Utils.JavaUtil.IsValidCodePoint",
+                false);
         configurator.mapMethod("java.lang.Character.toCodePoint", "iText.Commons.Utils.JavaUtil.ToCodePoint", false);
         configurator.mapType("java.util.Collections", "iText.Commons.Utils.JavaCollectionsUtil");
         configurator.mapMethod("java.util.Collections.sort", "iText.Commons.Utils.JavaCollectionsUtil.Sort", false);
@@ -139,7 +165,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.commons.utils.IOThrowingAction");
         configurator.mapFunctionalInterfaceToDelegate("com.itextpdf.commons.utils.ThrowingSupplier");
         configurator.keepInternalProtected("com.itextpdf.commons.ecosystem.TestConfigurationEvent.doAction");
-        configurator.addCustomUsingDeclaration("com.itextpdf.kernel.colors.DeviceRgb", Arrays.asList("iText.Commons.Utils"));
         configurator.mapMethod("com.itextpdf.commons.utils.SystemUtil.getPropertyOrEnvironmentVariable", "iText.Commons.Utils.SystemUtil.GetEnvironmentVariable", false);
         configurator.mapMethod("com.itextpdf.io.util.TextUtil.charToString", "iText.Commons.Utils.JavaUtil.CharToString", false);
         configurator.removeField("com.itextpdf.commons.actions.contexts.ContextManager.SECURITY_ERROR_LOGGING_INTERVAL");
@@ -222,9 +247,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
         configurator.mapMethod("com.itextpdf.commons.utils.ZipFileReader.close", "Dispose");
         configurator.mapMethod("com.itextpdf.commons.utils.ZipFileWriter.close", "Dispose");
-        configurator.mapMethod("com.itextpdf.kernel.pdf.annot.PdfSoundAnnotation.correctWavFile", "iText.Commons.Utils.JavaUtil.CorrectWavFile", false);
-        configurator.addCustomUsingDeclaration("com.itextpdf.layout.renderer.TypographyUtils", Arrays.asList("System.IO", "System.Reflection", "Versions.Attributes", "Microsoft.Extensions.Logging", "iText.Commons"));
-        configurator.mapType("org.junit.jupiter.api.condition.DisabledInNativeImage", "iText.Commons.Utils.NoopAnnotation");
+        configurator.addIgnoredAnnotations(Collections.singletonList("org.junit.jupiter.api.condition.DisabledInNativeImage"));
         configurator.addFullName("iText.Commons.Utils.NoopAnnotation");
 
         configurator.mapType("java.security.cert.Certificate", "iText.Commons.Bouncycastle.Cert.IX509Certificate");
@@ -304,7 +327,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
                 MemberKind.Method);
 
         configurator.removeMethod("java.security.Security.addProvider");
-        configurator.mapStringLiteral("com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT", "Either itext.bouncy-castle-adapter or itext.bouncy-castle-fips-adapter dependency must be added in order to use BouncyCastleFactoryCreator");
 
         configurator.mapMemberToInvocationsChain("org.bouncycastle.asn1.esf.SigPolicyQualifiers.SigPolicyQualifiers" + "(org.bouncycastle.asn1.esf.SigPolicyQualifierInfo[])", "", MemberKind.Method);
 
@@ -318,9 +340,136 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.commons.json.JsonTest.malformedJsonTrailingCommaTest()", "NETSTANDARD2_0");
         configurator.addIfPreprocessorDirectiveCondition("com.itextpdf.commons.json.JsonTest.malformedJsonUnescapedNewlineInStringTest()", "NETSTANDARD2_0");
 
+        setupExtensionMethodsRuntimeMapping(configurator);
+
         if (useBCWrappersConfig) {
             BCWrappersConfigurationUtils.applyMappingConfiguration(configurator);
         }
+    }
+
+    private void setupExtensionMethodsRuntimeMapping(MappingConfigurator configurator) {
+        // Because .net10 introduced a method Read on memory stream but it uses span<byte> so we need our
+        // own implementation.
+        configurator.mapMethod("java.io.InputStream.read(byte[])", "JRead");
+        configurator.mapMethod("java.io.InputStream.read(byte[],int,int)", "JRead");
+        configurator.mapMethod("java.io.InputStream.read()", "ReadByte");
+
+        Arrays.asList(
+                // java.io
+                "java.io.ByteArrayOutputStream.reset",
+                "java.io.DataInputStream.read(byte[], int, int)",
+                "java.io.InputStream.read",
+                "java.io.InputStream.read(byte[])",
+                "java.io.InputStream.read(byte[],int,int)",
+                "java.util.zip.InflaterInputStream.read",
+                "com.itextpdf.io.source.RASInputStream.read",
+                "java.io.OutputStream.write",
+                "java.io.RandomAccessFile.read",
+                "java.io.RandomAccessFile.seek",
+
+                // java.lang
+                "java.lang.AbstractStringBuilder.appendCodePoint",
+                "java.lang.AbstractStringBuilder.delete",
+                "java.lang.AbstractStringBuilder.setCharAt",
+                "java.lang.AbstractStringBuilder.substring",
+                "java.lang.Class.forName",
+                "java.lang.String.codePointAt",
+                "java.lang.String.equalsIgnoreCase",
+                "java.lang.String.getBytes",
+                "java.lang.String.getChars",
+                "java.lang.String.matches",
+                "java.lang.String.substring",
+                "java.lang.String.substring(int)",
+                "java.lang.String.substring(int,int)",
+
+                // java.net / java.nio / java.time
+                "java.net.URL.toExternalForm",
+                "java.nio.charset.Charset.name",
+                "java.time.LocalDateTime.isBefore",
+
+                // java.util
+                "java.util.AbstractSet.removeAll",
+                "java.util.ArrayList.remove",
+                "java.util.Collection.addAll",
+                "java.util.Collection.isEmpty",
+                "java.util.Collection.toArray",
+                "java.util.Collections.addAll",
+                "java.util.Date.after",
+                "java.util.Date.before",
+                "java.util.HashMap.putAll",
+                "java.util.LinkedHashMap.get",
+                "java.util.List.add",
+                "java.util.List.isEmpty",
+                "java.util.List.remove",
+                "java.util.List.removeAll",
+                "java.util.List.subList",
+                "java.util.List.toArray",
+                "java.util.Map.computeIfAbsent",
+                "java.util.Map.get",
+                "java.util.Map.isEmpty",
+                "java.util.Map.put",
+                "java.util.Map.putAll",
+                "java.util.Set.containsAll",
+                "java.util.Set.removeAll",
+                "java.util.TreeMap.removeAll",
+                "java.util.TreeMap.retainAll",
+                "java.util.Vector.clone",
+                "java.util.stream.Stream.sorted"
+        ).forEach(method -> configurator.addCustomUsingForMethodInvocation(method,
+                Collections.singletonList("iText.Commons.Internal.Runtime")));
+
+    }
+
+    @Override
+    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
+        modulesConfigurator.setModuleOption(UseBCWrappersModuleOption.getInstance(), true);
+    }
+
+    @Override
+    public void applySharpenOptions(OptionsConfigurator configurator) {
+        PascalCaseNamingStrategy pascalCaseNamingStrategy = new PascalCaseNamingStrategy();
+        pascalCaseNamingStrategy.addExceptionToPascalCaseNamespaces("iText");
+        configurator.setNamingStrategy(pascalCaseNamingStrategy);
+        configurator.setSharpenNamespace("nonamespace");
+        configurator.setAutoImplementIEnumeratorEnabled(true);
+        configurator.enableNativeTypeSystem();
+        configurator.setPathMappings(new DefaultPathMappings() {
+            @Override
+            public Path convertPathToCSharp(Path ogPath) {
+                final String ogPaths = ogPath.toString().replace(File.separator, "/");
+                return Paths.get(ogPaths.replace("com/itextpdf/", "itext/"));
+            }
+        });
+    }
+
+    @Override
+    public void applyConfigModuleSettings(ModulesConfigurator configurator) {
+        useBCWrappersConfig = configurator.getModuleOption(UseBCWrappersModuleOption.getInstance());
+    }
+
+    @Override
+    public Collection<ModuleOption> getAvailableModuleSettings() {
+        return Collections.singletonList(UseBCWrappersModuleOption.getInstance());
+    }
+
+    @Override
+    public Collection<String> getDependencies() {
+        return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public Collection<String> getIgnoredSourceFiles() {
+        return null;
+    }
+
+    @Override
+    public Collection<String> getIgnoredResources() {
+        return null;
+    }
+
+    @Override
+    public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
+        return null;
     }
 
     private void mapStandardJavaToUtil(MappingConfigurator configurator) {
@@ -341,8 +490,6 @@ public class SharpenConfigMapping implements MappingConfiguration {
         for (String name : streamImplementations) {
             configurator.addCustomUsingForMethodInvocation(name + ".sorted", Collections.singletonList("iText.Commons.Utils.Collections"));
         }
-
-
 
         configurator.mapType("java.util.Timer", "System.Threading.Timer");
         configurator.mapType("java.util.concurrent.Callable<>", "Func");
@@ -565,45 +712,5 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapProperty("org.bouncycastle.asn1.x509.IssuingDistributionPoint.isIndirectCRL", "IsIndirectCrl");
         configurator.mapProperty("org.bouncycastle.asn1.x509.IssuingDistributionPoint.onlyContainsAttributeCerts", "OnlyContainsAttributeCerts");
         configurator.mapProperty("org.bouncycastle.asn1.x509.IssuingDistributionPoint.getOnlySomeReasons", "OnlySomeReasons");
-    }
-
-    @Override
-    public void applySharpenOptions(OptionsConfigurator configurator) {
-
-    }
-
-    @Override
-    public void applyConfigModuleSettings(ModulesConfigurator configurator) {
-        useBCWrappersConfig = configurator.getModuleOption(UseBCWrappersModuleOption.getInstance());
-    }
-
-    @Override
-    public void setConfigModuleSettings(ModulesConfigurator modulesConfigurator) {
-        modulesConfigurator.setModuleOption(UseBCWrappersModuleOption.getInstance(), true);
-    }
-
-    @Override
-    public Collection<ModuleOption> getAvailableModuleSettings() {
-        return Collections.singletonList(UseBCWrappersModuleOption.getInstance());
-    }
-
-    @Override
-    public Collection<String> getDependencies() {
-        return Collections.EMPTY_LIST;
-    }
-
-    @Override
-    public Collection<String> getIgnoredSourceFiles() {
-        return null;
-    }
-
-    @Override
-    public Collection<String> getIgnoredResources() {
-        return null;
-    }
-
-    @Override
-    public List<SimpleImmutableEntry<String, String>> getOverwrittenResources() {
-        return null;
     }
 }

@@ -460,7 +460,7 @@ public class JsonUtilTest extends ExtendedITextTest {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
-        while ((length = inputStream.read(buffer)) != -1) {
+        while ((length = inputStream.read(buffer, 0, buffer.length)) > 0) {
             result.write(buffer, 0, length);
         }
         result.flush();

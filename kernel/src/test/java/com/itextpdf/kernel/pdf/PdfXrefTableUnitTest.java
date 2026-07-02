@@ -26,13 +26,11 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.test.AssertUtil;
-import com.itextpdf.test.ExceptionTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfXrefTableUnitTest extends ExtendedITextTest {
@@ -80,10 +78,10 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
         xrefTable.markReadingCompleted();
 
         // After reading is completed, growing xref due to new content must not be blocked by the limit.
-        AssertUtil.doesNotThrow(() -> xrefTable.setCapacity(100));
+        Assertions.assertDoesNotThrow(() -> xrefTable.setCapacity(100));
 
         // Also ensure adding new refs beyond the original limit doesn't throw.
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             for (int i = 1; i <= 50; i++) {
                 xrefTable.add(new PdfIndirectReference(null, i));
             }
@@ -196,14 +194,14 @@ public class PdfXrefTableUnitTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.xref.add(new PdfIndirectReferenceProxy(document, 11, maxAllowedOffset));
 
-        AssertUtil.doesNotThrow(() -> document.close());
+        Assertions.assertDoesNotThrow(() -> document.close());
     }
 
     @Test
     public void xRefIntMax() {
         PdfDocument document = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         document.xref.add(new PdfIndirectReferenceProxy(document, 11, Integer.MAX_VALUE));
-        AssertUtil.doesNotThrow(() -> document.close());
+        Assertions.assertDoesNotThrow(() -> document.close());
     }
 
 

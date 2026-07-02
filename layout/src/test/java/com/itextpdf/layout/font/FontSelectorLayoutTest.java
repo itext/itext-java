@@ -31,7 +31,6 @@ import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.font.selectorstrategy.BestMatchFontSelectorStrategy.BestMatchFontSelectorStrategyFactory;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -94,7 +93,7 @@ public class FontSelectorLayoutTest extends ExtendedITextTest {
         try(PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
             Document doc = new Document(pdfDoc)) {
             doc.setFont(PdfFontFactory.createFont("HeiseiMin-W3", "UniJIS-UCS2-H"));
-            AssertUtil.doesNotThrow(() -> doc.add(new Paragraph("\u9F9C")));
+            Assertions.assertDoesNotThrow(() -> doc.add(new Paragraph("\u9F9C")));
         }
     }
 }

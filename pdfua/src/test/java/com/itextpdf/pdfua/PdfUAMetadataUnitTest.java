@@ -38,7 +38,6 @@ import com.itextpdf.pdfua.checkers.PdfUA1Checker;
 import com.itextpdf.pdfua.checkers.PdfUA2Checker;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -168,7 +167,7 @@ public class PdfUAMetadataUnitTest extends ExtendedITextTest {
             catalog.put(PdfName.Metadata, metadata);
 
             PdfUA2MetadataChecker checker = new PdfUA2MetadataChecker(pdfDocument);
-            AssertUtil.doesNotThrow(() -> checker.checkMetadata(catalog));
+            Assertions.assertDoesNotThrow(() -> checker.checkMetadata(catalog));
         }
     }
 

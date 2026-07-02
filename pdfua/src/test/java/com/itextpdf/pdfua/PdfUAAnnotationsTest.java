@@ -1073,11 +1073,8 @@ public class PdfUAAnnotationsTest extends ExtendedITextTest {
             stamp.setFlag(PdfAnnotation.TOGGLE_NO_VIEW);
             pdfPage.addAnnotation(stamp);
         });
-        if (PdfConformance.PDF_UA_1.equals(conformance)) {
-            framework.assertBothValid("noViewAnnotation");
-        } else {
-            framework.assertBothValid("toggleNoViewAnnotation");
-        }
+
+        framework.assertBothValid("toggleNoViewAnnotation");
     }
 
     private PdfTextAnnotation createRichTextAnnotation() {

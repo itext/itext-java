@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -201,7 +202,6 @@ public class DataUtilTest extends ExtendedITextTest {
 
     @Test
     public void loadsZGzipFile() throws IOException {
-        // compressed on win, with z suffix
         File in = ParseTest.getFile("/htmltests/gzip.html.z");
         Document doc = Jsoup.parse(in, null);
         Assertions.assertEquals("Gzip test", doc.title());
@@ -214,5 +214,97 @@ public class DataUtilTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(in, null);
         Assertions.assertEquals("This is not gzipped", doc.title());
         Assertions.assertEquals("And should still be readable.", doc.selectFirst("p").text());
+    }
+
+    @Test
+    public void loadWithParserOverloadUsesGivenParser() throws IOException {
+        String html = "<html><head><title>One</title></head><body>Two</body></html>";
+        Document doc = DataUtil.load(stream(html), "UTF-8", "http://foo.com/", Parser.htmlParser());
+        Assertions.assertEquals("One", doc.head().text());
+    }
+
+    @Test
+    public void parseInputStreamWithNullReturnsEmptyDocument() throws IOException {
+        Document doc = DataUtil.parseInputStream(null, "UTF-8", "http://foo.com/", Parser.htmlParser());
+        Assertions.assertEquals("http://foo.com/", doc.baseUri());
+        Assertions.assertEquals("", doc.text());
+    }
+
+    @Test
+    public void crossStreamsCopiesAllBytes() throws IOException {
+        byte[] data = new byte[1024 * 64 + 7];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (byte) (i % 251);
+        }
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        DataUtil.crossStreams(in, out);
+
+        Assertions.assertArrayEquals(data, out.toByteArray());
+    }
+
+    @Test
+    public void shortStreamUnderBomLengthIsHandled() throws IOException {
+        Document doc = DataUtil.parseInputStream(stream("ab"), null, "http://foo.com/", Parser.htmlParser());
+        Assertions.assertEquals("ab", doc.text());
+    }
+
+    @Test
+    public void largeCharsetlessStreamTriggersReread() throws IOException {
+       StringBuilder sb = new StringBuilder(10000).append("<html><head><title>Big</title></head><body>");
+        while (sb.length() < (1024 * 5) + 1024) {
+            sb.append("<p>filler filler filler filler filler</p>");
+        }
+        sb.append("</body></html>");
+        Document doc = DataUtil.parseInputStream(stream(sb.toString()), null, "http://foo.com/", Parser.htmlParser());
+        Assertions.assertEquals("Big", doc.head().select("title").text());
+        Assertions.assertEquals("UTF-8", doc.outputSettings().charset().displayName());
+    }
+
+    @Test
+    public void xmlDeclarationFirstChildIsUsedForCharset() throws IOException {
+       String xml = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><data>Hellö</data>";
+        Document doc = DataUtil.parseInputStream(stream(xml, "ISO-8859-1"), null, "http://foo.com/", Parser.xmlParser());
+        Assertions.assertEquals("Hellö", doc.text());
+    }
+
+    @Test
+    public void uncheckedIoExceptionDuringFirstParseIsRethrown() {
+       Parser throwingParser = new ThrowingParser("boom-first");
+        Exception ex = Assertions.assertThrows(Exception.class,
+                () -> DataUtil.parseInputStream(stream("<html></html>"), null, "http://foo.com/", throwingParser));
+        Assertions.assertEquals("boom-first", ex.getMessage());
+    }
+
+    @Test
+    public void uncheckedIoExceptionDuringReaderParseIsRethrown() {
+        Parser throwingParser = new ThrowingParser("boom-reader");
+        Exception ex = Assertions.assertThrows(Exception.class,
+                () -> DataUtil.parseInputStream(stream("<html></html>"), "UTF-8", "http://foo.com/", throwingParser));
+        Assertions.assertEquals("boom-reader", ex.getMessage());
+    }
+
+    /**
+     * A Parser whose parseInput always throws an UncheckedIOException wrapping an IOException,
+     * used to exercise DataUtil's UncheckedIOException catch/rethrow paths.
+     */
+    private static final class ThrowingParser extends Parser {
+        private final String message;
+
+        ThrowingParser(String message) {
+            super(Parser.htmlParser().getTreeBuilder());
+            this.message = message;
+        }
+
+        @Override
+        public Document parseInput(java.io.Reader inputHtml, String baseUri) {
+            throw new com.itextpdf.styledxmlparser.jsoup.UncheckedIOException(new IOException(message));
+        }
+
+        @Override
+        public Document parseInput(String html, String baseUri) {
+            throw new com.itextpdf.styledxmlparser.jsoup.UncheckedIOException(new IOException(message));
+        }
     }
 }

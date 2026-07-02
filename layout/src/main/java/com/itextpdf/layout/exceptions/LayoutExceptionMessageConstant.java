@@ -62,6 +62,12 @@ public final class LayoutExceptionMessageConstant {
     public static final String FLEXIBLE_ARENT_ALLOWED_AS_MINIMUM_IN_MINMAX
             = "Flexible values aren't allowed as minimum in minmax grid function.";
     public static final String TEXT_CONTENT_CANNOT_BE_NULL = "Text content cannot be null.";
+    public static final String INFINITE_LOOP_DETECTED = "Potential infinite loop detected. " +
+            "Same layout element was layouted more than {0} times. " +
+            "If you need to configure this limit use LayoutInfiniteLoopResolver class in" +
+            "DocumentProperties#registerDependency or ConverterProperties#registerDependency methods.";
+    public static final String INCORRECT_LIST_CHILD =
+            "All children of a ListRenderer are suppose to be ListItemRenderer instances. Instead it was {0}.";
 
     private LayoutExceptionMessageConstant(){}
 }

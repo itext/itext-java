@@ -27,19 +27,18 @@ import com.itextpdf.commons.datastructures.SimpleArrayList;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.di.pagetree.DefaultPageTreeListFactory;
 import com.itextpdf.kernel.di.pagetree.IPageTreeListFactory;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfPagesTreeTest extends ExtendedITextTest {
     @Test
     public void generateTreeDocHasNoPagesTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        Assertions.assertDoesNotThrow(() -> pdfDoc.close());
     }
 
     @Test

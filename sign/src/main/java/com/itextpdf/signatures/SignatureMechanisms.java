@@ -29,6 +29,8 @@ import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,6 +197,9 @@ public class SignatureMechanisms {
      * @return	an algorithm name (for instance "RSA")
      */
     public static String getAlgorithm(String oid) {
+        if(oid == null){
+            throw  new IllegalArgumentException(SignExceptionMessageConstant.OID_SHALL_NOT_BE_NULL);
+        }
         String ret = algorithmNames.get(oid);
         if (ret == null) {
             return oid;

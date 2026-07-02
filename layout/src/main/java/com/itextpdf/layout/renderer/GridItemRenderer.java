@@ -25,18 +25,24 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper renderer around grid item. It's expected there is always exactly 1 child renderer.
  */
 class GridItemRenderer extends BlockRenderer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridItemRenderer.class);
+
     /**
      * A renderer to wrap.
      */
-    AbstractRenderer renderer;
+    IRenderer renderer;
 
     /**
      * Flag saying that we updated height of the renderer we wrap.
@@ -53,7 +59,7 @@ class GridItemRenderer extends BlockRenderer {
      */
     @Override
     public void addChild(IRenderer renderer) {
-        this.renderer = (AbstractRenderer) renderer;
+        this.renderer = renderer;
         super.addChild(renderer);
     }
 
@@ -147,7 +153,7 @@ class GridItemRenderer extends BlockRenderer {
      */
     @Override
     void addChildRenderer(IRenderer child) {
-        this.renderer = (AbstractRenderer) child;
+        this.renderer = child;
         super.addChildRenderer(child);
     }
 
@@ -155,22 +161,25 @@ class GridItemRenderer extends BlockRenderer {
         // We subtract margins/borders/paddings because we should take into account that
         // borders/paddings/margins should also fit into a cell.
         final Rectangle rectangle = new Rectangle(0, 0, 0, initialHeight);
-        if (AbstractRenderer.isBorderBoxSizing(renderer)) {
-            renderer.applyMargins(rectangle, false);
-            // In BlockRenderer#layout, after applying continuous container, we call AbstractRenderer#retrieveMaxHeight,
-            // which calls AbstractRenderer#retrieveHeight where in case of BoxSizing we reduce the height for top
-            // padding and border. So to reduce the height for top + bottom border, padding and margin here we apply
-            // both top and bottom margin, but only bottom padding and border
-            UnitValue paddingBottom = renderer.<UnitValue>getProperty(Property.PADDING_BOTTOM);
-            if (paddingBottom.isPointValue()) {
-                rectangle.decreaseHeight(paddingBottom.getValue());
+        if (renderer instanceof AbstractRenderer) {
+            AbstractRenderer abstractRenderer = (AbstractRenderer) renderer;
+            if (AbstractRenderer.isBorderBoxSizing(abstractRenderer)) {
+                abstractRenderer.applyMargins(rectangle, false);
+                // In BlockRenderer#layout, after applying continuous container, we call AbstractRenderer#retrieveMaxHeight,
+                // which calls AbstractRenderer#retrieveHeight where in case of BoxSizing we reduce the height for top
+                // padding and border. So to reduce the height for top + bottom border, padding and margin here we apply
+                // both top and bottom margin, but only bottom padding and border
+                UnitValue paddingBottom = abstractRenderer.<UnitValue>getProperty(Property.PADDING_BOTTOM);
+                if (paddingBottom.isPointValue()) {
+                    rectangle.decreaseHeight(paddingBottom.getValue());
+                }
+                Border borderBottom = abstractRenderer.getBorders()[AbstractRenderer.BOTTOM_SIDE];
+                if (borderBottom != null) {
+                    rectangle.decreaseHeight(borderBottom.getWidth());
+                }
+            } else {
+                abstractRenderer.applyMarginsBordersPaddings(rectangle, false);
             }
-            Border borderBottom = renderer.getBorders()[AbstractRenderer.BOTTOM_SIDE];
-            if (borderBottom != null) {
-                rectangle.decreaseHeight(borderBottom.getWidth());
-            }
-        } else {
-            renderer.applyMarginsBordersPaddings(rectangle, false);
         }
 
         return rectangle.getHeight();

@@ -45,7 +45,6 @@ import com.itextpdf.kernel.xmp.options.SerializeOptions;
 import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -141,7 +140,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfA4Checker checker = new PdfA4Checker(PdfAConformance.PDF_A_4);
         PdfDictionary catalog = new PdfDictionary();
         catalog.put(PdfName.Metadata, new PdfStream(bytes));
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             checker.checkMetaData(catalog);
         });
     }
@@ -343,7 +342,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfADocument pdfADocument = new PdfADocument(new PdfReader(outPdf), new PdfWriter(new ByteArrayOutputStream()));
         PdfDictionary catalog = generateCustomXmpCatalog(pdfADocument, (xmpMeta -> {
         }));
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfA4Checker(conformance).checkMetaData(catalog);
         });
     }
@@ -363,7 +362,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfDictionary catalog = generateCustomXmpCatalog(pdfADocument, (xmpMeta -> {
         }));
 
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfA4Checker(conformance).checkMetaData(catalog);
         });
     }
@@ -379,7 +378,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         PdfADocument pdfADocument = new PdfADocument(new PdfReader(outPdf), new PdfWriter(new ByteArrayOutputStream()));
         PdfDictionary catalog = generateCustomXmpCatalog(pdfADocument, (xmpMeta -> {
         }));
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new PdfA4Checker(conformance).checkMetaData(catalog);
         });
     }
@@ -398,7 +397,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
             xmpMeta.deleteProperty(XMPConst.NS_PDFA_ID, XMPConst.CONFORMANCE);
         }));
 
-        AssertUtil.doesNotThrow(() -> new PdfA4Checker(conformance).checkMetaData(catalog));
+        Assertions.assertDoesNotThrow(() -> new PdfA4Checker(conformance).checkMetaData(catalog));
     }
 
     @Test
@@ -435,7 +434,7 @@ public class PdfA4MetaDataTest extends ExtendedITextTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         XMPMetaFactory.serialize(xmpMeta, baos);
         catalog.put(PdfName.Metadata, new PdfStream(baos.toByteArray()));
-        AssertUtil.doesNotThrow(() -> new PdfA4Checker(conformance).checkMetaData(catalog));
+        Assertions.assertDoesNotThrow(() -> new PdfA4Checker(conformance).checkMetaData(catalog));
     }
 
     @Test

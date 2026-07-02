@@ -51,6 +51,7 @@ public class Div extends BlockElement<Div> {
      * Adds any block element to the div's contents.
      *
      * @param element a {@link BlockElement}
+     *
      * @return this Element
      */
     public Div add(IBlockElement element) {
@@ -62,6 +63,7 @@ public class Div extends BlockElement<Div> {
      * Adds an image to the div's contents.
      *
      * @param element an {@link Image}
+     *
      * @return this Element
      */
     public Div add(Image element) {
@@ -73,10 +75,24 @@ public class Div extends BlockElement<Div> {
      * Adds an area break to the div's contents.
      *
      * @param areaBreak an {@link AreaBreak}
+     *
      * @return this Element
      */
     public Div add(AreaBreak areaBreak) {
         childElements.add(areaBreak);
+        return this;
+    }
+
+    /**
+     * Adds the section break to the div contents.
+     *
+     * @param sectionBreak {@link SectionBreak} that terminates the current page content
+     * and creates a new page, optionally with a specified page size and/or page margins
+     *
+     * @return this same {@link Div} instance
+     */
+    public Div add(SectionBreak sectionBreak) {
+        childElements.add(sectionBreak);
         return this;
     }
 
@@ -93,6 +109,7 @@ public class Div extends BlockElement<Div> {
      * in case it is the last element in this area.
      *
      * @param fillArea defines whether the available area should be filled
+     *
      * @return this {@link Div}
      */
     public Div setFillAvailableArea(boolean fillArea) {
@@ -105,6 +122,7 @@ public class Div extends BlockElement<Div> {
      * in case the area has been split and it is the last element in the split part of this area.
      *
      * @param fillAreaOnSplit defines whether the available area should be filled
+     *
      * @return this {@link Div}
      */
     public Div setFillAvailableAreaOnSplit(boolean fillAreaOnSplit) {

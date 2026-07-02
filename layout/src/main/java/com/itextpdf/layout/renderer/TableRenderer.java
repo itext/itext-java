@@ -1769,6 +1769,7 @@ public class TableRenderer extends AbstractRenderer {
         int outerBorder = footer ? 2 : 0;
         TableRenderer renderer = (TableRenderer) footerOrHeader.createRendererSubTree().setParent(this);
         ensureFooterOrHeaderHasTheSamePropertiesAsParentTableRenderer(renderer);
+        renderer.setProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS, Boolean.TRUE);
         boolean firstHeader = !footer && rowRange.getStartRow() == 0 && isOriginalNonSplitRenderer;
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
         if (taggingHelper != null) {

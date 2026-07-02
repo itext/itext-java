@@ -76,29 +76,43 @@ public class PdfA3Checker extends PdfA2Checker{
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
             }
 
-
             PdfDictionary ef = fileSpec.getAsDictionary(PdfName.EF);
-            PdfStream embeddedFile = ef.getAsStream(PdfName.F);
-            if (embeddedFile == null) {
-                throw new PdfAConformanceException(PdfaExceptionMessageConstant.EF_KEY_OF_FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_DICTIONARY_WITH_VALID_F_KEY);
-            }
+            checkFileSpecEmbeddedStream(ef.getAsStream(PdfName.F));
+        }
+    }
 
-            if (!embeddedFile.containsKey(PdfName.Subtype)) {
-                throw new PdfAConformanceException(PdfaExceptionMessageConstant.MIME_TYPE_SHALL_BE_SPECIFIED_USING_THE_SUBTYPE_KEY_OF_THE_FILE_SPECIFICATION_STREAM_DICTIONARY);
-            }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkFileSpecEmbeddedStream(PdfStream embeddedFile) {
+        if (isAlreadyChecked(embeddedFile)) {
+            return;
+        }
 
-            if (embeddedFile.containsKey(PdfName.Params)) {
-                PdfObject params = embeddedFile.get(PdfName.Params);
-                if (!params.isDictionary()) {
-                    throw new PdfAConformanceException(PdfaExceptionMessageConstant.EMBEDDED_FILE_SHALL_CONTAIN_PARAMS_KEY_WITH_DICTIONARY_AS_VALUE);
-                }
-                if (((PdfDictionary)params).getAsString(PdfName.ModDate) == null) {
-                    throw new PdfAConformanceException(PdfaExceptionMessageConstant.EMBEDDED_FILE_SHALL_CONTAIN_PARAMS_KEY_WITH_VALID_MODDATE_KEY);
-                }
-            } else {
-                Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
-                logger.warn(PdfAConformanceLogMessageConstant.EMBEDDED_FILE_SHOULD_CONTAIN_PARAMS_KEY);
+        if (embeddedFile == null) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.EF_KEY_OF_FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_DICTIONARY_WITH_VALID_F_KEY);
+        }
+
+        if (!embeddedFile.containsKey(PdfName.Subtype)) {
+            throw new PdfAConformanceException(
+                    PdfaExceptionMessageConstant.MIME_TYPE_SHALL_BE_SPECIFIED_USING_THE_SUBTYPE_KEY_OF_THE_FILE_SPECIFICATION_STREAM_DICTIONARY);
+        }
+
+        if (embeddedFile.containsKey(PdfName.Params)) {
+            PdfObject params = embeddedFile.get(PdfName.Params);
+            if (!params.isDictionary()) {
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.EMBEDDED_FILE_SHALL_CONTAIN_PARAMS_KEY_WITH_DICTIONARY_AS_VALUE);
             }
+            if (((PdfDictionary) params).getAsString(PdfName.ModDate) == null) {
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.EMBEDDED_FILE_SHALL_CONTAIN_PARAMS_KEY_WITH_VALID_MODDATE_KEY);
+            }
+        } else {
+            Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
+            logger.warn(PdfAConformanceLogMessageConstant.EMBEDDED_FILE_SHOULD_CONTAIN_PARAMS_KEY);
         }
     }
 }

@@ -514,6 +514,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
                     PdfObject cloneResources = getPdfObject().clone();
                     cloneResources.makeIndirect(getPdfObject().getIndirectReference().getDocument());
                     pdfXObject.put(PdfName.Resources, cloneResources.getIndirectReference());
+                    pdfXObject.setModified();
                 }
             }
         }

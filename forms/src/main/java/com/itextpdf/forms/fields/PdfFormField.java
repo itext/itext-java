@@ -482,7 +482,7 @@ public class PdfFormField extends AbstractPdfFormField {
         if (kids != null) {
             kids.remove(fieldName.getPdfObject());
             if (kids.isEmpty()) {
-                getPdfObject().remove(PdfName.Kids);
+                remove(PdfName.Kids);
             }
         }
     }
@@ -492,7 +492,7 @@ public class PdfFormField extends AbstractPdfFormField {
      */
     public void removeChildren() {
         childFields.clear();
-        getPdfObject().remove(PdfName.Kids);
+        remove(PdfName.Kids);
     }
 
     /**
@@ -1029,8 +1029,7 @@ public class PdfFormField extends AbstractPdfFormField {
             // Font from DR may not be added to document through PdfResource.
             getDocument().addFont(getFont());
         } else if (!PdfName.Sig.equals(getFormType())) {
-            getPdfObject().remove(PdfName.DA);
-            setModified();
+            remove(PdfName.DA);
         }
     }
 

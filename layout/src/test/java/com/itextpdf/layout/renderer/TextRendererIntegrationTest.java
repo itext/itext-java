@@ -650,8 +650,6 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
                 .setFontColor(ColorConstants.RED)
                 .setBackgroundColor(ColorConstants.YELLOW);
 
-        Image image = new Image(ImageDataFactory.create(sourceFolder + "bulb.gif"));
-        image.setWidth(30);
         Paragraph text = new Paragraph()
                 .add(wissen)
                 .add(schaft)

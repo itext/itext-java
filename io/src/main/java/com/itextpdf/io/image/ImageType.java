@@ -33,5 +33,6 @@ public enum ImageType {
     JPEG2000,
     JBIG2,
     RAW,
+    WEBP,
     NONE
 }

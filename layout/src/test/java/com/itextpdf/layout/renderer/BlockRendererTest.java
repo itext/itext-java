@@ -125,7 +125,7 @@ public class BlockRendererTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, count = 2,
+            @LogMessage(messageTemplate = IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, count = 3,
                     logLevel = LogLevelConstants.ERROR)
     })
     // TODO DEVSIX-6488 all elements should be layouted first in case when parent box should wrap around child boxes

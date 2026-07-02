@@ -491,7 +491,7 @@ public class TextWritingTest extends ExtendedITextTest {
 
     @Test
     public void textInitializationWithNullValueThrowsException() {
-        Exception e = Assertions.assertThrows(IllegalArgumentException.class, () -> new Text(null));
+        Exception e = Assertions.assertThrows(IllegalArgumentException.class, () -> new Text((String) null));
         Assertions.assertEquals(LayoutExceptionMessageConstant.TEXT_CONTENT_CANNOT_BE_NULL, e.getMessage());
     }
 

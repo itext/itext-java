@@ -30,7 +30,6 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.testutils.PemFileHelper;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
@@ -127,7 +126,7 @@ public class CertificateInfoTest extends ExtendedITextTest {
 
     @Test
     public void distinguishedNameEncodingAndComparisonIntegrationTest() {
-        AssertUtil.doesNotThrow(() ->
+        Assertions.assertDoesNotThrow(() ->
         {
             PdfDocument doc = new PdfDocument(
                     new PdfReader(SOURCE_FOLDER + "signatureWithNameEncodingDifferences.pdf"));

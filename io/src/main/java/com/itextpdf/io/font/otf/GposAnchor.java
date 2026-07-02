@@ -22,11 +22,20 @@
  */
 package com.itextpdf.io.font.otf;
 
-
+/**
+ * A GPOS table uses anchor points to position one glyph with respect to another: two glyphs each define an anchor
+ * point, and the text-processing client attaches the glyphs by aligning their corresponding anchor points.
+ *
+ * <p>
+ * For more information see <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gpos#anchor-table">Anchor table</a>
+ */
 public class GposAnchor {
     private int xCoordinate;
     private int yCoordinate;
-    
+
+    /**
+     * Creates a GPOS Anchor object with zero x and y coordinates.
+     */
     public GposAnchor() {
     }
 

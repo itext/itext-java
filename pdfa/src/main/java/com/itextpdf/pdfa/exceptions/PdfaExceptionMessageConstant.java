@@ -214,6 +214,8 @@ public final class PdfaExceptionMessageConstant {
             "used in a DeviceN or NChannel colorspace, an entry in the Colorants dictionary shall be present.";
     public static final String OUTPUTINTENT_SHALL_NOT_CONTAIN_DESTOUTPUTPROFILEREF_KEY = "DestOutputProfileRef "
             + "shall not be present in output intent";
+    public static final String SEPARATION_COLOR_ARRAY_DOES_NOT_ADHERE_TO_PDF_SPEC = "Separation color space array does "
+            + "not adhere to the form [/Separation name alternateSpace tintTransform].";
 
     private PdfaExceptionMessageConstant(){}
 }

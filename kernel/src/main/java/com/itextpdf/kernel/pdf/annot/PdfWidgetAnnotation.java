@@ -92,12 +92,18 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
      */
     public void releaseFormFieldFromWidgetAnnotation() {
         PdfDictionary annotationDictionary = getPdfObject();
-        PdfDictionary parent = annotationDictionary.getAsDictionary(PdfName.Parent);
-        if (parent != null) {
-            PdfArray kids = parent.getAsArray(PdfName.Kids);
+        PdfDictionary fieldDictionary = annotationDictionary.getAsDictionary(PdfName.Parent);
+        if (fieldDictionary != null) {
+            PdfArray kids = fieldDictionary.getAsArray(PdfName.Kids);
             kids.remove(annotationDictionary);
+            if (kids.getIndirectReference() != null) {
+                kids.setModified();
+            } else {
+                fieldDictionary.setModified();
+            }
             if (kids.isEmpty()) {
-                parent.remove(PdfName.Kids);
+                fieldDictionary.remove(PdfName.Kids);
+                fieldDictionary.setModified();
             }
         }
     }
@@ -111,16 +117,16 @@ public class PdfWidgetAnnotation extends PdfAnnotation {
     public PdfWidgetAnnotation setVisibility(int visibility) {
         switch (visibility) {
             case HIDDEN:
-                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.HIDDEN));
+                put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.HIDDEN));
                 break;
             case VISIBLE_BUT_DOES_NOT_PRINT:
                 break;
             case HIDDEN_BUT_PRINTABLE:
-                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.NO_VIEW));
+                put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT | PdfAnnotation.NO_VIEW));
                 break;
             case VISIBLE:
             default:
-                getPdfObject().put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
+                put(PdfName.F, new PdfNumber(PdfAnnotation.PRINT));
                 break;
         }
         return this;

@@ -67,7 +67,6 @@ import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.pdfua.exceptions.PdfUAConformanceException;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -164,7 +163,7 @@ public class PdfUATest extends ExtendedITextTest {
             screen.setAction(action);
             screen.setContents("screen annotation");
             page.addAnnotation(screen);
-            AssertUtil.doesNotThrow(() -> {
+            Assertions.assertDoesNotThrow(() -> {
                 page.flush();
             });
         });
@@ -242,7 +241,8 @@ public class PdfUATest extends ExtendedITextTest {
     @MethodSource("data")
     public void documentWithInvalidLangEntryTest(PdfConformance conformance) throws IOException {
         UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
-        PdfDocument pdfDoc = framework.createPdfDocument(null, DESTINATION_FOLDER + "invalidLang.pdf",
+        PdfDocument pdfDoc = framework.createPdfDocument(null,
+                DESTINATION_FOLDER + "invalidLang" + framework.pathSafeConformance() + ".pdf",
                 "English pangram", "inv:alid");
         Exception e = Assertions.assertThrows(PdfException.class, () -> pdfDoc.close());
         Assertions.assertEquals(KernelExceptionMessageConstant.DOCUMENT_SHALL_CONTAIN_VALID_LANG_ENTRY, e.getMessage());
@@ -309,7 +309,8 @@ public class PdfUATest extends ExtendedITextTest {
             info.setTitle("English pangram");
         });
 
-        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("documentWithEmptyViewerPreferencesTest");
         } else {
             framework.assertBothFail("documentWithEmptyViewerPreferencesTest",
@@ -414,7 +415,8 @@ public class PdfUATest extends ExtendedITextTest {
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
 
-        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("pdfuaOCGPropertiesCheck01");
         } else {
             framework.assertBothFail("pdfuaOCGPropertiesCheck01",
@@ -438,7 +440,8 @@ public class PdfUATest extends ExtendedITextTest {
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
 
-        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("pdfuaOCGPropertiesCheck02");
         } else {
             framework.assertBothFail("pdfuaOCGPropertiesCheck02",
@@ -465,7 +468,8 @@ public class PdfUATest extends ExtendedITextTest {
             pdfDocument.getCatalog().put(PdfName.OCProperties, ocProperties);
         });
 
-        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("pdfuaOCGPropertiesCheck03");
         } else {
             framework.assertBothFail("pdfuaOCGPropertiesCheck03",

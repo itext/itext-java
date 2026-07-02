@@ -42,7 +42,6 @@ import com.itextpdf.kernel.pdf.canvas.parser.listener.LocationTextExtractionStra
 import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
 import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.kernel.pdf.colorspace.PdfSpecialCs;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -131,7 +130,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + fileName));
         PdfCanvasProcessor processor = new PdfCanvasProcessor(new NoOpEventListener());
         // Assert than no exception is thrown when an empty path is handled
-        AssertUtil.doesNotThrow(() -> processor.processPageContent(document.getPage(1)));
+        Assertions.assertDoesNotThrow(() -> processor.processPageContent(document.getPage(1)));
     }
 
     @Test
@@ -291,7 +290,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "coloredPatternParsingTest.pdf"));
         ColorParsingEventListener listener = new ColorParsingEventListener();
         PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
-        AssertUtil.doesNotThrow(()->
+        Assertions.assertDoesNotThrow(()->
             parser.processPageContent(pdfDoc.getFirstPage()));
         pdfDoc.close();
         PathRenderInfo renderInfo = listener.getEncounteredPath();
@@ -305,7 +304,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "unColoredPatternParsingTest.pdf"));
         ColorParsingEventListener listener = new ColorParsingEventListener();
         PdfCanvasProcessor parser = new PdfCanvasProcessor(listener);
-        AssertUtil.doesNotThrow(()->
+        Assertions.assertDoesNotThrow(()->
                 parser.processPageContent(pdfDoc.getFirstPage()));
         pdfDoc.close();
         PathRenderInfo renderInfo = listener.getEncounteredPath();

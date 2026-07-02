@@ -221,7 +221,8 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
                         PdfUAExceptionMessageConstants.RC_DIFFERENT_FROM_CONTENTS, false);
             }
         }
-        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertOnlyITextFail("markupAnnotationRCAndContents_" + annotType.getValue(),
                     PdfUAExceptionMessageConstants.RC_DIFFERENT_FROM_CONTENTS);
         }
@@ -281,7 +282,8 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
             pdfPage.addAnnotation(annotation);
         });
         if ((annotType == PdfName._3D || annotType == PdfName.RichMedia || annotType == PdfName.Ink)
-                && conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+                && conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             framework.assertBothValid("annotationNoContents_" + annotType.getValue());
         } else {
             framework.assertBothFail("annotationNoContents_" + annotType.getValue(),
@@ -303,7 +305,8 @@ public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
             annotation.setContents("");
             pdfPage.addAnnotation(annotation);
         });
-        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)) {
+        if (conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_REUSE)
+                && !conformance.conformsTo(PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY)) {
             if (annotType == PdfName._3D || annotType == PdfName.RichMedia || annotType == PdfName.Ink) {
                 framework.assertBothValid("annotationEmptyContents_" + annotType.getValue());
             } else {

@@ -64,29 +64,34 @@ public final class XmlUtil {
     }
 
     /**
-     * This method creates a new empty Xml document.
+     * This method creates a new empty XML document.
      *
-     * @return a new Xml document
+     * @return a new XML document
      * @throws ParserConfigurationException if an error occurs while creating the document
+     *
+     * @deprecated as unsafe, use XmlUtils#initNewXmlDocument from kernel module instead
      */
+    @Deprecated
     public static Document initNewXmlDocument() throws ParserConfigurationException {
         return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
     }
 
     /**
-     * This method creates new Xml document from input stream.
+     * This method creates new XML document from input stream.
      *
      * @param inputStream to parse
      *
-     * @return parsed Xml document
+     * @return parsed XML document
      *
      * @throws ParserConfigurationException if an error occurs while creating the document
      * @throws SAXException if any parse errors occur
      * @throws IOException if any IO errors occur
+     *
+     * @deprecated as unsafe, use XmlUtils#initXmlDocument from kernel module instead
      */
+    @Deprecated
     public static Document initXmlDocument(InputStream inputStream)
             throws ParserConfigurationException, IOException, SAXException {
         return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
     }
-
 }

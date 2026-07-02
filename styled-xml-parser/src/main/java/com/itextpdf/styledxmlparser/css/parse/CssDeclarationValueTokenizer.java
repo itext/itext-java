@@ -93,7 +93,7 @@ public class CssDeclarationValueTokenizer {
             if (token != null) {
                 processFunctionToken(token, functionBuffer);
             }
-            return new Token(functionBuffer.toString(), TokenType.FUNCTION);
+            return new Token(functionBuffer.toString(), TokenType.FUNCTION, (char) 0, token != null && token.hasSpace);
         }
         return null;
     }
@@ -229,6 +229,7 @@ public class CssDeclarationValueTokenizer {
      * The Token class.
      */
     public static class Token {
+        final boolean hasSpace;
         
         /** The value. */
         private final String value;
@@ -237,8 +238,6 @@ public class CssDeclarationValueTokenizer {
         private final TokenType type;
 
         private final char stringQuote;
-
-        private final boolean hasSpace;
 
         /**
          * Creates a new {@link Token} instance.

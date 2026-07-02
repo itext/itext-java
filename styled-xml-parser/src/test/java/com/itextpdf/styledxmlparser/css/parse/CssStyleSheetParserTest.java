@@ -150,6 +150,7 @@ public class CssStyleSheetParserTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INCORRECT_CHARACTER_SEQUENCE))
     public void invalidCssExampleWithCommaInsideOfPseudoClassTest() throws IOException {
         String cssFile = sourceFolder + "invalidCssExampleWithCommaInsideOfPseudoClassTest.css";
         String cmpFile = sourceFolder + "cmp_invalidCssExampleWithCommaInsideOfPseudoClassTest.css";

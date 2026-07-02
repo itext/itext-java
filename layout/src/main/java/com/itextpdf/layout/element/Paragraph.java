@@ -32,6 +32,7 @@ import com.itextpdf.layout.properties.ParagraphWidowsControl;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.margins.FootnoteAnchor;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
@@ -78,6 +79,7 @@ public class Paragraph extends BlockElement<Paragraph> {
      * Adds a piece of text to this {@link Paragraph}.
      *
      * @param text the content to be added, as a {@link String}
+     *
      * @return this {@link Paragraph}
      */
     public Paragraph add(String text) {
@@ -88,6 +90,7 @@ public class Paragraph extends BlockElement<Paragraph> {
      * Adds a {@link ILeafElement element} to this {@link Paragraph}.
      *
      * @param element the content to be added, any {@link ILeafElement}
+     *
      * @return this {@link Paragraph}
      */
     public Paragraph add(ILeafElement element) {
@@ -99,6 +102,7 @@ public class Paragraph extends BlockElement<Paragraph> {
      * Adds an {@link IBlockElement element} to this {@link Paragraph}.
      *
      * @param element the content to be added, any {@link IBlockElement}
+     *
      * @return this {@link Paragraph}
      */
     public Paragraph add(IBlockElement element) {
@@ -107,10 +111,23 @@ public class Paragraph extends BlockElement<Paragraph> {
     }
 
     /**
+     * Adds the {@link FootnoteAnchor} element to this {@link Paragraph}.
+     *
+     * @param footnoteAnchor the footnote anchor to be added
+     *
+     * @return this same {@link Paragraph} instance
+     */
+    public Paragraph add(FootnoteAnchor footnoteAnchor) {
+        childElements.add(footnoteAnchor);
+        return this;
+    }
+
+    /**
      * Adds a {@link java.util.List} of layout elements to this {@link Paragraph}.
      *
      * @param elements the content to be added
-     * @param <T2>      any {@link ILeafElement}
+     * @param <T2> any {@link ILeafElement}
+     *
      * @return this {@link Paragraph}
      */
     public <T2 extends ILeafElement> Paragraph addAll(java.util.List<T2> elements) {
@@ -124,7 +141,9 @@ public class Paragraph extends BlockElement<Paragraph> {
      * Adds an unspecified amount of tabstop elements as properties to this {@link Paragraph}.
      *
      * @param tabStops the {@link TabStop tabstop(s)} to be added as properties
+     *
      * @return this {@link Paragraph}
+     *
      * @see TabStop
      */
     public Paragraph addTabStops(TabStop... tabStops) {
@@ -136,7 +155,9 @@ public class Paragraph extends BlockElement<Paragraph> {
      * Adds a {@link java.util.List} of tabstop elements as properties to this {@link Paragraph}.
      *
      * @param tabStops the list of {@link TabStop}s to be added as properties
+     *
      * @return this {@link Paragraph}
+     *
      * @see TabStop
      */
     public Paragraph addTabStops(java.util.List<TabStop> tabStops) {
@@ -149,7 +170,9 @@ public class Paragraph extends BlockElement<Paragraph> {
      * {@link Property#TAB_STOPS} property.
      *
      * @param tabStopPosition the {@link TabStop} position to be removed.
+     *
      * @return this Paragraph
+     *
      * @see TabStop
      */
     public Paragraph removeTabStop(float tabStopPosition) {
@@ -181,7 +204,8 @@ public class Paragraph extends BlockElement<Paragraph> {
      * Sets the indent value for the first line of the {@link Paragraph}.
      *
      * @param indent the indent value that must be applied to the first line of
-     *               the Paragraph, as a <code>float</code>
+     * the Paragraph, as a <code>float</code>
+     *
      * @return this Paragraph
      */
     public Paragraph setFirstLineIndent(float indent) {
@@ -192,8 +216,9 @@ public class Paragraph extends BlockElement<Paragraph> {
     /**
      * Sets orphans restriction on a {@link Paragraph}.
      *
-     * @param orphansControl an instance of {@link ParagraphOrphansControl}.
-     * @return this {@link Paragraph} instance.
+     * @param orphansControl an instance of {@link ParagraphOrphansControl}
+     *
+     * @return this {@link Paragraph} instance
      */
     public Paragraph setOrphansControl(ParagraphOrphansControl orphansControl) {
         setProperty(Property.ORPHANS_CONTROL, orphansControl);
@@ -203,8 +228,9 @@ public class Paragraph extends BlockElement<Paragraph> {
     /**
      * Sets widows restriction on a {@link Paragraph}.
      *
-     * @param widowsControl an instance of {@link ParagraphWidowsControl}.
-     * @return this {@link Paragraph} instance.
+     * @param widowsControl an instance of {@link ParagraphWidowsControl}
+     *
+     * @return this {@link Paragraph} instance
      */
     public Paragraph setWidowsControl(ParagraphWidowsControl widowsControl) {
         setProperty(Property.WIDOWS_CONTROL, widowsControl);

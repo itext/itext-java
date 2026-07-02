@@ -32,14 +32,13 @@ import com.itextpdf.commons.ecosystem.ITextTestEvent;
 import com.itextpdf.commons.exceptions.ProductEventHandlerRepeatException;
 import com.itextpdf.commons.exceptions.UnknownProductException;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class ProductEventHandlerTest extends ExtendedITextTest {
@@ -160,7 +159,7 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
         AbstractContextBasedITextEvent event = new ITextTestEvent(new SequenceId(), null, "test",
                 ProductNameConstant.ITEXT_CORE);
 
-        AssertUtil.doesNotThrow(() -> handler.onAcceptedEvent(event));
+        Assertions.assertDoesNotThrow(() -> handler.onAcceptedEvent(event));
     }
 
     @Test
@@ -172,7 +171,7 @@ public class ProductEventHandlerTest extends ExtendedITextTest {
         AbstractContextBasedITextEvent event = new ITextTestEvent(new SequenceId(), null, "test",
                 ProductNameConstant.ITEXT_CORE);
 
-        AssertUtil.doesNotThrow(() -> handler.onAcceptedEvent(event));
+        Assertions.assertDoesNotThrow(() -> handler.onAcceptedEvent(event));
     }
 
     private static class CustomFactory implements IProductProcessorFactory {

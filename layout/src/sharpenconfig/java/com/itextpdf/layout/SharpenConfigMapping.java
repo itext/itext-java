@@ -23,6 +23,7 @@
 package com.itextpdf.layout;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -63,6 +64,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapType("com.itextpdf.layout.properties.OverflowPropertyValue", "iText.Layout.Properties.OverflowPropertyValue?");
         configurator.mapType("com.itextpdf.layout.properties.OverflowWrapPropertyValue", "iText.Layout.Properties.OverflowWrapPropertyValue?");
         configurator.mapType("com.itextpdf.layout.properties.RenderingMode", "iText.Layout.Properties.RenderingMode?");
+        configurator.mapType("com.itextpdf.layout.properties.margins.FootnoteNumberingType", "iText.Layout.Properties.Margins.FootnoteNumberingType?");
         configurator.mapVariableType("com.itextpdf.layout.renderer.LineRenderer.getNextTabStop.nextTabStopEntry", "KeyValuePair<float, TabStop>?");
         configurator.mapVariableType("com.itextpdf.layout.renderer.TextRenderer.applyOtf.glyphScript", "UnicodeScript");
         configurator.mapStringLiteral("com.itextpdf.layout.renderer.TypographyUtils.TYPOGRAPHY_PACKAGE", "iText.Typography.");
@@ -75,6 +77,8 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethodToCustomMember("com.itextpdf.layout.renderer.TypographyUtils.getTypographyClass", "GetTypographyClass", SharpenConfigCustomMembers.getTypographyClass);
         configurator.mapMethodToCustomMember("com.itextpdf.layout.layout.LayoutArea.clone", "Clone", SharpenConfigCustomMembers.cloneLayoutArea);
         configurator.mapMethodToCustomMember("com.itextpdf.layout.margincollapse.MarginsCollapse.clone", "Clone", SharpenConfigCustomMembers.cloneMarginsCollapse);
+        configurator.addFullName("iText.Layout.Font.Range");
+        configurator.addCustomUsingDeclaration("com.itextpdf.layout.renderer.TypographyUtils", Arrays.asList("System.IO", "System.Reflection", "Versions.Attributes", "Microsoft.Extensions.Logging", "iText.Commons" , "iText.Commons", "iText.Commons.Internal.Runtime"));
     }
 
     @Override

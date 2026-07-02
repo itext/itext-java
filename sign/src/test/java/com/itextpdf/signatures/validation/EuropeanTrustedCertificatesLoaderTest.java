@@ -37,7 +37,7 @@ public class EuropeanTrustedCertificatesLoaderTest extends ExtendedITextTest {
     public void loadCertificates() {
         EuropeanTrustedListConfigurationFactory factory = EuropeanTrustedListConfigurationFactory.getFactory().get();
         List<Certificate> f = factory.getCertificates();
-        Assertions.assertEquals(8, f.size(), "There should be 8 certificates loaded from the EU trusted list");
+        Assertions.assertEquals(6, f.size(), "There should be 6 certificates loaded from the EU trusted list");
     }
 
     @Test

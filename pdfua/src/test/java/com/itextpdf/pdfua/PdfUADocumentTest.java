@@ -28,7 +28,6 @@ import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.annotations.LogMessage;
@@ -48,7 +47,7 @@ public class PdfUADocumentTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED, logLevel = LogLevelConstants.WARN)
     })
     public void openNotUa1DocumentTest() {
-        AssertUtil.doesNotThrow(() ->
+        Assertions.assertDoesNotThrow(() ->
                 new PdfUADocument(
                         new PdfReader(SOURCE_FOLDER + "usualPdf.pdf"),
                         new PdfWriter(new ByteArrayOutputStream()),
@@ -60,7 +59,7 @@ public class PdfUADocumentTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED, logLevel = LogLevelConstants.WARN)
     })
     public void openNotUa2DocumentTest() {
-        AssertUtil.doesNotThrow(() ->
+        Assertions.assertDoesNotThrow(() ->
                 new PdfUADocument(
                         new PdfReader(SOURCE_FOLDER + "usualPdf.pdf"),
                         new PdfWriter(new ByteArrayOutputStream()),

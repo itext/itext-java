@@ -1,0 +1,376 @@
+<root>
+<Document>
+<Table bBox="[36 623.59 272.57 806 ]" o="/Layout">
+<TR>
+<TD bBox="[36.5 783.52 77.85 805.5 ]" o="/Layout" padding="2">
+<P bBox="[38.5 785.52 75.85 803.5 ]" o="/Layout">
+<Span>
+Cell 0</Span>
+</P>
+</TD>
+<TD bBox="[78.35 783.52 119.71 805.5 ]" o="/Layout" padding="2">
+<P bBox="[80.35 785.52 117.71 803.5 ]" o="/Layout">
+<Span>
+Cell 1</Span>
+</P>
+</TD>
+<TD bBox="[120.21 783.52 161.56 805.5 ]" o="/Layout" padding="2">
+<P bBox="[122.21 785.52 159.56 803.5 ]" o="/Layout">
+<Span>
+Cell 2</Span>
+</P>
+</TD>
+<TD bBox="[162.06 783.52 272.07 805.5 ]" o="/Layout" padding="2">
+<P bBox="[164.06 785.52 270.07 803.5 ]" o="/Layout">
+<Span>
+Cell 3</Span>
+</P>
+</TD>
+</TR>
+<TR>
+<TD bBox="[36.5 759.04 77.85 783.02 ]" o="/Layout" padding="2">
+<P bBox="[38.5 763.04 75.85 781.02 ]" o="/Layout">
+<Span>
+Cell 4</Span>
+</P>
+</TD>
+<TD bBox="[78.35 759.04 119.71 783.02 ]" o="/Layout" padding="2">
+<P bBox="[80.35 761.04 117.71 781.02 ]" borderColor="[0 1 0 ]" borderStyle="/Solid" borderThickness="1" o="/Layout">
+<Span>
+Cell 5</Span>
+<Reference>
+<Span baselineShift="7" o="/Layout">
+1</Span>
+</Reference>
+<Note backgroundColor="[1 0.68627 0.68627 ]" o="/Layout" element_id="footnote_1">
+<Lbl>
+<Span baselineShift="7" o="/Layout">
+1</Span>
+</Lbl>
+<Span>
+Footnote text</Span>
+</Note>
+</P>
+</TD>
+<TD bBox="[120.21 759.04 161.56 783.02 ]" o="/Layout" padding="2">
+<P bBox="[122.21 763.04 159.56 781.02 ]" o="/Layout">
+<Span>
+Cell 6</Span>
+</P>
+</TD>
+<TD bBox="[162.06 759.04 272.07 783.02 ]" o="/Layout" padding="2">
+<P bBox="[164.06 763.04 270.07 781.02 ]" o="/Layout">
+<Span>
+Cell 7</Span>
+</P>
+</TD>
+</TR>
+<TR>
+<TD bBox="[36.5 736.55 77.85 758.54 ]" o="/Layout" padding="2">
+<P bBox="[38.5 738.55 75.85 756.54 ]" o="/Layout">
+<Span>
+Cell 8</Span>
+</P>
+</TD>
+<TD bBox="[78.35 736.55 119.71 758.54 ]" o="/Layout" padding="2">
+<P bBox="[80.35 738.55 117.71 756.54 ]" o="/Layout">
+<Span>
+Cell 9</Span>
+</P>
+</TD>
+<TD bBox="[120.21 736.55 161.56 758.54 ]" o="/Layout" padding="2">
+<P bBox="[122.21 738.55 159.56 756.54 ]" o="/Layout">
+<Span>
+Cell 10</Span>
+</P>
+</TD>
+<TD bBox="[162.06 736.55 272.07 758.54 ]" o="/Layout" padding="2">
+<P bBox="[164.06 738.55 270.07 756.54 ]" o="/Layout">
+<Span>
+Cell 11</Span>
+</P>
+</TD>
+</TR>
+<TR>
+<TD bBox="[36.5 714.07 77.85 736.05 ]" o="/Layout" padding="2">
+<P bBox="[38.5 716.07 75.85 734.05 ]" o="/Layout">
+<Span>
+Cell 12</Span>
+</P>
+</TD>
+<TD bBox="[78.35 714.07 119.71 736.05 ]" o="/Layout" padding="2">
+<P bBox="[80.35 716.07 117.71 734.05 ]" o="/Layout">
+<Span>
+Cell 13</Span>
+</P>
+</TD>
+<TD bBox="[120.21 714.07 161.56 736.05 ]" o="/Layout" padding="2">
+<P bBox="[122.21 716.07 159.56 734.05 ]" o="/Layout">
+<Span>
+Cell 14</Span>
+</P>
+</TD>
+<TD bBox="[162.06 714.07 272.07 736.05 ]" o="/Layout" padding="2">
+<P bBox="[164.06 716.07 270.07 734.05 ]" o="/Layout">
+<Span>
+Cell 15</Span>
+</P>
+</TD>
+</TR>
+<TR>
+<TD bBox="[36.5 689.59 77.85 713.57 ]" o="/Layout" padding="2">
+<P bBox="[38.5 693.59 75.85 711.57 ]" o="/Layout">
+<Span>
+Cell 16</Span>
+</P>
+</TD>
+<TD bBox="[78.35 689.59 119.71 713.57 ]" o="/Layout" padding="2">
+<P bBox="[80.35 693.59 117.71 711.57 ]" o="/Layout">
+<Span>
+Cell 17</Span>
+</P>
+</TD>
+<TD bBox="[120.21 689.59 161.56 713.57 ]" o="/Layout" padding="2">
+<P bBox="[122.21 693.59 159.56 711.57 ]" o="/Layout">
+<Span>
+Cell 18</Span>
+</P>
+</TD>
+<TD bBox="[162.06 689.59 272.07 713.57 ]" o="/Layout" padding="2">
+<P bBox="[164.06 691.59 270.07 711.57 ]" borderColor="[0 1 0 ]" borderStyle="/Solid" borderThickness="1" o="/Layout">
+<Span>
+Cell 19</Span>
+<Reference>
+<Span baselineShift="7" o="/Layout">
+2</Span>
+</Reference>
+<Note backgroundColor="[1 1 0 ]" o="/Layout" element_id="footnote_2">
+<Lbl>
+<Span baselineShift="7" o="/Layout">
+2</Span>
+</Lbl>
+<Span>
+Footnote text 2</Span>
+</Note>
+</P>
+</TD>
+</TR>
+<TR>
+<TD bBox="[36.5 624.09 77.85 689.09 ]" o="/Layout" padding="2">
+<P bBox="[38.5 669.11 75.85 687.09 ]" o="/Layout">
+<Span>
+Cell 20</Span>
+</P>
+</TD>
+<TD bBox="[78.35 624.09 119.71 689.09 ]" o="/Layout" padding="2">
+<P bBox="[80.35 669.11 117.71 687.09 ]" o="/Layout">
+<Span>
+Cell 21</Span>
+</P>
+</TD>
+<TD bBox="[120.21 624.09 161.56 689.09 ]" o="/Layout" padding="2">
+<P bBox="[122.21 669.11 159.56 687.09 ]" o="/Layout">
+<Span>
+Cell 22</Span>
+</P>
+</TD>
+<TD bBox="[162.06 624.09 272.07 689.09 ]" o="/Layout" padding="2">
+<Figure bBox="[164.06 626.09 270.06 687.09 ]" height="61" o="/Layout" width="106">
+</Figure>
+</TD>
+</TR>
+</Table>
+<P bBox="[36 219.99 559 623.59 ]" o="/Layout" spaceAfter="4" spaceBefore="4">
+<Span>
+When a man hath no freedom to fight for at home, Let him combat for that of his neighbours; Let him think of the glories of Greece and of Rome, And get knocked on the head for his labours.  To do good to Mankind is the chivalrous plan, And is always as nobly requited; Then battle for Freedom wherever you can, And, if not shot or hanged, you&apos;ll get knighted.  When a man hath no freedom to fight for at home, Let him combat for that of his neighbours; Let him think of the glories of Greece and of Rome, And get knocked on the head for his labours.  To do good to Mankind is the chivalrous plan, And is always as nobly requited; Then battle for Freedom wherever you can, And, if not shot or hanged, you&apos;ll get knighted.  Two more lines</Span>
+</P>
+<Table>
+<THead>
+<TR>
+<TD bBox="[38 194 79.35 217.99 ]" o="/Layout" padding="2">
+<P bBox="[40 198 77.35 215.99 ]" o="/Layout">
+<Span>
+Cell 0</Span>
+</P>
+</TD>
+<TD bBox="[81.35 194 122.71 217.99 ]" o="/Layout" padding="2">
+<P bBox="[83.35 196 120.71 215.99 ]" borderColor="[0 1 0 ]" borderStyle="/Solid" borderThickness="1" o="/Layout">
+<Span>
+Cell 1</Span>
+<Reference>
+<Span baselineShift="7" o="/Layout">
+3</Span>
+</Reference>
+<Note borderColor="[0.75294 0.75294 0.75294 ]" borderStyle="/Solid" borderThickness="2" o="/Layout" element_id="footnote_3">
+<Lbl>
+<Span baselineShift="7" o="/Layout">
+3</Span>
+</Lbl>
+<Span>
+Footnote text 3</Span>
+</Note>
+</P>
+</TD>
+<TD bBox="[124.71 194 166.06 217.99 ]" o="/Layout" padding="2">
+<P bBox="[126.71 198 164.06 215.99 ]" o="/Layout">
+<Span>
+Cell 2</Span>
+</P>
+</TD>
+<TD bBox="[168.06 194 214.75 217.99 ]" o="/Layout" padding="2">
+<P bBox="[170.06 198 212.75 215.99 ]" o="/Layout">
+<Span>
+Cell 3</Span>
+</P>
+</TD>
+</TR>
+</THead>
+<TBody>
+<TR>
+<TD bBox="[37.25 170.02 80.1 192 ]" o="/Layout" padding="2">
+<P bBox="[39.25 172.02 78.1 190 ]" o="/Layout">
+<Span>
+Cell 4</Span>
+</P>
+</TD>
+<TD bBox="[80.6 170.02 123.46 192 ]" o="/Layout" padding="2">
+<P bBox="[82.6 172.02 121.46 190 ]" o="/Layout">
+<Span>
+Cell 5</Span>
+</P>
+</TD>
+<TD bBox="[123.96 170.02 166.81 192 ]" o="/Layout" padding="2">
+<P bBox="[125.96 172.02 164.81 190 ]" o="/Layout">
+<Span>
+Cell 6</Span>
+</P>
+</TD>
+<TD bBox="[167.31 170.02 215.5 192 ]" o="/Layout" padding="2">
+<P bBox="[169.31 172.02 213.5 190 ]" o="/Layout">
+<Span>
+Cell 7</Span>
+</P>
+</TD>
+</TR>
+<TR>
+<TD bBox="[37.25 147.54 80.1 169.52 ]" o="/Layout" padding="2">
+<P bBox="[39.25 149.54 78.1 167.52 ]" o="/Layout">
+<Span>
+Cell 8</Span>
+</P>
+</TD>
+<TD bBox="[80.6 147.54 123.46 169.52 ]" o="/Layout" padding="2">
+<P bBox="[82.6 149.54 121.46 167.52 ]" o="/Layout">
+<Span>
+Cell 9</Span>
+</P>
+</TD>
+<TD bBox="[123.96 147.54 166.81 169.52 ]" o="/Layout" padding="2">
+<P bBox="[125.96 149.54 164.81 167.52 ]" o="/Layout">
+<Span>
+Cell 10</Span>
+</P>
+</TD>
+<TD bBox="[167.31 147.54 215.5 169.52 ]" o="/Layout" padding="2">
+<P bBox="[169.31 149.54 213.5 167.52 ]" o="/Layout">
+<Span>
+Cell 11</Span>
+</P>
+</TD>
+</TR>
+<TR>
+<TD bBox="[37.25 756.04 80.1 778.02 ]" o="/Layout" padding="2">
+<P bBox="[39.25 758.04 78.1 776.02 ]" o="/Layout">
+<Span>
+Cell 12</Span>
+</P>
+</TD>
+<TD bBox="[80.6 756.04 123.46 778.02 ]" o="/Layout" padding="2">
+<P bBox="[82.6 758.04 121.46 776.02 ]" o="/Layout">
+<Span>
+Cell 13</Span>
+</P>
+</TD>
+<TD bBox="[123.96 756.04 166.81 778.02 ]" o="/Layout" padding="2">
+<P bBox="[125.96 758.04 164.81 776.02 ]" o="/Layout">
+<Span>
+Cell 14</Span>
+</P>
+</TD>
+<TD bBox="[167.31 756.04 215.5 778.02 ]" o="/Layout" padding="2">
+<P bBox="[169.31 758.04 213.5 776.02 ]" o="/Layout">
+<Span>
+Cell 15</Span>
+</P>
+</TD>
+</TR>
+<TR>
+<TD bBox="[37.25 733.55 80.1 755.54 ]" o="/Layout" padding="2">
+<P bBox="[39.25 735.55 78.1 753.54 ]" o="/Layout">
+<Span>
+Cell 16</Span>
+</P>
+</TD>
+<TD bBox="[80.6 733.55 123.46 755.54 ]" o="/Layout" padding="2">
+<P bBox="[82.6 735.55 121.46 753.54 ]" o="/Layout">
+<Span>
+Cell 17</Span>
+</P>
+</TD>
+<TD bBox="[123.96 733.55 166.81 755.54 ]" o="/Layout" padding="2">
+<P bBox="[125.96 735.55 164.81 753.54 ]" o="/Layout">
+<Span>
+Cell 18</Span>
+</P>
+</TD>
+<TD bBox="[167.31 733.55 215.5 755.54 ]" o="/Layout" padding="2">
+<P bBox="[169.31 735.55 213.5 753.54 ]" o="/Layout">
+<Span>
+Cell 19</Span>
+</P>
+</TD>
+</TR>
+</TBody>
+<TFoot>
+<TR>
+<TD bBox="[38 707.57 79.35 731.55 ]" o="/Layout" padding="2">
+<P bBox="[40 711.57 77.35 729.55 ]" o="/Layout">
+<Span>
+Cell 20</Span>
+</P>
+</TD>
+<TD bBox="[81.35 707.57 122.71 731.55 ]" o="/Layout" padding="2">
+<P bBox="[83.35 711.57 120.71 729.55 ]" o="/Layout">
+<Span>
+Cell 21</Span>
+</P>
+</TD>
+<TD bBox="[124.71 707.57 166.06 731.55 ]" o="/Layout" padding="2">
+<P bBox="[126.71 711.57 164.06 729.55 ]" o="/Layout">
+<Span>
+Cell 22</Span>
+</P>
+</TD>
+<TD bBox="[168.06 707.57 214.75 731.55 ]" o="/Layout" padding="2">
+<P bBox="[170.06 709.57 212.75 729.55 ]" borderColor="[0 1 0 ]" borderStyle="/Solid" borderThickness="1" o="/Layout">
+<Span>
+Cell 23</Span>
+<Reference>
+<Span baselineShift="7" o="/Layout">
+4</Span>
+</Reference>
+<Note borderColor="[0.25098 0.25098 0.25098 ]" borderStyle="/Solid" borderThickness="2" o="/Layout" element_id="footnote_4">
+<Lbl>
+<Span baselineShift="7" o="/Layout">
+4</Span>
+</Lbl>
+<Span>
+Footnote text 4</Span>
+</Note>
+</P>
+</TD>
+</TR>
+</TFoot>
+</Table>
+</Document>
+</root>

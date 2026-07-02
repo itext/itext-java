@@ -26,12 +26,13 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("IntegrationTest")
 public class SafeCallingTest extends ExtendedITextTest {
@@ -105,7 +106,7 @@ public class SafeCallingTest extends ExtendedITextTest {
 
     @Test
     public void safCallingWithPdfExceptionDoesNotThrowException() {
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             SafeCalling.onRuntimeExceptionLog(
                     () -> {
                         throw new PdfException("Test exception");
@@ -118,7 +119,7 @@ public class SafeCallingTest extends ExtendedITextTest {
 
     @Test
     public void npeExceptionDoesNotThrowException() {
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             SafeCalling.onRuntimeExceptionLog(
                     () -> {
                         throw new NullPointerException("Test exception");
@@ -131,7 +132,7 @@ public class SafeCallingTest extends ExtendedITextTest {
 
     @Test
     public void illegalArgumentExceptionDoesNotThrowException() {
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             SafeCalling.onRuntimeExceptionLog(
                     () -> {
                         throw new IllegalArgumentException("Test exception");

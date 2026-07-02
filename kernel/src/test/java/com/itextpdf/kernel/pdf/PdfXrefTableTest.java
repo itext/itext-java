@@ -28,7 +28,6 @@ import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
@@ -72,7 +71,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
             public void checkIfXrefStructureExceedsTheLimit(int requestedCapacity) {
             }
         };
-        AssertUtil.doesNotThrow(() -> new PdfDocument(new PdfReader(inputFile, new ReaderProperties().setMemoryLimitsAwareHandler(memoryLimitsAwareHandler))));
+        Assertions.assertDoesNotThrow(() -> new PdfDocument(new PdfReader(inputFile, new ReaderProperties().setMemoryLimitsAwareHandler(memoryLimitsAwareHandler))));
     }
 
     @Test
@@ -115,7 +114,7 @@ public class PdfXrefTableTest extends ExtendedITextTest {
         byte[] baseBytes = baseBaos.toByteArray();
         ByteArrayOutputStream stampedBaos = new ByteArrayOutputStream();
 
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             try (PdfDocument stampingDoc = new PdfDocument(
                     new PdfReader(new ByteArrayInputStream(baseBytes),
                             new ReaderProperties().setMemoryLimitsAwareHandler(handler)),

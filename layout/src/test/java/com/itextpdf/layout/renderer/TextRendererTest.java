@@ -261,6 +261,12 @@ public class TextRendererTest extends RendererUnitTest {
     }
 
     @Test
+    public void tibetanCharacterBelongsToSpecificScripts() {
+        // u0F0C TIBETAN MARK DELIMITER TSHEG BSTAR
+        Assertions.assertTrue(TextRenderer.codePointIsOfSpecialScript(0x0F0C));
+    }
+
+    @Test
     public void cyrillicCharacterDoesntBelongToSpecificScripts() {
         // u0433 Cyrillic Small Letter U
         Assertions.assertFalse(TextRenderer.codePointIsOfSpecialScript(1091));

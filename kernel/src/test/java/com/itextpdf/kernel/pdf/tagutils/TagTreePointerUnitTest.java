@@ -35,14 +35,13 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class TagTreePointerUnitTest extends ExtendedITextTest {
@@ -181,7 +180,7 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         TagTreePointer pointer = new TagTreePointer(doc);
         pointer.moveToKid(StandardRoles.P);
 
-        AssertUtil.doesNotThrow(() -> pointer.flushTag());
+        Assertions.assertDoesNotThrow(() -> pointer.flushTag());
         Assertions.assertTrue(kid1.isFlushed());
         Assertions.assertTrue(kid2.isFlushed());
     }
@@ -204,7 +203,7 @@ public class TagTreePointerUnitTest extends ExtendedITextTest {
         waitingTagsManager.assignWaitingState(pointer, pWaitingTagObj);
         pointer.moveToParent().moveToKid(StandardRoles.DIV);
 
-        AssertUtil.doesNotThrow(() -> pointer.flushTag());
+        Assertions.assertDoesNotThrow(() -> pointer.flushTag());
         Assertions.assertFalse(kid1.isFlushed());
         Assertions.assertTrue(kid2.isFlushed());
     }

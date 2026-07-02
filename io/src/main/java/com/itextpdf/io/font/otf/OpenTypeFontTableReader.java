@@ -22,8 +22,8 @@
  */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.util.IntHashtable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -259,6 +259,10 @@ public abstract class OpenTypeFontTableReader {
         int lookupFlag = rf.readUnsignedShort();
         int subTableCount = rf.readUnsignedShort();
         int[] subTableLocations = readUShortArray(subTableCount, lookupTableLocation);
-        lookupList.add(readLookupTable(lookupType, lookupFlag, subTableLocations));
+        final OpenTableLookup lookup = readLookupTable(lookupType, lookupFlag, subTableLocations);
+        if (lookup != null) {
+            lookup.setIndexInLookupList(lookupList.size());
+        }
+        lookupList.add(lookup);
     }
 }

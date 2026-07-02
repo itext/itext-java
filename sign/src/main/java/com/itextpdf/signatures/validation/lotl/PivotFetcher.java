@@ -94,10 +94,15 @@ public class PivotFetcher {
         Result result = new Result();
 
         List<String> pivotsUrlList = getPivotsUrlList(lotlXml);
+        //Stream is guaranteed to retain order so we should be a ok.
         List<String> ojUris = pivotsUrlList.stream()
-                .filter(url -> XmlPivotsHandler.isOfficialJournal(url)).collect(Collectors.toList());
+                .filter(url -> XmlPivotsHandler.isOfficialJournal(url))
+                .collect(Collectors.toList());
         if (ojUris.size() > 1) {
-            LOGGER.warn(SignLogMessageConstant.OJ_TRANSITION_PERIOD);
+            //This means we are in a transition period but the user has already updated, so no need to log.
+            if (ojUris.indexOf(currentJournalUri) != 0){
+                LOGGER.warn(SignLogMessageConstant.OJ_TRANSITION_PERIOD);
+            }
         }
         result.setPivotUrls(pivotsUrlList);
         List<byte[]> pivotFiles = new ArrayList<>();

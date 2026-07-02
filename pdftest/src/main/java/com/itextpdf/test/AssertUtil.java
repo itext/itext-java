@@ -25,7 +25,6 @@ package com.itextpdf.test;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Supplier;
-import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 
 /**
@@ -34,37 +33,6 @@ import org.opentest4j.AssertionFailedError;
 public class AssertUtil {
     private AssertUtil() {
         // Empty constructor
-    }
-
-    /**
-     * Asserts that {@link Executor#execute()} method call doesn't produce any
-     * {@link Exception} otherwise test will fail by throwing {@link AssertionError}.
-     *
-     * @param executor the instance of {@link Executor} whose
-     * {@link Executor#execute()} method will be checked for exception throwing
-     */
-    public static void doesNotThrow(Executor executor) {
-        try {
-            executor.execute();
-        } catch (Exception ex) {
-            Assertions.fail(ex.getMessage());
-        }
-    }
-
-    /**
-     * Asserts that {@link Executor#execute()} method call doesn't produce any
-     * {@link Exception} otherwise test will fail by throwing {@link AssertionError}.
-     *
-     * @param executor the instance of {@link Executor} whose
-     * {@link Executor#execute()} method will be checked for exception throwing
-     * @param message the identifying message for the {@link AssertionError} may be null
-     */
-    public static void doesNotThrow(Executor executor, String message) {
-        try {
-            executor.execute();
-        } catch (Exception ex) {
-            Assertions.fail(message);
-        }
     }
 
     /**

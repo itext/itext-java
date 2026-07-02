@@ -1,0 +1,32 @@
+NOTICE
+
+Test image resources
+
+Some files in this directory are derived from image samples available at:
+https://bomb.codes/bombs#images
+
+License:
+The original images are distributed under the GNU Affero General Public License v3.0.
+See gnu-agpl-v3.0.md for full license text.
+
+Unmodified files:
+- 10K.png
+- 10K.jpeg
+- 10K.j2k
+- 10K.tiff
+- 10K.gif
+
+Renamed files:
+- largeHeaderSmallData.png (from badsize.png)
+- largeHeaderSmallData.jpeg (from badsize.jpeg)
+- largeHeaderSmallData.jp2 (from badsize.j2k)
+
+Modified and renamed files:
+- smallHeaderLargeData.png (from 10K.png)
+- smallHeaderLargeData.jpeg (from 10K.jpeg)
+- smallHeaderLargeData.j2k (from 10K.j2k)
+- smallHeaderLargeData.tiff (from 10K.tiff)
+- smallHeaderLargeData.gif (from 10K.gif)
+
+Modifications were made for testing image processing edge cases, including
+mismatches between reported image dimensions and actual data size.

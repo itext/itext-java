@@ -41,19 +41,18 @@ import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.utils.checkers.PdfCheckersUtil;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.function.Function;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class PdfCheckerTest extends ExtendedITextTest {
@@ -240,7 +239,7 @@ public class PdfCheckerTest extends ExtendedITextTest {
             catalog.put(PdfName.Type, PdfName.Metadata);
             catalog.put(PdfName.Subtype, PdfName.XML);
 
-            AssertUtil.doesNotThrow(() -> PdfCheckersUtil.checkMetadata(catalog.getPdfObject(),
+            Assertions.assertDoesNotThrow(() -> PdfCheckersUtil.checkMetadata(catalog.getPdfObject(),
                     PdfConformance.WELL_TAGGED_PDF_FOR_ACCESSIBILITY, EXCEPTION_SUPPLIER));
         }
     }
@@ -258,7 +257,7 @@ public class PdfCheckerTest extends ExtendedITextTest {
             catalog.put(PdfName.Type, PdfName.Metadata);
             catalog.put(PdfName.Subtype, PdfName.XML);
 
-            AssertUtil.doesNotThrow(() ->
+            Assertions.assertDoesNotThrow(() ->
                     PdfCheckersUtil.checkMetadata(catalog.getPdfObject(), PdfConformance.PDF_UA_2, EXCEPTION_SUPPLIER));
         }
     }
@@ -273,7 +272,7 @@ public class PdfCheckerTest extends ExtendedITextTest {
             catalog.setLang(new PdfString("en-US"));
 
             Pdf20Checker checker = new Pdf20Checker(pdfDocument);
-            AssertUtil.doesNotThrow(() -> checker.checkLang(catalog));
+            Assertions.assertDoesNotThrow(() -> checker.checkLang(catalog));
         }
     }
 
@@ -287,7 +286,7 @@ public class PdfCheckerTest extends ExtendedITextTest {
             catalog.setLang(new PdfString(""));
 
             Pdf20Checker checker = new Pdf20Checker(pdfDocument);
-            AssertUtil.doesNotThrow(() -> checker.checkLang(catalog));
+            Assertions.assertDoesNotThrow(() -> checker.checkLang(catalog));
         }
     }
 

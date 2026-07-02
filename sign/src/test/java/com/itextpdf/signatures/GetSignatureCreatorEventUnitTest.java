@@ -22,8 +22,9 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ public class GetSignatureCreatorEventUnitTest extends ExtendedITextTest {
     @Test
     public void nullDocumentTest() {
         GetSignatureCreatorEvent getSignatureCreatorEvent = new GetSignatureCreatorEvent(null);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             getSignatureCreatorEvent.doAction();
         });
     }

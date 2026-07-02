@@ -49,6 +49,7 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
+import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -67,28 +68,6 @@ public class BlockTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BlockTest/";
     public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/BlockTest/";
 
-    private static final String textByronNarrow =
-            "When a man hath no freedom to fight for at home, " +
-                    "Let him combat for that of his neighbours; " +
-                    "Let him think of the glories of Greece and of Rome, " +
-                    "And get knocked on the head for his labours. " +
-                    "\n" +
-                    "To do good to Mankind is the chivalrous plan, " +
-                    "And is always as nobly requited; " +
-                    "Then battle for Freedom wherever you can, " +
-                    "And, if not shot or hanged, you'll get knighted.";
-
-    private static final String textByron =
-            "When a man hath no freedom to fight for at home,\n" +
-                    "    Let him combat for that of his neighbours;\n" +
-                    "Let him think of the glories of Greece and of Rome,\n" +
-                    "    And get knocked on the head for his labours.\n" +
-                    "\n" +
-                    "To do good to Mankind is the chivalrous plan,\n" +
-                    "    And is always as nobly requited;\n" +
-                    "Then battle for Freedom wherever you can,\n" +
-                    "    And, if not shot or hanged, you'll get knighted.";
-
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
@@ -105,9 +84,9 @@ public class BlockTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        Paragraph p = new Paragraph(textByron);
+        Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
         for (int i = 0; i < 10; i++) {
-            p.add(textByron);
+            p.add(TestResourceUtil.getByronStanza());
         }
         p.setBorder(new SolidBorder(0.5f));
 
@@ -166,7 +145,7 @@ public class BlockTest extends ExtendedITextTest {
 
         Document doc = new Document(pdfDocument);
 
-        Paragraph p = new Paragraph(textByron);
+        Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
         Div div = new Div();
         div.setBorder(new SolidBorder(ColorConstants.RED, 2));
         for (int i = 0; i < 5; i++) {
@@ -234,7 +213,7 @@ public class BlockTest extends ExtendedITextTest {
         float parentHeight = 650;
 
         Div d = new Div();
-        d.add(new Paragraph(textByron));
+        d.add(new Paragraph(TestResourceUtil.getByronStanza()));
         d.setBorder(new SolidBorder(0.5f));
 
 
@@ -334,7 +313,7 @@ public class BlockTest extends ExtendedITextTest {
         float parentHeight = 650;
 
         Paragraph p = new Paragraph();
-        p.add(new Text(textByron));
+        p.add(new Text(TestResourceUtil.getByronStanza()));
         p.setBorder(new SolidBorder(0.5f));
 
         doc.add(new Paragraph("Default layout:"));
@@ -431,7 +410,7 @@ public class BlockTest extends ExtendedITextTest {
         Paragraph explanation = new Paragraph("In this sample iText will not try to fit text in container's width, because overflow property is set. However no text is hidden.");
         doc.add(explanation);
 
-        Paragraph p = new Paragraph(textByronNarrow);
+        Paragraph p = new Paragraph(TestResourceUtil.getByronStanzaNarrow());
         p.setWidth(200);
         p.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
         p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
@@ -465,7 +444,7 @@ public class BlockTest extends ExtendedITextTest {
         p.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
         p.setBackgroundColor(ColorConstants.YELLOW);
         for (int i = 0; i < 10; i++) {
-            p.add(textByronNarrow);
+            p.add(TestResourceUtil.getByronStanzaNarrow());
         }
         p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
 
@@ -492,7 +471,7 @@ public class BlockTest extends ExtendedITextTest {
         p.setBorder(new SolidBorder(ColorConstants.BLUE, 1));
         p.setBackgroundColor(ColorConstants.YELLOW);
         for (int i = 0; i < 100; i++) {
-            p.add(textByronNarrow);
+            p.add(TestResourceUtil.getByronStanzaNarrow());
         }
         p.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
         p.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
@@ -587,7 +566,7 @@ public class BlockTest extends ExtendedITextTest {
         div.setBackgroundColor(ColorConstants.GREEN);
         div.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
 
-        div.add(new Paragraph(textByron));
+        div.add(new Paragraph(TestResourceUtil.getByronStanza()));
 
         doc.add(div);
 
@@ -605,15 +584,7 @@ public class BlockTest extends ExtendedITextTest {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
 
         String textByron =
-                "When a man hath no freedom to fight for at home,\n" +
-                        "    Let him combat for that of his neighbours;\n" +
-                        "Let him think of the glories of Greece and of Rome,\n" +
-                        "    And get knocked on the head for his labours.\n" +
-                        "\n" +
-                        "To do good to Mankind is the chivalrous plan,\n" +
-                        "    And is always as nobly requited;\n" +
-                        "Then battle for Freedom wherever you can,\n" +
-                        "    And, if not shot or hanged, you'll get knighted." +
+                TestResourceUtil.getByronStanza() +
                         "To do good to Mankind is the chivalrous plan,\n" +
                         "    And is always as nobly requited;\n" +
                         "Then battle for Freedom wherever you can,\n" +

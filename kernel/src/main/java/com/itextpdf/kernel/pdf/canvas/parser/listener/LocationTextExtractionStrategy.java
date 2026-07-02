@@ -191,7 +191,7 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
         if (DUMP_STATE) dumpState();
 
         List<TextChunk> textChunks = new ArrayList<>(locationalResult);
-        sortWithMarks(textChunks);
+        sortTextChunks(textChunks);
 
         StringBuilder sb = new StringBuilder();
         TextChunk lastChunk = null;
@@ -215,6 +215,15 @@ public class LocationTextExtractionStrategy implements ITextExtractionStrategy {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Sorts a list of text chunks according to their locations on a page.
+     *
+     * @param textChunks text chinks to sort
+     */
+    protected void sortTextChunks(List<TextChunk> textChunks) {
+        sortWithMarks(textChunks);
     }
 
     /**

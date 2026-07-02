@@ -134,10 +134,12 @@ public class WellTaggedPdfDocument extends PdfDocument {
     protected List<IValidationChecker> createCheckers(PdfConformance conformance) {
         List<IValidationChecker> checkers = new ArrayList<>();
         final ColorContrastChecker contrastChecker = new ColorContrastChecker(false, false);
-        if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)) {
-            checkers.add(new WellTaggedPdfForReuseChecker(this));
-        } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_ACCESSIBILITY)) {
+        //Currently if both accessibility and reuse are enabled we only add accessibility checker as it fully covers
+        //reuse checker, but in the future this could change.
+        if (conformance.conformsTo(WellTaggedPdfConformance.FOR_ACCESSIBILITY)) {
             checkers.add(new WellTaggedPdfForAccessibilityChecker(this));
+        } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)) {
+            checkers.add(new WellTaggedPdfForReuseChecker(this));
         }
         checkers.add(new Pdf20Checker(this));
         checkers.add(contrastChecker);

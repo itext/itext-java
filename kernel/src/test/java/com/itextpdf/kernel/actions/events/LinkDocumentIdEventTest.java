@@ -31,14 +31,13 @@ import com.itextpdf.kernel.actions.ProductEventHandlerAccess;
 import com.itextpdf.kernel.actions.ecosystem.ITextTestEvent;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class LinkDocumentIdEventTest extends ExtendedITextTest {
@@ -145,15 +144,15 @@ public class LinkDocumentIdEventTest extends ExtendedITextTest {
 
     @Test
     public void nullValuesAreAcceptableTest() throws IOException {
-        AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(null, (SequenceId) null));
-        AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(null, (AbstractIdentifiableElement) null));
+        Assertions.assertDoesNotThrow(() -> new LinkDocumentIdEvent(null, (SequenceId) null));
+        Assertions.assertDoesNotThrow(() -> new LinkDocumentIdEvent(null, (AbstractIdentifiableElement) null));
 
-        AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(null, new SequenceId()));
-        AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(null, new IdentifiableElement()));
+        Assertions.assertDoesNotThrow(() -> new LinkDocumentIdEvent(null, new SequenceId()));
+        Assertions.assertDoesNotThrow(() -> new LinkDocumentIdEvent(null, new IdentifiableElement()));
 
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "hello.pdf"))) {
-            AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(document, (SequenceId) null));
-            AssertUtil.doesNotThrow(() -> new LinkDocumentIdEvent(document, (AbstractIdentifiableElement) null));
+            Assertions.assertDoesNotThrow(() -> new LinkDocumentIdEvent(document, (SequenceId) null));
+            Assertions.assertDoesNotThrow(() -> new LinkDocumentIdEvent(document, (AbstractIdentifiableElement) null));
         }
     }
 

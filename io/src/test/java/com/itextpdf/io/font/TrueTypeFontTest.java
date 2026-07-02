@@ -23,6 +23,7 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.OpenTableLookup;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
@@ -174,6 +175,29 @@ public class TrueTypeFontTest extends ExtendedITextTest {
         trueTypeFontProgram.updateUsedGlyphs(usedGlyphs, false, subsetRanges);
         Assertions.assertEquals(1, usedGlyphs.size());
         Assertions.assertSame(trueTypeFontProgram.getGlyphByCode(10), usedGlyphs.get(1));
+    }
+
+    @Test
+    public void getFontFeatureFromPrimitiveFontTest() throws IOException {
+        TrueTypeFont trueTypeFontProgram =
+                (TrueTypeFont) FontProgramFactory.createFont(FONT_FOLDER + "FreeSansBold.ttf");
+
+        Map<String, List<OpenTableLookup>> extractedFeatures = new HashMap<>();
+        String script = trueTypeFontProgram.extractFeatures(Collections.singleton("cyrl"), extractedFeatures);
+        // No Cyrillic features, so default script should be returned
+        Assertions.assertEquals("DFLT", script);
+        // default only contains kerning and fractional features, so only those should be extracted
+        Assertions.assertEquals(2, extractedFeatures.size());
+        Assertions.assertTrue(extractedFeatures.containsKey("kern"));
+        Assertions.assertTrue(extractedFeatures.containsKey("frac"));
+
+        script = trueTypeFontProgram.extractFeatures(Collections.singleton("latn"), extractedFeatures);
+        Assertions.assertEquals("latn", script);
+        // Latin adds a ligatures feature
+        Assertions.assertEquals(3, extractedFeatures.size());
+        Assertions.assertTrue(extractedFeatures.containsKey("kern"));
+        Assertions.assertTrue(extractedFeatures.containsKey("frac"));
+        Assertions.assertTrue(extractedFeatures.containsKey("liga"));
     }
 
     private void checkCmapTableEntry(FontProgram fontProgram, char uniChar, int expectedGlyphId) {

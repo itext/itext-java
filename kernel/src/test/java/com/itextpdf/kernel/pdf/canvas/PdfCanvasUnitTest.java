@@ -24,6 +24,8 @@ package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -49,6 +51,7 @@ import com.itextpdf.kernel.validation.context.RenderingIntentValidationContext;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Stack;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -183,6 +186,79 @@ public class PdfCanvasUnitTest extends ExtendedITextTest {
             pdfCanvas.setExtGState(new PdfExtGState());
             Assertions.assertNotNull(checker.gState);
             Assertions.assertNotNull(checker.contentStream);
+        }
+    }
+
+    @Test
+    public void simpleTextWritingWithoutOffsetsTest() throws IOException {
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            final PdfStream contentStream = new PdfStream();
+            PdfCanvas pdfCanvas = new PdfCanvas(contentStream, new PdfResources(), doc);
+            pdfCanvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 12);
+            GlyphLine glyphLine = new GlyphLine();
+            final Glyph glyph = new Glyph(65, 200, 65);
+            glyphLine.add(glyph);
+            glyphLine.setEnd(1);
+            pdfCanvas.showText(glyphLine);
+
+            final String expected = "/F1 12 Tf\n"
+                                  + "(A)Tj\n";
+            Assertions.assertEquals(expected, new String(contentStream.getBytes(), StandardCharsets.UTF_8));
+        }
+    }
+
+    @Test
+    public void textWritingWithAdvanceOffsetTest() throws IOException {
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            final PdfStream contentStream = new PdfStream();
+            PdfCanvas pdfCanvas = new PdfCanvas(contentStream, new PdfResources(), doc);
+            pdfCanvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 12);
+            GlyphLine glyphLine = new GlyphLine();
+            final Glyph glyph = new Glyph(65, 200, 65);
+            glyph.setXAdvance((short) 200);
+            glyph.setYAdvance((short) 100);
+            glyphLine.add(glyph);
+            glyphLine.setEnd(1);
+            pdfCanvas.showText(glyphLine);
+
+            final String expected = "/F1 12 Tf\n"
+                                  + "(A)Tj\n"
+                                  + "4.8 1.2 Td\n";
+            Assertions.assertEquals(expected, new String(contentStream.getBytes(), StandardCharsets.UTF_8));
+        }
+    }
+
+    @Test
+    public void textWritingWithAdvanceOffsetAndAnchorDeltaTest() throws IOException {
+        try (PdfDocument doc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            final PdfStream contentStream = new PdfStream();
+            PdfCanvas pdfCanvas = new PdfCanvas(contentStream, new PdfResources(), doc);
+            pdfCanvas.setFontAndSize(PdfFontFactory.createFont(StandardFonts.HELVETICA), 12);
+            GlyphLine glyphLine = new GlyphLine();
+
+            Glyph glyph = new Glyph(65, 200, 65);
+            glyph.setXPlacement((short) 200);
+            glyph.setYPlacement((short) 100);
+            glyphLine.add(glyph);
+
+            glyph = new Glyph(66, 250, 66);
+            glyph.setAnchorDelta((short) -1);
+            glyph.setXAdvance((short) 130);
+            glyph.setYAdvance((short) 50);
+            glyphLine.add(glyph);
+
+            glyphLine.setEnd(2);
+            pdfCanvas.showText(glyphLine);
+
+            final String expected = "/F1 12 Tf\n"
+                                  + "2.4 1.2 Td\n"
+                                  + "(A)Tj\n"
+                                  + "-2.4 -1.2 Td\n"
+                                  + "0 1.2 Td\n"
+                                  + "(B)Tj\n"
+                                  + "0 -1.2 Td\n"
+                                  + "1.56 0.6 Td\n";
+            Assertions.assertEquals(expected, new String(contentStream.getBytes(), StandardCharsets.UTF_8));
         }
     }
 

@@ -71,7 +71,6 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -1296,7 +1295,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     public void nullPdfDoesNotThrowNPE() {
         Rectangle rect = new Rectangle(0, 0);
         PdfCanvas pdfCanvas = new PdfCanvas(new PdfStream(), null, null);
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             new Canvas(pdfCanvas, rect);
         });
     }

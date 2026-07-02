@@ -1,6 +1,7 @@
 Please notice that the following fonts are used with the mentioned below licenses.
 
 FreeSans.ttf | GPL license | GNU General Public License.txt | Based on "https://savannah.gnu.org/projects/freefont" (28.01.2026)
+FreeSansBold.ttf | GPL license | GNU General Public License.txt | Based on "https://savannah.gnu.org/projects/freefont" (29.01.2026)
 NotoColorEmoji.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Color+Emoji" (27.01.2026)
 NotoEmoji-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Emoji" (26.01.2026)
 NotoSansCJKjp-Bold.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit f36eda03dfa5582a6d49abbfb5c83d0209584158 (01.07.2015) from repository: "Based on "https://github.com/googlefonts/noto-cjk"
@@ -9,7 +10,7 @@ NotoSansCJKsc-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit f36e
 NotoSansJP-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Sans+JP" (26.01.2026)
 NotoSans-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "Based on "https://github.com/googlefonts/noto-fonts"
 NotoSansThai-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Sans+Thai (27.01.2026)
-Puritan-regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Puritan" (26.01.2026)
+NotoSansGujarati-Regular.ttf | OFL-1.1 | LICENSE-OFL-1.1.txt | Based on commit 5a89b487c648c34c2b6d1b9ebb73bb3fab1df4b2 (20.09.2017) from "https://github.com/googlefonts/noto-fonts"Puritan-regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Puritan" (26.01.2026)
 Puritan-regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Puritan" (26.01.2026)
 NotoSansOldItalic-Regular.ttf | SIL Open Font License v1.1. | LICENSE_OFL-1.1.txt | Based on commit 20bc5918912503bc1537a407a694738c33c048aa (07.31.2020) from "Based on "https://github.com/googlefonts/noto-fonts"
 NotoSansCherokee-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Sans+Cherokee" (27.01.2026)

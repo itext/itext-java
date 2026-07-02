@@ -1,0 +1,9 @@
+name: CreatePR
+
+on:
+  create:
+
+jobs:
+    call-createpr:
+      uses: XodoDocs/itext-github-workflows/.github/workflows/createpr.yml@master
+      secrets: inherit

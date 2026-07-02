@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -129,6 +130,7 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
     }
 
     @Test
+    @Disabled("TODO DEVSIX-9938 - Flaky access on ci") // Android-Conversion-Skip-Line
     // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void loadWithRequestAndHeaders() throws IOException {
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();

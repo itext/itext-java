@@ -34,7 +34,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayOutputStream;
@@ -78,7 +77,7 @@ public class CheckBoxFormFieldBuilderTest extends ExtendedITextTest {
     @Test
     public void createCheckBoxWithIncorrectNameTest() {
         PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        AssertUtil.doesNotThrow(() -> new CheckBoxFormFieldBuilder(pdfDoc, "incorrect.name")
+        Assertions.assertDoesNotThrow(() -> new CheckBoxFormFieldBuilder(pdfDoc, "incorrect.name")
                 .setWidgetRectangle(DUMMY_RECTANGLE).createCheckBox());
     }
 

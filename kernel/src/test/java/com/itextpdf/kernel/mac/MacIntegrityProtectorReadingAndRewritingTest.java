@@ -39,7 +39,6 @@ import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -274,7 +273,7 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void readSignedMacProtectedDocumentTest() {
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             try (PdfDocument ignored = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signedMacProtectedDocument.pdf",
                     new ReaderProperties().setPassword(PASSWORD)))) {
             }
@@ -285,7 +284,7 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void readThirdPartyMacProtectedDocumentTest() {
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             try (PdfDocument ignored = new PdfDocument(new PdfReader(SOURCE_FOLDER + "thirdPartyMacProtectedDocument.pdf",
                     new ReaderProperties().setPassword(PASSWORD)))) {
             }
@@ -304,7 +303,7 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
         PrivateKey privateKey = MacIntegrityProtectorCreationTest.getPrivateKey(CERTS_SRC + "keyForEncryption.pem");
         Certificate certificate = CryptoUtil.readPublicCertificate(
                 FileUtil.getInputStreamForFile(CERTS_SRC + "certForEncryption.crt"));
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             try (PdfDocument ignored = new PdfDocument(new PdfReader(SOURCE_FOLDER + "thirdPartyPublicKeyMacProtectedDocument.pdf",
                     new ReaderProperties().setPublicKeySecurityParams(certificate, privateKey, PROVIDER_NAME, null)))) {
             }
@@ -315,7 +314,7 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
     @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
             ignore = true))
     public void readMacProtectedPdf1_7() {
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             try (PdfDocument ignored = new PdfDocument(new PdfReader(SOURCE_FOLDER + "macProtectedDocumentPdf1_7.pdf",
                     new ReaderProperties().setPassword(PASSWORD)))) {
             }

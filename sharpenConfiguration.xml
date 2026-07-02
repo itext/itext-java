@@ -168,12 +168,16 @@
             <fileset reason="CloseableByteArrayOutputStream cannot be trivially ported into MemoryStream">
                 <file path="com/itextpdf/io/util/CloseableByteArrayOutputStream.java"/>
             </fileset>
+            <fileset reason="Java and .net have different WebP log messages">
+                <file path="com/itextpdf/io/image/WebPLogMessageConstant.java"/>
+            </fileset>
             <!-- barcodes -->
             <file path="com/itextpdf/barcodes/BarcodeMultiThreadingTest.java"/>
 
             <!-- bouncy-castle -->
             <fileset reason="Logic of some methods in BC and BCFips differs at Java and .NET.">
                 <file path="com/itextpdf/bouncycastleconnector/BouncyCastleDefaultFactory.java"/>
+                <file path="com/itextpdf/bouncycastleconnector/logs/BouncyCastleLogMessageConstant.java"/>
                 <file path="com/itextpdf/bouncycastle/BouncyCastleFactory.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1GeneralizedTimeBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/ASN1IntegerBC.java"/>
@@ -528,7 +532,6 @@
                 <file path="com/itextpdf/signatures/DigestAlgorithmsManualTest.java"/>
             </fileset>
             <fileset reason="SignatureMechanisms.getAlgorithm works differently for passed oid = null">
-                <file path="com/itextpdf/signatures/SignatureMechanismsManualTest.java"/>
             </fileset>
             <fileset reason="Some of the algorithms are not supported on .NET and the result is thus different. The tests with the identical result are in PdfPKCS7Test.">
                 <file path="com/itextpdf/signatures/PdfPKCS7ManuallyPortedTest.java"/>
@@ -551,11 +554,13 @@
                 <file path="com/itextpdf/signatures/testutils/PemFileHelper.java"/>
                 <file path="com/itextpdf/signatures/CertificateUtil.java"/>
             </fileset>
-            <fileset reason="EnumSet generics mapping problems">
+            <fileset reason="Enum generics mapping problems">
                 <file path="com/itextpdf/signatures/validation/context/ValidatorContexts.java" />
                 <file path="com/itextpdf/signatures/validation/context/TimeBasedContexts.java" />
                 <file path="com/itextpdf/signatures/validation/context/CertificateSources.java" />
                 <file path="com/itextpdf/signatures/validation/SignatureValidationProperties.java" />
+                <file path="com/itextpdf/layout/renderer/typography/ScriptInfoData.java" />
+
             </fileset>
             <fileset reason="Xml tooling is not translatable">
                 <file path="com/itextpdf/signatures/validation/report/xml/XmlReportGenerator.java"/>
@@ -649,6 +654,11 @@
                 <file path="com/itextpdf/brotlicompressor/BrotliStreamCompressionStrategy.java"/>
                 <file path="com/itextpdf/brotlicompressor/BrotliOutputStream.java"/>
                 <file path="com/itextpdf/brotlicompressor/BrotliOutputStreamTest.java"/>
+            </fileset>
+
+            <!-- webp-image-support -->
+            <fileset reason="Java implementations is based on twelve-monkeys while .Net utilizes Skia">
+                <file path="com/itextpdf/webpimagesupport/WebPImageData.java"/>
             </fileset>
         </java>
     </ignored>
@@ -756,6 +766,16 @@
 		<fileset reason="Juunit specific files">
             <file path="junit-platform.properties"/>
         </fileset>
+
+         <!-- webp-image-support -->
+         <fileset reason="Java implementations is based on twelve-monkeys while .Net utilizes SkiaSharp, so results may differ">
+             <file path="com/itextpdf/webpimagesupport/image/cmp_lossyWebPImagePdf.pdf"/>
+             <file path="com/itextpdf/webpimagesupport/image/cmp_animatedWebPImagePdf.pdf"/>
+             <file path="com/itextpdf/webpimagesupport/image/cmp_opaqueWebPImagePdf.pdf"/>
+             <file path="com/itextpdf/webpimagesupport/image/cmp_displayP3ProfilePdf.pdf"/>
+             <file path="com/itextpdf/webpimagesupport/image/cmp_linearRGBProfilePdf.pdf"/>
+             <file path="com/itextpdf/webpimagesupport/image/cmp_orientationPdf.pdf"/>
+         </fileset>
     </resource>
     <src>
         <module name="pdftest" />

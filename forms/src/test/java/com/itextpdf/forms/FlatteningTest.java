@@ -26,9 +26,11 @@ import com.itextpdf.forms.fields.PdfButtonFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.RadioFormFieldBuilder;
+import com.itextpdf.forms.fields.TextFormFieldBuilder;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -43,14 +45,15 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Tag("IntegrationTest")
 public class FlatteningTest extends ExtendedITextTest {
@@ -162,5 +165,29 @@ public class FlatteningTest extends ExtendedITextTest {
         String textAfterFlatten = PdfTextExtractor.getTextFromPage(document.getPage(1));
         document.close();
         Assertions.assertTrue(textAfterFlatten.contains("hiddenFieldValue"), "Pdf does not contain the expected text");
+    }
+
+    @Test
+    @LogMessages(
+            messages = {@LogMessage(messageTemplate = FormsLogMessageConstants.FORMFIELD_DOES_NOT_CONTAIN_AS)}
+    )
+    public void noASDictionaryWhileFlatteningShouldWarn() {
+        try (final PdfDocument pdfDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
+            pdfDoc.addNewPage();
+            final PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
+            final String formName = "text_1";
+
+            final PdfFormField textFormField = new TextFormFieldBuilder(pdfDoc, formName)
+                    .setWidgetRectangle(new Rectangle(20, 20, 20, 20))
+                    .setPage(1)
+                    .createText();
+
+            form.addField(textFormField);
+            form.getField(formName).getPdfObject().getAsDictionary(PdfName.AP).put(PdfName.N, new PdfDictionary());
+
+            Assertions.assertDoesNotThrow(() -> {
+                form.flattenFields();
+            });
+        }
     }
 }

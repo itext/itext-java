@@ -33,7 +33,8 @@ public class DIContainerConfigurations {
 
     private static final String[] DEFAULT_CONFIGURATIONS_CLASS = new String[] {
             "com.itextpdf.forms.util.RegisterDefaultDiContainer",
-            "com.itextpdf.kernel.utils.RegisterDefaultDiContainer"
+            "com.itextpdf.kernel.utils.RegisterDefaultDiContainer",
+            "com.itextpdf.layout.utils.RegisterDefaultDiContainer"
     };
 
     /**

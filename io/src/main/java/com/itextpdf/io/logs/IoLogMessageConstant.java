@@ -190,6 +190,7 @@ public final class IoLogMessageConstant {
     public static final String FILE_CHANNEL_CLOSING_FAILED = "Closing of the file channel this source is based on "
             + "failed.";
 
+    @Deprecated
     public static final String FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL =
             "Flex item layout result isn't full, but it must be. The cross size of the flex item will be 0.";
 
@@ -427,6 +428,14 @@ public final class IoLogMessageConstant {
     public static final String TYPE3_FONT_INITIALIZATION_ISSUE =
             "Type 3 font issue. Font cannot be initialized correctly.";
 
+    /**
+     * Old log message when Typography module was not found
+     *
+     * @deprecated since 9.7.0,
+     * replaced by com.itextpdf.kernel.logs.KernelLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING and
+     * com.itextpdf.kernel.logs.KernelLogMessageConstant.TYPOGRAPHY_NOT_FOUND_INFO
+     */
+    @Deprecated
     public static final String TYPOGRAPHY_NOT_FOUND = "Cannot find pdfCalligraph module, which was implicitly " +
             "required by one of the layout properties";
 
@@ -492,8 +501,6 @@ public final class IoLogMessageConstant {
 
     public static final String RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT =
             "Resource with given URL ({0}) was filtered out.";
-
-
 
     private IoLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly

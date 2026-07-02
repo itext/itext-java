@@ -28,8 +28,13 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.SectionBreak;
+import com.itextpdf.layout.element.SectionBreakUtil;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -37,16 +42,25 @@ import com.itextpdf.layout.layout.RootLayoutArea;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.Transform;
+import com.itextpdf.layout.properties.margins.FootnoteNumberingConfig;
+import com.itextpdf.layout.properties.margins.FootnotesProperties;
+import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentRenderer extends RootRenderer {
+    final FootnotesCounterHandler footnotesCounterHandler = new FootnotesCounterHandler();
 
     protected Document document;
     protected List<Integer> wrappedContentPage = new ArrayList<>();
     protected TargetCounterHandler targetCounterHandler = new TargetCounterHandler();
+
+    private PageMarginBoxesDrawingHandler marginBoxesHandler;
+    private boolean dynamicPageMarginsUsed = false;
+    private PageSize currentPageSize = null;
+    private SectionBreak prevSectionBreak = null;
 
     public DocumentRenderer(Document document) {
         this(document, true);
@@ -56,6 +70,10 @@ public class DocumentRenderer extends RootRenderer {
         this.document = document;
         this.immediateFlush = immediateFlush;
         this.modelElement = document;
+        this.marginBoxesHandler = new DocumentRenderer.PageMarginBoxesDrawingHandler().setDocumentRenderer(this);
+        if (this.document != null) {
+            this.document.getPdfDocument().addEventHandler(PdfDocumentEvent.END_PAGE, marginBoxesHandler);
+        }
     }
 
     /**
@@ -77,6 +95,17 @@ public class DocumentRenderer extends RootRenderer {
     }
 
     @Override
+    public void addChild(IRenderer renderer) {
+        if (renderer instanceof SectionBreakRenderer) {
+            SectionBreak sectionBreak = (SectionBreak) renderer.getModelElement();
+            if (sectionBreak != null) {
+                this.currentPageSize = sectionBreak.getPageSize();
+            }
+        }
+        super.addChild(renderer);
+    }
+
+    @Override
     public LayoutArea getOccupiedArea() {
         throw new IllegalStateException("Not applicable for DocumentRenderer");
     }
@@ -90,7 +119,23 @@ public class DocumentRenderer extends RootRenderer {
     public IRenderer getNextRenderer() {
         DocumentRenderer renderer = new DocumentRenderer(document, immediateFlush);
         renderer.targetCounterHandler = new TargetCounterHandler(targetCounterHandler);
+        renderer.marginBoxesHandler = marginBoxesHandler.setDocumentRenderer(renderer);
         return renderer;
+    }
+
+    @Override
+    protected void flushOnClose() {
+        super.flushOnClose();
+
+        document.getPdfDocument().removeEventHandler(marginBoxesHandler);
+        if (!document.getPdfDocument().isClosed()) {
+            for (int i = 1; i <= document.getPdfDocument().getNumberOfPages(); ++i) {
+                PdfPage page = document.getPdfDocument().getPage(i);
+                if (!page.isFlushed()) {
+                    marginBoxesHandler.processPage(document.getPdfDocument(), i);
+                }
+            }
+        }
     }
 
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
@@ -99,8 +144,12 @@ public class DocumentRenderer extends RootRenderer {
         if (taggingHelper != null) {
             taggingHelper.releaseFinishedHints();
         }
+
         AreaBreak areaBreak = overflowResult != null && overflowResult.getAreaBreak() != null ?
                 overflowResult.getAreaBreak() : null;
+        SectionBreak sectionBreak = overflowResult != null && overflowResult.getSectionBreak() != null ?
+                overflowResult.getSectionBreak() : null;
+
         int currentPageNumber = currentArea == null ? 0 : currentArea.getPageNumber();
         if (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE) {
             while (currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
@@ -109,9 +158,21 @@ public class DocumentRenderer extends RootRenderer {
             }
         } else {
             possiblyFlushPreviousPage(currentPageNumber);
-            currentPageNumber++;
+            // Don't bump page number in case SectionBreak is added to the empty page which is not the 1st.
+            // Or if page margins weren't changed.
+            if (sectionBreak == null || SectionBreakUtil.breakPage(sectionBreak)) {
+                currentPageNumber++;
+            }
         }
-        PageSize customPageSize = areaBreak != null ? areaBreak.getPageSize() : null;
+
+        PageSize customPageSize = currentPageSize;
+        if (areaBreak != null) {
+            customPageSize = areaBreak.getPageSize();
+        } else if (sectionBreak != null) {
+            customPageSize = sectionBreak.getPageSize();
+            currentPageSize = customPageSize;
+        }
+
         while (document.getPdfDocument().getNumberOfPages() >= currentPageNumber &&
                 document.getPdfDocument().getPage(currentPageNumber).isFlushed()) {
             currentPageNumber++;
@@ -120,7 +181,37 @@ public class DocumentRenderer extends RootRenderer {
         if (lastPageSize == null) {
             lastPageSize = new PageSize(document.getPdfDocument().getPage(currentPageNumber).getTrimBox());
         }
-        return (currentArea = new RootLayoutArea(currentPageNumber, getCurrentPageEffectiveArea(lastPageSize)));
+
+        if (sectionBreak != null) {
+            this.document.setPageMargins(currentPageNumber, sectionBreak.getPageMargins());
+
+            FootnotesProperties sectionBreakFootnotesProperties = sectionBreak.getFootnotesProperties();
+            if (sectionBreakFootnotesProperties != null) {
+                document.setFootnotesProperties(sectionBreakFootnotesProperties);
+            }
+        }
+        FootnotesProperties footnotesProperties = document.getFootnotesProperties();
+        FootnoteNumberingConfig footnoteNumberingConfig = footnotesProperties.getFootnoteNumberingConfig();
+        if (sectionBreak != null && FootnoteNumberingConfig.PER_SECTION == footnoteNumberingConfig) {
+            this.latestFootnoteNumber.put(currentPageNumber, 0);
+        } else if (FootnoteNumberingConfig.PER_PAGE != footnoteNumberingConfig) {
+            this.latestFootnoteNumber.put(currentPageNumber,
+                    this.latestFootnoteNumber.getOrDefault(currentPageNumber - 1, 0));
+        }
+
+        computeLayoutMargins(currentPageNumber);
+        if (sectionBreak != null) {
+            // Save section break to apply same page margins for all the following pages
+            // in case their margins were not set via Document by page number, rule or function.
+            prevSectionBreak = sectionBreak;
+        }
+
+        Rectangle updatedAreaRect = getCurrentPageEffectiveArea(lastPageSize);
+        if (sectionBreak != null && currentArea.getPageNumber() == currentPageNumber &&
+                overflowResult.getOccupiedArea() != null) {
+            updatedAreaRect.setHeight(overflowResult.getOccupiedArea().getBBox().getY() - updatedAreaRect.getY());
+        }
+        return (currentArea = new RootLayoutArea(currentPageNumber, updatedAreaRect));
     }
 
     protected void flushSingleRenderer(IRenderer resultRenderer) {
@@ -207,6 +298,87 @@ public class DocumentRenderer extends RootRenderer {
             // We don't flush current page immediately, but only flush previous one
             // because of manipulations with areas in case of keepTogether property
             document.getPdfDocument().getPage(currentPageNumber - 1).flush();
+        }
+    }
+
+    private void computeLayoutMargins(int pageNumber) {
+        PageMarginBoxes pageMarginBoxes = this.document.getPageMargins(pageNumber);
+        PdfPage page = document.getPdfDocument().getPage(pageNumber);
+        if (pageMarginBoxes == null) {
+            PageMarginBoxes prevPageMarginBoxes = prevSectionBreak == null ? null : prevSectionBreak.getPageMargins();
+            if (this.document.isPageMarginsSpecified(pageNumber) || prevPageMarginBoxes == null) {
+                this.resetDynamicPageMargins();
+                return;
+            }
+            pageMarginBoxes = new PageMarginBoxes(prevPageMarginBoxes);
+
+            PageSize prevPageSize = prevSectionBreak.getPageSize();
+            if (prevPageSize == null) {
+                prevPageSize = document.getPdfDocument().getDefaultPageSize();
+            }
+            if (prevPageSize.equalsWithEpsilon(page.getPageSize())) {
+                this.document.setPageMargins(pageNumber, pageMarginBoxes);
+                this.setDynamicPageMargins(pageMarginBoxes.getMarginSizes());
+                return;
+            }
+        }
+
+        float[] margins = pageMarginBoxes.layout(this, pageNumber, page.getPageSize());
+        pageMarginBoxes.setMarginSizes(margins);
+
+        // Set page margins for page number to prioritize them and save the layout result.
+        this.document.setPageMargins(pageNumber, pageMarginBoxes);
+        this.setDynamicPageMargins(margins);
+    }
+
+    private void setDynamicPageMargins(float[] margins) {
+        dynamicPageMarginsUsed = true;
+        setProperty(Property.MARGIN_TOP, margins[0]);
+        setProperty(Property.MARGIN_RIGHT, margins[1]);
+        setProperty(Property.MARGIN_BOTTOM, margins[2]);
+        setProperty(Property.MARGIN_LEFT, margins[3]);
+    }
+
+    private void resetDynamicPageMargins() {
+        if (dynamicPageMarginsUsed) {
+            deleteOwnProperty(Property.MARGIN_TOP);
+            deleteOwnProperty(Property.MARGIN_RIGHT);
+            deleteOwnProperty(Property.MARGIN_BOTTOM);
+            deleteOwnProperty(Property.MARGIN_LEFT);
+            dynamicPageMarginsUsed = false;
+        }
+    }
+
+    /**
+     * Handler for drawing page margins on {@code END_PAGE} event.
+     */
+    private static final class PageMarginBoxesDrawingHandler extends AbstractPdfDocumentEventHandler {
+        private DocumentRenderer documentRenderer;
+
+        public PageMarginBoxesDrawingHandler() {
+            // Default constructor.
+        }
+
+        PageMarginBoxesDrawingHandler setDocumentRenderer(DocumentRenderer documentRenderer) {
+            this.documentRenderer = documentRenderer;
+            return this;
+        }
+
+        @Override
+        public void onAcceptedEvent(AbstractPdfDocumentEvent event) {
+            if (event instanceof PdfDocumentEvent) {
+                PdfPage page = ((PdfDocumentEvent) event).getPage();
+                PdfDocument pdfDoc = event.getDocument();
+                int pageNumber = pdfDoc.getPageNumber(page);
+                processPage(pdfDoc, pageNumber);
+            }
+        }
+
+        void processPage(PdfDocument document, int pageNumber) {
+            PageMarginBoxes pageMarginBoxes = documentRenderer.document.getPageMargins(pageNumber);
+            if (pageMarginBoxes != null) {
+                pageMarginBoxes.draw(documentRenderer, document, pageNumber);
+            }
         }
     }
 }

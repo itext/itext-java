@@ -27,9 +27,12 @@ import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
 import com.itextpdf.layout.IPropertyContainer;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutPosition;
@@ -41,13 +44,22 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.margins.FootnoteNumberingConfig;
+import com.itextpdf.layout.properties.margins.FootnotesProperties;
+import com.itextpdf.layout.properties.margins.FootnotesUtil;
+import com.itextpdf.layout.properties.margins.PageMarginBoxes;
+import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
+import com.itextpdf.layout.utils.LayoutInfiniteLoopResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class RootRenderer extends AbstractRenderer {
@@ -57,10 +69,13 @@ public abstract class RootRenderer extends AbstractRenderer {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(RootRenderer.class);
 
+    private static final int MAX_AMOUNT_OF_ELEMENT_LAYOUTS = 1_000_000;
+
     protected boolean immediateFlush = true;
     protected RootLayoutArea currentArea;
     protected List<IRenderer> waitingDrawingElements = new ArrayList<>();
     List<Rectangle> floatRendererAreas;
+    Map<Integer, Integer> latestFootnoteNumber = new HashMap<>();
     private final List<IRenderer> waitingNextPageRenderers = new ArrayList<>();
     private IRenderer keepWithNextHangingRenderer;
     private LayoutResult keepWithNextHangingRendererLayoutResult;
@@ -120,10 +135,10 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (marginsCollapsingEnabled && currentArea != null) {
                 childMarginsInfo = marginsCollapseHandler.startChildMarginsHandling(renderer, currentArea.getBBox());
             }
+            int rendererLayoutCounter = 0;
             while (clearanceOverflowsToNextPage || (currentArea != null && renderer != null
-                    && (result = renderer.setParent(this)
-                    .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas)))
-                    .getStatus() != LayoutResult.FULL)) {
+                    && (result = layoutChild(renderer, childMarginsInfo)).getStatus() != LayoutResult.FULL)) {
+                rendererLayoutCounter = getRendererLayoutCounter(rendererLayoutCounter);
                 boolean currentAreaNeedsToBeUpdated = false;
                 if (clearanceOverflowsToNextPage) {
                     result = new LayoutResult(LayoutResult.NOTHING, null, null, renderer);
@@ -139,6 +154,8 @@ public abstract class RootRenderer extends AbstractRenderer {
                             currentAreaNeedsToBeUpdated = true;
                         }
                     }
+                    addedPositionedRenderers =
+                            layoutPositionedRenderersInStaticLoop(addedPositionedRenderers, result.getSplitRenderer());
                 } else if (result.getStatus() == LayoutResult.NOTHING && !clearanceOverflowsToNextPage) {
                     if (result.getOverflowRenderer() instanceof ImageRenderer) {
                         float imgHeight = result.getOverflowRenderer().getOccupiedArea().getBBox().getHeight();
@@ -157,7 +174,8 @@ public abstract class RootRenderer extends AbstractRenderer {
                                     ""));
                         }
                     } else {
-                        if (currentArea.isEmptyArea() && result.getAreaBreak() == null) {
+                        if (currentArea.isEmptyArea() && result.getAreaBreak() == null &&
+                                result.getSectionBreak() == null) {
                             boolean keepTogetherChanged = tryDisableKeepTogether(result,
                                     rendererIsFloat, rootRendererStateHandler);
 
@@ -231,38 +249,158 @@ public abstract class RootRenderer extends AbstractRenderer {
             }
         }
 
-        for (IRenderer addedPositionedRenderer : addedPositionedRenderers) {
-            positionedRenderers.add(addedPositionedRenderer);
-            renderer = positionedRenderers.get(positionedRenderers.size() - 1);
-            Integer positionedPageNumber = renderer.<Integer>getProperty(Property.PAGE_NUMBER);
-            if (positionedPageNumber == null) {
-                positionedPageNumber = currentArea.getPageNumber();
-            }
+        for (IRenderer positionedRenderer : addedPositionedRenderers) {
+            layoutPositionedRenderer(positionedRenderer);
+        }
+    }
 
-            LayoutArea layoutArea;
-            // For position=absolute, if none of the top, bottom, left, right properties are provided,
-            // the content should be displayed in the flow of the current content, not overlapping it.
-            // The behavior is just if it would be statically positioned except it does not affect other elements
-            if (Integer.valueOf(LayoutPosition.ABSOLUTE).equals(renderer.<Integer>getProperty(Property.POSITION)) && AbstractRenderer.noAbsolutePositionInfo(renderer)) {
-                layoutArea = new LayoutArea((int) positionedPageNumber, currentArea.getBBox().clone());
+    private List<IRenderer> layoutPositionedRenderersInStaticLoop(List<IRenderer> addedPositionedRenderers,
+                                                                  IRenderer splitRenderer) {
+        List<IRenderer> remainingAddedPositionedRenderers = new ArrayList<>();
+        for (IRenderer positionedRenderer : addedPositionedRenderers) {
+            if (positionedRenderer.hasProperty(Property.POSITIONED_ELEMENT_WRAPPED)
+                    && isRendererInSplitRendererTree(positionedRenderer, splitRenderer)) {
+                // Positioned renderer wrapper, if exists, was already layouted.
+                // It means we need to layout positioned renderer on the same page.
+                layoutPositionedRenderer(positionedRenderer);
             } else {
-                layoutArea = new LayoutArea((int) positionedPageNumber, initialCurrentArea.getBBox().clone());
-            }
-            Rectangle fullBbox = layoutArea.getBBox().clone();
-            preparePositionedRendererAndAreaForLayout(renderer, fullBbox, layoutArea.getBBox());
-            renderer.layout(new PositionedLayoutContext(new LayoutArea(layoutArea.getPageNumber(), fullBbox), layoutArea));
-
-            if (immediateFlush) {
-                flushSingleRenderer(renderer);
-                positionedRenderers.remove(positionedRenderers.size() - 1);
+                remainingAddedPositionedRenderers.add(positionedRenderer);
             }
         }
+        return remainingAddedPositionedRenderers;
+    }
+
+    private void layoutPositionedRenderer(IRenderer positionedRenderer) {
+        positionedRenderers.add(positionedRenderer);
+        Integer positionedPageNumber = positionedRenderer.<Integer>getProperty(Property.PAGE_NUMBER);
+        if (positionedPageNumber == null) {
+            positionedPageNumber = currentArea.getPageNumber();
+        }
+
+        LayoutArea layoutArea;
+        // For position=absolute, if none of the top, bottom, left, right properties are provided,
+        // the content should be displayed in the flow of the current content, not overlapping it.
+        // The behavior is just if it would be statically positioned except it does not affect other elements
+        if (Integer.valueOf(LayoutPosition.ABSOLUTE).equals(positionedRenderer.<Integer>getProperty(Property.POSITION))
+                && AbstractRenderer.horizontalCoordinateMissingForAbsolutePosition(positionedRenderer)
+                && AbstractRenderer.verticalCoordinateMissingForAbsolutePosition(positionedRenderer)) {
+            layoutArea = new LayoutArea((int) positionedPageNumber, currentArea.getBBox().clone());
+        } else {
+            layoutArea = new LayoutArea((int) positionedPageNumber, initialCurrentArea.getBBox().clone());
+        }
+        Rectangle fullBbox = layoutArea.getBBox().clone();
+        preparePositionedRendererAndAreaForLayout(positionedRenderer, fullBbox, layoutArea.getBBox());
+        positionedRenderer.layout(
+                new PositionedLayoutContext(new LayoutArea(layoutArea.getPageNumber(), fullBbox), layoutArea));
+        if (immediateFlush) {
+            flushSingleRenderer(positionedRenderer);
+            positionedRenderers.remove(positionedRenderers.size() - 1);
+        }
+    }
+
+    private LayoutResult layoutChild(IRenderer renderer, MarginsCollapseInfo childMarginsInfo) {
+        FootnotesCounterHandler footnotesCounterHandler = FootnotesCounterHandler.getFootnotesCounterHandler(this);
+        if (footnotesCounterHandler != null) {
+            footnotesCounterHandler.reset();
+        }
+
+        boolean isForcedPlacement = Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT));
+        LayoutResult layoutResult = renderer.setParent(this)
+                .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas));
+
+        if (footnotesCounterHandler == null) {
+            return layoutResult;
+        }
+
+        // Process footnotes that were collected during renderer layout.
+        Map<FootnoteRenderer, Float> footnotes = footnotesCounterHandler.collectFootnotes(
+                layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
+        int footnoteAnchorsNum = footnotes.size();
+        if (footnoteAnchorsNum == 0) {
+            return layoutResult;
+        }
+
+        int pageNum = currentArea.getPageNumber();
+        PageMarginBoxes pageMarginBoxes = null;
+        Document document = new Document(this.getPdfDocument());
+        if (this instanceof DocumentRenderer) {
+            document = (Document) this.getModelElement();
+            pageMarginBoxes = document.getPageMargins(currentArea.getPageNumber());
+        }
+
+        FootnotesProperties footnotesProperties = document.getFootnotesProperties();
+        FootnoteNumberingConfig footnoteNumberingConfig = footnotesProperties.getFootnoteNumberingConfig();
+        if (FootnoteNumberingConfig.PER_PAGE != footnoteNumberingConfig &&
+                !latestFootnoteNumber.containsKey(pageNum) && latestFootnoteNumber.containsKey(pageNum - 1)) {
+            latestFootnoteNumber.put(pageNum, latestFootnoteNumber.get(pageNum - 1));
+        }
+
+        int rendererAdditionalLayoutCounter = 0;
+
+        boolean footnotesPlaced = false;
+        float decreasedHeight = 0;
+        boolean footnotesNumDefined = false;
+        int footnotesNum = 0;
+        while (!footnotesPlaced) {
+            if (footnotesNumDefined) {
+                decreasedHeight = 0;
+            } else {
+                // Restore initial current area.
+                currentArea.getBBox().moveDown(decreasedHeight).increaseHeight(decreasedHeight);
+                // Decrease current area from the bottom to the height of footnotes.
+                footnotesNum = footnoteAnchorsNum;
+                decreasedHeight = 0;
+                for (Float footnoteHeight : footnotes.values()) {
+                    currentArea.getBBox().moveUp((float) footnoteHeight).decreaseHeight((float) footnoteHeight);
+                    decreasedHeight += (float) footnoteHeight;
+                }
+            }
+
+            footnotesCounterHandler.updateFootnoteNumberingAndStyles(footnotesProperties,
+                    (int) latestFootnoteNumber.getOrDefault(pageNum, 0));
+
+            footnotesCounterHandler.reset();
+            if (isForcedPlacement) {
+                renderer.setProperty(Property.FORCED_PLACEMENT, true);
+            }
+            layoutResult = renderer.setParent(this)
+                    .layout(new LayoutContext(currentArea.clone(), childMarginsInfo, floatRendererAreas));
+            if (layoutResult.getStatus() == LayoutResult.NOTHING) {
+                footnotes.clear();
+                footnotesCounterHandler.reset();
+            } else {
+                footnotes = footnotesCounterHandler.collectFootnotes(
+                        layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
+            }
+            footnoteAnchorsNum = footnotes.size();
+
+            // Number of the placed anchors == number of footnotes we reserved the space for before the layout
+            footnotesPlaced = footnoteAnchorsNum == footnotesNum;
+            if (footnoteAnchorsNum > footnotesNum) {
+                footnotesNumDefined = true;
+                // Decrease current area from the bottom until extra anchor will be moved to the next page.
+                // This logic can be improved in the future.
+                currentArea.getBBox().moveUp(1).decreaseHeight(1);
+            }
+            rendererAdditionalLayoutCounter = getRendererLayoutCounter(rendererAdditionalLayoutCounter);
+        }
+
+        if (pageMarginBoxes == null) {
+            pageMarginBoxes = new PageMarginBoxes(Collections.<PageMarginContent>emptyList());
+            document.setPageMargins(currentArea.getPageNumber(), pageMarginBoxes);
+        }
+        FootnotesUtil.addFootnotesToPage(pageNum,
+                new ArrayList<>(footnotes.keySet()), pageMarginBoxes, footnotesProperties);
+        latestFootnoteNumber.put(pageNum, latestFootnoteNumber.containsKey(pageNum) ?
+                (latestFootnoteNumber.get(pageNum) + footnotes.size()) : footnotes.size());
+
+        return layoutResult;
     }
 
     /**
      * Draws (flushes) the content.
      *
-     * @see #draw(com.itextpdf.layout.renderer.DrawContext)
+     * @see #draw(DrawContext)
      */
     public void flush() {
         for (IRenderer resultRenderer : childRenderers) {
@@ -288,10 +426,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             keepWithNextHangingRenderer = null;
             addChild(rendererToBeAdded);
         }
-        if (!immediateFlush) {
-            flush();
-        }
-        flushWaitingDrawingElements(true);
+        flushOnClose();
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
         if (taggingHelper != null) {
             taggingHelper.releaseAllHints();
@@ -332,7 +467,21 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
     }
 
+
+    @Deprecated
     protected void flushWaitingDrawingElements() {
+        flushWaitingDrawingElements(true);
+    }
+
+    /**
+     * Draws (flushes) the content, of this element and all its children that were not yet processed.
+     *
+     * @see #draw(DrawContext)
+     */
+    protected void flushOnClose() {
+        if (!immediateFlush) {
+            flush();
+        }
         flushWaitingDrawingElements(true);
     }
 
@@ -475,6 +624,19 @@ public abstract class RootRenderer extends AbstractRenderer {
         for (IRenderer renderer : waitingFloatRenderers) {
             addChild(renderer);
         }
+    }
+
+    private int getRendererLayoutCounter(int rendererLayoutCounter) {
+        rendererLayoutCounter++;
+        LayoutInfiniteLoopResolver loopResolver =
+                getPdfDocument().getDiContainer().getInstance(LayoutInfiniteLoopResolver.class);
+        int limit = loopResolver == null ?
+                MAX_AMOUNT_OF_ELEMENT_LAYOUTS : loopResolver.getMaxPagesCountForSingleElement();
+        if (rendererLayoutCounter > limit) {
+            throw new PdfException(
+                    MessageFormatUtil.format(LayoutExceptionMessageConstant.INFINITE_LOOP_DETECTED, limit / 3));
+        }
+        return rendererLayoutCounter;
     }
 
     private boolean updateForcedPlacement(IRenderer currentRenderer, IRenderer overflowRenderer) {

@@ -22,7 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
@@ -749,7 +749,10 @@ final class FlexUtil {
                             info.hypotheticalCrossSize);
                 }
             } else {
-                logger.error(IoLogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL);
+                logger.error(LayoutLogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL);
+                if (result.getAreaBreak() != null || result.getSectionBreak() != null) {
+                    logger.warn(LayoutLogMessageConstant.FLEX_ITEM_CONTAINS_AREA_BREAK_OR_SECTION_BREAK);
+                }
                 info.hypotheticalCrossSize = 0;
             }
         }

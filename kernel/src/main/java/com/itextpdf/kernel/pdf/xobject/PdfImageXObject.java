@@ -351,6 +351,7 @@ public class PdfImageXObject extends PdfXObject {
      */
     public PdfImageXObject put(PdfName key, PdfObject value) {
         getPdfObject().put(key, value);
+        setModified();
         return this;
     }
 

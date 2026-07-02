@@ -22,7 +22,6 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
@@ -49,10 +48,9 @@ import com.itextpdf.kernel.mac.AbstractMacIntegrityProtector;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.security.MessageDigest;
 import java.security.cert.Certificate;
+import java.security.SecureRandom;
 
 public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private static final int STANDARD_ENCRYPTION_40 = 2;
@@ -64,7 +62,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private static final int MAC_ENABLED = ~(1 << 12);
     private static final int MAC_DISABLED = 1 << 12;
 
-    private static long seq = SystemUtil.getTimeBasedSeed();
+    private static final SecureRandom RANDOM_ID_GENERATOR = new SecureRandom();
 
     private int cryptoMode;
 
@@ -311,18 +309,16 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Generates random document ID.
+     *
+     * @return document ID
+     */
     public static byte[] generateNewDocumentId() {
-        MessageDigest sha512;
-        try {
-            sha512 = MessageDigest.getInstance("SHA-512");
-        } catch (Exception e) {
-            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
-        }
-        long time = SystemUtil.getTimeBasedSeed();
-        long mem = SystemUtil.getFreeMemory();
-        String s = time + "+" + mem + "+" + (seq++);
+        byte[] bytes = new byte[64];
+        RANDOM_ID_GENERATOR.nextBytes(bytes);
 
-        return sha512.digest(s.getBytes(StandardCharsets.ISO_8859_1));
+        return bytes;
     }
 
     /**

@@ -120,20 +120,16 @@ public final class PdfCheckersUtil {
 
     private static void checkWellTaggedMetadata(XMPMeta metadata, PdfConformance conformance,
                                          Function<String, PdfException> exceptionSupplier) {
-        XMPProperty wtpdfProperty = null;
-        try {
-            wtpdfProperty = metadata.getProperty(
-                    XMPConst.NS_DECLARATIONS, XMPConst.DECLARATIONS + "/[1]/" + XMPConst.CONFORMS_TO);
-        } catch (Exception ignored) {
-        }
-        if (conformance.conformsTo(WellTaggedPdfConformance.FOR_ACCESSIBILITY)
-                && (wtpdfProperty == null || !XMPConst.NS_WTPDF_ACCESSIBILITY_ID.equals(wtpdfProperty.getValue()))) {
-            throw exceptionSupplier.apply(
-                    KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_ACCESSIBILITY_METADATA);
-        } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)
-                && (wtpdfProperty == null || !XMPConst.NS_WTPDF_REUSE_ID.equals(wtpdfProperty.getValue()))) {
-            throw exceptionSupplier.apply(
-                    KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_REUSE_METADATA);
+        PdfConformance xmpConformance = PdfConformance.getConformance(metadata);
+
+        if (xmpConformance.getWtpdfConformances() == null || !xmpConformance.isWellTaggedConformanceIncluded(conformance)) {
+            if (conformance.conformsTo(WellTaggedPdfConformance.FOR_ACCESSIBILITY)) {
+                throw exceptionSupplier.apply(
+                        KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_ACCESSIBILITY_METADATA);
+            } else if (conformance.conformsTo(WellTaggedPdfConformance.FOR_REUSE)) {
+                throw exceptionSupplier.apply(
+                        KernelExceptionMessageConstant.XMP_METADATA_HEADER_SHALL_CONTAIN_WTPDF_REUSE_METADATA);
+            }
         }
     }
 

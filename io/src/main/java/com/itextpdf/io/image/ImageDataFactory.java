@@ -28,6 +28,7 @@ import com.itextpdf.io.codec.TIFFFaxDecoder;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -35,14 +36,50 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class ImageDataFactory {
+    private static AbstractWebPLoader webpLoader = null;
+    private static final String WEBP_PACKAGE = "com.itextpdf.webpimagesupport.";
+    private static final String WEBP_APPLIER = "WebPLoader";
+    private static final String WEBP_APPLIER_INITIALIZE = "registerForIo";
 
     private ImageDataFactory() {
     }
 
+    static {
+        // Android-Conversion-Skip-Block-Start
+        try {
+            Class<?> type = getWebPClass(WEBP_PACKAGE + WEBP_APPLIER);
+            if (type != null) {
+                Method method = type.getMethod(WEBP_APPLIER_INITIALIZE, new Class[] {});
+                if (method != null) {
+                    method.setAccessible(true);
+                    method.invoke(null, new Object[] {});
+                }
+            }
+        } catch (Exception ignored) {
+            // do nothing
+        }
+        // Android-Conversion-Skip-Block-End
+        if (webpLoader == null) {
+            webpLoader = new NoWebPLoader();
+        }
+    }
+
+    /**
+     * Sets {@link AbstractWebPLoader} instance to use.
+     *
+     * @param newInstance the instance to set
+     */
+    public static void setWebPLoaderInstance(AbstractWebPLoader newInstance) {
+        webpLoader = newInstance;
+    }
+
+
     /**
      * Create an ImageData instance representing the image from the image bytes.
+     *
      * @param bytes byte representation of the image.
      * @param recoverImage whether to recover from a image error (for TIFF-images)
+     *
      * @return The created ImageData object.
      */
     public static ImageData create(byte[] bytes, boolean recoverImage) {
@@ -51,7 +88,9 @@ public final class ImageDataFactory {
 
     /**
      * Create an ImageData instance representing the image from the image bytes.
+     *
      * @param bytes byte representation of the image.
+     *
      * @return The created ImageData object.
      */
     public static ImageData create(byte[] bytes) {
@@ -60,8 +99,10 @@ public final class ImageDataFactory {
 
     /**
      * Create an ImageData instance representing the image from the file located at the specified url.
+     *
      * @param url location of the image
      * @param recoverImage whether to recover from a image error (for TIFF-images)
+     *
      * @return The created ImageData object.
      */
     public static ImageData create(URL url, boolean recoverImage) {
@@ -70,7 +111,9 @@ public final class ImageDataFactory {
 
     /**
      * Create an ImageData instance representing the image from the file located at the specified url.
+     *
      * @param url location of the image
+     *
      * @return The created ImageData object.
      */
     public static ImageData create(URL url) {
@@ -79,8 +122,10 @@ public final class ImageDataFactory {
 
     /**
      * Create an ImageData instance representing the image from the specified file.
+     *
      * @param filename filename of the file containing the image
      * @param recoverImage whether to recover from a image error (for TIFF-images)
+     *
      * @return The created ImageData object.
      * @throws MalformedURLException if an error occurred generating the URL.
      */
@@ -91,6 +136,7 @@ public final class ImageDataFactory {
     /**
      * Create an ImageData instance representing the image from the specified file.
      * @param filename filename of the file containing the image
+     *
      * @return The created ImageData object.
      * @throws MalformedURLException if an error occurred generating the URL.
      */
@@ -108,6 +154,7 @@ public final class ImageDataFactory {
      * @param parameters colour space parameters
      * @param data array containing raw image data
      * @param transparency array containing transparency information
+     *
      * @return created ImageData object.
      */
     public static ImageData create(int width, int height, boolean reverseBits,
@@ -137,6 +184,7 @@ public final class ImageDataFactory {
      * @param bpc bits per colour.
      * @param data array containing raw image data
      * @param transparency array containing transparency information
+     *
      * @return created ImageData object.
      */
     public static ImageData create(int width, int height, int components,
@@ -163,7 +211,7 @@ public final class ImageDataFactory {
 
     // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
     /**
-     * Gets an instance of an Image from a java.awt.Image
+     * Gets an instance of an Image from a java.awt.Image.
      *
      * @param image the java.awt.Image to convert
      * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
@@ -180,6 +228,7 @@ public final class ImageDataFactory {
      * @param image   the <CODE>java.awt.Image</CODE> to convert
      * @param color   if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @param forceBW if <CODE>true</CODE> the image is treated as black and white
+     *
      * @return RawImage
      * @throws java.io.IOException if an I/O error occurs.
      */
@@ -189,10 +238,11 @@ public final class ImageDataFactory {
     // Android-Conversion-Skip-Block-End
 
     /**
-     * Get a bitmap ImageData instance from the specified url.
+     * Gets a bitmap ImageData instance from the specified URL.
      *
-     * @param url location of the image.
-     * @param noHeader Whether the image contains a header.
+     * @param url location of the image
+     * @param noHeader whether the image contains a header
+     *
      * @return created ImageData
      */
     public static ImageData createBmp(URL url, boolean noHeader) {
@@ -203,10 +253,11 @@ public final class ImageDataFactory {
     }
 
     /**
-     * Get a bitmap ImageData instance from the provided bytes.
+     * Gets a bitmap ImageData instance from the provided bytes.
      *
      * @param bytes array containing the raw image data
      * @param noHeader Whether the image contains a header.
+     *
      * @return created ImageData
      */
     public static ImageData createBmp(byte[] bytes, boolean noHeader) {
@@ -222,6 +273,7 @@ public final class ImageDataFactory {
      * Return a GifImage object. This object cannot be added to a document
      *
      * @param bytes array containing the raw image data
+     *
      * @return GifImageData instance.
      */
     public static GifImageData createGif(byte[] bytes) {
@@ -232,10 +284,11 @@ public final class ImageDataFactory {
     }
 
     /**
-     * Returns a specified frame of the gif image
+     * Returns a specified frame of the gif image.
      *
      * @param url   url of gif image
      * @param frame number of frame to be returned, 1-based
+     *
      * @return GifImageData instance.
      */
     public static ImageData createGifFrame(URL url, int frame) {
@@ -243,10 +296,11 @@ public final class ImageDataFactory {
     }
 
     /**
-     * Returns a specified frame of the gif image
+     * Returns a specified frame of the gif image.
      *
      * @param bytes byte array of gif image
      * @param frame number of frame to be returned, 1-based
+     *
      * @return GifImageData instance
      */
     public static ImageData createGifFrame(byte[] bytes, int frame) {
@@ -254,7 +308,7 @@ public final class ImageDataFactory {
     }
 
     /**
-     * Returns <CODE>List</CODE> of gif image frames
+     * Returns <CODE>List</CODE> of gif image frames.
      *
      * @param bytes        byte array of gif image
      * @param frameNumbers array of frame numbers of gif image, 1-based
@@ -267,10 +321,11 @@ public final class ImageDataFactory {
     }
 
     /**
-     * Returns <CODE>List</CODE> of gif image frames
+     * Returns <CODE>List</CODE> of gif image frames.
      *
      * @param url          url of gif image
      * @param frameNumbers array of frame numbers of gif image, 1-based
+     *
      * @return all frames of gif image
      */
     public static List<ImageData> createGifFrames(URL url, int[] frameNumbers) {
@@ -280,9 +335,10 @@ public final class ImageDataFactory {
     }
 
     /**
-     * Returns <CODE>List</CODE> of gif image frames
+     * Returns <CODE>List</CODE> of gif image frames.
      *
      * @param bytes byte array of gif image
+     *
      * @return all frames of gif image
      */
     public static List<ImageData> createGifFrames(byte[] bytes) {
@@ -293,9 +349,10 @@ public final class ImageDataFactory {
     }
 
     /**
-     * Returns <CODE>List</CODE> of gif image frames
+     * Returns <CODE>List</CODE> of gif image frames.
      *
      * @param url url of gif image
+     *
      * @return all frames of gif image
      */
     public static List<ImageData> createGifFrames(URL url) {
@@ -325,8 +382,10 @@ public final class ImageDataFactory {
     }
 
     /**
-     * Create an {@link ImageData} instance from a Jpeg image url
-     * @param url URL
+     * Create an {@link ImageData} instance from a JPEG image URL.
+     *
+     * @param url URL to create JPEG image data from
+     *
      * @return the created JPEG image
      */
     public static ImageData createJpeg(URL url) {
@@ -336,6 +395,13 @@ public final class ImageDataFactory {
         return image;
     }
 
+    /**
+     * Creates an {@link ImageData} instance from a JPEG image raw bytes.
+     *
+     * @param bytes raw bytes to create JPEG image data from
+     *
+     * @return the created JPEG image
+     */
     public static ImageData createJpeg(byte[] bytes) {
         validateImageType(bytes, ImageType.JPEG);
         ImageData image = new JpegImageData(bytes);
@@ -344,6 +410,13 @@ public final class ImageDataFactory {
 
     }
 
+    /**
+     * Creates an {@link ImageData} instance from a JPEG2000 image URL.
+     *
+     * @param url URL to create JPEG2000 image data from
+     *
+     * @return the created JPEG2000 image
+     */
     public static ImageData createJpeg2000(URL url) {
         validateImageType(url, ImageType.JPEG2000);
         ImageData image = new Jpeg2000ImageData(url);
@@ -351,6 +424,13 @@ public final class ImageDataFactory {
         return image;
     }
 
+    /**
+     * Creates an {@link ImageData} instance from a JPEG2000 image raw bytes.
+     *
+     * @param bytes raw bytes to create JPEG2000 image data from
+     *
+     * @return the created JPEG2000 image
+     */
     public static ImageData createJpeg2000(byte[] bytes) {
         validateImageType(bytes, ImageType.JPEG2000);
         ImageData image = new Jpeg2000ImageData(bytes);
@@ -358,6 +438,13 @@ public final class ImageDataFactory {
         return image;
     }
 
+    /**
+     * Creates an {@link ImageData} instance from a PNG image URL.
+     *
+     * @param url URL to create PNG image data from
+     *
+     * @return the created PNG image
+     */
     public static ImageData createPng(URL url) {
         validateImageType(url, ImageType.PNG);
         ImageData image = new PngImageData(url);
@@ -365,6 +452,13 @@ public final class ImageDataFactory {
         return image;
     }
 
+    /**
+     * Creates an {@link ImageData} instance from a PNG image raw bytes.
+     *
+     * @param bytes raw bytes to create PNG image data from
+     *
+     * @return the created PNG image
+     */
     public static ImageData createPng(byte[] bytes) {
         validateImageType(bytes, ImageType.PNG);
         ImageData image = new PngImageData(bytes);
@@ -391,11 +485,36 @@ public final class ImageDataFactory {
     }
 
     /**
+     * Creates an {@link ImageData} instance from a WebP image URL.
+     *
+     * @param url URL to create WebP image data from
+     *
+     * @return the created WebP image
+     */
+    public static ImageData createWebP(URL url) {
+        validateImageType(url, ImageType.WEBP);
+        return webpLoader.getImageData(url);
+    }
+
+    /**
+     * Creates an {@link ImageData} instance from a WebP image raw bytes.
+     *
+     * @param bytes raw bytes to create WebP image data from
+     *
+     * @return the created WebP image
+     */
+    public static ImageData createWebP(byte[] bytes) {
+        validateImageType(bytes, ImageType.WEBP);
+        return webpLoader.getImageData(bytes);
+    }
+
+    /**
      * Checks if the type of image (based on first 8 bytes) is supported by factory.
      * <br>
      * <b>Note:</b> if this method returns {@code true} it doesn't means that {@link #create(byte[])} won't throw exception
      *
      * @param source image raw bytes
+     *
      * @return {@code true} if first eight bytes are recognised by factory as valid image type and {@code false} otherwise
      */
     public static boolean isSupportedType(byte[] source) {
@@ -433,7 +552,7 @@ public final class ImageDataFactory {
     public static boolean isSupportedType(ImageType imageType) {
         return imageType == ImageType.GIF || imageType == ImageType.JPEG || imageType == ImageType.JPEG2000
                 || imageType == ImageType.PNG || imageType == ImageType.BMP || imageType == ImageType.TIFF
-                || imageType == ImageType.JBIG2;
+                || imageType == ImageType.JBIG2 || (imageType == ImageType.WEBP && webpLoader.isWebPSupported());
     }
 
     private static ImageData createImageInstance(URL source, boolean recoverImage) {
@@ -473,6 +592,9 @@ public final class ImageDataFactory {
                 ImageData image = new Jbig2ImageData(source, 1);
                 Jbig2ImageHelper.processImage(image);
                 return image;
+            }
+            case WEBP: {
+                return webpLoader.getImageData(source);
             }
             default:
                 throw new IOException(IoExceptionMessageConstant.IMAGE_FORMAT_CANNOT_BE_RECOGNIZED);
@@ -517,6 +639,9 @@ public final class ImageDataFactory {
                 Jbig2ImageHelper.processImage(image);
                 return image;
             }
+            case WEBP: {
+                return webpLoader.getImageData(bytes);
+            }
             default:
                 throw new IOException(IoExceptionMessageConstant.IMAGE_FORMAT_CANNOT_BE_RECOGNIZED);
         }
@@ -546,5 +671,9 @@ public final class ImageDataFactory {
             throw new IllegalArgumentException(expectedType.name() +
                     " image expected. Detected image type: " + detectedType.name());
         }
+    }
+
+    private static Class<?> getWebPClass(String typographyClassName) throws ClassNotFoundException {
+        return Class.forName(typographyClassName);
     }
 }

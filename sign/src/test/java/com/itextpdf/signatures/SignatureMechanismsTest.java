@@ -32,6 +32,11 @@ import org.junit.jupiter.api.Tag;
 public class SignatureMechanismsTest extends ExtendedITextTest {
 
     @Test
+    public void getNull() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> SignatureMechanisms.getAlgorithm(null));
+    }
+
+    @Test
     public void getAlgorithmRSATest() {
         Assertions.assertEquals("RSA", SignatureMechanisms.getAlgorithm("1.2.840.113549.1.1.1"));
     }

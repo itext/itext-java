@@ -25,13 +25,12 @@ package com.itextpdf.signatures.validation;
 import com.itextpdf.eutrustedlistsresources.EuropeanTrustedListConfiguration;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.security.cert.Certificate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.security.cert.Certificate;
 
 @Tag("IntegrationTest")
 public class EuropeanTrustedCertificatesResourceLoaderTest extends ExtendedITextTest {
@@ -54,7 +53,7 @@ public class EuropeanTrustedCertificatesResourceLoaderTest extends ExtendedIText
         Certificate c = loader.loadCertificates().get(0);
 
         String expectedHash = hash.getHash();
-        AssertUtil.doesNotThrow(() -> {
+        Assertions.assertDoesNotThrow(() -> {
             EuropeanTrustedCertificatesResourceLoader.verifyCertificate(expectedHash, c);
         }, "The certificate should be verified successfully with the expected hash");
 

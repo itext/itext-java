@@ -475,8 +475,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
         FontProvider fontProvider = new FontProvider();
-        // TODO DEVSIX-9589 Create symbol font with cmap 3,0 for testing
-        Assertions.assertTrue(fontProvider.getFontSet().addFont(FONTS_FOLDER + "Symbols1.ttf", PdfEncodings.IDENTITY_H));
+        Assertions.assertTrue(fontProvider.getFontSet().addFont(FONTS_FOLDER + "iTextSymbolicFont.ttf", PdfEncodings.IDENTITY_H));
         Assertions.assertTrue(fontProvider.getFontSet().addFont(FONTS_FOLDER + "NotoSansJP-Regular.ttf"));
 
         String textString = "佗佘余偂卑卒卓屍屎奆奇慄慅慆慇慈敗敘教時灈灉灊睎";
@@ -488,7 +487,7 @@ public class FontSelectorTest extends ExtendedITextTest {
         try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
              Document doc = new Document(pdfDoc)) {
             doc.setFontProvider(fontProvider);
-            doc.setProperty(Property.FONT, new String[]{"Symbols1"});
+            doc.setProperty(Property.FONT, new String[]{"iTextSymbolicFont"});
             doc.add(paragraph);
         }
 

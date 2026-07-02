@@ -35,7 +35,6 @@ public class DivRenderer extends BlockRenderer {
      *
      * @param modelElement the {@link com.itextpdf.layout.element.Div} which this object should manage
      */
-
     public DivRenderer(Div modelElement) {
         super(modelElement);
     }

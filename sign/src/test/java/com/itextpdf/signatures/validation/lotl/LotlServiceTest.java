@@ -23,7 +23,6 @@
 package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.io.resolver.resource.IResourceRetriever;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
@@ -31,7 +30,6 @@ import com.itextpdf.signatures.validation.lotl.EuropeanLotlFetcher.Result;
 import com.itextpdf.signatures.validation.report.ReportItem;
 import com.itextpdf.signatures.validation.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.report.ValidationReport;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -43,18 +41,21 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.security.cert.Certificate;
-import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("IntegrationTest")
@@ -141,7 +142,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     public void testWithPivotFetcher() {
         try (LotlService lotlService = new LotlService(
                 new LotlFetchingProperties(new RemoveOnFailingCountryData()).setCountryNames("NL"))) {
-            AssertUtil.doesNotThrow(() -> lotlService.withPivotFetcher(new PivotFetcher(lotlService)));
+            Assertions.assertDoesNotThrow(() -> lotlService.withPivotFetcher(new PivotFetcher(lotlService)));
         }
     }
 
@@ -298,7 +299,7 @@ public class LotlServiceTest extends ExtendedITextTest {
                 }
             };
             service.withEuropeanResourceFetcher(europeanResourceFetcher);
-            AssertUtil.doesNotThrow(() -> service.tryAndRefreshCache());
+            Assertions.assertDoesNotThrow(() -> service.tryAndRefreshCache());
         }
     }
 
@@ -361,7 +362,7 @@ public class LotlServiceTest extends ExtendedITextTest {
     @Test
     public void cancelTimerWhenItsNotSet() {
         try (LotlService lotlService = new LotlService(new LotlFetchingProperties(new RemoveOnFailingCountryData()))) {
-            AssertUtil.doesNotThrow(() -> lotlService.cancelTimer());
+            Assertions.assertDoesNotThrow(() -> lotlService.cancelTimer());
         }
     }
 
@@ -388,7 +389,7 @@ public class LotlServiceTest extends ExtendedITextTest {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
-            AssertUtil.doesNotThrow(() -> {
+            Assertions.assertDoesNotThrow(() -> {
                 lotlService.initializeCache(null);
             });
         }
@@ -443,7 +444,7 @@ public class LotlServiceTest extends ExtendedITextTest {
         LotlFetchingProperties props = new LotlFetchingProperties(new RemoveOnFailingCountryData());
         try (LotlService lotlService = new LotlService(props)) {
             lotlService.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
-            AssertUtil.doesNotThrow(() -> {
+            Assertions.assertDoesNotThrow(() -> {
                 lotlService.initializeCache(Files.newInputStream(Paths.get(SOURCE + "all-countries.json")));
             });
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

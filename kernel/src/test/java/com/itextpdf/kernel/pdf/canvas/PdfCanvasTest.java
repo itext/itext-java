@@ -24,7 +24,6 @@ package com.itextpdf.kernel.pdf.canvas;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.ActualTextIterator;
@@ -60,7 +59,6 @@ import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.canvas.wmf.WmfImageData;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -1149,7 +1147,7 @@ public class PdfCanvasTest extends ExtendedITextTest {
             }
         };
         stream.put(PdfName.Filter, new PdfName("FlateDecode"));
-        AssertUtil.doesNotThrow(()->{
+        Assertions.assertDoesNotThrow(()->{
             new PdfCanvas(stream, new PdfResources(),doc );
         });
     }

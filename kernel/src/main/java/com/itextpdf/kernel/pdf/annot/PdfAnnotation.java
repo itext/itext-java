@@ -320,7 +320,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * @param layer the layer this annotation belongs to
      */
     public void setLayer(IPdfOCG layer) {
-        getPdfObject().put(PdfName.OC, layer.getIndirectReference());
+        put(PdfName.OC, layer.getIndirectReference());
     }
 
     /**
@@ -648,7 +648,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
         PdfDictionary ap = getAppearanceDictionary();
         if (ap == null) {
             ap = new PdfDictionary();
-            getPdfObject().put(PdfName.AP, ap);
+            put(PdfName.AP, ap);
         }
         ap.put(appearanceType, appearance);
         return this;
@@ -1042,6 +1042,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      */
     public PdfAnnotation remove(PdfName key) {
         getPdfObject().remove(key);
+        setModified();
         return this;
     }
 

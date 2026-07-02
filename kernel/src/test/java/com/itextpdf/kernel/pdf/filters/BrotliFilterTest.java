@@ -34,7 +34,6 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.ReaderProperties;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayInputStream;
@@ -151,7 +150,7 @@ public class BrotliFilterTest extends ExtendedITextTest {
         try (PdfDocument pdf = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {
             PdfStream stream = new PdfStream(bytes);
             stream.makeIndirect(pdf);
-            AssertUtil.doesNotThrow(() -> {
+            Assertions.assertDoesNotThrow(() -> {
                 filter.decode(bytes, PdfName.BrotliDecode, new PdfName("slkdjf"), stream);
             });
         }

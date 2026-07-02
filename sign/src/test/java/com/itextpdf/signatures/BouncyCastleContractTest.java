@@ -27,12 +27,11 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1Primitive;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IBasicOCSPResponse;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
-
 import com.itextpdf.commons.utils.EncodingUtil;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -97,6 +96,6 @@ public class BouncyCastleContractTest extends  ExtendedITextTest {
         IASN1Primitive asn1Primitive = FACTORY.createASN1Primitive(encodedResponse);
         IBasicOCSPResponse basicReponse = FACTORY.createBasicOCSPResponse(asn1Primitive);
         IBasicOCSPResp ocspResponse = FACTORY.createBasicOCSPResp(basicReponse);
-        AssertUtil.doesNotThrow( ()-> ocspResponse.getResponses());
+        Assertions.assertDoesNotThrow( ()-> ocspResponse.getResponses());
     }
 }

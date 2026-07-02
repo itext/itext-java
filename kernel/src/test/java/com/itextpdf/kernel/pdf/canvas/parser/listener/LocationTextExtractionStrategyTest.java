@@ -64,4 +64,68 @@ public class LocationTextExtractionStrategyTest extends ExtendedITextTest {
                 "camaraderie. Responses were returned directly to us. ";
         Assertions.assertEquals(expectedText, text);
     }
+
+    @Test
+    // TODO DEVSIX-9940 - Text location extraction issue
+    public void testLocationExtractionInTibetan() throws IOException {
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "tibetan.pdf"));
+        LocationTextExtractionStrategy locationTextExtractionStrategy =
+                new LocationTextExtractionStrategy().setUseActualText(true);
+        String text = PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1), locationTextExtractionStrategy);
+        pdfDocument.close();
+
+        // Actual expected result
+//                  "0\n"
+//                + "དརཀྭྲོ - 1\n"
+//                + "དརཀྭླི - 2\n"
+//                + "དརཀྭླུ - 3\n"
+//                + "དརཀྭླེ - 4\n"
+//                + "དརཀྭློ - 5\n"
+//                + "དརཀྭྭི - 6\n"
+//                + "དརཀྭྭུ - 7\n"
+//                + "དརཀྭྭེ - 8\n"
+//                + "དརཀྭྭོ - 9\n"
+//                + "དརཁིགས - 10\n"
+//                + "དརཁིངས - 11\n"
+//                + "དརཁིདས - 12\n"
+//                + "དརཁིའས - 13\n"
+//                + "དརཁུགས - 14\n"
+//                + "དརཁུངས - 15\n"
+//                + "དརཁུདས - 16\n"
+//                + "དརཁུའས - 17\n"
+//                + "དརཁེགས - 18\n"
+//                + "དརཁེངས - 19"
+
+        String expectedText = "0\n"
+                + "- 1\n"
+                + "- 2\n"
+                + "- 3\n"
+                + "- 4\n"
+                + "- 5\n"
+                + "- 6\n"
+                + "- 7\n"
+                + "- 8\n"
+                + "- 9\n"
+                + "དརཁགས - 10\n"
+                + "དརཁིངས - 11\n"
+                + "དརཁིདས - 12\n"
+                + "དརཁིའས - 13\n"
+                + "དརཁུགས - 14\n"
+                + "དརཁུངས - 15\n"
+                + "དརཁུདས - 16\n"
+                + "དརཁུའས - 17\n"
+                + "དརཁེགས - 18\n"
+                + "དརཁེངས - 19\n"
+                + "དརཀྭླི \n"
+                + "དརཀྭླུ \n"
+                + "དརཀྭླེ \n"
+                + "དརཀྭློ \n"
+                + "དརཀྭྭི \n"
+                + "དརཀྭྭེ \n"
+                + "དརཀྭྭོ \n"
+                + "ི\n"
+                + "དརཀྭྲོ \n"
+                + "དརཀྭྭུ ";
+        Assertions.assertEquals(expectedText, text);
+    }
 }

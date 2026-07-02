@@ -64,8 +64,10 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
@@ -792,6 +794,10 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING,
+                    logLevel = LogLevelConstants.WARN)
+    })
     //Create a document with formfields and paragraphs in both fonts, and fill them before closing the document
     public void fillFieldWithHebrewCase1() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase1";
@@ -824,6 +830,9 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING,
+                    logLevel =  LogLevelConstants.WARN, count = 2)})
     //Create a document with formfields and paragraphs in both fonts, and fill them after closing and reopening the document
     public void fillFieldWithHebrewCase2() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase2";
@@ -863,6 +872,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     //Create a document with formfields in both fonts, and fill them before closing the document
     public void fillFieldWithHebrewCase3() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase3";
@@ -891,6 +902,8 @@ public class PdfFormFieldTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     //Create a document with formfields in both fonts, and fill them after closing and reopening the document
     public void fillFieldWithHebrewCase4() throws IOException, InterruptedException {
         String testName = "fillFieldWithHebrewCase4";

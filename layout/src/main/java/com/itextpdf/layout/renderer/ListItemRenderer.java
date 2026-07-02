@@ -254,7 +254,7 @@ public class ListItemRenderer extends DivRenderer {
     }
 
     private void applyListSymbolPosition() {
-        if (symbolRenderer == null) {
+        if (symbolRenderer == null || symbolAddedInside) {
             return;
         }
 

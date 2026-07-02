@@ -80,7 +80,7 @@ class LotlCacheDataV1 implements IJsonSerializable {
             byte[] data = new byte[4096];
             int bytesRead;
 
-            while ((bytesRead = is.read(data, 0, data.length)) != -1) {
+            while ((bytesRead = is.read(data, 0, data.length)) > 0) {
                 buffer.write(data, 0, bytesRead);
             }
 

@@ -117,6 +117,7 @@ public final class Property {
      */
     public static final int FONT_SET = 98;
     public static final int FONT_SIZE = 24;
+    public static final int FOOTNOTES_PROPERTIES = 160;
     public static final int FORCED_PLACEMENT = 26;
     public static final int FULL = 25;
     public static final int GRID_COLUMN_END = 147;
@@ -238,14 +239,19 @@ public final class Property {
     public static final int ADD_MARKED_CONTENT_TEXT = 137;
     public static final int TREAT_AS_CONTINUOUS_CONTAINER = 140;
     public static final int TREAT_AS_CONTINUOUS_CONTAINER_RESULT = 141;
+    public static final int IGNORE_AREA_AND_SECTION_BREAKS = 161;
+    public static final int TOP_CALCULATED = 162;
+    public static final int LEFT_CALCULATED = 163;
+    public static final int POSITIONED_ELEMENT_WRAPPED = 164;
+    public static final int POSITIONED_ELEMENT_WRAPPER_LAYOUT = 165;
 
     /**
      * Some properties must be passed to {@link IPropertyContainer} objects that
      * are lower in the document's hierarchy. Most inherited properties are
-     * related to textual operations. Indicates whether or not this type of property is inheritable.
+     * related to textual operations. Indicates whether this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 157;
+    private static final int MAX_INHERITED_PROPERTY_ID = 165;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -267,6 +273,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.FONT_SIZE] = true;
         INHERITED_PROPERTIES[Property.FONT_STYLE] = true;
         INHERITED_PROPERTIES[Property.FONT_WEIGHT] = true;
+        INHERITED_PROPERTIES[Property.FOOTNOTES_PROPERTIES] = true;
         INHERITED_PROPERTIES[Property.FORCED_PLACEMENT] = true;
         INHERITED_PROPERTIES[Property.HYPHENATION] = true;
         INHERITED_PROPERTIES[Property.ITALIC_SIMULATION] = true;
@@ -294,6 +301,8 @@ public final class Property {
         INHERITED_PROPERTIES[Property.META_INFO] = true;
         INHERITED_PROPERTIES[Property.ADD_MARKED_CONTENT_TEXT] = true;
         INHERITED_PROPERTIES[Property.TREAT_AS_CONTINUOUS_CONTAINER] = true;
+        INHERITED_PROPERTIES[Property.IGNORE_AREA_AND_SECTION_BREAKS] = true;
+        INHERITED_PROPERTIES[Property.POSITIONED_ELEMENT_WRAPPER_LAYOUT] = true;
     }
 
     private Property() {

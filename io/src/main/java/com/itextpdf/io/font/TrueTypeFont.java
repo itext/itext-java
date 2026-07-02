@@ -26,16 +26,21 @@ import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.TrueTypeCodePages;
+import com.itextpdf.io.font.otf.FeatureRecord;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphPositioningTableReader;
 import com.itextpdf.io.font.otf.GlyphSubstitutionTableReader;
+import com.itextpdf.io.font.otf.LanguageRecord;
+import com.itextpdf.io.font.otf.OpenTableLookup;
+import com.itextpdf.io.font.otf.OpenTypeFontTableReader;
 import com.itextpdf.io.font.otf.OpenTypeGdefTableReader;
 import com.itextpdf.io.util.IntHashtable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -319,6 +324,45 @@ public class TrueTypeFont extends FontProgram {
         return cmaps.cmapEncodings.size();
     }
 
+
+    /**
+     * Extracts features from GSUB and GPOS tables based on the passed script tags.
+     * The features are put in the passed extractedFeatures map
+     *
+     * @param otfScriptTags the script tags to extract the features for
+     * @param extractedFeatures the features will be added to this map
+     * @return the script tag which was used to extract features.
+     * It may be null if no features were extracted or default script tag was used.
+     */
+    public String extractFeatures(Collection<String> otfScriptTags,
+            Map<String, List<OpenTableLookup>> extractedFeatures) {
+        List<String> otfScriptTagsList;
+        otfScriptTagsList = new ArrayList<String>();
+        if (otfScriptTags != null) {
+            otfScriptTagsList.addAll(otfScriptTags);
+        }
+        String dfltScriptTag = "DFLT";
+        otfScriptTagsList.add(dfltScriptTag);
+
+        GlyphSubstitutionTableReader gsubTableReader = getGsubTable();
+        String usedScriptTag = extractFeaturesFromTable(gsubTableReader, otfScriptTagsList, extractedFeatures);
+
+        String finalUsedScriptTag = null;
+        if (usedScriptTag != null && !dfltScriptTag.equals(usedScriptTag)) {
+            // In case there are more than one version of script, let's try use it for both gsub and gpos.
+            // For this reason reinit otfScriptTagsList without other versions of scripts
+            otfScriptTagsList = Arrays.asList(usedScriptTag, dfltScriptTag);
+            finalUsedScriptTag = usedScriptTag;
+        }
+
+        GlyphPositioningTableReader gposTableReader = getGposTable();
+        usedScriptTag = extractFeaturesFromTable(gposTableReader, otfScriptTagsList, extractedFeatures);
+        if (finalUsedScriptTag == null) {
+            finalUsedScriptTag = usedScriptTag;
+        }
+        return finalUsedScriptTag;
+    }
+
     protected void readGdefTable() throws java.io.IOException {
         int[] gdef = fontParser.tables.get("GDEF");
         if (gdef != null) {
@@ -590,5 +634,29 @@ public class TrueTypeFont extends FontProgram {
         }
 
         return missingGlyphs;
+    }
+
+    private static String extractFeaturesFromTable(OpenTypeFontTableReader table, Iterable<String> otfScriptTagsList,
+            Map<String, List<OpenTableLookup>> extractedFeatures) {
+        String usedScriptTag = null;
+
+        LanguageRecord languageRecord = null;
+        if (table != null) {
+            for (String scriptTag : otfScriptTagsList) {
+                languageRecord = table.getLanguageRecord(scriptTag);
+                if (languageRecord != null) {
+                    usedScriptTag = scriptTag;
+                    break;
+                }
+            }
+        }
+        if (languageRecord != null) {
+            for (int featureIndex : languageRecord.getFeatures()) {
+                FeatureRecord feature = table.getFeatureRecords().get(featureIndex);
+                List<OpenTableLookup> lookups = table.getLookups(new FeatureRecord[] {feature});
+                extractedFeatures.put(feature.getTag(), lookups);
+            }
+        }
+        return usedScriptTag;
     }
 }

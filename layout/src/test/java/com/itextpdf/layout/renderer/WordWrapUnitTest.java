@@ -38,6 +38,7 @@ import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
 import com.itextpdf.layout.properties.FloatPropertyValue;
@@ -48,6 +49,8 @@ import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRe
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.SpecialScriptsContainingSequenceStatus;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.SpecialScriptsContainingTextRendererSequenceInfo;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -125,6 +128,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     public void noNeedToSplitTextRendererOnLineSplit() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);
@@ -435,6 +440,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     public void specialScriptsWordBreakPointsSplit() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);
@@ -480,6 +487,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     public void forcedSplitOnTooNarrowArea() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);
@@ -501,6 +510,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     public void midWordSplitPartialLayoutResult() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);
@@ -524,6 +535,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     public void multipleRenderers() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);
@@ -590,6 +603,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     public void wordWrappingUnavailableWithNoCalligraph() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);
@@ -606,10 +621,13 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         LayoutArea layoutArea = new LayoutArea(1, new Rectangle(maxWidth / 2, 100));
         lineRenderer.layout(new LayoutContext(layoutArea));
 
+
         Assertions.assertNull(((TextRenderer) lineRenderer.getChildRenderers().get(0)).getSpecialScriptsWordBreakPoints());
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     public void nothingLayoutResult() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);
@@ -927,6 +945,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     public void overflowXSingleWordSingleRenderer() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);
@@ -950,6 +970,8 @@ public class WordWrapUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING)})
     public void overflowXSingleWordOneGlyphPerTextRenderer() throws IOException {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         Document document = new Document(pdfDocument);

@@ -28,6 +28,8 @@ import com.itextpdf.styledxmlparser.css.selector.CssSelector;
 import com.itextpdf.styledxmlparser.css.selector.ICssSelector;
 import com.itextpdf.styledxmlparser.node.INode;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -118,7 +120,11 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
             case CommonCssConstants.HAS:
                 return createHasSelectorItem(arguments);
             case CommonCssConstants.NOT:
-                return createNotSelectorItem(arguments);
+                return CssPseudoClassNotSelectorItem.createNotSelectorItem(arguments);
+            case CommonCssConstants.IS:
+                return CssPseudoClassIsSelectorItem.createIsSelectorItem(arguments);
+            case CommonCssConstants.WHERE:
+                return CssPseudoClassWhereSelectorItem.createWhereSelectorItem(arguments);
             case CommonCssConstants.ROOT:
                 return CssPseudoClassRootSelectorItem.getInstance();
             case CommonCssConstants.LINK:
@@ -150,14 +156,68 @@ public abstract class CssPseudoClassSelectorItem implements ICssSelectorItem {
         }
     }
 
-    private static CssPseudoClassNotSelectorItem createNotSelectorItem(String arguments) {
-        CssSelector selector = new CssSelector(arguments);
-        for (ICssSelectorItem item : selector.getSelectorItems()) {
-            if (item instanceof CssPseudoClassNotSelectorItem || item instanceof CssPseudoElementSelectorItem) {
-                return null;
+    /**
+     * Parses a selector list. Whether parsing is supposed to be forgiving can be configured.
+     *
+     * @param arguments selector list as written inside parentheses
+     * @param forgiving {@code true} if parsing is supposed to be forgiving, {@code false} otherwise
+     *
+     * @return list of valid selectors (possibly empty), or null if arguments are syntactically incorrect
+     */
+    static List<ICssSelector> parseSelectorListWithoutPseudoElements(String arguments, boolean forgiving) {
+        if (arguments == null || arguments.trim().isEmpty()) {
+            // selector list with empty argument is invalid.
+            return null;
+        }
+
+        List<String> parts = CssSelectorParser.splitByTopLevelComma(arguments);
+        if (parts.isEmpty()) {
+            return null;
+        }
+
+        List<ICssSelector> selectors = new ArrayList<>();
+        for (String rawPart : parts) {
+            String part = rawPart == null ? "" : rawPart.trim();
+            if (part.isEmpty()) {
+                // Empty entries like :is(.a,,.b) are invalid selectors in the list.
+                if (forgiving) {
+                    continue;
+                } else {
+                    return null;
+                }
+            }
+
+            try {
+                CssSelector sel = new CssSelector(CssSelectorParser.parseSelectorItems(part, false));
+                if (containsPseudoElement(Collections.<ICssSelector>singletonList(sel))) {
+                    if (!forgiving) {
+                        return null;
+                    }
+                } else {
+                    selectors.add(sel);
+                }
+            } catch (IllegalArgumentException ex) {
+                // Invalid/unsupported selector in the list.
+                if (!forgiving) {
+                    return null;
+                }
             }
         }
-        return new CssPseudoClassNotSelectorItem(selector);
+
+        return selectors;
+    }
+
+    static boolean containsPseudoElement(List<ICssSelector> selectors) {
+        for (ICssSelector sel : selectors) {
+            if (sel instanceof CssSelector) {
+                for (ICssSelectorItem item : ((CssSelector) sel).getSelectorItems()) {
+                    if (item instanceof CssPseudoElementSelectorItem) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private static CssPseudoClassHasSelectorItem createHasSelectorItem(String arguments) {

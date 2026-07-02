@@ -28,19 +28,17 @@ import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Tag("IntegrationTest")
 public class PdfOutputStreamTest extends ExtendedITextTest {
@@ -60,11 +58,9 @@ public class PdfOutputStreamTest extends ExtendedITextTest {
                         EncryptionConstants.ENCRYPTION_AES_256 | EncryptionConstants.EMBEDDED_FILES_ONLY));
         PdfDocument document = new CustomPdfDocument1(writer);
 
-        document.addFileAttachment("descripton",
-                PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton",
-                        "test.txt", null, null));
-
-        Exception e = Assertions.assertThrows(PdfException.class, () -> document.close());
+        Exception e = Assertions.assertThrows(PdfException.class, () -> PdfFileSpec.createEmbeddedFileSpec(
+                document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton",
+                "test.txt", null, null));
         Assertions.assertEquals(MessageFormatUtil.format(
                         KernelExceptionMessageConstant.THIS_DECODE_PARAMETER_TYPE_IS_NOT_SUPPORTED,
                         PdfName.class),
@@ -84,7 +80,7 @@ public class PdfOutputStreamTest extends ExtendedITextTest {
                 PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton",
                         "test.txt", null, null));
 
-        AssertUtil.doesNotThrow(() -> document.close());
+        Assertions.assertDoesNotThrow(() -> document.close());
     }
 
     @Test
@@ -100,7 +96,7 @@ public class PdfOutputStreamTest extends ExtendedITextTest {
                 PdfFileSpec.createEmbeddedFileSpec(document, "TEST".getBytes(StandardCharsets.UTF_8), "descripton",
                         "test.txt", null, null));
 
-        AssertUtil.doesNotThrow(() -> document.close());
+        Assertions.assertDoesNotThrow(() -> document.close());
     }
 
     @Test
@@ -174,7 +170,6 @@ public class PdfOutputStreamTest extends ExtendedITextTest {
     }
 
 
-
     @Test
     public void filterWith3AlreadyExistingFiltersButNoDecodeBackFillsDecodeParams() {
         CustomPdfStream stream = new CustomPdfStream(new ByteArrayOutputStream(10));
@@ -194,7 +189,6 @@ public class PdfOutputStreamTest extends ExtendedITextTest {
         Assertions.assertEquals(PdfName.LZWDecode, updatedFilterArray.getAsName(1));
         Assertions.assertEquals(PdfName.FlateDecode, updatedFilterArray.getAsName(2));
         Assertions.assertEquals(PdfName.ASCII85Decode, updatedFilterArray.getAsName(3));
-
 
         PdfArray updatedDecodeParmsArray = pdfStream.getAsArray(PdfName.DecodeParms);
         Assertions.assertNull(updatedDecodeParmsArray);

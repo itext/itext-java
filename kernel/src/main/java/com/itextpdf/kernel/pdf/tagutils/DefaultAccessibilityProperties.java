@@ -60,6 +60,30 @@ public class DefaultAccessibilityProperties extends AccessibilityProperties {
         this.role = role;
     }
 
+    /**
+     * Instantiates a new {@link DefaultAccessibilityProperties} instance as a copy of another instance.
+     *
+     * @param other the instance to copy
+     */
+    public DefaultAccessibilityProperties(AccessibilityProperties other) {
+        this.role = other.getRole();
+        this.language = other.getLanguage();
+        this.actualText = other.getActualText();
+        this.alternateDescription = other.getAlternateDescription();
+        this.expansion = other.getExpansion();
+        this.attributesList = new ArrayList<>(other.getAttributesList());
+        this.phoneme = other.getPhoneme();
+        this.phoneticAlphabet = other.getPhoneticAlphabet();
+        this.namespace = other.getNamespace();
+        this.refs = new ArrayList<>();
+        for (TagTreePointer ref : other.getRefsList()) {
+            this.refs.add(new TagTreePointer(ref));
+        }
+        this.structElemId = other.getStructureElementId() != null
+                ? Arrays.copyOf(other.getStructureElementId(), other.getStructureElementId().length)
+                : null;
+    }
+
     @Override
     public String getRole() {
         return role;
@@ -123,6 +147,7 @@ public class DefaultAccessibilityProperties extends AccessibilityProperties {
     @Override
     public AccessibilityProperties addAttributes(int index, PdfStructureAttributes attributes) {
         if (attributes != null) {
+            //TODO: DEVSIX-10054 fix index 0 behaviour
             if (index > 0) {
                 attributesList.add(index, attributes);
             } else {
@@ -206,7 +231,11 @@ public class DefaultAccessibilityProperties extends AccessibilityProperties {
      */
     @Override
     public AccessibilityProperties setStructureElementId(byte[] id) {
-        this.structElemId = Arrays.copyOf(id, id.length);
+        if (id == null) {
+            this.structElemId = null;
+        } else {
+            this.structElemId = Arrays.copyOf(id, id.length);
+        }
         return this;
     }
 }

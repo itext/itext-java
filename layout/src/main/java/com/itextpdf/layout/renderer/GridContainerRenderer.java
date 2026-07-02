@@ -27,6 +27,7 @@ import com.itextpdf.layout.element.GridContainer;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.ContinuousContainer;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
@@ -37,11 +38,16 @@ import com.itextpdf.layout.properties.grid.TemplateValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a renderer for a grid.
  */
 public class GridContainerRenderer extends BlockRenderer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridContainerRenderer.class);
+
     private float containerHeight = 0.0f;
     private float containerWidth = 0.0f;
 
@@ -52,6 +58,7 @@ public class GridContainerRenderer extends BlockRenderer {
      */
     public GridContainerRenderer(GridContainer modelElement) {
         super(modelElement);
+        setProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS, Boolean.TRUE);
     }
 
     /**
@@ -112,6 +119,12 @@ public class GridContainerRenderer extends BlockRenderer {
      */
     @Override
     public void addChild(IRenderer renderer) {
+        if (renderer instanceof AreaBreakRenderer || renderer instanceof SectionBreakRenderer) {
+            LOGGER.warn(
+                    LayoutLogMessageConstant.GRID_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK);
+            return;
+        }
+
         // The grid's items are not affected by the 'float' and 'clear' properties.
         // Still let clear them on renderer level not model element
         renderer.setProperty(Property.FLOAT, null);
@@ -208,11 +221,8 @@ public class GridContainerRenderer extends BlockRenderer {
             layoutResult.getOverflowRenderers().add(overflowRenderer);
             layoutResult.setCauseOfNothing(cellResult.getCauseOfNothing());
             return cell.getRowStart();
-        }
-
-        // PARTIAL + FULL result handling
-        layoutResult.getSplitRenderers().add(cell.getValue());
-        if (cellResult.getStatus() == LayoutResult.PARTIAL) {
+        } else if (cellResult.getStatus() == LayoutResult.PARTIAL) {
+            layoutResult.getSplitRenderers().add(cellResult.getSplitRenderer());
             overflowRenderer.setProperty(Property.GRID_COLUMN_START, cell.getColumnStart() + 1);
             overflowRenderer.setProperty(Property.GRID_COLUMN_END, cell.getColumnEnd() + 1);
             int rowStart = cell.getRowStart() + 1;
@@ -241,9 +251,11 @@ public class GridContainerRenderer extends BlockRenderer {
             }
 
             return notLayoutedRow;
+        } else {
+            // FULL result
+            layoutResult.getSplitRenderers().add(cell.getValue());
+            return Integer.MAX_VALUE;
         }
-
-        return Integer.MAX_VALUE;
     }
 
     //Init cell layout context based on a parent context and calculated cell layout area from grid sizing algorithm.

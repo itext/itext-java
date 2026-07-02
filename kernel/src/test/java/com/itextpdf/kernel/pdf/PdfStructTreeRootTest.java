@@ -25,7 +25,6 @@ package com.itextpdf.kernel.pdf;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
-import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -113,6 +112,6 @@ public class PdfStructTreeRootTest extends ExtendedITextTest {
         String inFile = sourceFolder + "cyclicReferences.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(inFile), new PdfWriter(new ByteArrayOutputStream()));
-        AssertUtil.doesNotThrow(() -> pdfDoc.close());
+        Assertions.assertDoesNotThrow(() -> pdfDoc.close());
     }
 }

@@ -23,9 +23,9 @@
 package com.itextpdf.kernel.utils.objectpathitems;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.io.util.XmlUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.utils.XmlUtils;
 import com.itextpdf.test.ExtendedITextTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -111,14 +111,14 @@ public class TrailerPathTest extends ExtendedITextTest {
     }
 
     @Test
-    public void toXmlNodeTest() throws Exception {
+    public void toXmlNodeTest() {
         PdfDocument src = createDocument();
         PdfDocument dest = createDocument();
 
         Stack<LocalPathItem> stack = new Stack<LocalPathItem>();
         stack.push(new ArrayPathItem(1));
         TrailerPath path1 = new TrailerPath(src, dest, stack);
-        Document doc = XmlUtil.initNewXmlDocument();
+        Document doc = XmlUtils.initNewXmlDocument();
 
         Assertions.assertNotNull(path1.toXmlNode(doc));
     }
