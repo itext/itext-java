@@ -243,6 +243,7 @@ public final class Property {
     public static final int TOP_CALCULATED = 162;
     public static final int LEFT_CALCULATED = 163;
     public static final int POSITIONED_ELEMENT_WRAPPED = 164;
+    public static final int POSITIONED_ELEMENT_WRAPPER_LAYOUT = 165;
 
     /**
      * Some properties must be passed to {@link IPropertyContainer} objects that
@@ -250,7 +251,7 @@ public final class Property {
      * related to textual operations. Indicates whether this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 161;
+    private static final int MAX_INHERITED_PROPERTY_ID = 165;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -301,6 +302,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.ADD_MARKED_CONTENT_TEXT] = true;
         INHERITED_PROPERTIES[Property.TREAT_AS_CONTINUOUS_CONTAINER] = true;
         INHERITED_PROPERTIES[Property.IGNORE_AREA_AND_SECTION_BREAKS] = true;
+        INHERITED_PROPERTIES[Property.POSITIONED_ELEMENT_WRAPPER_LAYOUT] = true;
     }
 
     private Property() {

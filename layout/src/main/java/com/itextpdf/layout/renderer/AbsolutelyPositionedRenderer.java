@@ -57,9 +57,13 @@ class AbsolutelyPositionedRenderer implements IRenderer {
     @Override
     public LayoutResult layout(LayoutContext layoutContext) {
         LayoutContext copiedContext = copyContext(layoutContext);
+        if (wrappedRenderer.hasProperty(Property.POSITIONED_ELEMENT_WRAPPER_LAYOUT)) {
+            return dummyRenderer.layout(copiedContext);
+        }
         Object positioning = wrappedRenderer.<Integer>getOwnProperty(Property.POSITION);
         wrappedRenderer.setProperty(Property.POSITION, LayoutPosition.STATIC);
         wrappedRenderer.setProperty(Property.FLOAT, FloatPropertyValue.NONE);
+        wrappedRenderer.setProperty(Property.POSITIONED_ELEMENT_WRAPPER_LAYOUT, new Object());
         LayoutResult result = wrappedRenderer.layout(copiedContext);
         if (result.getStatus() == LayoutResult.NOTHING) {
             wrappedRenderer.setProperty(Property.FORCED_PLACEMENT, true);
@@ -71,6 +75,7 @@ class AbsolutelyPositionedRenderer implements IRenderer {
         } else {
             wrappedRenderer.setProperty(Property.POSITION, positioning);
         }
+        wrappedRenderer.deleteOwnProperty(Property.POSITIONED_ELEMENT_WRAPPER_LAYOUT);
         if (verticalCoordinateMissing) {
             wrappedRenderer.setProperty(Property.TOP_CALCULATED, result.getOccupiedArea().getBBox().getTop());
         }
@@ -85,6 +90,26 @@ class AbsolutelyPositionedRenderer implements IRenderer {
 
     public IRenderer getWrappedRenderer() {
         return wrappedRenderer;
+    }
+
+    @Override
+    public <T1> T1 getProperty(int property, T1 defaultValue) {
+        if (Property.POSITION == property) {
+            // This absolutely positioned renderer wrapper is never supposed to be treated as absolutely positioned.
+            // The whole idea of this wrapper is to calculate it's potential static coordinates.
+            return (T1) (Object) LayoutPosition.STATIC;
+        }
+        return wrappedRenderer.<T1>getProperty(property, defaultValue);
+    }
+
+    @Override
+    public <T1> T1 getProperty(int property) {
+        if (Property.POSITION == property) {
+            // This absolutely positioned renderer wrapper is never supposed to be treated as absolutely positioned.
+            // The whole idea of this wrapper is to calculate it's potential static coordinates.
+            return (T1) (Object) LayoutPosition.STATIC;
+        }
+        return wrappedRenderer.<T1>getProperty(property);
     }
 
     @Override
@@ -116,26 +141,6 @@ class AbsolutelyPositionedRenderer implements IRenderer {
     @Override
     public boolean hasOwnProperty(int property) {
         return wrappedRenderer.hasOwnProperty(property);
-    }
-
-    @Override
-    public <T1> T1 getProperty(int property) {
-        if (Property.POSITION == property) {
-            // This absolutely positioned renderer wrapper is never supposed to be treated as absolutely positioned.
-            // The whole idea of this wrapper is to calculate it's potential static coordinates.
-            return (T1) (Object) LayoutPosition.STATIC;
-        }
-        return wrappedRenderer.<T1>getProperty(property);
-    }
-
-    @Override
-    public <T1> T1 getProperty(int property, T1 defaultValue) {
-        if (Property.POSITION == property) {
-            // This absolutely positioned renderer wrapper is never supposed to be treated as absolutely positioned.
-            // The whole idea of this wrapper is to calculate it's potential static coordinates.
-            return (T1) (Object) LayoutPosition.STATIC;
-        }
-        return wrappedRenderer.<T1>getProperty(property, defaultValue);
     }
 
     @Override
