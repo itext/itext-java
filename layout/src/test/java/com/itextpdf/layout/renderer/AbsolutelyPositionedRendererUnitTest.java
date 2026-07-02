@@ -67,6 +67,15 @@ public class AbsolutelyPositionedRendererUnitTest extends ExtendedITextTest {
         Assertions.assertEquals(50, absolutelyPositionedRenderer.<Integer>getProperty(Property.LEFT));
     }
 
+    @Test
+    public void getPropertyDefaultValueTest() {
+        DivRenderer wrappedRenderer = new DivRenderer(new Div());
+        AbsolutelyPositionedRenderer absolutelyPositionedRenderer = new AbsolutelyPositionedRenderer(wrappedRenderer, false, false);
+
+        Assertions.assertEquals(LayoutPosition.STATIC, absolutelyPositionedRenderer.<Integer>getProperty(Property.POSITION, LayoutPosition.FIXED));
+        Assertions.assertEquals(50, absolutelyPositionedRenderer.<Integer>getProperty(Property.LEFT, 50));
+    }
+
     static class CustomRenderer extends DivRenderer {
         public int counter = 0;
 
