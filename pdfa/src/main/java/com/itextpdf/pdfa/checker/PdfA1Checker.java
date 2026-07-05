@@ -368,21 +368,28 @@ public class PdfA1Checker extends PdfAChecker {
     @Override
     protected void checkContentStream(PdfStream contentStream, PdfResources resources) {
         if (isFullCheckMode() || contentStream.isModified()) {
-            byte[] contentBytes = contentStream.getBytes();
-            PdfTokenizer tokenizer = new PdfTokenizer(
-                    new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(contentBytes)));
+            checkContentStream(contentStream.getBytes(), resources);
+        }
+    }
 
-            PdfCanvasParser parser = new PdfCanvasParser(tokenizer, resources);
-            List<PdfObject> operands = new ArrayList<>();
-            try {
-                while (parser.parse(operands).size() > 0) {
-                    for (PdfObject operand : operands) {
-                        checkContentStreamObject(operand);
-                    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkContentStream(byte[] streamContent, PdfResources resources) {
+        PdfTokenizer tokenizer = new PdfTokenizer(
+                new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(streamContent)));
+
+        PdfCanvasParser parser = new PdfCanvasParser(tokenizer, resources);
+        List<PdfObject> operands = new ArrayList<>();
+        try {
+            while (parser.parse(operands).size() > 0) {
+                for (PdfObject operand : operands) {
+                    checkContentStreamObject(operand);
                 }
-            } catch (IOException e) {
-                throw new PdfException(PdfaExceptionMessageConstant.CANNOT_PARSE_CONTENT_STREAM, e);
             }
+        } catch (IOException e) {
+            throw new PdfException(PdfaExceptionMessageConstant.CANNOT_PARSE_CONTENT_STREAM, e);
         }
     }
 

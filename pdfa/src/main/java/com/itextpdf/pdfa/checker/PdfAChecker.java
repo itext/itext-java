@@ -532,25 +532,56 @@ public abstract class PdfAChecker implements IValidationChecker {
     public abstract void checkText(String text, PdfFont font);
 
     /**
-     * Attest content stream conformance with appropriate specification.
+     * Validates the operators and operands in the given content stream against the
+     * applicable PDF/A specification level.
      *
      * <p>
-     * Throws {@link PdfAConformanceException} if any discrepancy was found.
+     * This overload validates a {@link PdfStream} without an explicitly provided
+     * resource dictionary. Implementations typically extract bytes from the stream
+     * and delegate to {@link #checkContentStream(byte[], PdfResources)}.
      *
-     * @param contentStream is a content stream to validate
+     * @param contentStream the content stream to validate
      */
     protected abstract void checkContentStream(PdfStream contentStream);
 
     /**
-     * Attest content stream conformance with appropriate specification.
+     * Validates the operators and operands in the given content stream against the
+     * applicable PDF/A specification level, using the supplied resource dictionary
+     * to resolve named resources (color spaces, fonts, XObjects, etc.) referenced
+     * inside the stream.
      *
      * <p>
-     * Throws {@link PdfAConformanceException} if any discrepancy was found.
+     * This overload is preferred over {@link #checkContentStream(PdfStream)} when
+     * the caller already holds the relevant {@link PdfResources}, for example when
+     * checking form XObjects or page content streams whose resources are known at
+     * call time.
      *
-     * @param contentStream is a content stream to validate
-     * @param resources the resources of the contentStream
+     * @param contentStream the content stream to validate
+     * @param resources the resource dictionary associated with the content stream;
+     *                  may be {@code null} if no resources are available
      */
     protected void checkContentStream(PdfStream contentStream, PdfResources resources) {
+        // Do nothing
+        // TODO DEVSIX-8808 iText Core related api breaks for the next major release
+        //  After major release the method must become abstract
+    }
+
+    /**
+     * Validates the raw bytes of a content stream against the applicable PDF/A
+     * specification level, using the supplied resource dictionary to resolve named
+     * resources referenced inside the stream.
+     *
+     * <p>
+     * This overload is used when the content to check has already been read from
+     * one or more {@link PdfStream} objects and concatenated into a single byte
+     * array (for example, when validating a page whose content is spread across
+     * multiple content streams that form one logical stream).
+     *
+     * @param streamContent the raw content stream bytes to validate
+     * @param resources the resource dictionary associated with the content stream;
+     *                  may be {@code null} if no resources are available
+     */
+    protected void checkContentStream(byte[] streamContent, PdfResources resources) {
         // Do nothing
         // TODO DEVSIX-8808 iText Core related api breaks for the next major release
         //  After major release the method must become abstract
@@ -999,17 +1030,28 @@ public abstract class PdfAChecker implements IValidationChecker {
         //to add additional restrictions on earlier versions
         checkOutputIntents(pageDict);
 
-        int contentStreamCount = page.getContentStreamCount();
-        for (int j = 0; j < contentStreamCount; ++j) {
-            PdfStream contentStream = page.getContentStream(j);
-            checkContentStream(contentStream, page.getResources());
-            checkedObjects.add(contentStream);
-        }
+        checkPageContentStreams(page);
     }
 
     private void checkOpenAction(PdfObject openAction) {
         if (openAction != null && openAction.isDictionary()) {
             checkAction((PdfDictionary) openAction);
+        }
+    }
+
+    private void checkPageContentStreams(PdfPage page) {
+        // A Contents array represents one logical content stream obtained by concatenating its streams.
+        boolean contentStreamShouldBeChecked = isFullCheckMode();
+        for (int i = 0; i < page.getContentStreamCount(); ++i) {
+            PdfStream contentStream = page.getContentStream(i);
+            if (contentStream.isModified()) {
+                contentStreamShouldBeChecked = true;
+            }
+            checkedObjects.add(contentStream);
+        }
+
+        if (contentStreamShouldBeChecked) {
+            checkContentStream(page.getContentBytes(), page.getResources());
         }
     }
 
