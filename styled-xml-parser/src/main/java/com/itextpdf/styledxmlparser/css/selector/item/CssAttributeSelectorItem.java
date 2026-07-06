@@ -35,6 +35,15 @@ import java.util.regex.Pattern;
  */
 public class CssAttributeSelectorItem implements ICssSelectorItem {
 
+    /**
+     * Special characters that needs to be escaped when used as literal value in a pattern.
+     * White space and '#' characters are included as they are dotnet special characters.
+     * Java allows to escape such (but not all) non-special characters and treats them as literal value.
+     */
+    static final String SPECIAL_CHARACTERS = "\\[]/^$.|?*+(){}# \t\n\r" +
+            "\u000B\u000C\u001C\u001D\u001E\u001F\u00A0\u1680\u2000\u2001\u2002\u2003" +
+            "\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u2028\u2029\u202F\u205F\u3000";
+
     /** The property. */
     private String property;
 
@@ -103,9 +112,9 @@ public class CssAttributeSelectorItem implements ICssSelectorItem {
                 case '$':
                     return value.length() > 0 && attributeValue.endsWith(value);
                 case '~':
-                    String quotedValue = Pattern.quote(value);
-                    String pattern = MessageFormatUtil.format("(^{0}\\s+)|(\\s+{1}\\s+)|(\\s+{2}$)", quotedValue,
-                            quotedValue, quotedValue);
+                    String literalValue = escapeSpecialCharacters(value);
+                    String pattern = MessageFormatUtil.format("(^{0}\\s+)|(\\s+{1}\\s+)|(\\s+{2}$)", literalValue,
+                            literalValue, literalValue);
                     return Pattern.compile(pattern).matcher(attributeValue).matches();
                 case '*':
                     return value.length() > 0 && attributeValue.contains(value);
@@ -113,6 +122,49 @@ public class CssAttributeSelectorItem implements ICssSelectorItem {
                     return false;
             }
         }
+    }
+
+    /**
+     * Escapes special characters determined by {@link #SPECIAL_CHARACTERS} in provided {@link String}
+     * in order to be used as literal value in a pattern.
+     * Note that special characters contain white space and '#' characters to match dotnet special characters.
+     * Java allows to escape such (but not all) non-special characters and treats them as literal characters.
+     *
+     * @param input String to escape special characters in
+     *
+     * @return string with special characters escaped
+     */
+    public static String escapeSpecialCharacters(String input) {
+        int firstEscapeIndex = -1;
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (isSpecialCharacter(c)) {
+                firstEscapeIndex = i;
+                break;
+            }
+        }
+
+        if (firstEscapeIndex == -1) {
+            return input;
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(input, 0, firstEscapeIndex);
+
+        for (int i = firstEscapeIndex; i < input.length(); ++i) {
+            char c = input.charAt(i);
+            if (isSpecialCharacter(c)) {
+                stringBuilder.append('\\');
+            }
+
+            stringBuilder.append(c);
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private static boolean isSpecialCharacter(char c) {
+        return SPECIAL_CHARACTERS.indexOf(c) != -1;
     }
 
     /* (non-Javadoc)
