@@ -192,18 +192,15 @@ public abstract class AbstractRadialGradientBuilder extends AbstractGradientBuil
         // - hasUncoveredVertex == false, hasCoveredVertex == true: all vertices are uncovered, xMax = xZeroRad
         // - hasUncoveredVertex == false, hasCoveredVertex == true: xMax should be equal to positive infinity
         if (hasUncoveredVertex && hasCoveredVertex) {
-            // TODO: DEVSIX-10037 we should choose finite but big enough domain to cover the surface
-            //  if we will have stops and domain reduction with max stops count in the future,
-            //  then we can make `xMax = Double.POSITIVE_INFINITE;` here
-            //  For now will try to choose finite xMax close enough to cover:
+            // We should choose finite but big enough domain to cover the bbox.
             double maxY = 0;
             for (Point point : rectVertices) {
                 double py = point.getY();
                 maxY = Math.abs(py) > Math.abs(maxY) ? py : maxY;
             }
             double coveredSign = isIncreasingRadius ? 1d : -1d;
-            // looking for px so that arc between (xZeroRad, 0) and (px, maxY) would correspond predefined t deg
-            // formula: px = xZeroRad +/- maxY * tan(t/2)
+            // Looking for px so that arc between (xZeroRad, 0) and (px, maxY) would correspond predefined t deg.
+            // Formula: px = xZeroRad +/- maxY * tan(t/2)
             double px = xZeroRad + coveredSign * maxY * TAN_CONSTANT;
             double denominator = 2 * r0 * rDiff + 2 * px;
             double targetX = (-1d * r0 * r0 + px * px + maxY * maxY) / denominator;
