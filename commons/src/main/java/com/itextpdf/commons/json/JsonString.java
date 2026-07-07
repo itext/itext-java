@@ -25,7 +25,7 @@ package com.itextpdf.commons.json;
 import java.util.Objects;
 
 /**
- * Class representing json string value.
+ * Class representing JSON string value.
  */
 public final class JsonString extends JsonValue {
     private final String value;

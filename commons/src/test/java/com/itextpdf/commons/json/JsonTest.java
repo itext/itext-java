@@ -50,6 +50,8 @@ public class JsonTest extends ExtendedITextTest {
     @Test
     public void roundNumberTest() {
         Assertions.assertEquals("-4", new JsonNumber(-4).toJson());
+        Assertions.assertEquals(-1,
+                ((JsonNumber) JsonValue.fromJson(new JsonNumber(-1.2).toJson())).getLongValue());
     }
 
     @Test
@@ -95,6 +97,21 @@ public class JsonTest extends ExtendedITextTest {
         JsonValue cmpJson = JsonValue.fromJson(cmpString);
 
         Assertions.assertEquals(cmpString, resultString);
+        Assertions.assertEquals(cmpJson, resultJson);
+        Assertions.assertEquals(cmpJson, complexStructure);
+    }
+
+    @Test
+    public void serializeComplexStructureToPrettifiedJsonTest() throws IOException {
+        String cmp = SOURCE_FOLDER + "complexStructurePrettifiedJson.json";
+        String cmpString = getJsonStringFromFile(cmp);
+
+        JsonValue complexStructure = createComplexStructureObject();
+        String resultString = complexStructure.toPrettifiedJson();
+        JsonValue resultJson = JsonValue.fromJson(resultString);
+        JsonValue cmpJson = JsonValue.fromJson(cmpString);
+
+        Assertions.assertEquals(cmpString.replace("\r", ""), resultString.replace("\r", ""));
         Assertions.assertEquals(cmpJson, resultJson);
         Assertions.assertEquals(cmpJson, complexStructure);
     }
@@ -160,6 +177,17 @@ public class JsonTest extends ExtendedITextTest {
         JsonNumber negInfNumber = new JsonNumber(Double.NEGATIVE_INFINITY);
         e = Assertions.assertThrows(ITextException.class, () -> negInfNumber.toJson());
         Assertions.assertTrue(e.getMessage().contains("Failed to serialize json into string"));
+
+        JsonNumber maxLongNumber = new JsonNumber(Long.MAX_VALUE - 100);
+        String maxLongNumberStr = maxLongNumber.toJson();
+        Assertions.assertEquals("9223372036854775707", maxLongNumberStr);
+        Assertions.assertEquals(Long.MAX_VALUE - 100,
+                ((JsonNumber) JsonValue.fromJson(maxLongNumberStr)).getValue());
+
+        JsonNumber minLongNumber = new JsonNumber(Long.MIN_VALUE + 100);
+        Assertions.assertEquals("-9223372036854775708", minLongNumber.toJson());
+        Assertions.assertEquals(Long.MIN_VALUE + 100,
+                ((JsonNumber) JsonValue.fromJson(minLongNumber.toJson())).getValue());
     }
 
     @Test
@@ -201,6 +229,8 @@ public class JsonTest extends ExtendedITextTest {
         JsonObject obj = new JsonObject();
         obj.add("key", new JsonString("first"));
         obj.add("key", new JsonString("second"));
+        obj.add("the other key", new JsonString("third"));
+        obj.remove("the other key");
 
         String serialized = obj.toJson();
         JsonValue deserialized = JsonValue.fromJson(serialized);
@@ -257,6 +287,13 @@ public class JsonTest extends ExtendedITextTest {
     public void whitespaceOnlyJsonTest() {
         String whitespaceJson = "   \t\n   ";
         Exception e = Assertions.assertThrows(ITextException.class, () -> JsonValue.fromJson(whitespaceJson));
+        Assertions.assertTrue(e.getMessage().contains("Failed to parse json string"));
+    }
+
+    @Test
+    public void tooBigNumberTestTest() {
+        String numberJson = "999999999999999999999999999999";
+        Exception e = Assertions.assertThrows(ITextException.class, () -> JsonValue.fromJson(numberJson));
         Assertions.assertTrue(e.getMessage().contains("Failed to parse json string"));
     }
 

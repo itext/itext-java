@@ -44,7 +44,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for JSON serialization and deserialization operations. Not for public use.
+ *
+ * @deprecated Use {@link com.itextpdf.commons.json.JsonValue} and related classes for JSON operations instead.
  */
+@Deprecated
 public final class JsonUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonUtil.class);
 

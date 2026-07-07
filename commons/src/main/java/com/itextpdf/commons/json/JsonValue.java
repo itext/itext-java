@@ -23,7 +23,7 @@
 package com.itextpdf.commons.json;
 
 /**
- * Class representing generic json value.
+ * Class representing generic JSON value.
  */
 public abstract class JsonValue {
 
@@ -52,5 +52,14 @@ public abstract class JsonValue {
      */
     public final String toJson() {
         return JsonValueConverter.toJson(this);
+    }
+
+    /**
+     * Converts this {@link JsonValue} into a prettified JSON string with indentation and line breaks.
+     *
+     * @return prettified JSON string representing this {@link JsonValue}
+     */
+    public final String toPrettifiedJson() {
+        return JsonValueConverter.toPrettifiedJson(this);
     }
 }
