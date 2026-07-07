@@ -42,7 +42,7 @@ public class PdfType3FontIntegrationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/font"
             + "/PdfType3FontIntegrationTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/kernel/font/PdfType3FontIntegrationTest/";
+            "./target/test/com/itextpdf/kernel/font/PdfType3FontIntegrationTest/";
 
     @BeforeAll
     public static void beforeClass() {

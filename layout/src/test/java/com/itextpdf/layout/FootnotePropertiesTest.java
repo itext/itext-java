@@ -61,7 +61,7 @@ import java.util.Arrays;
 @Tag("IntegrationTest")
 public class FootnotePropertiesTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FootnotePropertiesTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/FootnotePropertiesTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/FootnotePropertiesTest/";
 
     public static Iterable<Object[]> numberingType() {
         return Arrays.asList(new Object[][]{

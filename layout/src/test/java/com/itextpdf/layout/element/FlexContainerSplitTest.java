@@ -54,7 +54,7 @@ import org.junit.jupiter.api.Test;
 public class FlexContainerSplitTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FlexContainerSplitTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/FlexContainerSplitTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/FlexContainerSplitTest/";
 
     private static final String VERY_LONG_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do "
             + "eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud "

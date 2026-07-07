@@ -56,7 +56,7 @@ public class MarginsCollapsePageMarginsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/layout/MarginsCollapsePageMarginsTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/layout/MarginsCollapsePageMarginsTest/";
+            "./target/test/com/itextpdf/layout/MarginsCollapsePageMarginsTest/";
 
     @BeforeAll
     public static void beforeClass() {

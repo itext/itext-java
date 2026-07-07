@@ -62,7 +62,7 @@ public class EncryptedSigningTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/EncryptedSigningTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/EncryptedSigningTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/EncryptedSigningTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();

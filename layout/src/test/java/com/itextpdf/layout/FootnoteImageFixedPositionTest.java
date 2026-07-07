@@ -54,7 +54,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/layout/FootnoteImageFixedPositionTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/layout/FootnoteImageFixedPositionTest/";
+            "./target/test/com/itextpdf/layout/FootnoteImageFixedPositionTest/";
 
     private static final float A4_HEIGHT = PageSize.A4.getHeight();
     private static final float A4_WIDTH = PageSize.A4.getWidth();

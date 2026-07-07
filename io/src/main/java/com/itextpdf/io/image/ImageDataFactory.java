@@ -45,20 +45,6 @@ public final class ImageDataFactory {
     }
 
     static {
-        // Android-Conversion-Skip-Block-Start
-        try {
-            Class<?> type = getWebPClass(WEBP_PACKAGE + WEBP_APPLIER);
-            if (type != null) {
-                Method method = type.getMethod(WEBP_APPLIER_INITIALIZE, new Class[] {});
-                if (method != null) {
-                    method.setAccessible(true);
-                    method.invoke(null, new Object[] {});
-                }
-            }
-        } catch (Exception ignored) {
-            // do nothing
-        }
-        // Android-Conversion-Skip-Block-End
         if (webpLoader == null) {
             webpLoader = new NoWebPLoader();
         }
@@ -209,33 +195,6 @@ public final class ImageDataFactory {
         return image;
     }
 
-    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
-    /**
-     * Gets an instance of an Image from a java.awt.Image.
-     *
-     * @param image the java.awt.Image to convert
-     * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
-     * @return RawImage
-     * @throws java.io.IOException if an I/O error occurs.
-     */
-    public static ImageData create(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
-        return ImageDataFactory.create(image, color, false);
-    }
-
-    /**
-     * Gets an instance of an Image from a java.awt.Image.
-     *
-     * @param image   the <CODE>java.awt.Image</CODE> to convert
-     * @param color   if different from <CODE>null</CODE> the transparency pixels are replaced by this color
-     * @param forceBW if <CODE>true</CODE> the image is treated as black and white
-     *
-     * @return RawImage
-     * @throws java.io.IOException if an I/O error occurs.
-     */
-    public static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
-        return AwtImageDataFactory.create(image, color, forceBW);
-    }
-    // Android-Conversion-Skip-Block-End
 
     /**
      * Gets a bitmap ImageData instance from the specified URL.

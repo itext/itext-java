@@ -56,7 +56,7 @@ public class DynamicMarginsPercentageTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/layout/DynamicMarginsPercentageTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/layout/DynamicMarginsPercentageTest/";
+            "./target/test/com/itextpdf/layout/DynamicMarginsPercentageTest/";
 
     @BeforeAll
     public static void beforeClass() {

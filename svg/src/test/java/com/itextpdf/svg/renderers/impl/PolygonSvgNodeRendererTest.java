@@ -49,7 +49,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolygonSvgNoderendererTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/PolygonSvgNoderendererTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/PolygonSvgNoderendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

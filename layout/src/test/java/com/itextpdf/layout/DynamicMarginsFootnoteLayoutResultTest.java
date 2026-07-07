@@ -64,7 +64,7 @@ public class DynamicMarginsFootnoteLayoutResultTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/layout/DynamicMarginsFootnoteLayoutResultTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/layout/DynamicMarginsFootnoteLayoutResultTest/";
+            "./target/test/com/itextpdf/layout/DynamicMarginsFootnoteLayoutResultTest/";
 
     private static final float A4_HEIGHT = PageSize.A4.getHeight();
     private static final float A4_WIDTH = PageSize.A4.getWidth();

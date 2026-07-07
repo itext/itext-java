@@ -67,7 +67,7 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/layout/FlexPageMarginsTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/layout/FlexPageMarginsTest/";
+            "./target/test/com/itextpdf/layout/FlexPageMarginsTest/";
 
     @BeforeAll
     public static void beforeClass() {

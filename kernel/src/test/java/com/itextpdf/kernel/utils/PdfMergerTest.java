@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
 public class PdfMergerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/utils/PdfMergerTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/utils/PdfMergerTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/utils/PdfMergerTest/";
 
     @BeforeAll
     public static void beforeClass() {

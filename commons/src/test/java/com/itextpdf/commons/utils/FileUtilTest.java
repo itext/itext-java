@@ -40,7 +40,7 @@ import java.nio.file.Paths;
 public class FileUtilTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/commons/utils/SystemUtilTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/commons/utils/FileUtilTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/commons/utils/FileUtilTest/";
 
     @BeforeAll
     public static void beforeClass() {

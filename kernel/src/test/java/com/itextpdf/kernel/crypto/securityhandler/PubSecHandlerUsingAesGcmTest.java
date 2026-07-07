@@ -66,7 +66,7 @@ public class PubSecHandlerUsingAesGcmTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/kernel/crypto/securityhandler/PubSecHandlerUsingAesGcmTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/kernel/crypto/securityhandler/PubSecHandlerUsingAesGcmTest/";
+            "./target/test/com/itextpdf/kernel/crypto/securityhandler/PubSecHandlerUsingAesGcmTest/";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final char[] PASSWORD = "testpassphrase".toCharArray();

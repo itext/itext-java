@@ -59,7 +59,7 @@ import org.junit.jupiter.api.Test;
 public class PadesTwoPhaseSigningTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PadesTwoPhaseSigningTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PadesTwoPhaseSigningTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PadesTwoPhaseSigningTest/";
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 

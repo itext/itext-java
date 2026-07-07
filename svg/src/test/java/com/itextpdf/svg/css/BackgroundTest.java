@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 //TODO DEVSIX-8832: Update cmp files
 public class BackgroundTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/BackgroundTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/BackgroundTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/BackgroundTest/";
 
     private ISvgConverterProperties properties;
 

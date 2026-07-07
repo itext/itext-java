@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("IntegrationTest")
 public class ParentTreeTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/ParentTreeTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/ParentTreeTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/ParentTreeTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PageSizeTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/geom/PageSizeTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/geom/PageSizeTest/";
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/geom/PageSizeTest/";
 

@@ -64,7 +64,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/layout/HugeFootnoteLayoutResultTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/layout/HugeFootnoteLayoutResultTest/";
+            "./target/test/com/itextpdf/layout/HugeFootnoteLayoutResultTest/";
 
     private static final float A4_HEIGHT = PageSize.A4.getHeight();
     private static final float A4_WIDTH = PageSize.A4.getWidth();

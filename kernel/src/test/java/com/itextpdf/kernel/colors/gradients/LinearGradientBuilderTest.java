@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Tag;
 public class LinearGradientBuilderTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/colors/gradients/LinearGradientBuilderTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/colors/gradients/LinearGradientBuilderTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/colors/gradients/LinearGradientBuilderTest/";
 
     @BeforeAll
     public static void beforeClass() {

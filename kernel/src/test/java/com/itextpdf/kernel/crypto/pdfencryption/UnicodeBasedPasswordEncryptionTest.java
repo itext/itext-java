@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Tag("BouncyCastleIntegrationTest")
 public class UnicodeBasedPasswordEncryptionTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/crypto/pdfencryption/UnicodeBasedPasswordEncryptionTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/pdfencryption/UnicodeBasedPasswordEncryptionTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/pdfencryption/UnicodeBasedPasswordEncryptionTest/";
 
     private static Map<String, SaslPreparedString> nameToSaslPrepared;

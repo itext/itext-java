@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 public class PdfA4MiscCheckTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA4MiscCheckTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4MiscCheckTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA4MiscCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

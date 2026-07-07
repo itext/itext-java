@@ -64,7 +64,7 @@ public class RadioTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/RadioTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/forms/form/element/RadioTest/";
+            "./target/test/com/itextpdf/forms/form/element/RadioTest/";
 
     @BeforeAll
     public static void beforeClass() {

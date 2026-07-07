@@ -66,6 +66,6 @@ public class NoWebPModuleTest extends ExtendedITextTest {
     @Test
     public void webpNotFoundLogMessageConstantTest() {
         Assertions.assertFalse(WebPLogMessageConstant.WEBP_NOT_FOUND.isEmpty());
-        // Android-Conversion-Replace Assertions.assertEquals("Processing WebP images is not supported on Android.", WebPLogMessageConstant.WEBP_NOT_FOUND);
+        Assertions.assertEquals("Processing WebP images is not supported on Android.", WebPLogMessageConstant.WEBP_NOT_FOUND);
     }
 }
