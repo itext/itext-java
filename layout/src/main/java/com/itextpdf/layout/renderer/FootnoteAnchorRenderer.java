@@ -22,7 +22,15 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.IElement;
@@ -40,6 +48,8 @@ import com.itextpdf.layout.tagging.FootnoteTaggingHelper;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Renderer for {@link FootnoteAnchor} instance representing an anchor for a footnote.
@@ -139,16 +149,23 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         FootnoteTaggingHelper.repairFootnoteAnchorTagIfNeeded(this, taggingHelper);
 
         boolean isTagged = drawContext.isTaggingEnabled();
+        boolean tagCreated = false;
         if (isTagged) {
             taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
             if (taggingHelper == null) {
                 isTagged = false;
             } else {
                 TagTreePointer tagPointer = taggingHelper.useAutoTaggingPointerAndRememberItsPosition(this);
-                taggingHelper.createTag(this, tagPointer);
+                tagCreated = taggingHelper.createTag(this, tagPointer);
             }
         }
 
+        if (tagCreated || !isTagged) {
+            // We only don't set up links if tagging is enabled, but tag was not created,
+            // meaning this content is in fact an artifact. This happens because links contain annotations,
+            // and annotations need to be tagged. But since this content is an artifact, we can't properly tag it.
+            setUpLinks(drawContext);
+        }
         footnoteAnchor.draw(drawContext);
 
         if (isTagged) {
@@ -225,6 +242,46 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         }
         if (element instanceof Text) {
             footnoteAnchor.setFootnoteAnchor((Text) element);
+        }
+    }
+
+    private static void setUpLinks(IPropertyContainer from, IPropertyContainer to, String name,
+                                   String altDescription, PdfDocument document) {
+        int amountOfNamedDestinations = 0;
+        if (document.getCatalog().getNameTree(PdfName.Dests).getNames() != null) {
+            amountOfNamedDestinations = document.getCatalog().getNameTree(PdfName.Dests).getNames().size();
+        }
+        PdfLinkAnnotation footnoteAnnotation = (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0))
+                .setAction(PdfAction.createGoTo(name + amountOfNamedDestinations))
+                .setFlags(PdfAnnotation.PRINT);
+        footnoteAnnotation.setBorder(new PdfArray(new float[]{0, 0, 0}));
+        footnoteAnnotation.setContents(altDescription);
+
+        from.setProperty(Property.LINK_ANNOTATION, footnoteAnnotation);
+
+        Set<Object> footnoteDestinations = to.<Set<Object>>getProperty(Property.DESTINATION);
+        if (footnoteDestinations == null) {
+            footnoteDestinations = new HashSet<>();
+        }
+        footnoteDestinations.add(
+                new Tuple2<String, PdfDictionary>(name + amountOfNamedDestinations, footnoteAnnotation.getAction()));
+        to.setProperty(Property.DESTINATION, footnoteDestinations);
+    }
+
+    private void setUpLinks(DrawContext drawContext) {
+        IPropertyContainer footnoteLabel =
+                FootnotesUtil.getInjectedFootnoteAnchor((Footnote)footnoteRenderer.getModelElement());
+        if (footnoteLabel == null) {
+            // Footnote label is not supposed to be null. If it is, something is broken, and we don't add links.
+            return;
+        }
+        // We don't want to override existing link annotations, if any.
+        if (footnoteAnchor.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION) == null &&
+                footnoteLabel.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION) == null) {
+            setUpLinks(footnoteAnchor, footnoteLabel, "footnoteAnchor", "Go to footnote.",
+                    drawContext.getDocument());
+            setUpLinks(footnoteLabel, footnoteAnchor, "footnoteContent", "Go to footnote anchor.",
+                    drawContext.getDocument());
         }
     }
 

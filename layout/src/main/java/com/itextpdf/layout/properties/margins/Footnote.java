@@ -49,7 +49,7 @@ import java.util.Map;
 public class Footnote extends AbstractElement<Footnote> implements IAccessibleElement {
 
     final Map<Integer, IElement> anchors = new HashMap<>();
-    IElement footnoteAnchor = null;
+    private IElement footnoteAnchor = null;
     private DefaultAccessibilityProperties tagProperties;
 
     /**
@@ -83,6 +83,15 @@ public class Footnote extends AbstractElement<Footnote> implements IAccessibleEl
             tagProperties = new DefaultAccessibilityProperties(StandardRoles.NOTE);
         }
         return tagProperties;
+    }
+
+    /**
+     * Gets injected footnote anchor element, which is a copy of a footnote anchor in the main content.
+     *
+     * @return injected footnote anchor element
+     */
+    IElement getInjectedFootnoteAnchor() {
+        return footnoteAnchor;
     }
 
     /**

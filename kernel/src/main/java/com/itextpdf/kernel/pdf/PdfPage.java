@@ -1368,12 +1368,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annotation instanceof PdfLinkAnnotation) {
             // "Link" and "Reference" tags were added starting from PDF 1.4
             if (PdfVersion.PDF_1_3.compareTo(getDocument().getPdfVersion()) < 0) {
-                if (StandardRoles.REFERENCE.equals(tagPointer.getRole()) ||
-                        StandardRoles.LINK.equals(tagPointer.getRole())) {
+                if (StandardRoles.LINK.equals(tagPointer.getRole())) {
                     return false;
                 }
                 String linkRole = ((PdfLinkAnnotation) annotation).getRoleBasedOnDestination(getDocument());
                 if (StandardRoles.REFERENCE.equals(linkRole) && isReferenceAllowed(tagPointer.getRole())) {
+                    if (StandardRoles.REFERENCE.equals(tagPointer.getRole())) {
+                        return false;
+                    }
                     PdfNamespace currentNamespace = tagPointer.getNamespaceForNewTags();
                     if (PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) <= 0) {
                         tagPointer.setNamespaceForNewTags(PdfNamespace.getDefault(getDocument()));

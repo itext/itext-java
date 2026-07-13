@@ -40,11 +40,15 @@ Cell 4</Span>
 Cell 5</Span>
 <Reference>
 <Span baselineShift="7" o="/Layout">
+<Reference>
+/Link</Reference>
 1</Span>
 </Reference>
 <Note backgroundColor="[1 0.68627 0.68627 ]" o="/Layout" element_id="footnote_1">
 <Lbl>
 <Span baselineShift="7" o="/Layout">
+<Reference>
+/Link</Reference>
 1</Span>
 </Lbl>
 <Span>
@@ -142,11 +146,15 @@ Cell 18</Span>
 Cell 19</Span>
 <Reference>
 <Span baselineShift="7" o="/Layout">
+<Reference>
+/Link</Reference>
 2</Span>
 </Reference>
 <Note backgroundColor="[1 1 0 ]" o="/Layout" element_id="footnote_2">
 <Lbl>
 <Span baselineShift="7" o="/Layout">
+<Reference>
+/Link</Reference>
 2</Span>
 </Lbl>
 <Span>
@@ -199,11 +207,15 @@ Cell 0</Span>
 Cell 1</Span>
 <Reference>
 <Span baselineShift="7" o="/Layout">
+<Reference>
+/Link</Reference>
 3</Span>
 </Reference>
 <Note borderColor="[0.75294 0.75294 0.75294 ]" borderStyle="/Solid" borderThickness="2" o="/Layout" element_id="footnote_3">
 <Lbl>
 <Span baselineShift="7" o="/Layout">
+<Reference>
+/Link</Reference>
 3</Span>
 </Lbl>
 <Span>
@@ -357,11 +369,15 @@ Cell 22</Span>
 Cell 23</Span>
 <Reference>
 <Span baselineShift="7" o="/Layout">
+<Reference>
+/Link</Reference>
 4</Span>
 </Reference>
 <Note borderColor="[0.25098 0.25098 0.25098 ]" borderStyle="/Solid" borderThickness="2" o="/Layout" element_id="footnote_4">
 <Lbl>
 <Span baselineShift="7" o="/Layout">
+<Reference>
+/Link</Reference>
 4</Span>
 </Lbl>
 <Span>

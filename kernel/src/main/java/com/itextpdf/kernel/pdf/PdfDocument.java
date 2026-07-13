@@ -1066,17 +1066,16 @@ public class PdfDocument implements Closeable {
 
                     catalog.getPdfObject().put(PdfName.Pages, catalog.getPageTree().generateTree());
 
-                    for (Map.Entry<PdfName, PdfNameTree> entry : catalog.nameTrees.entrySet()) {
-                        PdfNameTree tree = entry.getValue();
-                        if (tree.isModified()) {
-                            ensureTreeRootAddedToNames(tree.buildTree().makeIndirect(this), entry.getKey());
-                        }
-                    }
-
                     for (int pageNum = 1; pageNum <= getNumberOfPages(); pageNum++) {
                         PdfPage page = getPage(pageNum);
                         if (page != null) {
                             page.flush();
+                        }
+                    }
+                    for (Map.Entry<PdfName, PdfNameTree> entry : catalog.nameTrees.entrySet()) {
+                        PdfNameTree tree = entry.getValue();
+                        if (tree.isModified()) {
+                            ensureTreeRootAddedToNames(tree.buildTree().makeIndirect(this), entry.getKey());
                         }
                     }
                     if (structTreeRoot != null) {

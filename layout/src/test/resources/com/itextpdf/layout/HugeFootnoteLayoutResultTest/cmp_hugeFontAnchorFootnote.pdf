@@ -1,5 +1,14 @@
 %PDF-1.7
 %âãÏÓ
+9 0 obj
+<</A 10 0 R/Border[0 0 0]/Contents(Go to footnote.)/F 4/P 4 0 R/Rect[186.41 695.66 390.97 784.46]/Subtype/Link>>
+endobj
+11 0 obj
+<</A 12 0 R/Border[0 0 0]/Contents(Go to footnote anchor.)/F 4/P 4 0 R/Rect[39 318.28 515.36 407.08]/Subtype/Link>>
+endobj
+13 0 obj
+<</A 12 0 R/Border[0 0 0]/Contents(Go to footnote anchor.)/F 4/P 4 0 R/Rect[39 198.4 195.2 287.2]/Subtype/Link>>
+endobj
 5 0 obj
 <</Filter/FlateDecode/Length 578>>stream
 xœSM›0½ó+æÖ­´r1`bÔS+u÷ÒJíiULxã8›æßwl`!«M“K2ó>üÆlƒ(„`ê æÀÃº€±•¯Z¬2¬R¬ât*øø®
@@ -9,13 +18,13 @@ SK7~ç@ÎCÆHÊ<@ô…Ò¬ük—21êÏ÷pü¢2’F¿f„S(ƒ8ƒ$Jü"Ò©iƒŸo£9É¸G'¢1KÂ!ç°Il‘ò,ü
 endstream
 endobj
 4 0 obj
-<</Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</Font<</F1 6 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
+<</Annots[9 0 R 11 0 R 13 0 R]/Contents 5 0 R/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<</Font<</F1 6 0 R>>>>/TrimBox[0 0 595 842]/Type/Page>>
 endobj
 1 0 obj
-<</Pages 2 0 R/Type/Catalog>>
+<</Names 15 0 R/Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20260628005439+03'00')/ModDate(D:20260628005439+03'00')/Producer(iText® Core 9.7.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
+<</CreationDate(D:20260717005217+03'00')/ModDate(D:20260717005217+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Helvetica/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -23,18 +32,45 @@ endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
 endobj
+10 0 obj
+<</D(footnoteAnchor0)/S/GoTo/Type/Action>>
+endobj
+12 0 obj
+<</D(footnoteContent0)/S/GoTo/Type/Action>>
+endobj
+15 0 obj
+<</Dests 14 0 R>>
+endobj
+14 0 obj
+<</Names[(footnoteAnchor0) 8 0 R (footnoteContent0) 7 0 R]>>
+endobj
+7 0 obj
+[4 0 R /XYZ 186.41 784.46 0]
+endobj
+8 0 obj
+[4 0 R /XYZ 39 407.08 0]
+endobj
 xref
-0 7
+0 16
 0000000000 65535 f 
-0000000793 00000 n 
-0000001098 00000 n 
-0000000838 00000 n 
-0000000660 00000 n 
+0000001210 00000 n 
+0000001528 00000 n 
+0000001268 00000 n 
+0000001049 00000 n 
+0000000404 00000 n 
+0000001440 00000 n 
+0000001809 00000 n 
+0000001853 00000 n 
 0000000015 00000 n 
-0000001010 00000 n 
+0000001579 00000 n 
+0000000143 00000 n 
+0000001638 00000 n 
+0000000275 00000 n 
+0000001732 00000 n 
+0000001698 00000 n 
 trailer
-<</ID [<5386e9e9de444fe6b64b656439d5060448f327bb687c1355ce8e2d97cb91f92f2ce46cf0732debac1d4c4cf6d63308db7627957e81b39168cbcad0dc0e71917f><5386e9e9de444fe6b64b656439d5060448f327bb687c1355ce8e2d97cb91f92f2ce46cf0732debac1d4c4cf6d63308db7627957e81b39168cbcad0dc0e71917f>]/Info 3 0 R/Root 1 0 R/Size 7>>
-%iText-Core-9.7.0-SNAPSHOT
+<</ID [<500ad601c61bf6f5b124386385bd3a387cee692fda6d9e7385026dc2296dbb047c006b41002f46c3b903419d646f73f9742a6dd2cb967d68632ccdca81ce28ef><500ad601c61bf6f5b124386385bd3a387cee692fda6d9e7385026dc2296dbb047c006b41002f46c3b903419d646f73f9742a6dd2cb967d68632ccdca81ce28ef>]/Info 3 0 R/Root 1 0 R/Size 16>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-1149
+1893
 %%EOF

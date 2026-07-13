@@ -5,8 +5,10 @@
 <Span>
 When a man hath no freedom to fight for at home, Let him combat for that of his neighbours; Let him think of the glories of Greece and of Rome, And get knocked on the head for his labours.  To do good to Mankind is the chivalrous plan, And is always as nobly requited; Then battle for Freedom wherever you can, And, if not shot or hanged, you&apos;ll get knighted.</Span>
 <Link>
-[1]<FENote bBox="[51.34 79.93 395 97.91 ]" backgroundColor="[0 1 1 ]" o="/Layout">
+/Link[1]<FENote bBox="[51.34 79.93 395 97.91 ]" backgroundColor="[0 1 1 ]" o="/Layout">
 <Lbl>
+<Reference>
+/Link</Reference>
 [1]</Lbl>
 <Span>
 Footnote text</Span>
@@ -17,12 +19,16 @@ Footnote text</Span>
 <Span>
 When a man hath no freedom to fight for at home, Let him combat for that of his neighbours; Let him think of the glories of Greece and of Rome, And get knocked on the head for his labours.  To do good to Mankind is the chivalrous plan, And is always as nobly requited; Then battle for Freedom wherever you can, And, if not shot or hanged, you&apos;ll get knighted.</Span>
 <Lbl>
+<Reference>
+/Link</Reference>
 [2]</Lbl>
 <Span>
   </Span>
 <Span>
 When a man hath no freedom to fight for at home, Let him combat for that of his neighbours; Let him think of the glories of Greece and of Rome, And get knocked on the head for his labours.  To do good to Mankind is the chivalrous plan, And is always as nobly requited; Then battle for Freedom wherever you can, And, if not shot or hanged, you&apos;ll get knighted.</Span>
 <Lbl>
+<Reference>
+/Link</Reference>
 [3]</Lbl>
 <Span>
   </Span>
@@ -46,12 +52,16 @@ When a man hath no freedom to fight for at home, Let him combat for that of his 
 When a man hath no freedom to fight for at home, Let him combat for that of his neighbours; Let him think of the glories of Greece and of Rome, And get knocked on the head for his labours.  To do good to Mankind is the chivalrous plan, And is always as nobly requited; Then battle for Freedom wherever you can, And, if not shot or hanged, you&apos;ll get knighted.</Span>
 <FENote bBox="[51.34 61.95 395 79.93 ]" backgroundColor="[1 0.78431 0 ]" o="/Layout">
 <Lbl>
+<Reference>
+/Link</Reference>
 [2]</Lbl>
 <Span>
 Footnote text 2</Span>
 </FENote>
 <Aside backgroundColor="[1 0 0 ]" o="/Layout" element_id="footnote_1">
 <Lbl>
+<Reference>
+/Link</Reference>
 [3]</Lbl>
 <Span>
 Footnote text 3 Second line Third line Fourth line</Span>

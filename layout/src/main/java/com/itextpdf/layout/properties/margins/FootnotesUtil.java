@@ -24,6 +24,7 @@ package com.itextpdf.layout.properties.margins;
 
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
+import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.FootnoteRenderer;
@@ -56,8 +57,8 @@ public final class FootnotesUtil {
         for (FootnoteRenderer footnoteRederer : footnotesToAdd) {
             Footnote footnote = (Footnote) footnoteRederer.getModelElement();
             footnotesContainer.add(footnote, footnoteRederer.<TaggingHintKey>getProperty(Property.TAGGING_HINT_KEY));
-            if (footnote.footnoteAnchor != null) {
-                footnote.anchors.put(pageNum, footnote.footnoteAnchor);
+            if (footnote.getInjectedFootnoteAnchor() != null) {
+                footnote.anchors.put(pageNum, footnote.getInjectedFootnoteAnchor());
                 footnote.resetFootnoteAnchor();
             }
         }
@@ -92,5 +93,16 @@ public final class FootnotesUtil {
      */
     public static void applyFootnoteAnchorStyle(FootnoteAnchor anchor, Style footnoteAnchorLabelStyle) {
         anchor.setFootnoteAnchorLabelStyle(footnoteAnchorLabelStyle);
+    }
+
+    /**
+     * Gets injected footnote anchor element, which is a copy of a footnote anchor in the main content.
+     *
+     * @param footnote {@link Footnote} from which injected footnote anchor is retrieved
+     *
+     * @return injected footnote anchor element
+     */
+    public static IElement getInjectedFootnoteAnchor(Footnote footnote) {
+        return footnote.getInjectedFootnoteAnchor();
     }
 }

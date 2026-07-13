@@ -55,6 +55,13 @@ public class FootnoteRenderer extends BlockRenderer {
             IRenderer footnoteParagraphContainer = childRenderers.get(0);
             IRenderer footnoteAnchorContent = footnoteParagraphContainer.getChildRenderers().get(0);
 
+            if (taggingHelper != null && taggingHelper.isArtifact(this)) {
+                // We remove these properties in case tagging is enabled, but tag is marked as artifact.
+                // We need to do that in order to not create link annotation and destinations,
+                // because annotations need to be tagged. But since this content is artifact, we can't properly tag it.
+                footnoteAnchorContent.setProperty(Property.LINK_ANNOTATION, null);
+                footnoteAnchorContent.setProperty(Property.DESTINATION, null);
+            }
             FootnoteTaggingHelper.wrapAnchorInsideFootnoteIntoLbl(footnoteAnchorContent, taggingHelper);
         }
 
