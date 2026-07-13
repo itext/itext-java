@@ -172,3 +172,43 @@ some additional info about where element can be divided. This way is too complic
 
 `MulticolRenderer` is responsible for enabling property `TREAT_AS_CONTINUOUS_CONTAINER` to achieve continuous 
 layouting between columns (see [Continuous container layouting](#continuous-container-layouting) paragraph).
+
+### Dynamic margins and footnotes
+Dynamic margins support allows developers to adjust page margins on the fly, it also includes footnote support 
+with automatic numbering, customizable footnote containers, and intelligent layout logic that ensures footnote 
+anchors and text remain perfectly positioned.
+
+Dynamic margins are represented by `PageMarginBoxes` class, container for a single page margin boxes 
+with `PageMarginContent` storing layout elements that represent dynamic content to be placed on margin.
+Footnotes container is also added there after all since `PageMarginBoxes` class is responsible for layout,
+drawing and tagging of the dynamic margins and footnotes, and it can be used either to specify page margins 
+via `Document#setPageMargins` or to adjust page margins on the fly using the `SectionBreak` element.
+
+#### Dynamic margins layout
+Dynamic margins layout happens on the new page start (current area update) 
+in `DocumentRenderer#computeLayoutMargins`, so the space for margins is reserved on a page.
+
+#### Footnotes layout
+Footnotes layout is more tricky since `FootnoteAnchor` with corresponding `Footnote` is added into paragraph.
+
+While paragraph layout, we collect all `FootnoteAnchor` instances with the help of `FootnotesCounterHandler`
+and check whether there is enough space to put all corresponding `Footnote` instances at the bottom of the 
+current area. If not, we decrease available layout area and relayout added element until number of placed 
+anchors won't be equal to the number of footnotes placed on a page. 
+This happens in `RootRenderer#layoutChild`.
+
+After element with footnote anchors and footnotes are placed, we decrease current area from the bottom 
+to preserve the space required for the footnotes to be drawn later. 
+Also, footnotes are added to footnotes container on a page (in `PageMarginBoxes`).
+
+#### Drawing and tagging
+Both dynamic margins and footnotes are drawn on document or page flush (END_PAGE event).
+`PageMarginBoxesDrawingHandler` class is responsible for it.
+
+Dynamic margins are tagged as artifacts (see `PageMarginBoxes#setPageMarginTagRole`). 
+
+Footnotes have special tagging logic triggered on drawing (see `FootnoteRenderer#draw` and 
+`FootnoteAnchorRenderer#draw`): 
+- Footnote anchor in the text is tagged as `Reference` (or `Lbl` in PDF 2.0) and put as a child of the paragraph tag
+- Footnote is tagged as `Note` (or `FENote` in PDF 2.0) and put as the last child of the paragraph tag with its anchor
+- Footnote anchor label inside the footnote (before footnote text) is tagged as `Lbl` and is a child of the footnote tag
