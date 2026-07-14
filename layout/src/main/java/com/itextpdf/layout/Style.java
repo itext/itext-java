@@ -548,4 +548,16 @@ public class Style extends ElementPropertyContainer<Style> {
         setProperty(Property.MIN_WIDTH, UnitValue.createPointValue(minWidth));
         return this;
     }
+
+    /**
+     * Sets the text rise of the element.
+     *
+     * @param textRise the new text rise in points
+     *
+     * @return this style
+     */
+    public Style setTextRise(float textRise) {
+        setProperty(Property.TEXT_RISE, textRise);
+        return (Style) (Object) this;
+    }
 }

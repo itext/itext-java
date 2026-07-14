@@ -113,6 +113,44 @@ public class StylesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void addNullAsStyleIfAbsentTest() {
+        Paragraph p = new Paragraph("text");
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> p.addStyleIfAbsent(null));
+    }
+
+    @Test
+    public void addingStyleIfAbsentAfterOwnPropertyTest() {
+        Style myStyle = new Style();
+        myStyle.setFontColor(ColorConstants.RED);
+
+        Paragraph p = new Paragraph("text")
+                .setFontColor(ColorConstants.GREEN)
+                .addStyleIfAbsent(myStyle);
+
+        Assertions.assertEquals(ColorConstants.GREEN,
+                p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+    }
+
+    @Test
+    public void addingStyleIfAbsentAfterStylePropertyTest() {
+        Style existingStyle = new Style();
+        existingStyle.setFontColor(ColorConstants.RED);
+
+        Style absentStyle = new Style();
+        absentStyle.setFontColor(ColorConstants.GREEN);
+        absentStyle.setTextRise(3f);
+
+        Paragraph p = new Paragraph("text")
+                .addStyle(existingStyle)
+                .addStyleIfAbsent(absentStyle);
+
+        Assertions.assertEquals(ColorConstants.RED,
+                p.getRenderer().<TransparentColor>getProperty(Property.FONT_COLOR).getColor());
+        Assertions.assertEquals(3f, (float) p.<Float>getProperty(Property.TEXT_RISE), EPS);
+    }
+
+    @Test
     public void setMarginsViaStyleTest() {
         float expectedMarginTop = 92;
         float expectedMarginRight = 90;

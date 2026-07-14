@@ -39,14 +39,12 @@ import com.itextpdf.layout.tagging.IAccessibleElement;
  * Footnote anchor indicates footnote in the text with superscript numbers (or letters or other symbols).
  */
 public class FootnoteAnchor extends AbstractElement<FootnoteAnchor> implements IAccessibleElement {
-    private static final int DEFAULT_FONT_SIZE = 6;
-    private static final int DEFAULT_TEXT_RISE = 7;
-
     protected DefaultAccessibilityProperties tagProperties;
     private final Footnote footnote;
     private IElement footnoteAnchor;
 
     private Style footnoteAnchorLabelStyle = null;
+    private boolean defaultStyleNeeded = true;
 
     /**
      * Creates new {@link FootnoteAnchor} instance.
@@ -56,6 +54,7 @@ public class FootnoteAnchor extends AbstractElement<FootnoteAnchor> implements I
     public FootnoteAnchor(Footnote footnote) {
         // Footnote anchor be set automatically based on FootnoteNumberingType. Asterisk is used as default value.
         this(new Text("*"), footnote);
+        defaultStyleNeeded = false;
     }
 
     /**
@@ -65,9 +64,7 @@ public class FootnoteAnchor extends AbstractElement<FootnoteAnchor> implements I
      * @param footnote {@link Footnote} linked to this anchor
      */
     public FootnoteAnchor(String text, Footnote footnote) {
-        // TODO DEVSIX-10031 Do not specify constant font size by default,
-        //  it should depend on parent paragraph font size.
-        this(new Text(text).setFontSize(DEFAULT_FONT_SIZE).setTextRise(DEFAULT_TEXT_RISE).setNeutralRole(), footnote);
+        this(new Text(text).setNeutralRole(), footnote);
     }
 
     /**
@@ -109,6 +106,13 @@ public class FootnoteAnchor extends AbstractElement<FootnoteAnchor> implements I
      * @return this same {@link FootnoteAnchor} instance
      */
     public FootnoteAnchor setFootnoteAnchor(Text footnoteAnchor) {
+        // If we override the default (*) than we want to set defaultStyleNeeded to true.
+        // If we override any other we keep defaultStyleNeeded=true.
+        // And we can't create with default (*), then pass custom and then pass the same default.
+        if (this.footnoteAnchor != footnoteAnchor) {
+            defaultStyleNeeded = true;
+        }
+
         this.footnoteAnchor = footnoteAnchor;
         this.footnote.applyFootnoteAnchor(this);
         return this;
@@ -124,6 +128,7 @@ public class FootnoteAnchor extends AbstractElement<FootnoteAnchor> implements I
     public FootnoteAnchor setFootnoteAnchor(Image footnoteAnchor) {
         this.footnoteAnchor = footnoteAnchor;
         this.footnote.applyFootnoteAnchor(this);
+        defaultStyleNeeded = false;
         return this;
     }
 
@@ -170,6 +175,15 @@ public class FootnoteAnchor extends AbstractElement<FootnoteAnchor> implements I
         this.footnoteAnchorLabelStyle = footnoteAnchorLabelStyle;
         this.footnote.applyFootnoteAnchor(this);
         return this;
+    }
+
+    /**
+     * Checks whether this anchor uses default anchor text.
+     *
+     * @return {@code true} if this anchor has default anchor text, {@code false} otherwise
+     */
+    boolean isDefaultStyleNeeded() {
+        return defaultStyleNeeded;
     }
 
     /**

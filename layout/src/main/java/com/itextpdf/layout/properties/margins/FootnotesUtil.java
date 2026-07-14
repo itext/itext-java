@@ -26,6 +26,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.FootnoteRenderer;
 import com.itextpdf.layout.tagging.TaggingHintKey;
@@ -34,6 +35,9 @@ import com.itextpdf.layout.tagging.TaggingHintKey;
  * Utility class to process footnotes for internal usage only.
  */
 public final class FootnotesUtil {
+
+    private static final float DEFAULT_FOOTNOTE_ANCHOR_FONT_SIZE_SCALE_FACTOR = 0.5F;
+    private static final float DEFAULT_FOOTNOTE_ANCHOR_TEXT_RISE_SCALE_FACTOR = 0.6F;
 
     private FootnotesUtil() {
         // Private constructor will prevent the instantiation of this class directly.
@@ -104,5 +108,61 @@ public final class FootnotesUtil {
      */
     public static IElement getInjectedFootnoteAnchor(Footnote footnote) {
         return footnote.getInjectedFootnoteAnchor();
+    }
+
+    /**
+     * Indicates whether a default style should be applied to injected footnote anchor copy.
+     *
+     * @param footnote {@link Footnote} containing injected anchor copy
+     *
+     * @return {@code true} if default style is needed, {@code false} otherwise
+     */
+    public static boolean isDefaultStyleNeededForInjectedFootnoteAnchor(Footnote footnote) {
+        return footnote.isDefaultStyleNeededForInjectedFootnoteAnchor();
+    }
+
+    /**
+     * Indicates whether a default style should be applied to the footnote anchor.
+     *
+     * @param anchor {@link FootnoteAnchor} to check
+     *
+     * @return {@code true} if default style is needed, {@code false} otherwise
+     */
+    public static boolean isDefaultStyleNeeded(FootnoteAnchor anchor) {
+        return anchor.isDefaultStyleNeeded();
+    }
+
+    /**
+     * Creates the default style for a footnote anchor in the main content.
+     * <p>
+     * The resulting style uses a reduced font size and positive text rise relative to the parent font size:
+     * <p>
+     * font size = parent font size * 0.5
+     * <p>
+     * text rise = parent font size * 0.6
+     * <p>
+     * If {@code parentFontSize} is {@code null} {@code 12pt} is used as the base size.
+     *
+     * @param parentFontSize parent font size unit value
+     *
+     * @return default style for a footnote anchor
+     */
+    public static Style createDefaultFootnoteAnchorStyle(UnitValue parentFontSize) {
+        float fontSize;
+        if (parentFontSize == null) {
+            fontSize = 12;
+        } else {
+            fontSize = parentFontSize.getValue();
+        }
+
+        Style defaultStyle = new Style();
+
+        final float defaultFontSize = fontSize * DEFAULT_FOOTNOTE_ANCHOR_FONT_SIZE_SCALE_FACTOR;
+        defaultStyle.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(defaultFontSize));
+
+        final float defaultTextRise = fontSize * DEFAULT_FOOTNOTE_ANCHOR_TEXT_RISE_SCALE_FACTOR;
+        defaultStyle.setProperty(Property.TEXT_RISE, defaultTextRise);
+
+        return defaultStyle;
     }
 }

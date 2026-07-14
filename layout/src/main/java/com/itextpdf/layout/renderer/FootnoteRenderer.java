@@ -22,8 +22,17 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.layout.Style;
+import com.itextpdf.layout.element.IElement;
+import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.margins.Footnote;
+import com.itextpdf.layout.properties.margins.FootnotesUtil;
 import com.itextpdf.layout.tagging.FootnoteTaggingHelper;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
@@ -48,6 +57,12 @@ public class FootnoteRenderer extends BlockRenderer {
     }
 
     @Override
+    public LayoutResult layout(LayoutContext layoutContext) {
+        applyDefaultStyleToInjectedFootnoteAnchor();
+        return super.layout(layoutContext);
+    }
+
+    @Override
     public void draw(DrawContext drawContext) {
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
         FootnoteTaggingHelper.repairFootnoteTagIfNeeded(this, taggingHelper);
@@ -66,5 +81,34 @@ public class FootnoteRenderer extends BlockRenderer {
         }
 
         super.draw(drawContext);
+    }
+
+    private void applyDefaultStyleToInjectedFootnoteAnchor() {
+        Footnote footnote = (Footnote) modelElement;
+        if (!FootnotesUtil.isDefaultStyleNeededForInjectedFootnoteAnchor(footnote)) {
+            return;
+        }
+
+        UnitValue resolvedFontSize = null;
+
+        if (!footnote.getChildren().isEmpty() && footnote.getChildren().get(0) instanceof Paragraph) {
+            Paragraph paragraph = (Paragraph) footnote.getChildren().get(0);
+            resolvedFontSize = paragraph.<UnitValue>getProperty(Property.FONT_SIZE);
+        }
+        if (resolvedFontSize == null) {
+            resolvedFontSize = footnote.<UnitValue>getProperty(Property.FONT_SIZE);
+        }
+        if (resolvedFontSize == null) {
+            // Renderer lookup resolves inheritable properties from parent renderers.
+            resolvedFontSize = this.<UnitValue>getProperty(Property.FONT_SIZE);
+        }
+
+        IElement injectedAnchor = FootnotesUtil.getInjectedFootnoteAnchor(footnote);
+        Style defaultStyle = FootnotesUtil.createDefaultFootnoteAnchorStyle(resolvedFontSize);
+        if (injectedAnchor instanceof Text) {
+            ((Text) injectedAnchor).addStyleIfAbsent(defaultStyle);
+        } else if (injectedAnchor instanceof Image) {
+            ((Image) injectedAnchor).addStyleIfAbsent(defaultStyle);
+        }
     }
 }

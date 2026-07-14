@@ -44,6 +44,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -106,6 +107,16 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
             default:
                 return (T1) (Object) null;
         }
+    }
+
+
+    /**
+     * Gets a copy of this container's properties.
+     *
+     * @return an unmodifiable map with properties set directly on this container
+     */
+    public Map<Integer, Object> getOwnProperties() {
+        return Collections.unmodifiableMap(properties);
     }
 
     /**

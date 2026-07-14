@@ -34,6 +34,9 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
+import com.itextpdf.layout.Style;
+import com.itextpdf.layout.element.AbstractElement;
+import com.itextpdf.layout.element.IAbstractElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Text;
@@ -43,8 +46,10 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.margins.Footnote;
 import com.itextpdf.layout.properties.margins.FootnoteAnchor;
+import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.properties.margins.FootnotesUtil;
 import com.itextpdf.layout.tagging.FootnoteTaggingHelper;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
@@ -54,6 +59,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -97,6 +103,8 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
             }
         }
 
+        handleFootnoteAnchorStyles();
+
         int pageNumber = layoutContext.getArea().getPageNumber();
         Rectangle pageRectangle = this.getPdfDocument().getPage(pageNumber).getPageSize();
         IRenderer parentRenderer = getParent();
@@ -117,7 +125,7 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
 
         this.footnoteRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, pageRectangle)));
 
-        LayoutResult layoutResult = footnoteAnchor.layout(layoutContext);
+        LayoutResult layoutResult = footnoteAnchor.setParent(this).layout(layoutContext);
         this.occupiedArea = layoutResult.getOccupiedArea();
 
         if (LayoutResult.NOTHING == layoutResult.getStatus()) {
@@ -329,5 +337,67 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         splitRenderer.footnoteAnchor = layoutResult.getSplitRenderer().setParent(splitRenderer);
 
         return splitRenderer;
+    }
+
+    private void handleFootnoteAnchorStyles() {
+        if (!(footnoteAnchor.getModelElement() instanceof IAbstractElement)) {
+            return;
+        }
+
+        IPropertyContainer footnoteAnchorModelElement = footnoteAnchor.getModelElement();
+        FootnoteAnchor modelElement = ((FootnoteAnchor) this.getModelElement());
+        FootnotesProperties footnotesProperties = this.<FootnotesProperties>getProperty(Property.FOOTNOTES_PROPERTIES);
+        Style customStyle = footnotesProperties.getFootnoteAnchorStyle();
+
+        if (footnoteAnchorModelElement instanceof Text) {
+            handleFootnoteAnchorStyles(modelElement, (Text) footnoteAnchorModelElement, customStyle);
+        } else if (footnoteAnchorModelElement instanceof Image) {
+            handleFootnoteAnchorStyles(modelElement, (Image) footnoteAnchorModelElement, customStyle);
+        }
+    }
+
+    private <T extends IElement> void handleFootnoteAnchorStyles(FootnoteAnchor modelElement,
+            AbstractElement<T> footnoteAnchorModelElement, Style customStyle) {
+        copyPropertiesAndStyles(modelElement, footnoteAnchorModelElement);
+
+        if (customStyle != null) {
+            footnoteAnchorModelElement.addStyleIfAbsent(customStyle);
+        }
+
+        if (FootnotesUtil.isDefaultStyleNeeded(modelElement)) {
+            UnitValue parentFontSize = getParent().<UnitValue>getProperty(Property.FONT_SIZE);
+            Style defaultStyle = FootnotesUtil.createDefaultFootnoteAnchorStyle(parentFontSize);
+            if (!footnoteAnchorModelElement.getOwnProperties().containsKey(Property.FONT_SIZE)
+                    && !hasStyleWithOwnProperty(footnoteAnchorModelElement, Property.FONT_SIZE)) {
+                footnoteAnchor.setProperty(Property.FONT_SIZE, defaultStyle.<UnitValue>getProperty(Property.FONT_SIZE));
+            }
+            if (!footnoteAnchorModelElement.getOwnProperties().containsKey(Property.TEXT_RISE)
+                    && !hasStyleWithOwnProperty(footnoteAnchorModelElement, Property.TEXT_RISE)) {
+                footnoteAnchor.setProperty(Property.TEXT_RISE, defaultStyle.<Float>getProperty(Property.TEXT_RISE));
+            }
+        }
+
+        setFootnoteAnchor(((FootnoteAnchor) this.modelElement), footnoteAnchorModelElement);
+    }
+
+    private static <T extends IElement> void copyPropertiesAndStyles(FootnoteAnchor sourceElement,
+            AbstractElement<T> targetElement) {
+        for (Map.Entry<Integer, Object> property : sourceElement.getOwnProperties().entrySet()) {
+            if (!targetElement.hasProperty(property.getKey())) {
+                targetElement.setProperty(property.getKey(), property.getValue());
+            }
+        }
+        for (Style style : sourceElement.getStyles()) {
+            targetElement.addStyleIfAbsent(style);
+        }
+    }
+
+    private static <T extends IElement> boolean hasStyleWithOwnProperty(AbstractElement<T> element, int property) {
+        for (Style style : element.getStyles()) {
+            if (style.hasOwnProperty(property)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

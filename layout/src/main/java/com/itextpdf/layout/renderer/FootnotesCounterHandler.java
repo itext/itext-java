@@ -123,6 +123,9 @@ class FootnotesCounterHandler {
                         footnoteAnchorLabelStyle);
             }
         }
+        // Note: footnote anchor style is applied by FootnoteAnchorRenderer via Property.FOOTNOTES_PROPERTIES
+        // so that we do not need to apply anchor styles to the anchor here
+
         if (footnotesProperties.getFootnoteNumberingType() == null) {
             return;
         }
@@ -204,12 +207,7 @@ class FootnotesCounterHandler {
             default:
                 throw new IllegalStateException();
         }
-        Style defaultStyle = new Style();
-        // TODO DEVSIX-10031 Do not specify constant font size by default,
-        //  it should depend on parent paragraph font size.
-        defaultStyle.setProperty(Property.FONT_SIZE, UnitValue.createPointValue(DEFAULT_FONT_SIZE));
-        defaultStyle.setProperty(Property.TEXT_RISE, DEFAULT_TEXT_RISE);
-        Text textElement = new Text(numberText).addStyle(defaultStyle);
+        Text textElement = new Text(numberText);
         return new TextRenderer(textElement);
     }
 }

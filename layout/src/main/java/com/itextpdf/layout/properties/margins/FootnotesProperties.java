@@ -37,6 +37,7 @@ public class FootnotesProperties {
     private FootnoteNumberingConfig footnoteNumberingConfig = FootnoteNumberingConfig.PER_PAGE;
     private Style footnotesContainerStyle = null;
     private Style footnoteAnchorLabelStyle = null;
+    private Style footnoteAnchorStyle = null;
 
     /**
      * Creates new {@link FootnotesProperties} instance.
@@ -126,6 +127,27 @@ public class FootnotesProperties {
      */
     public FootnotesProperties setFootnoteAnchorLabelStyle(Style footnoteAnchorLabelStyle) {
         this.footnoteAnchorLabelStyle = footnoteAnchorLabelStyle;
+        return this;
+    }
+
+    /**
+     * Gets {@link Style} storing style properties for footnote anchors.
+     *
+     * @return {@link Style} storing properties for footnote anchors
+     */
+    public Style getFootnoteAnchorStyle() {
+        return footnoteAnchorStyle;
+    }
+
+    /**
+     * Sets {@link Style} storing style properties for footnote anchors.
+     *
+     * @param footnoteAnchorStyle {@link Style} storing properties for footnote anchors
+     *
+     * @return this same {@link FootnotesProperties} instance
+     */
+    public FootnotesProperties setFootnoteAnchorStyle(Style footnoteAnchorStyle) {
+        this.footnoteAnchorStyle = footnoteAnchorStyle;
         return this;
     }
 }

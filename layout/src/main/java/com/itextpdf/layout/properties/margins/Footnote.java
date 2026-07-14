@@ -50,6 +50,7 @@ public class Footnote extends AbstractElement<Footnote> implements IAccessibleEl
 
     final Map<Integer, IElement> anchors = new HashMap<>();
     private IElement footnoteAnchor = null;
+    private boolean defaultStyleNeededForInjectedFootnoteAnchor = false;
     private DefaultAccessibilityProperties tagProperties;
 
     /**
@@ -138,6 +139,7 @@ public class Footnote extends AbstractElement<Footnote> implements IAccessibleEl
         if (footnoteAnchorSymbol == null) {
             return;
         }
+        this.defaultStyleNeededForInjectedFootnoteAnchor = footnoteAnchor.isDefaultStyleNeeded();
         this.footnoteAnchor = footnoteAnchorSymbol;
         paragraph.getChildren().add(0, this.footnoteAnchor);
     }
@@ -160,6 +162,10 @@ public class Footnote extends AbstractElement<Footnote> implements IAccessibleEl
         } else {
             return footnoteAnchorSymbol;
         }
+    }
+
+    boolean isDefaultStyleNeededForInjectedFootnoteAnchor() {
+        return defaultStyleNeededForInjectedFootnoteAnchor;
     }
 
     private void removeFootnoteAnchorFromParagraph(Paragraph paragraph) {
