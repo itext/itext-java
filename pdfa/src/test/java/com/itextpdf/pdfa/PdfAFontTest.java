@@ -705,16 +705,16 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPdfA4UmingTtcTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "pdfA4UmingTtcTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_pdfA4UmingTtcTest.pdf";
+    public void checkPdfA4NNotoCJKTtcTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4NotoCJKTtcTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_pdfA4NotoCJKTtcTest.pdf";
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(outPdf, writerProperties);
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
-        PdfFont font = PdfFontFactory.createTtcFont(SOURCE_FOLDER + "uming.ttc", 0, "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED, false);
+        PdfFont font = PdfFontFactory.createTtcFont(SOURCE_FOLDER + "fonts/NotoSerifCJK-VF.ttf.ttc", 0, "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED, false);
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()

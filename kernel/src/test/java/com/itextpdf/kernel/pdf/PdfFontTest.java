@@ -1489,8 +1489,7 @@ public class PdfFontTest extends ExtendedITextTest {
         PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = doc.addNewPage();
 
-        // TODO DEVSIX-9682 Replace uming.ttc in kernel
-        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "uming.ttc,1");
+        PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSerifCJK-VF.ttf.ttc,1");
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -1518,8 +1517,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        // TODO DEVSIX-9682 Replace uming.ttc in kernel
-        String font = FONTS_FOLDER + "uming.ttc";
+        String font = FONTS_FOLDER + "NotoSerifCJK-VF.ttf.ttc";
 
         PdfFont pdfTrueTypeFont = PdfFontFactory.createTtcFont(font, 0, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_EMBEDDED, false);
@@ -1574,8 +1572,7 @@ public class PdfFontTest extends ExtendedITextTest {
                 setCreator(creator).
                 setTitle(title);
 
-        // TODO DEVSIX-9682 Replace uming.ttc in kernel
-        String font = FONTS_FOLDER + "uming.ttc";
+        String font = FONTS_FOLDER + "NotoSerifCJK-VF.ttf.ttc";
 
         PdfFont pdfTrueTypeFont = PdfFontFactory.createTtcFont(font, 0, PdfEncodings.WINANSI,
                 EmbeddingStrategy.FORCE_NOT_EMBEDDED, false);
@@ -1905,9 +1902,8 @@ public class PdfFontTest extends ExtendedITextTest {
 
     @Test
     public void testCheckTTCSize() throws IOException {
-        // TODO DEVSIX-9682 Replace uming.ttc in kernel
-        TrueTypeCollection collection = new TrueTypeCollection(FONTS_FOLDER + "uming.ttc");
-        Assertions.assertTrue(collection.getTTCSize() == 4);
+        TrueTypeCollection collection = new TrueTypeCollection(FONTS_FOLDER + "NotoSerifCJK-VF.ttf.ttc");
+        Assertions.assertTrue(collection.getTTCSize() == 5);
     }
 
     @Test
