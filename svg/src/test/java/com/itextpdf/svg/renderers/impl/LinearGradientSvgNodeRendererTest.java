@@ -668,4 +668,9 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     public void linearGradHrefTransitiveSpreadMethod2Test() throws java.io.IOException, InterruptedException {
         convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefTransitiveSpreadMethod2");
     }
+
+    @Test
+    public void lowerCaseGradientUnitsTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(sourceFolder, destinationFolder, "lowerCaseGradientUnits");
+    }
 }

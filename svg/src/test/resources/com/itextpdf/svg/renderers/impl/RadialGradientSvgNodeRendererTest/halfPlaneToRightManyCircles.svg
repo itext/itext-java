@@ -1,0 +1,9 @@
+<svg x="0" y="0" width="800" height="600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs>
+    <radialGradient id="myFillGradientMirrored" spreadMethod="repeat" cx="50%" cy="50%" r="500p" fx="100%" fy="50%">
+      <stop offset="0%" stop-color="orange" />
+      <stop offset="100%" stop-color="magenta" />
+    </radialGradient>
+  </defs>
+  <rect x="100" y="100" width="600" height="400" stroke="black" fill="url(#myFillGradientMirrored)" />
+</svg>

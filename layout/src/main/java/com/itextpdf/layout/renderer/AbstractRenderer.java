@@ -29,6 +29,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.NumberUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
+import com.itextpdf.kernel.colors.gradients.IGradientBuilder;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
@@ -583,20 +584,20 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     /**
-     * Create a {@link PdfFormXObject} with the given area and containing a linear gradient inside.
+     * Create a {@link PdfFormXObject} with the given area and containing a gradient inside.
      *
-     * @param linearGradientBuilder the linear gradient builder
+     * @param gradientBuilder the gradient builder
      * @param xObjectArea the result object area
      * @param document the pdf document
      *
-     * @return the xObject with a specified area and a linear gradient
+     * @return the xObject with a specified area and a gradient
      */
-    public static PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
+    public static PdfFormXObject createXObject(IGradientBuilder gradientBuilder,
                                                Rectangle xObjectArea, PdfDocument document) {
         Rectangle formBBox = new Rectangle(0, 0, xObjectArea.getWidth(), xObjectArea.getHeight());
         PdfFormXObject xObject = new PdfFormXObject(formBBox);
-        if (linearGradientBuilder != null) {
-            Color gradientColor = linearGradientBuilder.buildColor(formBBox, null, document);
+        if (gradientBuilder != null) {
+            Color gradientColor = gradientBuilder.buildColor(formBBox, null, document);
             if (gradientColor != null) {
                 new PdfCanvas(xObject, document)
                         .setColor(gradientColor, true)
@@ -605,6 +606,23 @@ public abstract class AbstractRenderer implements IRenderer {
             }
         }
         return xObject;
+    }
+
+    /**
+     * Create a {@link PdfFormXObject} with the given area and containing a linear gradient inside.
+     *
+     * @param linearGradientBuilder the linear gradient builder
+     * @param xObjectArea the result object area
+     * @param document the pdf document
+     *
+     * @return the xObject with a specified area and a linear gradient
+     *
+     * @deprecated use {@link AbstractRenderer#createXObject(IGradientBuilder, Rectangle, PdfDocument)} instead
+     */
+    @Deprecated
+    public static PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
+            Rectangle xObjectArea, PdfDocument document) {
+        return createXObject((IGradientBuilder) linearGradientBuilder, xObjectArea, document);
     }
 
     /**
@@ -702,11 +720,11 @@ public abstract class AbstractRenderer implements IRenderer {
         final UnitValue xPosition = UnitValue.createPointValue(0);
         final UnitValue yPosition = UnitValue.createPointValue(0);
         if (backgroundXObject == null) {
-            final AbstractLinearGradientBuilder gradientBuilder = backgroundImage.getLinearGradientBuilder();
+            final IGradientBuilder gradientBuilder = backgroundImage.getGradientBuilder();
             if (gradientBuilder == null) {
                 return;
             }
-            // fullWidth and fullHeight is 0 because percentage shifts are ignored for linear-gradients
+            // fullWidth and fullHeight is 0 because percentage shifts are ignored for gradient backgrounds
             backgroundImage.getBackgroundPosition().calculatePositionValues(0, 0, xPosition, yPosition);
             backgroundXObject = createXObject(gradientBuilder, originBackgroundArea, drawContext.getDocument());
         } else {

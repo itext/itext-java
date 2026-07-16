@@ -198,10 +198,12 @@ public abstract class AbstractRadialGradientBuilder extends AbstractGradientBuil
                 double py = point.getY();
                 maxY = Math.abs(py) > Math.abs(maxY) ? py : maxY;
             }
-            double coveredSign = isIncreasingRadius ? 1d : -1d;
+
             // Looking for px so that arc between (xZeroRad, 0) and (px, maxY) would correspond predefined t deg.
             // Formula: px = xZeroRad +/- maxY * tan(t/2)
-            double px = xZeroRad + coveredSign * maxY * TAN_CONSTANT;
+            double px1 = xZeroRad - (maxY * TAN_CONSTANT);
+            double px2 = xZeroRad + (maxY * TAN_CONSTANT);
+            double px = isIncreasingRadius ? Math.max(px1, px2) : Math.min(px1, px2);
             double denominator = 2 * r0 * rDiff + 2 * px;
             double targetX = (-1d * r0 * r0 + px * px + maxY * maxY) / denominator;
             if (isIncreasingRadius) {

@@ -25,7 +25,6 @@ package com.itextpdf.kernel.colors.gradients;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
 import com.itextpdf.kernel.geom.AffineTransform;
-import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -80,7 +79,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void noStrategyProvidedTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
@@ -90,7 +89,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderToRightTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_RIGHT)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -101,7 +100,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderToLeftTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_LEFT)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -112,7 +111,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderToBottomTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -123,7 +122,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderToBottomRightTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM_RIGHT)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -134,7 +133,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderToBottomLeftTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_BOTTOM_LEFT)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -145,7 +144,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderToTopTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -156,7 +155,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderToTopRightTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -167,7 +166,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderToTopLeftTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_LEFT)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -178,7 +177,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderZeroAngleTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsCentralRotationAngle(0d)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -189,7 +188,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderPositiveAngleTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsCentralRotationAngle(Math.PI/3)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -200,7 +199,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderNegativeAngleTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsCentralRotationAngle(-Math.PI/3)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -211,7 +210,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderWithNoneSpreadingAndCanvasTransformTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_RIGHT)
                 .setSpread(GradientSpreadMethod.NONE)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -226,7 +225,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderWithToCornerAndInnerStopsAndNoneSpreadingTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT)
                 .setSpread(GradientSpreadMethod.NONE)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
@@ -238,7 +237,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderWithToCornerAndInnerStopsAndPadSpreadingTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT)
                 .setSpread(GradientSpreadMethod.PAD)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
@@ -250,7 +249,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderWithToCornerAndInnerStopsAndReflectSpreadingTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT)
                 .setSpread(GradientSpreadMethod.REFLECT)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
@@ -262,7 +261,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderWithToCornerAndInnerStopsAndRepeatSpreadingTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<Point> gradientBuilder = new StrategyBasedLinearGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
                 .setGradientDirectionAsStrategy(StrategyBasedLinearGradientBuilder.GradientStrategy.TO_TOP_RIGHT)
                 .setSpread(GradientSpreadMethod.REPEAT)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0.3d, OffsetType.RELATIVE))
@@ -273,7 +272,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
     }
 
     private void generateAndComparePdfs(String fileName, AffineTransform transform,
-            AbstractGradientBuilder<Point> gradientBuilder) throws InterruptedException, IOException {
+            IGradientBuilder gradientBuilder) throws InterruptedException, IOException {
         String outPdfPath = DESTINATION_FOLDER + fileName;
         try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdfPath))) {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());

@@ -27,11 +27,12 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop.OffsetType;
 import com.itextpdf.kernel.colors.gradients.GradientSpreadMethod;
+import com.itextpdf.kernel.colors.gradients.IGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.LinearGradientBuilder;
+import com.itextpdf.kernel.colors.gradients.RadialGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -50,7 +51,6 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.properties.Background;
 import com.itextpdf.layout.properties.BackgroundBox;
 import com.itextpdf.layout.properties.BackgroundImage;
-import com.itextpdf.layout.properties.BackgroundImage.Builder;
 import com.itextpdf.layout.properties.BackgroundPosition;
 import com.itextpdf.layout.properties.BackgroundRepeat;
 import com.itextpdf.layout.properties.BackgroundRepeat.BackgroundRepeatValue;
@@ -85,7 +85,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createXObjectTest() {
+    public void createXObjectWithLinearGradientTest() {
         StrategyBasedLinearGradientBuilder gradientBuilder =
                 (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
                         .setGradientDirectionAsStrategy(
@@ -102,15 +102,29 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
     }
 
     @Test
-    public void createXObjectWithNullLinearGradientTest() {
+    public void createXObjectWithNullGradientTest() {
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
-        PdfXObject pdfXObject = AbstractRenderer.createXObject(null, new Rectangle(0, 0, 20, 20), pdfDocument);
+        PdfXObject pdfXObject =
+                AbstractRenderer.createXObject((IGradientBuilder) null, new Rectangle(0, 0, 20, 20), pdfDocument);
         Assertions.assertNull(pdfXObject.getPdfObject().get(PdfName.Resources));
     }
 
     @Test
+    public void createXObjectWithRadialGradientTest() {
+        RadialGradientBuilder gradientBuilder = (RadialGradientBuilder) new RadialGradientBuilder()
+                .setGradientVector(10, 10, 0, 10, 10, 10)
+                .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 1d, OffsetType.RELATIVE));
+
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        PdfXObject pdfXObject = AbstractRenderer.createXObject(gradientBuilder, new Rectangle(0, 0, 20, 20),
+                pdfDocument);
+        Assertions.assertNotNull(pdfXObject.getPdfObject().get(PdfName.Resources));
+    }
+
+    @Test
     public void createXObjectWithInvalidColorTest() {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder();
+        IGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder();
 
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
         PdfXObject pdfXObject = AbstractRenderer.createXObject(gradientBuilder, new Rectangle(0, 0, 20, 20),
@@ -385,7 +399,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
                         .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
                         .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()));
-        images.add(new BackgroundImage.Builder().setLinearGradientBuilder(linearGradientBuilder)
+        images.add(new BackgroundImage.Builder().setGradientBuilder(linearGradientBuilder)
                 .setBackgroundPosition(new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT)
                         .setPositionY(BackgroundPosition.PositionY.BOTTOM)
                         .setYShift(UnitValue.createPointValue(100)).setXShift(UnitValue.createPointValue(30)))
@@ -424,7 +438,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                 (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
                         .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
                         .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()));
-        images.add(new BackgroundImage.Builder().setLinearGradientBuilder(linearGradientBuilder)
+        images.add(new BackgroundImage.Builder().setGradientBuilder(linearGradientBuilder)
                 .setBackgroundPosition(new BackgroundPosition().setPositionX(BackgroundPosition.PositionX.RIGHT)
                         .setPositionY(BackgroundPosition.PositionY.BOTTOM)
                         .setYShift(UnitValue.createPercentValue(70)).setXShift(UnitValue.createPercentValue(33)))
@@ -617,7 +631,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
         final DrawContext drawContext = new DrawContext(pdfDocument, pdfCanvas);
         final AbstractRenderer renderer = new DivRenderer(new Div().setPadding(20).setBorder(new DashedBorder(10)));
         renderer.occupiedArea = new LayoutArea(1, new Rectangle(100f, 200f, 300f, 400f));
-        final BackgroundImage backgroundImage = new Builder().setImage(rawImage)
+        final BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(rawImage)
                 .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT))
                 .setBackgroundClip(BackgroundBox.CONTENT_BOX)
                 .setBackgroundOrigin(BackgroundBox.BORDER_BOX).build();
@@ -664,7 +678,7 @@ public class AbstractRendererUnitTest extends ExtendedITextTest {
                                 new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                         .addStopColor(
                                 new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
-        final BackgroundImage backgroundImage = new Builder().setLinearGradientBuilder(gradientBuilder)
+        final BackgroundImage backgroundImage = new BackgroundImage.Builder().setGradientBuilder(gradientBuilder)
                 .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT))
                 .setBackgroundClip(BackgroundBox.CONTENT_BOX)
                 .setBackgroundOrigin(BackgroundBox.BORDER_BOX).build();

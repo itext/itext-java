@@ -138,7 +138,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                         .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
                         .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage backgroundImage = new BackgroundImage.Builder()
-                .setLinearGradientBuilder(gradientBuilder)
+                .setGradientBuilder(gradientBuilder)
                 .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradient", backgroundImage);
     }
@@ -150,7 +150,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                         .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
                         .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
                         .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder)
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setGradientBuilder(gradientBuilder)
                 .setBackgroundPosition(new BackgroundPosition()
                         .setYShift(UnitValue.createPointValue(30))
                         .setXShift(UnitValue.createPointValue(50)))
@@ -166,7 +166,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                         .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
                         .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage backgroundImage = new BackgroundImage.Builder()
-                .setLinearGradientBuilder(gradientBuilder)
+                .setGradientBuilder(gradientBuilder)
                 .setBackgroundRepeat(new BackgroundRepeat())
                 .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndRepeat", backgroundImage);
@@ -180,7 +180,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                         .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
                         .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage backgroundImage = new BackgroundImage.Builder()
-                .setLinearGradientBuilder(gradientBuilder)
+                .setGradientBuilder(gradientBuilder)
                 .setBackgroundRepeat(new BackgroundRepeat())
                 .setBackgroundPosition(new BackgroundPosition()
                         .setYShift(UnitValue.createPointValue(30))
@@ -201,7 +201,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                         .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
                         .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage backgroundImage = new BackgroundImage.Builder()
-                .setLinearGradientBuilder(gradientBuilder)
+                .setGradientBuilder(gradientBuilder)
                 .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndTransform", backgroundImage, Math.PI / 4);
     }
@@ -741,7 +741,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                         .addStopColor(new GradientColorStop(ColorConstants.BLACK.getColorValue()))
                         .addStopColor(new GradientColorStop(ColorConstants.WHITE.getColorValue()));
         BackgroundImage backgroundImage = new BackgroundImage.Builder()
-                .setLinearGradientBuilder(gradientBuilder)
+                .setGradientBuilder(gradientBuilder)
                 .build();
         StrategyBasedLinearGradientBuilder topGradientBuilder =
                 (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
@@ -751,7 +751,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
                         .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage topBackgroundImage =
                 new BackgroundImage.Builder()
-                        .setLinearGradientBuilder(topGradientBuilder)
+                        .setGradientBuilder(topGradientBuilder)
                         .setBackgroundBlendMode(blendMode)
                         .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndBlendMode_"

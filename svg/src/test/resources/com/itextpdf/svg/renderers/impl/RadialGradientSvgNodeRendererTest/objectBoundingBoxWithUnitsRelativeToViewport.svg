@@ -1,0 +1,38 @@
+<svg x="0" y="0" width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="radialGradient1" gradientUnits="objectBoundingBox" cx="50%" cy="0.5vw" fy="0.1vw" r="50%" fx="0.1vw">
+      <stop offset="0%" stop-color="green" stop-opacity="1" />
+      <stop offset="0%" stop-color="red" stop-opacity="1" />
+      <stop offset="100%" stop-color="blue" stop-opacity="1" />
+      <stop offset="100%" stop-color="yellow" stop-opacity="1" />
+    </radialGradient>
+    <radialGradient id="radialGradient2" gradientUnits="objectBoundingBox" cx="50%" cy="0.5vh" fy="0.1vh" r="50%" fx="0.1vh">
+      <stop offset="0%" stop-color="green" stop-opacity="1" />
+      <stop offset="0%" stop-color="red" stop-opacity="1" />
+      <stop offset="100%" stop-color="blue" stop-opacity="1" />
+      <stop offset="100%" stop-color="yellow" stop-opacity="1" />
+    </radialGradient>
+    <radialGradient id="radialGradient3" gradientUnits="objectBoundingBox" cx="50%" cy="0.5vmin" fy="0.1vmin" r="50%" fx="0.1vmin">
+      <stop offset="0%" stop-color="green" stop-opacity="1" />
+      <stop offset="0%" stop-color="red" stop-opacity="1" />
+      <stop offset="100%" stop-color="blue" stop-opacity="1" />
+      <stop offset="100%" stop-color="yellow" stop-opacity="1" />
+    </radialGradient>
+    <radialGradient id="radialGradient4" gradientUnits="objectBoundingBox" cx="50%" cy="0.5vmax" fy="0.1vmax" r="50%" fx="0.1vmax">
+      <stop offset="0%" stop-color="green" stop-opacity="1" />
+      <stop offset="0%" stop-color="red" stop-opacity="1" />
+      <stop offset="100%" stop-color="blue" stop-opacity="1" />
+      <stop offset="100%" stop-color="yellow" stop-opacity="1" />
+    </radialGradient>
+  </defs>
+  <svg x="0" y="80" width="600" height="950">
+    <text x="15" y="15">"vw"</text>
+    <rect x="10" y="30" width="175" height="200" rx="10" ry="10" style="fill:url(#radialGradient1);             stroke: #005000;             stroke-width: 3;" />
+    <text x="315" y="15">"vh"</text>
+    <rect x="300" y="30" width="175" height="200" rx="10" ry="10" style="fill:url(#radialGradient2);             stroke: #005000;             stroke-width: 3;" />
+    <text x="15" y="255">"vmin"</text>
+    <rect x="10" y="270" width="175" height="200" rx="10" ry="10" style="fill:url(#radialGradient3);             stroke: #005000;             stroke-width: 3;" />
+    <text x="315" y="255">"vmax"</text>
+    <rect x="300" y="270" width="175" height="200" rx="10" ry="10" style="fill:url(#radialGradient4);             stroke: #005000;             stroke-width: 3;" />
+  </svg>
+</svg>

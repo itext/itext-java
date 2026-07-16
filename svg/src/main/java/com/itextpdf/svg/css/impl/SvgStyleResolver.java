@@ -91,7 +91,12 @@ public class SvgStyleResolver implements ICssResolver {
 
     // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
     private static final String[] ELEMENTS_INHERITING_PARENT_STYLES = new String[]{
-            Tags.MARKER, Tags.LINEAR_GRADIENT, StringNormalizer.toLowerCase(Tags.LINEAR_GRADIENT), Tags.PATTERN
+            Tags.MARKER,
+            Tags.LINEAR_GRADIENT,
+            StringNormalizer.toLowerCase(Tags.LINEAR_GRADIENT),
+            Tags.RADIAL_GRADIENT,
+            StringNormalizer.toLowerCase(Tags.RADIAL_GRADIENT),
+            Tags.PATTERN
     };
 
     private static final LazyLogger LOGGER = new LazyLogger(SvgStyleResolver.class);

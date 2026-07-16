@@ -1,0 +1,22 @@
+<svg x="0" y="0" width="1200" height="1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="radialGradient1" gradientUnits="userSpaceOnUse" cx="50%" cy="10px" fy="3cm" r="50%" fx="1mm">
+      <stop offset="0%" stop-color="green" stop-opacity="1" />
+      <stop offset="0%" stop-color="red" stop-opacity="1" />
+      <stop offset="100%" stop-color="blue" stop-opacity="1" />
+      <stop offset="100%" stop-color="yellow" stop-opacity="1" />
+    </radialGradient>
+    <radialGradient id="radialGradient2" gradientUnits="userSpaceOnUse" cx="50%" cy="4pc" fy="2in" r="50%" fx="1cm">
+      <stop offset="0%" stop-color="green" stop-opacity="1" />
+      <stop offset="0%" stop-color="red" stop-opacity="1" />
+      <stop offset="100%" stop-color="blue" stop-opacity="1" />
+      <stop offset="100%" stop-color="yellow" stop-opacity="1" />
+    </radialGradient>
+  </defs>
+  <svg x="0" y="80" width="600" height="950">
+    <text x="15" y="15">"cm"</text>
+    <rect x="10" y="30" width="175" height="200" rx="10" ry="10" style="fill:url(#radialGradient1);             stroke: #005000;             stroke-width: 3;" />
+    <text x="315" y="15">"mm"</text>
+    <rect x="300" y="30" width="175" height="200" rx="10" ry="10" style="fill:url(#radialGradient2);             stroke: #005000;             stroke-width: 3;" />
+  </svg>
+</svg>

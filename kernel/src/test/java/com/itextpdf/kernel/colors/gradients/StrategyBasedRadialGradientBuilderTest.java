@@ -80,7 +80,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void noStrategyProvidedTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE));
@@ -90,7 +90,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void absoluteCenterFromLeftBottomTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 120, false, true, 50, false)
                 .setRadiusRelativeToBoundingBoxSize(100, false, 100, false)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -102,7 +102,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void absoluteCenterFromRightTopTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(false, 120, false, false, 50, false)
                 .setRadiusRelativeToBoundingBoxSize(100, false, 100, false)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -114,7 +114,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void absoluteNegativeCenterFromLeftBottomTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, -120, false, true, -50, false)
                 .setRadiusRelativeToBoundingBoxSize(200, false, 200, false)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -126,7 +126,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void absoluteNegativeCenterFromRightTopTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(false, -120, false, false, -50, false)
                 .setRadiusRelativeToBoundingBoxSize(200, false, 200, false)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -138,7 +138,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void relativeCenterFromLeftBottomTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 0.1d, true, true, 0.1d, true)
                 .setRadiusRelativeToBoundingBoxSize(100, false, 100, false)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -150,7 +150,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void relativeCenterFromRightTopTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(false, 0.1d, true, false, 0.1d, true)
                 .setRadiusRelativeToBoundingBoxSize(100, false, 100, false)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -162,7 +162,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderClosestSideEllipseTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 0.3, true, true, 0.2, true)
                 .setRadiusFromCenterStrategy(false, GradientStrategy.CLOSEST_SIDE)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -174,7 +174,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderClosestCornerEllipseTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 0.3, true, true, 0.2, true)
                 .setRadiusFromCenterStrategy(false, GradientStrategy.CLOSEST_CORNER)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -186,7 +186,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderFarthestSideEllipseTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 0.3, true, true, 0.2, true)
                 .setRadiusFromCenterStrategy(false, GradientStrategy.FARTHEST_SIDE)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -198,7 +198,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderFarthestCornerEllipseTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 0.3, true, true, 0.2, true)
                 .setRadiusFromCenterStrategy(false, GradientStrategy.FARTHEST_CORNER)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -210,7 +210,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderClosestSideCircleTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 0.3, true, true, 0.2, true)
                 .setRadiusFromCenterStrategy(true, GradientStrategy.CLOSEST_SIDE)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -222,7 +222,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderClosestCornerCircleTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 0.3, true, true, 0.2, true)
                 .setRadiusFromCenterStrategy(true, GradientStrategy.CLOSEST_CORNER)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -234,7 +234,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderFarthestSideCircleTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 0.3, true, true, 0.2, true)
                 .setRadiusFromCenterStrategy(true, GradientStrategy.FARTHEST_SIDE)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -246,7 +246,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderFarthestCornerCircleTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 0.3, true, true, 0.2, true)
                 .setRadiusFromCenterStrategy(true, GradientStrategy.FARTHEST_CORNER)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
@@ -258,7 +258,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderZeroManualRadiusWithPadTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setRadiusRelativeToBoundingBoxSize(0, false, 0, false)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -270,7 +270,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderManualRadiusTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setRadiusRelativeToBoundingBoxSize(0.3d, true, 20, false)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -281,7 +281,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderNegativeRadiusTest() {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setRadiusRelativeToBoundingBoxSize(-0.3d, true, -20, false)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -293,7 +293,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
 
     @Test
     public void builderWithNoneSpreadingAndCanvasTransformTest() throws IOException, InterruptedException {
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new StrategyBasedRadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1d, OffsetType.RELATIVE))
@@ -306,7 +306,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
     }
 
     private void generateAndComparePdfs(String fileName, AffineTransform transform,
-            AbstractGradientBuilder<RadialGradientPoint> gradientBuilder) throws InterruptedException, IOException {
+            IGradientBuilder gradientBuilder) throws InterruptedException, IOException {
         String outPdfPath = DESTINATION_FOLDER + fileName;
         try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdfPath))) {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());

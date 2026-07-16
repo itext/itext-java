@@ -578,6 +578,21 @@ public final class SvgConstants {
         public static final String GRADIENT_TRANSFORM = "gradientTransform";
 
         /**
+         * Attribute defining the radius of radial gradient focal point.
+         */
+        public static final String FR = "fr";
+
+        /**
+         * Attribute defining the x value of radial gradient focal point.
+         */
+        public static final String FX = "fx";
+
+        /**
+         * Attribute defining the y value of radial gradient focal point.
+         */
+        public static final String FY = "fy";
+
+        /**
          * Attribute defining the height. Used in several elements.
          */
         public static final String HEIGHT = "height";

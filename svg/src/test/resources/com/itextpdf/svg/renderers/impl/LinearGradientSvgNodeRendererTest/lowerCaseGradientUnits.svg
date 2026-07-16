@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="260">
+    <defs>
+        <linearGradient id="g" gradientunits="userSpaceOnUse" x1="10" y1="120" x2="390" y2="120">
+            <stop offset="0%" stop-color="red"/>
+            <stop offset="100%" stop-color="blue"/>
+        </linearGradient>
+    </defs>
+    <rect x="10" y="10" width="380" height="220" fill="url(#g)"/>
+</svg>

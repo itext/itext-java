@@ -68,7 +68,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithNullArgumentsAndWithoutSettersTest() {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder();
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder();
 
         Assertions.assertNull(gradientBuilder.buildColor(targetBoundingBox, null, null));
     }
@@ -76,7 +76,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithOneStopTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 140f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -89,7 +89,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildWithTwoStopsFullPlaneTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 140f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -103,7 +103,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildWithTwoStopsFullPlaneWithHugeStopsTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 131f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -117,7 +117,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildWithTwoStopsHalfPlaneTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() - 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft(), targetBoundingBox.getBottom() + 100f, 130f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -131,7 +131,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildWithTwoStopsHalfPlaneNonCoveredTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() - 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() - 200f, targetBoundingBox.getBottom() + 100f, 130f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -141,12 +141,11 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
         generateAndComparePdfs("twoStopsHalfPlaneNonCovered.pdf", targetBoundingBox, null, gradientBuilder);
     }
 
-
     @Test
     public void buildWithTwoStopsHalfPlaneIntersectTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 130f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -160,7 +159,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildWithTwoStopsConeTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -174,7 +173,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildWithTwoStopsMatchCenterTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 0f,
                         targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -196,7 +195,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
         Point center = new Point(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f);
         center = transform.inverseTransform(center, null);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(center.getX(), center.getY(), 0f,
                         center.getX(), center.getY(), 100f)
                 .setCurrentSpaceToGradientVectorSpaceTransformation(transform)
@@ -210,7 +209,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithTwoStopsAtTheBeginningTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -223,7 +222,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithTwoStopsAtTheEndTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -236,7 +235,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithTwoStopsInTheMiddleTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -249,7 +248,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithTwoStopsBeforeTheBeginningTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -262,7 +261,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithTwoStopsAfterTheEndTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -275,7 +274,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void padCaseWithVeryCloseCornerStopsTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -290,7 +289,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithDoublingStopsAtEndsAndPadTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -307,7 +306,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithDoublingStopsAtEndsAndEndsOfCoordinatesAndPadTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -326,7 +325,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithoutCoordinatesTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setSpread(GradientSpreadMethod.PAD)
                 .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0d, OffsetType.RELATIVE))
                 .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue(), 0.5, OffsetType.RELATIVE))
@@ -338,7 +337,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithZeroVectorTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -352,7 +351,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithSameRadiusTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 30f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -366,7 +365,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithDecreasingRadiusTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 100f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 30f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -380,7 +379,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithDecreasingRadiusHalfPlaneTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 130f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 30f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -394,7 +393,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithDecreasingRadiusFullPlaneTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 140f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 30f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -408,7 +407,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithNullArgumentsAndWithoutStopsTest() {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD);
@@ -419,7 +418,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithNullArgumentsAndNoneSpreadingTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -434,7 +433,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithNullArgumentsAndPadSpreadingTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -449,7 +448,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithNullArgumentsAndReflectSpreadingTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.REFLECT)
@@ -464,7 +463,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithNullArgumentsAndRepeatSpreadingTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -479,7 +478,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void builderWithNoneSpreadingTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -493,7 +492,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void builderWithNoneSpreadingAndCanvasTransformTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -513,7 +512,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
         AffineTransform gradientTransform = AffineTransform.getTranslateInstance(150, -50);
         gradientTransform.scale(0.5, 1.5);
         gradientTransform.rotate(Math.PI / 3, 400f, 550f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setCurrentSpaceToGradientVectorSpaceTransformation(gradientTransform)
@@ -531,7 +530,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void builderWithPadSpreadingTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -545,7 +544,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void builderWithReflectSpreadingTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.REFLECT)
@@ -559,7 +558,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void builderWithRepeatSpreadingTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -576,7 +575,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
         AffineTransform gradientTransform = AffineTransform.getTranslateInstance(150, -50);
         gradientTransform.scale(0.5, 1.5);
         gradientTransform.rotate(Math.PI / 3, 400f, 550f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setCurrentSpaceToGradientVectorSpaceTransformation(gradientTransform)
@@ -594,7 +593,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithAutoStopAndAbsoluteOnCoordinatesHintTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -609,7 +608,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithAutoStopAndRelativeOnCoordinatesHintTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -624,7 +623,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithAutoStopAndRelativeBetweenColorsHintTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -639,7 +638,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithAutoStopAndRelativeBetweenColorsZeroHintTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -654,7 +653,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithAutoStopAndRelativeBetweenColorsOneHintTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -669,7 +668,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithPadSpreadingAndRelativeBetweenColorsZeroHintTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -685,7 +684,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithPadSpreadingAndRelativeBetweenColorsOneHintTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -701,7 +700,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithAutoStopAndNoneHintTypeTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -716,7 +715,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithReflectSpreadingAndStopsOutsideCoordinatesTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.REFLECT)
@@ -729,7 +728,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithSingleAutoStopsAtStartAndEndTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -746,7 +745,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithSingleAutoStopsAtStartAndEndWithHintsTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -763,7 +762,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithMultipleAutoStopsAtStartAndEndWithHintsTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -780,7 +779,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithAutoStopsInTheMiddleTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -799,7 +798,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithAutoStopsInTheMiddleWithHintsTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -817,7 +816,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithDecreasingOffsetsTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -839,7 +838,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void builderWithZeroColorsLengthAndReflect() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.REFLECT)
@@ -853,7 +852,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithTwoStopsBeforeTheBeginningAndNoneTest() {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -866,7 +865,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithTwoStopsAfterEndAndNoneTest() {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -879,7 +878,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithTwoEqualOffsetsStopsAndNoneTest() {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -892,7 +891,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithTwoStopsInCenterAndNoneTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -905,7 +904,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     @Test
     public void buildWithTwoStopsOutsideAndNoneTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200, targetBoundingBox.getBottom() + 100f, 100f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -923,7 +922,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildStopsDefaultLimitRepeatTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 103f, targetBoundingBox.getBottom() + 100f, 33f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -945,7 +944,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildStopsLimitReachedRepeatTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 130f)
                 .setSpread(GradientSpreadMethod.REPEAT)
@@ -965,7 +964,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildStopsLimitReachedReflectTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 130f)
                 .setSpread(GradientSpreadMethod.REFLECT)
@@ -981,7 +980,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildStopsLimitReachedPadTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 130f)
                 .setSpread(GradientSpreadMethod.PAD)
@@ -997,7 +996,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     public void buildStopsLimitReachedNoneTest() throws IOException, InterruptedException {
         Rectangle targetBoundingBox = new Rectangle(50f, 450f, 300f, 300f);
 
-        AbstractGradientBuilder<RadialGradientPoint> gradientBuilder = new RadialGradientBuilder()
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
                 .setGradientVector(targetBoundingBox.getLeft() + 100f, targetBoundingBox.getBottom() + 100f, 30f,
                         targetBoundingBox.getLeft() + 200f, targetBoundingBox.getBottom() + 100f, 130f)
                 .setSpread(GradientSpreadMethod.NONE)
@@ -1009,13 +1008,44 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
                 gradientPropertiesResolver);
     }
 
+
+    @Test
+    public void buildWithIncreasingRadiusNegativeMaxYTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(75, 75, 450, 300);
+        AffineTransform currentToGradient = new AffineTransform(600, 0, 0, 400, 75, 75);
+
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
+                .setGradientVector(0f, 0.5625f, 0f, 0.375f, 0.5625f, 0.375f)
+                .setCurrentSpaceToGradientVectorSpaceTransformation(currentToGradient)
+                .setSpread(GradientSpreadMethod.REPEAT)
+                .addStopColor(new GradientColorStop(ColorConstants.ORANGE.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.MAGENTA.getColorValue(), 1d, OffsetType.RELATIVE));
+
+        generateAndComparePdfs("increasingRadiusNegativeMaxY.pdf", targetBoundingBox, null, gradientBuilder);
+    }
+
+    @Test
+    public void buildWithIncreasingRadiusPositiveMaxYTest() throws IOException, InterruptedException {
+        Rectangle targetBoundingBox = new Rectangle(75, 75, 450, 300);
+        AffineTransform currentToGradient = new AffineTransform(600, 0, 0, 400, 75, 75);
+
+        IGradientBuilder gradientBuilder = new RadialGradientBuilder()
+                .setGradientVector(0f, 0.2f, 0f, 0.375f, 0.2f, 0.375f)
+                .setCurrentSpaceToGradientVectorSpaceTransformation(currentToGradient)
+                .setSpread(GradientSpreadMethod.REPEAT)
+                .addStopColor(new GradientColorStop(ColorConstants.ORANGE.getColorValue(), 0d, OffsetType.RELATIVE))
+                .addStopColor(new GradientColorStop(ColorConstants.MAGENTA.getColorValue(), 1d, OffsetType.RELATIVE));
+
+        generateAndComparePdfs("increasingRadiusPositiveMaxY.pdf", targetBoundingBox, null, gradientBuilder);
+    }
+
     private void generateAndComparePdfs(String fileName, Rectangle toDraw, AffineTransform transform,
-            AbstractGradientBuilder<RadialGradientPoint> gradientBuilder) throws InterruptedException, IOException {
+            IGradientBuilder gradientBuilder) throws InterruptedException, IOException {
         generateAndComparePdfs(fileName, toDraw, transform, gradientBuilder, null);
     }
 
     private void generateAndComparePdfs(String fileName, Rectangle toDraw, AffineTransform transform,
-            AbstractGradientBuilder<RadialGradientPoint> gradientBuilder,
+            IGradientBuilder gradientBuilder,
             GradientPropertiesResolver gradientPropertiesResolver) throws InterruptedException, IOException {
         DocumentProperties properties = new DocumentProperties();
         if (gradientPropertiesResolver != null) {
@@ -1041,7 +1071,7 @@ public class RadialGradientBuilderTest extends ExtendedITextTest {
     }
 
     private void generateAndComparePdfsWithoutArgumentToBuild(String fileName, Rectangle toDraw,
-            AbstractGradientBuilder<RadialGradientPoint> gradientBuilder) throws InterruptedException, IOException {
+            IGradientBuilder gradientBuilder) throws InterruptedException, IOException {
         String outPdfPath = DESTINATION_FOLDER + fileName;
         try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdfPath))) {
             PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());

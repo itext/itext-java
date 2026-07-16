@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="260">
+  <defs>
+    <radialGradient id="g" cx="40%" cy="60%" r="65%">
+      <stop offset="0%" stop-color="red"/>
+      <stop offset="100%" stop-color="blue"/>
+    </radialGradient>
+  </defs>
+  <rect x="20" y="20" width="320" height="210" fill="url(#g)"/>
+</svg>

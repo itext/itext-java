@@ -38,6 +38,7 @@ import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PatternSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolylineSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.RadialGradientSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.RectangleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.StopSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.SvgTagSvgNodeRenderer;
@@ -61,6 +62,7 @@ class DefaultSvgNodeRendererMapper {
 
     private static final String CLIP_PATH_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.CLIP_PATH);
     private static final String LINEAR_GRADIENT_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.LINEAR_GRADIENT);
+    private static final String RADIAL_GRADIENT_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.RADIAL_GRADIENT);
     private static final String TEXT_LEAF_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.TEXT_LEAF);
 
     /**
@@ -87,6 +89,7 @@ class DefaultSvgNodeRendererMapper {
         result.put(SvgConstants.Tags.PATH, () -> new PathSvgNodeRenderer());
         result.put(SvgConstants.Tags.POLYGON, () -> new PolygonSvgNodeRenderer());
         result.put(SvgConstants.Tags.POLYLINE, () -> new PolylineSvgNodeRenderer());
+        result.put(SvgConstants.Tags.RADIAL_GRADIENT, () -> new RadialGradientSvgNodeRenderer());
         result.put(SvgConstants.Tags.RECT, () -> new RectangleSvgNodeRenderer());
         result.put(SvgConstants.Tags.STOP, () -> new StopSvgNodeRenderer());
         result.put(SvgConstants.Tags.SVG, () -> new SvgTagSvgNodeRenderer());
@@ -99,6 +102,7 @@ class DefaultSvgNodeRendererMapper {
         // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
         result.put(CLIP_PATH_LC, () -> new ClipPathSvgNodeRenderer());
         result.put(LINEAR_GRADIENT_LC, () -> new LinearGradientSvgNodeRenderer());
+        result.put(RADIAL_GRADIENT_LC, () -> new RadialGradientSvgNodeRenderer());
         result.put(TEXT_LEAF_LC, () -> new TextLeafSvgNodeRenderer());
 
         mapping = Collections.unmodifiableMap(result);
@@ -157,7 +161,6 @@ class DefaultSvgNodeRendererMapper {
         ignoredTags.add(SvgConstants.Tags.METADATA);
         ignoredTags.add(SvgConstants.Tags.MISSING_GLYPH);
 
-        ignoredTags.add(SvgConstants.Tags.RADIAL_GRADIENT);
 
         ignoredTags.add(SvgConstants.Tags.STYLE);
 

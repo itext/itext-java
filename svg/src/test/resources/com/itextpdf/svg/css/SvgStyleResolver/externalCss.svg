@@ -12,6 +12,16 @@
 <desc>Mozilla CSS Getting Started - SVG demonstration</desc>
 
 <defs>
+  <radialGradient
+          id="fade"
+          cx="0"
+          cy="0"
+          r="200"
+          gradientUnits="userSpaceOnUse">
+    <stop id="fade-stop-1" offset="33%" />
+    <stop id="fade-stop-2" offset="95%" />
+  </radialGradient>
+
   <g id="segment" class="segment">
     <path class="segment-fill" d="M0,0 v-200 a40,40 0 0,0 -62,10 z"/>
     <path class="segment-edge" d="M0,-200 a40,40 0 0,0 -62,10"/>

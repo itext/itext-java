@@ -1,0 +1,14 @@
+<svg x="0" y="0" width="800" height="600" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <defs>
+    <radialGradient id="myFillGradient" spreadMethod="reflect" cx="50%" cy="50%" r="50%" fx="40%">
+      <stop offset="0" stop-color="orange" />
+      <stop offset="0" stop-color="magenta" />
+      <stop offset="0.5" stop-color="red" />
+      <stop offset="0.5" stop-color="green" />
+      <stop offset="0.5" stop-color="blue" />
+      <stop offset="1" stop-color="magenta" />
+      <stop offset="1" stop-color="black" />
+    </radialGradient>
+  </defs>
+  <rect x="100" y="100" width="600" height="400" stroke="black" fill="url(#myFillGradient)" />
+</svg>

@@ -159,7 +159,7 @@ public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 7),
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 6),
     })
     public void caseSensitiveTagTest() {
         String contents = "<svg width='100pt' height='100pt'>" +

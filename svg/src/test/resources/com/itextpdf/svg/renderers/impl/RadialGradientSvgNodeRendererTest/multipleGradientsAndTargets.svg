@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="260">
+  <defs>
+    <radialGradient id="g1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="red"/>
+      <stop offset="100%" stop-color="blue"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="20%" cy="30%" r="40%">
+      <stop offset="0%" stop-color="yellow"/>
+      <stop offset="100%" stop-color="green"/>
+    </radialGradient>
+  </defs>
+  <rect x="10" y="10" width="180" height="220" fill="url(#g1)"/>
+  <rect x="210" y="10" width="180" height="220" fill="url(#g2)"/>
+</svg>
