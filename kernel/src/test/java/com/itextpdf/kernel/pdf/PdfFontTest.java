@@ -1443,7 +1443,7 @@ public class PdfFontTest extends ExtendedITextTest {
         byte[] afm = StreamUtil.inputStreamToArray(FileUtil.getInputStreamForFile(FONTS_FOLDER + "cmr10.afm"));
         PdfFont font = PdfFontFactory.createFont(FontProgramFactory.createType1Font(afm, afm, false), null);
         byte[] streamContent = ((Type1Font) ((PdfType1Font) font).getFontProgram()).getFontStreamBytes();
-        Assertions.assertTrue(streamContent == null, "Empty stream content expected");
+        Assertions.assertNull(streamContent, "Empty stream content expected");
     }
 
     @Test
@@ -1903,7 +1903,7 @@ public class PdfFontTest extends ExtendedITextTest {
     @Test
     public void testCheckTTCSize() throws IOException {
         TrueTypeCollection collection = new TrueTypeCollection(FONTS_FOLDER + "NotoSerifCJK-VF.ttf.ttc");
-        Assertions.assertTrue(collection.getTTCSize() == 5);
+        Assertions.assertEquals(5, collection.getTTCSize());
     }
 
     @Test
@@ -1952,10 +1952,10 @@ public class PdfFontTest extends ExtendedITextTest {
     public void testSplitString() throws IOException {
         PdfFont font = PdfFontFactory.createFont();
         List<String> list1 = font.splitString("Hello", 12f, 10);
-        Assertions.assertTrue(list1.size() == 3);
+        Assertions.assertEquals(3, list1.size());
 
         List<String> list2 = font.splitString("Digitally signed by Dmitry Trusevich\nDate: 2015.10.25 14:43:56 MSK\nReason: Test 1\nLocation: Ghent", 12f, 176);
-        Assertions.assertTrue(list2.size() == 5);
+        Assertions.assertEquals(5, list2.size());
     }
 
     @Test
