@@ -527,12 +527,10 @@
                   <exclude>com.itextpdf.io.codec.brotli.dec</exclude>
                 </excludes>
                 <excludeModules>
-                  <excludeModule>brotli-compressor</excludeModule>
                   <excludeModule>bouncy-castle-adapter</excludeModule>
                   <excludeModule>bouncy-castle-connector</excludeModule>
                   <excludeModule>bouncy-castle-fips-adapter</excludeModule>
                   <excludeModule>pdftest</excludeModule>
-                  <excludeModule>webp-image-support</excludeModule>
                 </excludeModules>
               </parameter>
             </configuration>
