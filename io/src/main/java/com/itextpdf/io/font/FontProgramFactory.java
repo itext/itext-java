@@ -172,7 +172,7 @@ public final class FontProgramFactory {
             throws java.io.IOException {
         String baseName = FontProgram.trimFontStyle(name);
 
-        //yes, we trying to find built-in standard font with original name, not baseName.
+        // Yes, we are trying to find built-in standard font with original name, not baseName
         boolean isBuiltinFonts14 = StandardFonts.isStandardFont(name);
         boolean isCidFont = !isBuiltinFonts14 && CjkResourceLoader.isPredefinedCidFont(baseName);
 
@@ -289,7 +289,7 @@ public final class FontProgramFactory {
      * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading the file
      */
     public static FontProgram createType1Font(byte[] afm, byte[] pfb, boolean cached) throws java.io.IOException {
-        return createType1Font(null, null, afm, pfb, cached);
+        return createType1Font(null, null, afm, pfb, cached, null);
     }
 
     /**
@@ -314,7 +314,24 @@ public final class FontProgramFactory {
      * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading the file
      */
     public static FontProgram createType1Font(String metricsPath, String binaryPath, boolean cached) throws java.io.IOException {
-        return createType1Font(metricsPath, binaryPath, null, null, cached);
+        return createType1Font(metricsPath, binaryPath, null, null, cached, null);
+    }
+
+    /**
+     * Creates a new Type 1 font by the corresponding AFM/PFM and PFB files
+     *
+     * @param metricsPath path to the AFM or PFM metrics file
+     * @param fontEncoding the encoding used to remap character codes to Unicode values after the font
+     *                     has been parsed; may be {@code null} to skip glyph remapping
+     * @param cached specifies whether to cache the created {@link FontProgram} or not
+     *
+     * @return created {@link FontProgram} instance
+     *
+     * @throws java.io.IOException exception is thrown in case an I/O error occurs when reading the file
+     */
+    public static FontProgram createType1Font(String metricsPath, FontEncoding fontEncoding, boolean cached)
+            throws java.io.IOException {
+        return createType1Font(metricsPath, null, null, null, cached, fontEncoding);
     }
 
     /**
@@ -497,18 +514,21 @@ public final class FontProgramFactory {
         return fontRegisterProvider.isRegisteredFont(fontName);
     }
 
-    private static FontProgram createType1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb, boolean cached) throws java.io.IOException {
+    private static FontProgram createType1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb,
+            boolean cached, FontEncoding fontEncoding) throws java.io.IOException {
         FontProgram fontProgram;
         FontCacheKey fontKey = null;
         if (cached) {
-            fontKey = createFontCacheKey(metricsPath, afm);
+            String encKeyNamePart = fontEncoding == null ? "" : fontEncoding.getBaseEncoding();
+            fontKey = createFontCacheKey(metricsPath == null ? null : (metricsPath + encKeyNamePart),
+                    afm == null ? pfb : afm);
             fontProgram = FontCache.getFont(fontKey);
             if (fontProgram != null) {
                 return fontProgram;
             }
         }
 
-        fontProgram = new Type1Font(metricsPath, binaryPath, afm, pfb);
+        fontProgram = new Type1Font(metricsPath, binaryPath, afm, pfb, fontEncoding);
         return cached ? FontCache.saveFont(fontProgram, fontKey) : fontProgram;
     }
 

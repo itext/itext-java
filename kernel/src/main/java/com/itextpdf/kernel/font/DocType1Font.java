@@ -55,12 +55,13 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
             CMapToUnicode toUnicode) {
         final String baseFont = getBaseFont(fontDictionary);
         if (!fontDictionary.containsKey(PdfName.FontDescriptor)) {
-            final Type1Font type1StdFont = getType1Font(baseFont);
+            final Type1Font type1StdFont = getType1Font(baseFont, fontEncoding);
             if (type1StdFont != null) {
-                type1StdFont.initializeGlyphs(fontEncoding);
                 return type1StdFont;
             }
         }
+
+        // Here we don't cache font program on kernel level
         DocType1Font fontProgram = new DocType1Font(baseFont);
         PdfDictionary fontDesc = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         fontProgram.subtype = fontDesc != null ? fontDesc.getAsName(PdfName.Subtype) : null;
@@ -107,16 +108,13 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         return baseFontName.getValue();
     }
 
-    static Type1Font getType1Font(String baseFont) {
+    static Type1Font getType1Font(String baseFont, FontEncoding fontEncoding) {
         try {
-            //if there are no font modifiers, cached font could be used,
-            //otherwise a new instance should be created.
-            return (Type1Font) FontProgramFactory.createFont(baseFont, false);
-        } catch (Exception e ) {
+            return (Type1Font) FontProgramFactory.createType1Font(baseFont, fontEncoding, true);
+        } catch (Exception e) {
             return null;
         }
     }
-
 
     @Override
     public PdfStream getFontFile() {

@@ -69,11 +69,45 @@ public class Type1Font extends FontProgram {
         fontNames = new FontNames();
     }
 
-    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws java.io.IOException {
+    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb)
+            throws java.io.IOException {
+        this(metricsPath, binaryPath, afm, pfb, null);
+    }
+
+    /**
+     * Creates a {@link Type1Font} by parsing the AFM/PFM metrics and, optionally, the PFB binary
+     * data, then applying an explicit encoding to the resulting glyph maps.
+     *
+     * <p>
+     * The font source may be supplied either as file-system paths or as raw byte arrays; one pair
+     * ({@code metricsPath}/{@code binaryPath} or {@code afm}/{@code pfb}) must be non-{@code null}.
+     * After parsing, if {@code fontEncoding} is non-{@code null}, {@link #initializeGlyphs(FontEncoding)}
+     * is called to remap character codes according to that encoding.
+     *
+     * @param metricsPath  path to the AFM or PFM metrics file, or a built-in standard font name,
+     *                     or {@code null} if {@code afm} bytes are provided instead
+     * @param binaryPath   path to the PFB binary file, or {@code null} if {@code pfb} bytes are
+     *                     provided or if the font is a built-in standard font
+     * @param afm          byte contents of the AFM or PFM metrics file, or {@code null} if
+     *                     {@code metricsPath} is provided instead
+     * @param pfb          byte contents of the PFB binary file, or {@code null} if {@code binaryPath}
+     *                     is provided or if the font is a built-in standard font
+     * @param fontEncoding the encoding used to remap character codes to Unicode values after the font
+     *                     has been parsed; may be {@code null} to skip glyph remapping
+     *
+     * @throws java.io.IOException if an I/O error occurs while reading the metrics or binary file,
+     *                             or if the AFM/PFM data is malformed
+     */
+    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb, FontEncoding fontEncoding)
+            throws java.io.IOException {
         this();
 
         fontParser = new Type1Parser(metricsPath, binaryPath, afm, pfb);
         process();
+
+        if (fontEncoding != null) {
+            initializeGlyphs(fontEncoding);
+        }
     }
 
     protected Type1Font(String baseFont) {
@@ -85,7 +119,10 @@ public class Type1Font extends FontProgram {
      * Fills missing character codes in {@code codeToGlyph} map.
      *
      * @param fontEncoding to be used to map unicode values to character codes.
+     *
+     * @deprecated to make private
      */
+    @Deprecated
     public void initializeGlyphs(FontEncoding fontEncoding) {
         for (int i = 0; i < 256; i++) {
             final int unicode = fontEncoding.getUnicode(i);

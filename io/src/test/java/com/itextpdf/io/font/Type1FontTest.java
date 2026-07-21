@@ -37,9 +37,7 @@ public class Type1FontTest extends ExtendedITextTest {
     @Test
     public void fillUsingEncodingTest() throws IOException {
         FontEncoding fontEncoding = FontEncoding.createFontEncoding("WinAnsiEncoding");
-        Type1Font type1StdFont = (Type1Font) FontProgramFactory.createFont("Helvetica", true);
-        Assertions.assertEquals(149, type1StdFont.codeToGlyph.size());
-        type1StdFont.initializeGlyphs(fontEncoding);
+        Type1Font type1StdFont = (Type1Font) FontProgramFactory.createType1Font("Helvetica", fontEncoding, true);
         Assertions.assertEquals(217, type1StdFont.codeToGlyph.size());
         Assertions.assertEquals(0x2013, type1StdFont.codeToGlyph.get(150).getUnicode());
         Assertions.assertArrayEquals(new char[]{(char)0x2013}, type1StdFont.codeToGlyph.get(150).getChars());
@@ -51,5 +49,25 @@ public class Type1FontTest extends ExtendedITextTest {
                 FONTS_FOLDER + "cmr10.afm", FONTS_FOLDER + "cmr10.pfb");
 
         Assertions.assertEquals(26864, ((Type1Font) fp).getFontStreamBytes().length);
+    }
+
+    @Test
+    public void differentEncodingsTest() throws IOException {
+        FontEncoding fontEncoding = FontEncoding.createFontEncoding("Cp1252");
+        FontEncoding fontEncoding2 = FontEncoding.createFontEncoding("MacRoman");
+        Type1Font font1 = (Type1Font) FontProgramFactory.createType1Font("Helvetica", fontEncoding, true);
+        Type1Font font2 = (Type1Font) FontProgramFactory.createType1Font("Helvetica", fontEncoding2, true);
+
+        Assertions.assertNotSame(font1, font2);
+    }
+
+    @Test
+    public void sameEncodingsTest() throws IOException {
+        FontEncoding fontEncoding = FontEncoding.createFontEncoding("Cp1252");
+        FontEncoding fontEncoding2 = FontEncoding.createFontEncoding("Cp1252");
+        Type1Font font1 = (Type1Font) FontProgramFactory.createType1Font("Helvetica", fontEncoding, true);
+        Type1Font font2 = (Type1Font) FontProgramFactory.createType1Font("Helvetica", fontEncoding2, true);
+
+        Assertions.assertSame(font1, font2);
     }
 }

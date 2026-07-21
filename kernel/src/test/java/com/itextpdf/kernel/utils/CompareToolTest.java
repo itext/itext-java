@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -116,7 +117,9 @@ public class CompareToolTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
-        String outPdf = sourceFolder + "tagged_pdf.pdf";
+        String outRefPdf = sourceFolder + "tagged_pdf.pdf";
+        String outPdf = destinationFolder + "tagged_pdf.pdf";
+        FileUtil.copy(outRefPdf, outPdf);
         String cmpPdf = sourceFolder + "cmp_tagged_xml_neg.xml";
         String result = compareTool.compareTagStructureAgainstXml(outPdf, cmpPdf);
         System.out.println("\nRESULT:\n" + result);
@@ -130,7 +133,9 @@ public class CompareToolTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
-        String outPdf = sourceFolder + "tagged_pdf.pdf";
+        String outRefPdf = sourceFolder + "tagged_pdf.pdf";
+        String outPdf = destinationFolder + "tagged_pdf.pdf";
+        FileUtil.copy(outRefPdf, outPdf);
         String cmpXml = sourceFolder + "cmp_tagged_xml_pos.xml";
         String result = compareTool.compareTagStructureAgainstXml(outPdf, cmpXml);
         System.out.println("\nRESULT:\n" + result);
