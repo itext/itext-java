@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfImageXObjectTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/PdfImageXObjectTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/xobject/PdfImageXObjectTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/xobject/PdfImageXObjectTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -202,7 +202,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void decodingIndexedCsWithRgbTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb.pdf"))) {
             PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));
@@ -214,7 +214,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void decodingIndexedCsWithRgbStringTableTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb_string_table.pdf"))) {
             PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));
@@ -226,7 +226,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6445 fix different DeflaterOutputStream behavior)
+    @org.junit.jupiter.api.Disabled
     public void decodingIndexedCsWithRgbWrongLookupTest() throws IOException {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(SOURCE_FOLDER + "img_indexed_rgb_wrong_lookup.pdf"))) {
             PdfImageXObject imageXObject = pdfDocument.getPage(1).getResources().getImage(new PdfName("Im0"));

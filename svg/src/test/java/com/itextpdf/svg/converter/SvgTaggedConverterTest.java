@@ -52,7 +52,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
 
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/converter/SvgTaggedConverterTest/";
-    public static final String DEST_FOLDER = TestUtil.getOutputPath() + "/svg/converter/SvgTaggedConverterTest/";
+    public static final String DEST_FOLDER = "./target/test/com/itextpdf/svg/converter/SvgTaggedConverterTest/";
 
     @BeforeAll
     public static void beforeClass() {

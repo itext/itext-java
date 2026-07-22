@@ -68,7 +68,7 @@ public class PKCS7ExternalSignatureContainerTest extends ExtendedITextTest {
     private static final boolean FIPS_MODE = "BCFIPS".equals(FACTORY.getProviderName());
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/PKCS7ExternalSignatureContainerTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/";
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();

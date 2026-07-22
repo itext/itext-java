@@ -55,7 +55,7 @@ import org.junit.jupiter.api.Test;
 public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/KeepTogetherDivAndTableTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/KeepTogetherDivAndTableTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/KeepTogetherDivAndTableTest/";
 
     @BeforeAll
     public static void beforeClass() {

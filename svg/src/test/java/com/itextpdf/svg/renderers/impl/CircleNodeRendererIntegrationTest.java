@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class CircleNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/CircleSvgNodeRendererTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/CircleSvgNodeRendererTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/renderers/impl/CircleSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

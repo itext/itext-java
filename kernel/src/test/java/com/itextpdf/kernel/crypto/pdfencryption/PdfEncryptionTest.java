@@ -96,7 +96,7 @@ import org.junit.jupiter.api.Test;
 public class PdfEncryptionTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/crypto/pdfencryption/PdfEncryptionTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto/pdfencryption/PdfEncryptionTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto/pdfencryption/PdfEncryptionTest/";
 
     public static final char[] PRIVATE_KEY_PASS = "testpassphrase".toCharArray();

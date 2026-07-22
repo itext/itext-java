@@ -68,7 +68,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfA1AnnotationCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA1AnnotationCheckTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA1AnnotationCheckTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA1AnnotationCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

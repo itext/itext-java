@@ -55,7 +55,7 @@ public class CrlClientOnlineTest extends ExtendedITextTest {
     private static final String certWithMalformedUrl = certSrc + "certWithMalformedUrl.crt";
     private static final String certWithCorrectUrl = certSrc + "certWithCorrectUrl.crt";
     private static final String chainWithSeveralUrls = certSrc + "chainWithSeveralUrls.pem";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/";
 
     @Test
     public void crlClientOnlineURLConstructorTest() throws MalformedURLException {

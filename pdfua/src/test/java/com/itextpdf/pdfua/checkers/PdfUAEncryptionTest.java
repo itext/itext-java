@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfUAEncryptionTest extends ExtendedITextTest {
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAEncryptionTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUAEncryptionTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUAEncryptionTest/";
     private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
     private static final byte[] USER_PASSWORD = "user".getBytes(StandardCharsets.UTF_8);

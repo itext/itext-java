@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 public class GanttChartsTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/GanttChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/GanttChartsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/googlecharts/GanttChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

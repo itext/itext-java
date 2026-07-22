@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfFormFieldTextTest extends ExtendedITextTest {
     private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/forms/fonts/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormFieldTextTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldTextTest/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldTextTest/";
     private static final String TEXT = "Some text in Russian \u0442\u0435\u043A\u0441\u0442 (text)";
 

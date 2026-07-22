@@ -58,7 +58,7 @@ import java.util.Map;
 @Tag("IntegrationTest")
 public class FlatteningTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FlatteningTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/FlatteningTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/FlatteningTest/";
 
     @BeforeAll
     public static void beforeClass() {

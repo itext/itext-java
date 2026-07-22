@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 public class EmptyNestedTableTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/EmptyNestedTableTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/EmptyNestedTableTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/EmptyNestedTableTest/";
 
     @BeforeAll
     public static void beforeClass() {

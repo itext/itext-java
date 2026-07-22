@@ -94,23 +94,6 @@ public class DeviceRgb extends Color {
         }
     }
 
-    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
-    /**
-     * Create DeviceRGB color from R, G, B values of java.awt.Color
-     * <p>
-     * Note, that alpha chanel is ignored,  but opacity still can be achieved
-     * in some places by using 'setOpacity' method or 'TransparentColor' class.
-     *
-     * @param color the color which RGB values are used
-     */
-    public DeviceRgb(java.awt.Color color) {
-        this(color.getRed(), color.getGreen(), color.getBlue());
-        if (color.getAlpha() != 255) {
-            Logger LOGGER = LoggerFactory.getLogger(DeviceRgb.class);
-            LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.COLOR_ALPHA_CHANNEL_IS_IGNORED, color.getAlpha()));
-        }
-    }
-    // Android-Conversion-Skip-Block-End
 
     /**
      * Creates DeviceRgb color with all colorants intensities initialised as zeroes.

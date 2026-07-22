@@ -55,7 +55,7 @@ import org.junit.jupiter.api.Test;
 public class FloatAndAlignmentTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatAndAlignmentTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FloatAndAlignmentTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatAndAlignmentTest/";
 
     private static String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor " +
             "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco " +

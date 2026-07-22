@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/PdfFormFieldsHierarchyTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/PdfFormFieldsHierarchyTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/PdfFormFieldsHierarchyTest/";
 
     @BeforeAll
     public static void beforeClass() {

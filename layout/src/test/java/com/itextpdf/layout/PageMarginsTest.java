@@ -87,7 +87,7 @@ import org.xml.sax.SAXException;
 @Tag("IntegrationTest")
 public class PageMarginsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PageMarginsTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/PageMarginsTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/PageMarginsTest/";
 
     private static final String DOG = "./src/test/resources/com/itextpdf/layout/PageMarginsTest/DOG.bmp";
 

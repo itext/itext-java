@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PdfCanvasGlyphlineShowTextTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/PdfCanvasGlyphlineShowTextTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/kernel/fonts/";
 

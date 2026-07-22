@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ParagraphTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/ParagraphTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/ParagraphTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/ParagraphTest/";
 
     @BeforeAll

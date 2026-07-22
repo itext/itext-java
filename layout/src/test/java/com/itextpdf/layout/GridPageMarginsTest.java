@@ -67,7 +67,7 @@ public class GridPageMarginsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/layout/GridPageMarginsTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/layout/GridPageMarginsTest/";
+            "./target/test/com/itextpdf/layout/GridPageMarginsTest/";
 
     @BeforeAll
     public static void beforeClass() {

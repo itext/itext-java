@@ -63,7 +63,7 @@ import org.junit.jupiter.api.Test;
 public class PdfAXmpTest extends ExtendedITextTest {
 
     public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfAXmpTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfAXmpTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAXmpTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
 
     @BeforeAll

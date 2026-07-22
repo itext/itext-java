@@ -81,7 +81,7 @@ public class PostQuantumAlgorithmsTest extends ExtendedITextTest {
     private static final boolean FIPS_MODE = "BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName());
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/PostQuantumAlgorithmsTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/PostQuantumAlgorithmsTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/PostQuantumAlgorithmsTest/";
 
     private static final String SOURCE_FILE = SOURCE_FOLDER + "helloWorldDoc.pdf";
     private static final String SIGNATURE_FIELD = "Signature";

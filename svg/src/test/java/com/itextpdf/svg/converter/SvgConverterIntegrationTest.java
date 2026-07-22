@@ -69,7 +69,7 @@ import org.junit.jupiter.api.Test;
 public class SvgConverterIntegrationTest extends SvgIntegrationTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/converter/SvgConverterTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/converter/SvgConverterTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/svg/converter/SvgConverterTest/";
 
     private static final String ECLIPSESVGSTRING = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
             "<svg\n" +

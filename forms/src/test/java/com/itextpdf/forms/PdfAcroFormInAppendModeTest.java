@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     private static final String TEST_NAME = "PdfAcroFormInAppendModeTest/";
-    private static final String DESTINATION_DIR = TestUtil.getOutputPath() + "/forms/" + TEST_NAME;
+    private static final String DESTINATION_DIR = "./target/test/com/itextpdf/forms/" + TEST_NAME;
     private static final String SOURCE_DIR = "./src/test/resources/com/itextpdf/forms/" + TEST_NAME;
 
     private static final String INPUT_FILE_WITH_TWO_FORM_FIELDS = SOURCE_DIR + "inputFileWithTwoFormFields.pdf";

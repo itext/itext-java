@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Test;
 public class HighlightItemsTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/parser/HighlightItemsTest/";
-    private static final String outputPath = TestUtil.getOutputPath() + "/kernel/parser/HighlightItemsTest/";
+    private static final String outputPath = "./target/test/com/itextpdf/kernel/parser/HighlightItemsTest/";
 
     @BeforeAll
     public static void beforeClass() {

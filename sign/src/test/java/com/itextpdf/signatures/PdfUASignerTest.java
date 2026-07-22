@@ -80,7 +80,7 @@ import org.slf4j.LoggerFactory;
 public class PdfUASignerTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/PdfUASignerTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/PdfUASignerTest/";
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/PdfUASignerTest/";
 

@@ -68,7 +68,7 @@ import org.junit.jupiter.api.Test;
 public class KeepTogetherTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/KeepTogetherTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/KeepTogetherTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/KeepTogetherTest/";
 
     private static final String BIG_TEXT = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,\n"
             + " sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,\n"

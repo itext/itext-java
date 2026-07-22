@@ -50,7 +50,7 @@ public class PdfARadiofieldTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = "./src/test/resources/com/itextpdf/pdfa/cmp/PdfARadiofieldTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfARadiofieldTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfARadiofieldTest/";
 
     @BeforeAll
     public static void beforeClass() {

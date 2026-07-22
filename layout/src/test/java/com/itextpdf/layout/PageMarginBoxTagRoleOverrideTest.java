@@ -55,7 +55,7 @@ public class PageMarginBoxTagRoleOverrideTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/layout/PageMarginBoxTagRoleOverrideTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/layout/PageMarginBoxTagRoleOverrideTest/";
+            "./target/test/com/itextpdf/layout/PageMarginBoxTagRoleOverrideTest/";
 
     @BeforeAll
     public static void beforeClass() {

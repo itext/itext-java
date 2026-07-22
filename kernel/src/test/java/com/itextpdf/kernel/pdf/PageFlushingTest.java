@@ -59,7 +59,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PageFlushingTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PageFlushingTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PageFlushingTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PageFlushingTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfDocumentIdTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentTestID/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfDocumentTestID/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentTestID/";
 
     @BeforeAll
     public static void beforeClass() {

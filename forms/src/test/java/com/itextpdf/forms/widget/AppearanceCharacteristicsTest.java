@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class AppearanceCharacteristicsTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/widget/AppearanceCharacteristicsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/widget/AppearanceCharacteristicsTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/widget/AppearanceCharacteristicsTest/";
 
     @BeforeAll
