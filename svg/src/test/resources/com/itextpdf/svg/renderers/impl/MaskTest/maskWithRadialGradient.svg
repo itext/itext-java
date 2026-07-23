@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 294 80" overflow="hidden">
+    <defs>
+        <radialGradient cx="17.95" cy="445.59" r="343.16" fx="1.01366"
+            gradientUnits="userSpaceOnUse" id="radial-gradient"
+            gradientTransform="matrix(1.17 -0.27 -0.23 -1.03 143.33 498.26)">
+            <stop offset="0.06" />
+            <stop offset="0.09" stop-color="#6E6E6E" />
+            <stop offset="0.65" stop-color="#040404" />
+            <stop offset="0.69" />
+        </radialGradient>
+        <clipPath id="clip-path">
+            <rect x="0" y="0" width="80" height="80" fill="none" />
+        </clipPath>
+        <linearGradient x1="-399.01" y1="-123.6" x2="95.23" y2="38.52"
+            gradientUnits="userSpaceOnUse" id="linear-gradient">
+            <stop offset="0" stop-color="#BFE6BF" />
+            <stop offset="1" stop-color="#E6F7E6" />
+        </linearGradient>
+        <mask maskUnits="userSpaceOnUse" x="-277.74" y="-276.34" width="628.04" height="633.7"
+            id="mask">
+            <g id="i">
+                <ellipse cx="-10.32" cy="28.8" rx="211.2" ry="213.09" fill="url(#radial-gradient)" />
+            </g>
+        </mask>
+        <clipPath id="clip-path-2">
+            <path
+                d="M-173.66-96.19 79.84-96.19C87-96.19 92.78-91 92.78-84.66L92.78 68.46C92.78 74.83 87 80 79.84 80L-173.66 80C-180.81 80-186.6 74.84-186.6 68.47L-186.6-84.66C-186.6-91-180.81-96.19-173.66-96.19Z"
+                fill="none" />
+        </clipPath>
+    </defs>
+    <rect width="294" height="80" fill="white" opacity="0.7" />
+    <g opacity="0.8">
+        <g clip-path="url(#clip-path)">
+            <path
+                d="M-173.66-96.2 79.86-96.2C87-96.2 92.8-91 92.8-84.66L92.8 68.46C92.8 74.83 87 80 79.86 80L-173.66 80C-180.81 80-186.6 74.83-186.6 68.46L-186.6-84.66C-186.6-91-180.81-96.2-173.66-96.2Z"
+                fill="url(#linear-gradient)" />
+            <g mask="url(#mask)">
+                <g opacity="0.8">
+                    <g clip-path="url(#clip-path-2)">
+                        <g opacity="0.78">
+                            <line x1="40" y1="40" x2="40" y2="0" stroke="#0B2A66" stroke-width="0.5" opacity="0.35" />
+                            <line x1="40" y1="40" x2="52" y2="0" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="68" y2="0" stroke="#0B2A66" stroke-width="0.5" opacity="0.3" />
+                            <line x1="40" y1="40" x2="80" y2="0" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="80" y2="12" stroke="#0B2A66" stroke-width="0.5" opacity="0.3" />
+                            <line x1="40" y1="40" x2="80" y2="28" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="80" y2="40" stroke="#0B2A66" stroke-width="0.5" opacity="0.35" />
+                            <line x1="40" y1="40" x2="80" y2="52" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="80" y2="68" stroke="#0B2A66" stroke-width="0.5" opacity="0.3" />
+                            <line x1="40" y1="40" x2="80" y2="80" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="68" y2="80" stroke="#0B2A66" stroke-width="0.5" opacity="0.3" />
+                            <line x1="40" y1="40" x2="52" y2="80" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="40" y2="80" stroke="#0B2A66" stroke-width="0.5" opacity="0.35" />
+                            <line x1="40" y1="40" x2="28" y2="80" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="12" y2="80" stroke="#0B2A66" stroke-width="0.5" opacity="0.3" />
+                            <line x1="40" y1="40" x2="0" y2="80" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="0" y2="68" stroke="#0B2A66" stroke-width="0.5" opacity="0.3" />
+                            <line x1="40" y1="40" x2="0" y2="52" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="0" y2="40" stroke="#0B2A66" stroke-width="0.5" opacity="0.35" />
+                            <line x1="40" y1="40" x2="0" y2="28" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="0" y2="12" stroke="#0B2A66" stroke-width="0.5" opacity="0.3" />
+                            <line x1="40" y1="40" x2="0" y2="0" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                            <line x1="40" y1="40" x2="12" y2="0" stroke="#0B2A66" stroke-width="0.5" opacity="0.3" />
+                            <line x1="40" y1="40" x2="28" y2="0" stroke="#0B2A66" stroke-width="0.5" opacity="0.24" />
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <ellipse cx="40" cy="40" rx="26.8" ry="18" id="SVGID" fill="#FFFFFF" />
+        <rect x="25.1" y="25.1" width="29.8" height="29.8" fill="#D1C1D1" />
+    </g>
+
+</svg>

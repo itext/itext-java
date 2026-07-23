@@ -49,6 +49,10 @@ import org.junit.jupiter.api.Test;
 @Tag("UnitTest")
 public class ImageSvgNodeRendererUnitTest extends ExtendedITextTest {
 
+    private static final float EPSILON = 0.00001f;
+    private static final String IMAGE_DATA = "data:image/png;base64,"
+            + "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
+
     @Test
     public void noObjectBoundingBoxTest() {
         ImageSvgNodeRenderer renderer = new ImageSvgNodeRenderer();
@@ -89,6 +93,24 @@ public class ImageSvgNodeRendererUnitTest extends ExtendedITextTest {
             // 100px x 50px converted to points
             Assertions.assertTrue(contentStream.contains("75 0 0 -37.5 0 37.5 cm"));
         }
+    }
+
+    @Test
+    public void objectBoundingBoxTest() {
+        ImageSvgNodeRenderer renderer = new ImageSvgNodeRenderer();
+        renderer.setAttribute(SvgConstants.Attributes.HREF, IMAGE_DATA);
+        renderer.setAttribute(SvgConstants.Attributes.X, "10");
+        renderer.setAttribute(SvgConstants.Attributes.Y, "20");
+        renderer.setAttribute(SvgConstants.Attributes.WIDTH, "40");
+        renderer.setAttribute(SvgConstants.Attributes.HEIGHT, "30");
+        renderer.setAttribute(SvgConstants.Attributes.PRESERVE_ASPECT_RATIO, SvgConstants.Values.NONE);
+
+        SvgDrawContext context = new SvgDrawContext(null, null);
+        context.addViewPort(new Rectangle(0, 0, 200, 200));
+        Rectangle objectBoundingBox = renderer.getObjectBoundingBox(context);
+
+        Assertions.assertNotNull(objectBoundingBox);
+        Assertions.assertTrue(new Rectangle(7.5f, 15f, 30f, 22.5f).equalsWithEpsilon(objectBoundingBox, EPSILON));
     }
 
     @Test

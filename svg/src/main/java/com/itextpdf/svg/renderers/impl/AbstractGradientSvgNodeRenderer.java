@@ -87,6 +87,7 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
         }
 
         configureGradientBuilderStopsAndSpread(builder, parentOpacity);
+        builder.setSvgLuminanceMode(context.isRenderingLuminosityMask());
 
         return builder.buildColor(
                 objectBoundingBox.applyMargins(objectBoundingBoxMargin, objectBoundingBoxMargin,
@@ -116,7 +117,8 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
      */
     @Override
     protected boolean isHidden() {
-        return CommonCssConstants.NONE.equals(this.attributesAndStyles.get(CommonCssConstants.DISPLAY));
+        return this.attributesAndStyles != null
+                && CommonCssConstants.NONE.equals(this.attributesAndStyles.get(CommonCssConstants.DISPLAY));
     }
 
     /**

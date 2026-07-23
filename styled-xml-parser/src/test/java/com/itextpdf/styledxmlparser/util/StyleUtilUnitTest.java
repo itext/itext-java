@@ -90,6 +90,19 @@ public class StyleUtilUnitTest extends ExtendedITextTest {
         Assertions.assertTrue(equal);
     }
 
+    @Test
+    public void mergeParentDeclarationsCaseInsensitiveInheritTest() {
+        Map<String, String> styles = new HashMap<>();
+        styles.put("clip-path", " InHeRiT ");
+        styles.put("mask", "\tINHERIT\n");
+
+        StyleUtil.mergeParentStyleDeclaration(styles, "clip-path", "url(#clip)", null, inheritanceRules);
+        StyleUtil.mergeParentStyleDeclaration(styles, "mask", "url(#mask)", null, inheritanceRules);
+
+        Assertions.assertEquals("url(#clip)", styles.get("clip-path"));
+        Assertions.assertEquals("url(#mask)", styles.get("mask"));
+    }
+
 
     @Test
     public void mergeParentDeclarationsRelativeMeasurementInheritTest(){

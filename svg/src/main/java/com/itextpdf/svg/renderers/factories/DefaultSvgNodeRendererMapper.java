@@ -34,6 +34,7 @@ import com.itextpdf.svg.renderers.impl.ImageSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LinearGradientSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.MarkerSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.MaskSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PatternSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.PolygonSvgNodeRenderer;
@@ -85,6 +86,7 @@ class DefaultSvgNodeRendererMapper {
         result.put(SvgConstants.Tags.LINE, () -> new LineSvgNodeRenderer());
         result.put(SvgConstants.Tags.LINEAR_GRADIENT, () -> new LinearGradientSvgNodeRenderer());
         result.put(SvgConstants.Tags.MARKER, () -> new MarkerSvgNodeRenderer());
+        result.put(SvgConstants.Tags.MASK, () -> new MaskSvgNodeRenderer());
         result.put(SvgConstants.Tags.PATTERN, () -> new PatternSvgNodeRenderer());
         result.put(SvgConstants.Tags.PATH, () -> new PathSvgNodeRenderer());
         result.put(SvgConstants.Tags.POLYGON, () -> new PolygonSvgNodeRenderer());
@@ -157,7 +159,6 @@ class DefaultSvgNodeRendererMapper {
 
         ignoredTags.add(SvgConstants.Tags.HKERN);
 
-        ignoredTags.add(SvgConstants.Tags.MASK);
         ignoredTags.add(SvgConstants.Tags.METADATA);
         ignoredTags.add(SvgConstants.Tags.MISSING_GLYPH);
 

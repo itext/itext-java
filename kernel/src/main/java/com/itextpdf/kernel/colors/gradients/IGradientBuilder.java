@@ -57,6 +57,16 @@ public interface IGradientBuilder {
     IGradientBuilder setSpread(GradientSpreadMethod gradientSpreadMethod);
 
     /**
+     * Sets whether to build a DeviceGray gradient using the SVG luminance coefficients.
+     * This method is SVG-specific because PDF and SVG use different luminance formulas.
+     * By default, gradients are built in DeviceRGB. The original RGB stop colors are not modified.
+     *
+     * @param svgLuminanceMode {@code true} to build a luminance gradient, {@code false} to build an RGB gradient
+     * @return the current builder instance
+     */
+    IGradientBuilder setSvgLuminanceMode(boolean svgLuminanceMode);
+
+    /**
      * Builds the {@link Color} object representing the gradient with specified configuration
      * that fills the target bounding box.
      *

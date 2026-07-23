@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="120" viewBox="0 0 220 120">
+  <defs>
+    <mask id="m" style="mask-type:luminance;">
+      <rect x="10" y="10" width="60" height="100" fill="#202020"/>
+      <rect x="80" y="10" width="60" height="100" fill="#808080"/>
+      <rect x="150" y="10" width="60" height="100" fill="#f0f0f0"/>
+    </mask>
+  </defs>
+  <rect width="220" height="120" fill="#007744" mask="url(#m)"/>
+</svg>
+

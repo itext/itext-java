@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120">
+  <defs>
+    <mask id="m">
+      <rect width="160" height="120" fill="white"/>
+    </mask>
+  </defs>
+  <rect width="160" height="120" fill="#eeeeee"/>
+  <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=" x="20" y="20" width="120" height="80"
+         preserveAspectRatio="none" mask="url(#m)"/>
+</svg>

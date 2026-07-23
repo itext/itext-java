@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120" viewBox="0 0 240 120">
+  <defs>
+    <mask id="m" mask-type="luminance" style="mask-type:alpha;">
+      <rect x="0" y="0" width="80" height="120" fill="black" fill-opacity="0.4"/>
+      <rect x="80" y="0" width="80" height="120" fill="white" fill-opacity="0.4"/>
+      <rect x="160" y="0" width="80" height="120" fill="red" fill-opacity="0.4"/>
+    </mask>
+  </defs>
+  <rect width="240" height="120" fill="#2d7d46" mask="url(#m)"/>
+</svg>
+

@@ -643,6 +643,26 @@ public final class SvgConstants {
         public static final String MARKER_UNITS = "markerUnits";
 
         /**
+         * Attribute defining the mask to be applied to a specific shape or group of shapes.
+         */
+        public static final String MASK = "mask";
+
+        /**
+         * Attribute defining the coordinate system for mask geometry attributes x, y, width and height.
+         */
+        public static final String MASK_UNITS = "maskUnits";
+
+        /**
+         * Attribute defining the coordinate system for mask content.
+         */
+        public static final String MASK_CONTENT_UNITS = "maskContentUnits";
+
+        /**
+         * Attribute defining whether mask values come from alpha or luminance.
+         */
+        public static final String MASK_TYPE = "mask-type";
+
+        /**
          * Attribute defining the offset of a stop color for gradients.
          */
         public static final String OFFSET = "offset";
@@ -959,6 +979,11 @@ public final class SvgConstants {
          * Value representing automatic orientation for the marker attribute orient.
          */
         public static final String AUTO = "auto";
+
+        /**
+         * Value representing alpha-based mask value extraction.
+         */
+        public static final String ALPHA = "alpha";
 
         /**
          * Value representing reverse automatic orientation for the start marker.

@@ -47,6 +47,12 @@ public class DefaultStyleInheritanceIntegrationTest extends SvgIntegrationTest {
     public void simpleGroupInheritanceTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"simpleGroupInheritance");
     }
+
+    @Test
+    public void mixedCasePresentationAttributeInheritanceTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"mixedCasePresentationAttributeInheritance");
+    }
+
     //Inheritance in use tags
     @Test
     public void useFillInheritanceTest() throws IOException, InterruptedException {

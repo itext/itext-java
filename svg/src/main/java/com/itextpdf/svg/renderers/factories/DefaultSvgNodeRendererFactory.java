@@ -75,7 +75,8 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
         result = svgNodeRendererCreator.create();
 
         // DefsSvgNodeRenderer should not have parental relationship with any renderer, it only serves as a storage
-        if (parent != null && !(result instanceof INoDrawSvgNodeRenderer) && !(parent instanceof DefsSvgNodeRenderer)) {
+        if (parent != null && !(result instanceof INoDrawSvgNodeRenderer)
+                && !(parent instanceof DefsSvgNodeRenderer)) {
             result.setParent(parent);
         }
 

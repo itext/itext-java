@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="140" viewBox="0 0 240 140">
+  <defs>
+    <mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="240" height="140" style="mask-type: alpha">
+      <rect width="240" height="140" fill="white" opacity="0.5"/>
+    </mask>
+  </defs>
+  <rect width="240" height="140" fill="#eeeeee"/>
+  <g mask="url(#m)">
+    <rect x="20" y="20" width="80" height="100" fill="#d32f2f"/>
+    <rect x="140" y="20" width="80" height="100" fill="#1565c0" mask="inherit"/>
+  </g>
+</svg>

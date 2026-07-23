@@ -96,6 +96,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName All = createDirectName("All");
     public static final PdfName AllOff = createDirectName("AllOff");
     public static final PdfName AllOn = createDirectName("AllOn");
+    public static final PdfName Alpha = createDirectName("Alpha");
     public static final PdfName Alt = createDirectName("Alt");
     public static final PdfName Alternate = createDirectName("Alternate");
     public static final PdfName Alternates = createDirectName("Alternates");

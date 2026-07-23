@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="180" viewBox="0 0 300 180">
+  <defs>
+    <mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="300" height="180"
+          style="mask-type:luminance;">
+      <g fill="none" stroke-width="40" stroke-linecap="butt">
+        <path d="M 30 10 V 80" stroke="#ff0000"/>
+        <path d="M 90 10 V 80" stroke="#00ff00"/>
+        <path d="M 150 10 V 80" stroke="#0000ff"/>
+        <path d="M 210 10 V 80" stroke="#000000"/>
+        <path d="M 270 10 V 80" stroke="#ffffff"/>
+        <g stroke-opacity="0.5">
+          <path d="M 30 100 V 170" stroke="#ff0000"/>
+          <path d="M 90 100 V 170" stroke="#00ff00"/>
+          <path d="M 150 100 V 170" stroke="#0000ff"/>
+          <path d="M 210 100 V 170" stroke="#000000"/>
+          <path d="M 270 100 V 170" stroke="#ffffff"/>
+        </g>
+      </g>
+    </mask>
+  </defs>
+  <rect width="300" height="180" fill="white"/>
+  <rect width="300" height="180" fill="black" mask="url(#m)"/>
+</svg>

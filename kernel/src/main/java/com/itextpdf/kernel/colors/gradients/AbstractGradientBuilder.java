@@ -46,6 +46,7 @@ import com.itextpdf.kernel.pdf.function.AbstractPdfFunction;
 import com.itextpdf.kernel.pdf.function.IPdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfType2Function;
 import com.itextpdf.kernel.pdf.function.PdfType3Function;
+import com.itextpdf.kernel.utils.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +65,7 @@ public abstract class AbstractGradientBuilder<T> implements IGradientBuilder {
 
     private final List<GradientColorStop> stops = new ArrayList<>();
     private GradientSpreadMethod spreadMethod = GradientSpreadMethod.NONE;
+    private boolean svgLuminanceMode;
 
     /**
      * {@inheritDoc}
@@ -86,6 +88,15 @@ public abstract class AbstractGradientBuilder<T> implements IGradientBuilder {
         } else {
             this.spreadMethod = GradientSpreadMethod.NONE;
         }
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IGradientBuilder setSvgLuminanceMode(boolean svgLuminanceMode) {
+        this.svgLuminanceMode = svgLuminanceMode;
         return this;
     }
 
@@ -344,7 +355,13 @@ public abstract class AbstractGradientBuilder<T> implements IGradientBuilder {
             actualCoordinates = createCoordsForNewDomain(coordinatesDomain, baseCoordinatesVector);
         }
 
-        return createPdfShading(new PdfDeviceCs.Rgb(), createCoordsDictEntry(actualCoordinates),
+        PdfColorSpace colorSpace;
+        if (svgLuminanceMode) {
+            colorSpace = new PdfDeviceCs.Gray();
+        } else {
+            colorSpace = new PdfDeviceCs.Rgb();
+        }
+        return createPdfShading(colorSpace, createCoordsDictEntry(actualCoordinates),
                 new PdfArray(coordinatesDomain), constructFunction(stopsToConstruct));
     }
 
@@ -595,7 +612,7 @@ public abstract class AbstractGradientBuilder<T> implements IGradientBuilder {
         return adjustedStops;
     }
 
-    private static IPdfFunction constructFunction(List<GradientColorStop> toConstruct) {
+    private IPdfFunction constructFunction(List<GradientColorStop> toConstruct) {
         int functionsAmount = toConstruct.size() - 1;
 
         double[] bounds = new double[functionsAmount - 1];
@@ -625,7 +642,7 @@ public abstract class AbstractGradientBuilder<T> implements IGradientBuilder {
         return new PdfType3Function(new double[] {domainStart, domainEnd}, null, type2Functions, bounds, encode);
     }
 
-    private static AbstractPdfFunction<? extends PdfDictionary> constructSingleGradientSegmentFunction(
+    private AbstractPdfFunction<? extends PdfDictionary> constructSingleGradientSegmentFunction(
             GradientColorStop from, GradientColorStop to) {
         double exponent = 1d;
         float[] fromColor = from.getRgbArray();
@@ -640,6 +657,10 @@ public abstract class AbstractGradientBuilder<T> implements IGradientBuilder {
                 // similar to css color hint logic
                 exponent = Math.log(0.5) / Math.log(hintOffset);
             }
+        }
+        if (svgLuminanceMode) {
+            fromColor = new float[] {ColorUtils.calculateSvgLuminance(fromColor)};
+            toColor = new float[] {ColorUtils.calculateSvgLuminance(toColor)};
         }
         return new PdfType2Function(new float[] {0f, 1f}, null, fromColor, toColor, exponent);
     }

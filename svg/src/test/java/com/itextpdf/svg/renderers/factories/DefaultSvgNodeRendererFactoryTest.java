@@ -22,15 +22,20 @@
  */
 package com.itextpdf.svg.renderers.factories;
 
+import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
+import com.itextpdf.styledxmlparser.jsoup.parser.Tag;
+import com.itextpdf.styledxmlparser.node.IElementNode;
+import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
-@Tag("UnitTest")
+@org.junit.jupiter.api.Tag("UnitTest")
 public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
 
     @Test
@@ -41,5 +46,45 @@ public class DefaultSvgNodeRendererFactoryTest extends ExtendedITextTest {
                 () -> nodeRendererFactory.createSvgNodeRendererForTag(null, null)
         );
         Assertions.assertEquals(SvgExceptionMessageConstant.TAG_PARAMETER_NULL, e.getMessage());
+    }
+
+    @Test
+    public void maskRendererDoesNotHaveParentTest() {
+        ISvgNodeRendererFactory nodeRendererFactory = new DefaultSvgNodeRendererFactory();
+        ISvgNodeRenderer parent = nodeRendererFactory.createSvgNodeRendererForTag(
+                createElementNode(SvgConstants.Tags.G), null);
+
+        ISvgNodeRenderer mask = nodeRendererFactory.createSvgNodeRendererForTag(
+                createElementNode(SvgConstants.Tags.MASK), parent);
+
+        Assertions.assertNull(mask.getParent());
+    }
+
+    @Test
+    public void symbolRendererDoesNotHaveParentTest() {
+        ISvgNodeRendererFactory nodeRendererFactory = new DefaultSvgNodeRendererFactory();
+        ISvgNodeRenderer parent = nodeRendererFactory.createSvgNodeRendererForTag(
+                createElementNode(SvgConstants.Tags.G), null);
+
+        ISvgNodeRenderer symbol = nodeRendererFactory.createSvgNodeRendererForTag(
+                createElementNode(SvgConstants.Tags.SYMBOL), parent);
+
+        Assertions.assertNull(symbol.getParent());
+    }
+
+    @Test
+    public void drawableRendererHasParentTest() {
+        ISvgNodeRendererFactory nodeRendererFactory = new DefaultSvgNodeRendererFactory();
+        ISvgNodeRenderer parent = nodeRendererFactory.createSvgNodeRendererForTag(
+                createElementNode(SvgConstants.Tags.G), null);
+
+        ISvgNodeRenderer rectangle = nodeRendererFactory.createSvgNodeRendererForTag(
+                createElementNode(SvgConstants.Tags.RECT), parent);
+
+        Assertions.assertSame(parent, rectangle.getParent());
+    }
+
+    private static IElementNode createElementNode(String tagName) {
+        return new JsoupElementNode(new Element(Tag.valueOf(tagName), ""));
     }
 }

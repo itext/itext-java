@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="160" viewBox="0 0 280 160">
+  <defs>
+    <mask id="m">
+      <rect width="280" height="160" fill="black"/>
+      <circle cx="140" cy="80" r="65" fill="white"/>
+    </mask>
+  </defs>
+  <rect width="280" height="160" fill="#f7f7f7"/>
+  <rect x="10" y="20" width="70" height="120" fill="#cc0000" mask="url(#m)"/>
+  <rect x="105" y="20" width="70" height="120" fill="#00aa00" mask="url(#m)"/>
+  <rect x="200" y="20" width="70" height="120" fill="#0000cc" mask="url(#m)"/>
+</svg>
+

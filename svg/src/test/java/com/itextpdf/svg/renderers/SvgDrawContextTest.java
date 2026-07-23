@@ -60,7 +60,44 @@ public class SvgDrawContextTest extends ExtendedITextTest {
         SvgDrawContext context = new SvgDrawContext(null, null);
         Assertions.assertEquals(0, context.size());
     }
-    
+
+    @Test
+    public void maskIdCycleDetectionTest() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
+
+        Assertions.assertFalse(context.isCurrentMaskId("first"));
+        Assertions.assertTrue(context.pushMaskId("first"));
+        Assertions.assertTrue(context.isCurrentMaskId("first"));
+        Assertions.assertTrue(context.pushMaskId("second"));
+        Assertions.assertTrue(context.isCurrentMaskId("second"));
+        Assertions.assertFalse(context.isCurrentMaskId("first"));
+        Assertions.assertFalse(context.pushMaskId("first"));
+        Assertions.assertTrue(context.isCurrentMaskId("second"));
+        context.popMaskId();
+        Assertions.assertTrue(context.isCurrentMaskId("first"));
+        context.popMaskId();
+        Assertions.assertFalse(context.isCurrentMaskId("first"));
+        Assertions.assertTrue(context.pushMaskId("first"));
+        context.popMaskId();
+    }
+
+    @Test
+    public void nestedMaskRenderingModesTest() {
+        SvgDrawContext context = new SvgDrawContext(null, null);
+
+        Assertions.assertFalse(context.isRenderingLuminosityMask());
+        context.pushMaskRenderingMode(true);
+        Assertions.assertTrue(context.isRenderingLuminosityMask());
+        context.pushMaskRenderingMode(false);
+        Assertions.assertFalse(context.isRenderingLuminosityMask());
+        context.popMaskRenderingMode();
+        Assertions.assertTrue(context.isRenderingLuminosityMask());
+        context.popMaskRenderingMode();
+        Assertions.assertFalse(context.isRenderingLuminosityMask());
+        context.popMaskRenderingMode();
+        Assertions.assertFalse(context.isRenderingLuminosityMask());
+    }
+
     @Test
     public void drawContextPushCountTest() {
         try (PdfDocument tokenDoc = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()))) {

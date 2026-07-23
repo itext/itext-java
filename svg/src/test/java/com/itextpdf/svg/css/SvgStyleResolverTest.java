@@ -92,6 +92,32 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
     }
 
     @Test
+    public void svgCssResolverNormalizesInheritedPresentationAttributesTest() {
+        Element jsoupGroup = new Element(Tag.valueOf("g"), "");
+        Attributes groupAttributes = jsoupGroup.attributes();
+        groupAttributes.put(new Attribute(SvgConstants.Attributes.CLIP_PATH, "url(#clip)"));
+        groupAttributes.put(new Attribute(SvgConstants.Attributes.MASK, "url(#mask)"));
+
+        Element jsoupRect = new Element(Tag.valueOf("rect"), "");
+        Attributes rectAttributes = jsoupRect.attributes();
+        rectAttributes.put(new Attribute(SvgConstants.Attributes.CLIP_PATH, " InHeRiT "));
+        rectAttributes.put(new Attribute(SvgConstants.Attributes.MASK, "\tINHERIT\n"));
+
+        JsoupElementNode group = new JsoupElementNode(jsoupGroup);
+        JsoupElementNode rect = new JsoupElementNode(jsoupRect);
+        group.addChild(rect);
+
+        SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());
+        SvgStyleResolver resolver = new SvgStyleResolver(group, context);
+        SvgCssContext cssContext = new SvgCssContext();
+        group.setStyles(resolver.resolveStyles(group, cssContext));
+        Map<String, String> actual = resolver.resolveStyles(rect, cssContext);
+
+        Assertions.assertEquals("url(#clip)", actual.get(SvgConstants.Attributes.CLIP_PATH));
+        Assertions.assertEquals("url(#mask)", actual.get(SvgConstants.Attributes.MASK));
+    }
+
+    @Test
     public void svgCssResolverStylesheetTest() {
         Element jsoupLink = new Element(Tag.valueOf(SvgConstants.Tags.LINK), "");
         Attributes linkAttributes = jsoupLink.attributes();
@@ -433,7 +459,6 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         expectedOrderedStyles.put("--test-var", "circle");
         expectedOrderedStyles.put("list-style-type", "circle");
         expectedOrderedStyles.put("font-size", "12pt");
-
         Assertions.assertEquals(expectedOrderedStyles, orderedStyles);
     }
 

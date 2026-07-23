@@ -132,7 +132,8 @@ public class ClipPathSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
 
     @Override
     protected boolean isHidden() {
-        return CommonCssConstants.NONE.equals(this.attributesAndStyles.get(CommonCssConstants.DISPLAY))
+        return this.attributesAndStyles != null
+                && CommonCssConstants.NONE.equals(this.attributesAndStyles.get(CommonCssConstants.DISPLAY))
                 && !CommonCssConstants.HIDDEN.equals(this.attributesAndStyles.get(CommonCssConstants.VISIBILITY));
     }
 }

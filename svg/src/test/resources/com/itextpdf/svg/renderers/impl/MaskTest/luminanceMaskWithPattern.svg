@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="100">
+  <defs>
+    <pattern id="pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="10" height="20" fill="#ff0000"/>
+      <rect x="10" width="10" height="20" fill="#00ff00"/>
+    </pattern>
+    <mask id="luminanceMask" mask-type="luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+      <rect width="100" height="100" fill="url(#pattern)"/>
+    </mask>
+  </defs>
+  <rect width="100" height="100" fill="url(#pattern)"/>
+  <g transform="translate(110 0)">
+    <rect width="100" height="100" fill="black" mask="url(#luminanceMask)"/>
+  </g>
+  <g transform="translate(220 0)">
+    <rect width="100" height="100" fill="url(#pattern)"/>
+  </g>
+</svg>

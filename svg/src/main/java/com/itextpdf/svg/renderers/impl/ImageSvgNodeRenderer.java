@@ -49,7 +49,13 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        return null;
+        if (context == null || this.attributesAndStyles == null) {
+            return null;
+        }
+
+        PdfXObject xObject = retrieveImage(context.getResourceResolver());
+        ImageParameters imageParameters = calculateImageParameters(context, xObject);
+        return imageParameters == null ? null : imageParameters.imageRectangle;
     }
 
     @Override
@@ -60,18 +66,43 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
             return;
         }
 
-        String uri = this.attributesAndStyles.get(SvgConstants.Attributes.HREF);
-        if (uri == null) {
-            uri = this.attributesAndStyles.get(SvgConstants.Attributes.XLINK_HREF);
-        }
-
-        PdfXObject xObject = resourceResolver.retrieveImage(uri);
-
-        if (xObject == null) {
+        PdfXObject xObject = retrieveImage(resourceResolver);
+        ImageParameters imageParameters = calculateImageParameters(context, xObject);
+        if (imageParameters == null) {
             return;
         }
 
         PdfCanvas currentCanvas = context.getCurrentCanvas();
+        Rectangle imageRectangle = imageParameters.imageRectangle;
+        if (SvgConstants.Values.SLICE.equals(imageParameters.meetOrSlice)) {
+            currentCanvas.saveState()
+                    .rectangle(imageParameters.viewPort)
+                    .clip()
+                    .endPath()
+                    .addXObjectWithTransformationMatrix(xObject, imageRectangle.getWidth(), 0, 0,
+                            -imageRectangle.getHeight(), imageRectangle.getX(), imageRectangle.getTop())
+                    .restoreState();
+            return;
+        }
+        currentCanvas.addXObjectWithTransformationMatrix(xObject, imageRectangle.getWidth(), 0, 0,
+                -imageRectangle.getHeight(), imageRectangle.getX(), imageRectangle.getTop());
+    }
+
+    private PdfXObject retrieveImage(ResourceResolver resourceResolver) {
+        if (resourceResolver == null || this.attributesAndStyles == null) {
+            return null;
+        }
+        String uri = this.attributesAndStyles.get(SvgConstants.Attributes.HREF);
+        if (uri == null) {
+            uri = this.attributesAndStyles.get(SvgConstants.Attributes.XLINK_HREF);
+        }
+        return resourceResolver.retrieveImage(uri);
+    }
+
+    private ImageParameters calculateImageParameters(SvgDrawContext context, PdfXObject xObject) {
+        if (xObject == null) {
+            return null;
+        }
 
         float x = 0;
         if (attributesAndStyles.containsKey(SvgConstants.Attributes.X)) {
@@ -99,10 +130,13 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
             height = CssUtils.convertPxToPts(xObject.getHeight());
         }
 
-        if (width != 0 && height != 0) {
-            String[] alignAndMeet = retrieveAlignAndMeet();
-            String align = alignAndMeet[0];
-            String meetOrSlice = alignAndMeet[1];
+        if (width <= 0 || height <= 0) {
+            return null;
+        }
+
+        String[] alignAndMeet = retrieveAlignAndMeet();
+        String align = alignAndMeet[0];
+        String meetOrSlice = alignAndMeet[1];
 
             Rectangle currentViewPort = new Rectangle(0, 0, width, height);
             Rectangle viewBox;
@@ -119,27 +153,28 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
 
             Rectangle appliedViewBox = SvgCoordinateUtils.applyViewBox(viewBox, currentViewPort, align, meetOrSlice);
 
-            float scaleWidth = appliedViewBox.getWidth() / viewBox.getWidth();
-            float scaleHeight = appliedViewBox.getHeight() / viewBox.getHeight();
+        float scaleWidth = appliedViewBox.getWidth() / viewBox.getWidth();
+        float scaleHeight = appliedViewBox.getHeight() / viewBox.getHeight();
 
-            float xOffset = appliedViewBox.getX() / scaleWidth - viewBox.getX();
-            float yOffset = appliedViewBox.getY() / scaleHeight - viewBox.getY();
+        float origX = x;
+        float origY = y;
+        x += appliedViewBox.getX() / scaleWidth - viewBox.getX();
+        y += appliedViewBox.getY() / scaleHeight - viewBox.getY();
 
-            x += xOffset;
-            y += yOffset;
-            width = appliedViewBox.getWidth();
-            height = appliedViewBox.getHeight();
+        Rectangle imageRectangle = new Rectangle(x, y, appliedViewBox.getWidth(), appliedViewBox.getHeight());
+        Rectangle clipRectangle = new Rectangle(origX, origY, width, height);
+        return new ImageParameters(imageRectangle, clipRectangle, meetOrSlice);
+    }
 
-            if (SvgConstants.Values.SLICE.equals(meetOrSlice)) {
-                currentCanvas.saveState()
-                        .rectangle(currentViewPort)
-                        .clip()
-                        .endPath()
-                        .addXObjectWithTransformationMatrix(xObject, width, 0, 0, -height, x, y + height)
-                        .restoreState();
-                return;
-            }
+    private static final class ImageParameters {
+        final Rectangle imageRectangle;
+        final Rectangle viewPort;
+        final String meetOrSlice;
+
+        ImageParameters(Rectangle imageRectangle, Rectangle viewPort, String meetOrSlice) {
+            this.imageRectangle = imageRectangle;
+            this.viewPort = viewPort;
+            this.meetOrSlice = meetOrSlice;
         }
-        currentCanvas.addXObjectWithTransformationMatrix(xObject, width, 0, 0, -height, x, y + height);
     }
 }

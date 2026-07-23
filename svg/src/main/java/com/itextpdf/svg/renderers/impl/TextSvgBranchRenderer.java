@@ -29,6 +29,7 @@ import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
+import com.itextpdf.kernel.utils.ColorUtils;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Paragraph;
@@ -423,7 +424,9 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
     void applyFillAndStrokeProperties(FillProperties fillProperties, StrokeProperties strokeProperties,
             SvgDrawContext context) {
         if (fillProperties != null) {
-            context.getSvgTextProperties().setFillColor(fillProperties.getColor());
+            context.getSvgTextProperties().setFillColor(context.isRenderingLuminosityMask()
+                    ? ColorUtils.toDeviceGrayForSvgLuminanceMode(fillProperties.getColor())
+                    : fillProperties.getColor());
             if (!CssUtils.compareFloats(fillProperties.getOpacity(), 1f)) {
                 context.getSvgTextProperties().setFillOpacity(fillProperties.getOpacity());
             }
@@ -435,7 +438,9 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                         lineDashParameters.getDashPhase());
             }
             if (strokeProperties.getColor() != null) {
-                context.getSvgTextProperties().setStrokeColor(strokeProperties.getColor());
+                context.getSvgTextProperties().setStrokeColor(context.isRenderingLuminosityMask()
+                        ? ColorUtils.toDeviceGrayForSvgLuminanceMode(strokeProperties.getColor())
+                        : strokeProperties.getColor());
             }
             context.getSvgTextProperties().setLineWidth(strokeProperties.getWidth());
             if (!CssUtils.compareFloats(strokeProperties.getOpacity(), 1f)) {

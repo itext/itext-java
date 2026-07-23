@@ -22,10 +22,16 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.kernel.geom.AffineTransform;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
+import com.itextpdf.svg.utils.TransformUtils;
+
+import java.util.Arrays;
 
 /**
  * This renderer represents a branch in an SVG tree. It doesn't do anything aside from calling the superclass doDraw.
@@ -53,6 +59,24 @@ public class GroupSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
 
     @Override
     public Rectangle getObjectBoundingBox(SvgDrawContext context) {
-        return null;
+        if (isHidden()) {
+            return null;
+        }
+        Rectangle commonRectangle = null;
+        for (ISvgNodeRenderer child : getChildren()) {
+            if (child instanceof AbstractSvgNodeRenderer && ((AbstractSvgNodeRenderer) child).isHidden()) {
+                continue;
+            }
+            Rectangle childBoundingBox = child.getObjectBoundingBox(context);
+            String transformString = child.getAttribute(SvgConstants.Attributes.TRANSFORM);
+            if (childBoundingBox != null && transformString != null && !transformString.isEmpty()) {
+                AffineTransform transformation = TransformUtils.parseTransform(transformString);
+                Point[] points = childBoundingBox.toPointsArray();
+                transformation.transform(points, 0, points, 0, points.length);
+                childBoundingBox = Rectangle.calculateBBox(Arrays.asList(points));
+            }
+            commonRectangle = Rectangle.getCommonRectangle(commonRectangle, childBoundingBox);
+        }
+        return commonRectangle;
     }
 }

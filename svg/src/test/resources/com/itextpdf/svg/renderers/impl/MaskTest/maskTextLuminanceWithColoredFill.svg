@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="180" viewBox="0 0 300 180">
+  <defs>
+    <mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="300" height="180"
+          style="mask-type:luminance;">
+      <g font-family="Helvetica" font-weight="bold" font-size="72" stroke="none">
+        <text x="5" y="75" fill="#ff0000">H</text>
+        <text x="65" y="75" fill="#00ff00">H</text>
+        <text x="125" y="75" fill="#0000ff">H</text>
+        <text x="185" y="75" fill="#000000">H</text>
+        <text x="245" y="75" fill="#ffffff">H</text>
+        <g fill-opacity="0.5">
+          <text x="5" y="165" fill="#ff0000">H</text>
+          <text x="65" y="165" fill="#00ff00">H</text>
+          <text x="125" y="165" fill="#0000ff">H</text>
+          <text x="185" y="165" fill="#000000">H</text>
+          <text x="245" y="165" fill="#ffffff">H</text>
+        </g>
+      </g>
+    </mask>
+  </defs>
+  <rect width="300" height="180" fill="white"/>
+  <rect width="300" height="180" fill="black" mask="url(#m)"/>
+</svg>
