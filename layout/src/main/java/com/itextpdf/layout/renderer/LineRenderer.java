@@ -1635,12 +1635,14 @@ public class LineRenderer extends AbstractRenderer {
         final List<IRenderer> newChildRenderers = new ArrayList<>(getChildRenderers().size());
         boolean updateChildRenderers = false;
         for (final IRenderer child : getChildRenderers()) {
-            IRenderer rendererToCheck = unwrapChildRendererIfNeeded(child);
-            if (rendererToCheck instanceof TextRenderer) {
-                TextRenderer textRenderer = (TextRenderer) rendererToCheck;
+            if (child instanceof TextRenderer) {
+                TextRenderer textRenderer = (TextRenderer) child;
                 if (textRenderer.resolveFonts(newChildRenderers)) {
                     updateChildRenderers = true;
                 }
+            } else if (child instanceof FootnoteAnchorRenderer) {
+                FootnoteAnchorRenderer textRenderer = (FootnoteAnchorRenderer)child;
+                textRenderer.resolveFonts(newChildRenderers);
             } else {
                 newChildRenderers.add(child);
             }

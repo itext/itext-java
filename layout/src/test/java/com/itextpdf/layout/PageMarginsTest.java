@@ -22,10 +22,18 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
+import com.itextpdf.io.font.otf.GlyphLine.GlyphLinePart;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.util.TextUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -49,10 +57,19 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.SectionBreak;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.font.FontInfo;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.layout.font.FontSelector;
+import com.itextpdf.layout.font.FontSet;
+import com.itextpdf.layout.font.selectorstrategy.AbstractFontSelectorStrategy;
+import com.itextpdf.layout.font.selectorstrategy.IFontSelectorStrategy;
+import com.itextpdf.layout.font.selectorstrategy.IFontSelectorStrategyFactory;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
+import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.margins.Footnote;
 import com.itextpdf.layout.properties.margins.FootnoteAnchor;
@@ -63,13 +80,17 @@ import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.FootnoteRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
+import com.itextpdf.layout.renderer.TextPreprocessingUtil;
 import com.itextpdf.layout.testutil.PageMarginsTestUtil;
 import com.itextpdf.layout.testutil.TestResourceUtil;
+import com.itextpdf.test.AssertUtil;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.LogLevelConstants;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -88,6 +109,7 @@ import org.xml.sax.SAXException;
 public class PageMarginsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PageMarginsTest/";
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/PageMarginsTest/";
+    private static final String FONTS = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     private static final String DOG = "./src/test/resources/com/itextpdf/layout/PageMarginsTest/DOG.bmp";
 
@@ -140,6 +162,99 @@ public class PageMarginsTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
                 "diff_" + fileName));
     }
+
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT, logLevel = LogLevelConstants.ERROR)
+    })
+    public void footnoteWithFontFamilyTest() throws IOException, InterruptedException {
+        String fileName = "footnoteWithFontFamily";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+                Document document = new Document(pdfDocument)) {
+
+            FontProvider provider = new FontProvider();
+            provider.getFontSet().addFont(StandardFonts.HELVETICA, null, "helvetica");
+            provider.getFontSet().addFont(StandardFonts.COURIER, null, "courier");
+
+            Footnote footnote = new Footnote("Footnote text");
+            footnote.setBackgroundColor(ColorConstants.CYAN);
+
+            FootnoteAnchor anchor = new FootnoteAnchor("[1]", footnote);
+            anchor.setProperty(Property.FONT, new String[] { "helvetica"});
+            anchor.setProperty(Property.FONT_PROVIDER, provider);
+
+            Footnote footnote2 = new Footnote(new Paragraph("Footnote text 2").setMargin(0));
+            footnote2.setBackgroundColor(ColorConstants.ORANGE);
+            FootnoteAnchor anchor2 = new FootnoteAnchor("[2]", footnote2);
+            Footnote footnote3 = new Footnote("Footnote text 3\nSecond line\nThird line\nFourth line");
+            footnote3.setBackgroundColor(ColorConstants.RED);
+            FootnoteAnchor anchor3 = new FootnoteAnchor("[3]", footnote3);
+
+            Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
+            p.add(anchor);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor2);
+            p.add("\n\n");
+            p.add(TestResourceUtil.getByronStanza());
+            p.add(anchor3);
+
+            for (int i = 0; i < 5; i++) {
+                p.add("\n\n");
+                p.add(TestResourceUtil.getByronStanza());
+            }
+
+            SectionBreak sectionBreak = new SectionBreak()
+                    .setPageMargins(new PageMarginBoxes(PageMarginsTestUtil.getPageMargins1()));
+
+            Div div1 = new Div();
+            div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));
+            document.add(sectionBreak);
+            document.add(div1);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+
+    @Test
+    public void footnoteAnchorWithMultipleResolvedFontTest() {
+        String fileName = "footnoteAnchorFonts";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        Exception exception = Assertions.assertThrows(PdfException.class, () -> {
+            try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+                    Document document = new Document(pdfDocument)) {
+
+                FontProvider provider = new FontProvider();
+                // This font only contains latin script
+                provider.getFontSet().addFont(FONTS + "NotoSansCJKjp-Regular.otf", null, "NotoSansCJK");
+                // This font does contains Cyrillic script
+                provider.getFontSet().addFont(FONTS + "NotoSans-Regular.ttf", null, "NotoSans");
+
+                Footnote footnote = new Footnote("Footnote text");
+                footnote.setBackgroundColor(ColorConstants.CYAN);
+
+                FootnoteAnchor anchor = new FootnoteAnchor("Д H", footnote);
+                anchor.setProperty(Property.FONT, new String[] {"NotoSansCJK", "NotoSans"});
+                anchor.setProperty(Property.FONT_PROVIDER, provider);
+
+                Paragraph p = new Paragraph(TestResourceUtil.getByronStanza());
+                p.add(anchor);
+                p.add("\n\n");
+                p.add(TestResourceUtil.getByronStanza());
+
+                Div div1 = new Div();
+                div1.add(p).setBorder(new SolidBorder(ColorConstants.MAGENTA, 5));
+                document.add(div1);
+            }
+        });
+        Assertions.assertEquals(LayoutExceptionMessageConstant.FOOTNOTE_ANCHOR_LAYOUT_CONSISTENCY, exception.getMessage());
+    }
+
 
     @Test
     public void footnoteInTableTest() throws IOException, InterruptedException {

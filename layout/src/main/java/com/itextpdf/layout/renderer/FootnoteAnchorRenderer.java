@@ -23,6 +23,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -36,6 +37,7 @@ import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -47,8 +49,11 @@ import com.itextpdf.layout.properties.margins.FootnotesUtil;
 import com.itextpdf.layout.tagging.FootnoteTaggingHelper;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -204,6 +209,24 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
     @Override
     public IRenderer getNextRenderer() {
         return new FootnoteAnchorRenderer((FootnoteAnchor) modelElement);
+    }
+
+    /**
+     * Resolve {@link Property#FONT} String[] value.
+     *
+     * @param newChildRenderers all processed renderers are added to this list.
+     */
+    void resolveFonts(Collection<IRenderer> newChildRenderers) {
+        if (footnoteAnchor != null) {
+            List<IRenderer> addedRenderers = new ArrayList<IRenderer>();
+            if (footnoteAnchor instanceof TextRenderer) {
+                ((TextRenderer) footnoteAnchor).resolveFonts(addedRenderers);
+                if (addedRenderers.size() > 1) {
+                    throw new PdfException(LayoutExceptionMessageConstant.FOOTNOTE_ANCHOR_LAYOUT_CONSISTENCY);
+                }
+                newChildRenderers.add( this);
+            }
+        }
     }
 
     /**
