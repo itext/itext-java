@@ -127,7 +127,6 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
             if (Float.isNaN(this.yPos)) {
                 this.yPos = this.occupiedArea.getBBox().getTop();
             }
-            FootnotesCounterHandler.addFootnoteAnchor(this);
         }
         if (layoutResult.getSplitRenderer() != null) {
             FootnoteAnchorRenderer splitRenderer = createSplitRenderer(layoutResult);

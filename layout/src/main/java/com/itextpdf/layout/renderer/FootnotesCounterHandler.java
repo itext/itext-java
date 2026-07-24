@@ -28,7 +28,6 @@ import com.itextpdf.kernel.numbering.GreekAlphabetNumbering;
 import com.itextpdf.kernel.numbering.RomanNumbering;
 import com.itextpdf.layout.Style;
 import com.itextpdf.layout.element.Text;
-import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.margins.Footnote;
@@ -38,13 +37,11 @@ import com.itextpdf.layout.properties.margins.FootnoteNumberingType;
 import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.properties.margins.FootnotesUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Helper handler class to collect and count footnotes placed on the page.
@@ -53,28 +50,13 @@ class FootnotesCounterHandler {
     private static final int DEFAULT_FONT_SIZE = 6;
     private static final int DEFAULT_TEXT_RISE = 7;
 
-    private final Map<FootnoteAnchor, FootnoteAnchorRenderer> renderers = new HashMap<>();
-
-    private final Map<FootnoteRenderer, Float> footnotes = new LinkedHashMap<FootnoteRenderer, Float>();
+    private final Map<Footnote, FootnoteRenderer> footnotes = new LinkedHashMap<>();
 
     /**
      * Creates a new {@link FootnotesCounterHandler} instance.
      */
     public FootnotesCounterHandler() {
         // Empty constructor.
-    }
-
-    /**
-     * Adds footnote anchor info after {@link FootnoteAnchor} layout.
-     *
-     * @param renderer renderer for {@link FootnoteAnchor} which stores layout information
-     */
-    static void addFootnoteAnchor(FootnoteAnchorRenderer renderer) {
-        final FootnotesCounterHandler footnotesCounterHandler = getFootnotesCounterHandler(renderer);
-        if (footnotesCounterHandler != null) {
-            FootnoteAnchor footnoteAnchor = (FootnoteAnchor) renderer.modelElement;
-            footnotesCounterHandler.renderers.put(footnoteAnchor, renderer);
-        }
     }
 
     /**
@@ -99,7 +81,6 @@ class FootnotesCounterHandler {
      * Resets current {@link FootnotesCounterHandler} before collecting placed footnotes.
      */
     void reset() {
-        renderers.clear();
         footnotes.clear();
     }
 
@@ -107,35 +88,20 @@ class FootnotesCounterHandler {
      * Collects footnotes which anchors are placed in the current area
      * in order their anchors are placed on a page from top to bottom and left to right.
      *
-     * @param currentArea {@link LayoutArea} area to collect placed footnote anchors
+     * @param renderer parent renderer to collect footnotes from
+     * @param footnotesAnchorsFound a list to store the encountered footnote anchors
      *
-     * @return linked map of {@link Footnote} and its height float value
+     * @return linked map of {@link Footnote} and corresponding renderers.
      */
-    Map<FootnoteRenderer, Float> collectFootnotes(LayoutArea currentArea) {
+    Map<Footnote, FootnoteRenderer> collectFootnotes(IRenderer renderer,
+            List<FootnoteAnchorRenderer> footnotesAnchorsFound) {
+        footnotesAnchorsFound.clear();
         footnotes.clear();
-        List<FootnoteAnchor> anchors = new ArrayList<>(renderers.keySet());
-        Collections.sort(anchors, new FootnoteAnchorComparator());
 
-        for (FootnoteAnchor footnoteAnchor : anchors) {
-            FootnoteAnchorRenderer renderer = renderers.get(footnoteAnchor);
-
-            if (renderer.occupiedArea == null) {
-                continue;
-            }
-
-            int expectedPageNumber = currentArea.getPageNumber();
-            // Check whether footnote anchor is inside the currentArea (if the overlap is greater than 50 percent).
-            boolean isAnchorInsideCurrentArea = currentArea.getBBox().overlaps(renderer.occupiedArea.getBBox(),
-                    0.5F * Math.min(renderer.occupiedArea.getBBox().getWidth(),
-                            renderer.occupiedArea.getBBox().getHeight()));
-
-            if (expectedPageNumber == renderer.occupiedArea.getPageNumber() && isAnchorInsideCurrentArea) {
-                footnotes.put(renderer.footnoteRenderer,
-                        renderer.footnoteRenderer.getOccupiedArea().getBBox().getHeight());
-            }
-        }
+        collectFromTree(renderer, footnotes, footnotesAnchorsFound);
         return footnotes;
     }
+
 
     /**
      * Updates footnote anchors using automatic numbering and styles configured via {@link FootnotesProperties}.
@@ -143,32 +109,72 @@ class FootnotesCounterHandler {
      * @param footnotesProperties {@link FootnotesProperties} with optional {@link FootnoteNumberingType}
      * specifying type for numbering of the footnote anchors and optional styles for footnote anchors
      * @param latestFootnoteNum the number of the previous placed footnote based on {@link FootnoteNumberingConfig}
+     * @param anchorsToNumber the list of anchors to apply the renumbering on
      */
-    void updateFootnoteNumberingAndStyles(FootnotesProperties footnotesProperties, int latestFootnoteNum) {
+    void updateFootnoteNumberingAndStyles(FootnotesProperties footnotesProperties, int latestFootnoteNum,
+            Collection<FootnoteAnchorRenderer> anchorsToNumber) {
         if (footnotesProperties == null) {
             return;
         }
         Style footnoteAnchorLabelStyle = footnotesProperties.getFootnoteAnchorLabelStyle();
         if (footnoteAnchorLabelStyle != null) {
-            for (FootnoteAnchor anchor : renderers.keySet()) {
-                FootnotesUtil.applyFootnoteAnchorStyle(anchor, footnoteAnchorLabelStyle);
+            for (FootnoteAnchorRenderer renderer : anchorsToNumber) {
+                FootnotesUtil.applyFootnoteAnchorStyle((FootnoteAnchor) renderer.getModelElement(),
+                        footnoteAnchorLabelStyle);
             }
         }
         if (footnotesProperties.getFootnoteNumberingType() == null) {
             return;
         }
         FootnoteNumberingType footnoteNumberingType = footnotesProperties.getFootnoteNumberingType();
-        List<FootnoteAnchor> anchors = new ArrayList<>(renderers.keySet());
-        Collections.sort(anchors, new FootnoteAnchorComparator());
+        List<FootnoteAnchorRenderer> anchors = anchorsToNumber.stream().sorted(
+                (renderer1, renderer2) -> {
+                    int result = Float.compare(-renderer1.yPos, -renderer2.yPos);
+                    if (result == 0) {
+                        Rectangle rectangle1 = renderer1.occupiedArea.getBBox();
+                        Rectangle rectangle2 = renderer2.occupiedArea.getBBox();
+                        result = Float.compare(rectangle1.getX(), rectangle2.getX());
+                    }
+                    return result;
+                }
+        ).collect(
+                Collectors.toList());
 
         int footnoteNum = latestFootnoteNum + 1;
-        for (FootnoteAnchor anchor : anchors) {
-            FootnoteAnchorRenderer renderer = renderers.get(anchor);
+        for (FootnoteAnchorRenderer renderer : anchors) {
             IRenderer currentSymbolRenderer = makeFootnoteNumSymbolRenderer(footnoteNum, footnoteNumberingType);
             ++footnoteNum;
             renderer.addSymbolRenderer(currentSymbolRenderer);
         }
+    }
 
+    private static void collectFromTree(IRenderer renderer, Map<Footnote, FootnoteRenderer> footnotes,
+            List<FootnoteAnchorRenderer> footnotesAnchorsFound) {
+        if (renderer == null) {
+            return;
+        }
+        TableRenderer tableRenderer = null;
+        if (renderer instanceof TableRenderer) {
+            tableRenderer = (TableRenderer) renderer;
+            if (tableRenderer.headerRenderer != null) {
+                collectFromTree(tableRenderer.headerRenderer, footnotes, footnotesAnchorsFound);
+            }
+        }
+        for (IRenderer child : renderer.getChildRenderers()) {
+            if (child instanceof FootnoteAnchorRenderer) {
+                footnotesAnchorsFound.add((FootnoteAnchorRenderer) child);
+                FootnoteRenderer footnoteRenderer = ((FootnoteAnchorRenderer) child).footnoteRenderer;
+                if (footnoteRenderer == null) {
+                    continue;
+                }
+                footnotes.put((Footnote) footnoteRenderer.getModelElement(), footnoteRenderer);
+            } else {
+                collectFromTree(child, footnotes, footnotesAnchorsFound);
+            }
+        }
+        if (tableRenderer != null && tableRenderer.footerRenderer != null) {
+            collectFromTree(tableRenderer.footerRenderer, footnotes, footnotesAnchorsFound);
+        }
     }
 
     private static IRenderer makeFootnoteNumSymbolRenderer(int index, FootnoteNumberingType numberingType) {
@@ -205,20 +211,5 @@ class FootnotesCounterHandler {
         defaultStyle.setProperty(Property.TEXT_RISE, DEFAULT_TEXT_RISE);
         Text textElement = new Text(numberText).addStyle(defaultStyle);
         return new TextRenderer(textElement);
-    }
-
-    private final class FootnoteAnchorComparator implements Comparator<FootnoteAnchor> {
-        @Override
-        public int compare(FootnoteAnchor o1, FootnoteAnchor o2) {
-            FootnoteAnchorRenderer renderer1 = renderers.get(o1);
-            FootnoteAnchorRenderer renderer2 = renderers.get(o2);
-            int result = Float.compare(-renderer1.yPos, -renderer2.yPos);
-            if (result == 0) {
-                Rectangle rectangle1 = renderer1.occupiedArea.getBBox();
-                Rectangle rectangle2 = renderer2.occupiedArea.getBBox();
-                result = Float.compare(rectangle1.getX(), rectangle2.getX());
-            }
-            return result;
-        }
     }
 }

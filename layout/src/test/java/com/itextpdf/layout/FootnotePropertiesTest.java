@@ -155,6 +155,186 @@ public class FootnotePropertiesTest extends ExtendedITextTest {
                 "diff_" + fileName));
     }
 
+    @Test
+    public void footnoteTableFooterNewPageTest()
+            throws IOException, InterruptedException {
+        String fileName = "footnoteTableFooterNewPage";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        FootnoteNumberingType numberingType = FootnoteNumberingType.DECIMAL;
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+
+            document.setFootnotesProperties(new FootnotesProperties()
+                    .setFootnoteNumberingType(numberingType)
+                    .setFootnoteNumberingConfig(FootnoteNumberingConfig.PER_DOCUMENT));
+
+            Footnote footnote = new Footnote("Footnote text");
+            FootnoteAnchor anchor = new FootnoteAnchor(footnote);
+            Footnote footnote2 = new Footnote("Footnote text 2");
+            FootnoteAnchor anchor2 = new FootnoteAnchor(footnote2);
+
+            Table table = new Table(4);
+            for (int i = 0; i < 24; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 5) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+            document.add(table);
+
+            footnote = new Footnote("Footnote text 3");
+            anchor = new FootnoteAnchor(footnote);
+            footnote2 = new Footnote("Footnote text 5");
+            anchor2 = new FootnoteAnchor(footnote2);
+            table = new Table(4);
+            for (int i = 0; i < 24; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 1) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 15) {
+                    paragraph.add(new FootnoteAnchor(new Footnote("Footnote text 4\n\n")));
+                }
+                if (i == 23) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i < 4) {
+                    table.addHeaderCell(new Cell().add(paragraph).setBorder(new SolidBorder(ColorConstants.CYAN, 2)));
+                } else if (i > 19) {
+                    table.addFooterCell(new Cell().add(paragraph).setBorder(new SolidBorder(ColorConstants.BLUE, 2)));
+                } else {
+                    table.addCell(paragraph);
+                }
+            }
+
+            document.add(new Paragraph(TestResourceUtil.getByronStanza() + "\n\n" +
+                    TestResourceUtil.getByronStanza() + "\n\n" + "Two more \nlines"));
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+    @Test
+    public void footnoteTableFooterNewPage3Test()
+            throws IOException, InterruptedException {
+        String fileName = "footnoteTableFooterNewPage3";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        FootnoteNumberingType numberingType = FootnoteNumberingType.DECIMAL;
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+
+            document.setFootnotesProperties(new FootnotesProperties()
+                    .setFootnoteNumberingType(numberingType)
+                    .setFootnoteNumberingConfig(FootnoteNumberingConfig.PER_DOCUMENT));
+
+            Footnote footnote = new Footnote("Footnote text");
+            FootnoteAnchor anchor = new FootnoteAnchor(footnote);
+            Footnote footnote2 = new Footnote("Footnote text 2");
+            FootnoteAnchor anchor2 = new FootnoteAnchor(footnote2);
+
+            Table table = new Table(4);
+            for (int i = 0; i < 24; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 5) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 19) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+            document.add(table);
+
+            footnote = new Footnote("Footnote text 3");
+            anchor = new FootnoteAnchor(footnote);
+            footnote2 = new Footnote("Footnote text 5");
+            anchor2 = new FootnoteAnchor(footnote2);
+            table = new Table(4);
+            for (int i = 0; i < 24; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 1) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 15) {
+                    paragraph.add(new FootnoteAnchor(new Footnote("Footnote\ntext\n4")))
+                            .setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 23) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                table.addCell(paragraph);
+            }
+
+            document.add(new Paragraph(TestResourceUtil.getByronStanza() + "\n\n" +
+                    TestResourceUtil.getByronStanza() + "\n\n" + "Two more \nlines"));
+
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+    @Test
+    public void footnoteTableFooterNewPage2Test()
+            throws IOException, InterruptedException {
+        String fileName = "footnoteTableFooterNewPage2";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        FootnoteNumberingType numberingType = FootnoteNumberingType.DECIMAL;
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDocument)) {
+
+            document.setFootnotesProperties(new FootnotesProperties()
+                    .setFootnoteNumberingType(numberingType)
+                    .setFootnoteNumberingConfig(FootnoteNumberingConfig.PER_DOCUMENT));
+
+            document.add(new Div().setHeight(580).setWidth(500).setBackgroundColor(ColorConstants.LIGHT_GRAY));
+            Footnote footnote = new Footnote("Footnote text 1");
+            FootnoteAnchor anchor = new FootnoteAnchor(footnote);
+            Footnote footnote2 = new Footnote("Footnote text 3");
+            FootnoteAnchor anchor2 = new FootnoteAnchor(footnote2);
+            Table table = new Table(4);
+            for (int i = 0; i < 24; ++i) {
+                Paragraph paragraph = new Paragraph("Cell " + i);
+                if (i == 1) {
+                    paragraph.add(anchor).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 15) {
+                    paragraph.add(new FootnoteAnchor(new Footnote("Footnote\ntext\n2")))
+                            .setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i == 23) {
+                    paragraph.add(anchor2).setBorder(new SolidBorder(ColorConstants.GREEN, 1));
+                }
+                if (i < 4) {
+                    table.addHeaderCell(new Cell().add(paragraph).setBorder(new SolidBorder(ColorConstants.CYAN, 2)));
+                } else if (i > 19) {
+                    table.addFooterCell(new Cell().add(paragraph).setBorder(new SolidBorder(ColorConstants.BLUE, 2)));
+                } else {
+                    table.addCell(paragraph);
+                }
+            }
+            document.add(table);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER,
+                "diff_" + fileName));
+    }
+
+
     @ParameterizedTest(name = "{0}")
     @MethodSource("numberingConfig")
     public void footnoteNumberingConfigTest(FootnoteNumberingConfig numberingConfig)

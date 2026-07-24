@@ -377,8 +377,7 @@ public class PageMarginsTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
-             Document document = new Document(pdfDocument)) {
-
+            Document document = new Document(pdfDocument)) {
             Footnote footnote = new Footnote("Footnote text");
             footnote.setBackgroundColor(ColorConstants.PINK);
             FootnoteAnchor anchor = new FootnoteAnchor(new Text("1").setFontSize(6).setTextRise(7), footnote);

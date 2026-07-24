@@ -45,6 +45,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.margins.Footnote;
 import com.itextpdf.layout.properties.margins.FootnoteNumberingConfig;
 import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.properties.margins.FootnotesUtil;
@@ -311,9 +312,9 @@ public abstract class RootRenderer extends AbstractRenderer {
             return layoutResult;
         }
 
+        List<FootnoteAnchorRenderer> footnoteAnchors  = new ArrayList<>();
         // Process footnotes that were collected during renderer layout.
-        Map<FootnoteRenderer, Float> footnotes = footnotesCounterHandler.collectFootnotes(
-                layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
+        Map<Footnote, FootnoteRenderer> footnotes = footnotesCounterHandler.collectFootnotes(renderer, footnoteAnchors);
         int footnoteAnchorsNum = footnotes.size();
         if (footnoteAnchorsNum == 0) {
             return layoutResult;
@@ -339,8 +340,10 @@ public abstract class RootRenderer extends AbstractRenderer {
         boolean footnotesPlaced = false;
         float decreasedHeight = 0;
         boolean footnotesNumDefined = false;
+        // We need to run the layout once again for table footers containing footnotes.
+        boolean extraRun = false;
         int footnotesNum = 0;
-        while (!footnotesPlaced) {
+        while (!footnotesPlaced || extraRun) {
             if (footnotesNumDefined) {
                 decreasedHeight = 0;
             } else {
@@ -349,14 +352,14 @@ public abstract class RootRenderer extends AbstractRenderer {
                 // Decrease current area from the bottom to the height of footnotes.
                 footnotesNum = footnoteAnchorsNum;
                 decreasedHeight = 0;
-                for (Float footnoteHeight : footnotes.values()) {
+                for (FootnoteRenderer footnoteRenderer : footnotes.values()) {
+                    float footnoteHeight = footnoteRenderer.getOccupiedArea().getBBox().getHeight();
                     currentArea.getBBox().moveUp((float) footnoteHeight).decreaseHeight((float) footnoteHeight);
                     decreasedHeight += (float) footnoteHeight;
                 }
             }
-
             footnotesCounterHandler.updateFootnoteNumberingAndStyles(footnotesProperties,
-                    (int) latestFootnoteNumber.getOrDefault(pageNum, 0));
+                    (int) latestFootnoteNumber.getOrDefault(pageNum, 0), footnoteAnchors);
 
             footnotesCounterHandler.reset();
             if (isForcedPlacement) {
@@ -369,27 +372,33 @@ public abstract class RootRenderer extends AbstractRenderer {
                 footnotesCounterHandler.reset();
             } else {
                 footnotes = footnotesCounterHandler.collectFootnotes(
-                        layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
+                        layoutResult.getStatus() == LayoutResult.PARTIAL? layoutResult.getSplitRenderer(): renderer,
+                        footnoteAnchors);
             }
-            footnoteAnchorsNum = footnotes.size();
+            if (extraRun) {
+                extraRun = false;
+            } else {
+                footnoteAnchorsNum = footnotes.size();
 
-            // Number of the placed anchors == number of footnotes we reserved the space for before the layout
-            footnotesPlaced = footnoteAnchorsNum == footnotesNum;
-            if (footnoteAnchorsNum > footnotesNum) {
-                footnotesNumDefined = true;
-                // Decrease current area from the bottom until extra anchor will be moved to the next page.
-                // This logic can be improved in the future.
-                currentArea.getBBox().moveUp(1).decreaseHeight(1);
+                // Number of the placed anchors == number of footnotes we reserved the space for before the layout
+                footnotesPlaced = footnoteAnchorsNum == footnotesNum;
+                extraRun = footnotesPlaced;
+                if (footnoteAnchorsNum > footnotesNum) {
+                    footnotesNumDefined = true;
+                    // Decrease current area from the bottom until extra anchor will be moved to the next page.
+                    // This logic can be improved in the future.
+                    currentArea.getBBox().moveUp(1).decreaseHeight(1);
+                }
             }
             rendererAdditionalLayoutCounter = getRendererLayoutCounter(rendererAdditionalLayoutCounter);
-        }
 
+        }
         if (pageMarginBoxes == null) {
             pageMarginBoxes = new PageMarginBoxes(Collections.<PageMarginContent>emptyList());
             document.setPageMargins(currentArea.getPageNumber(), pageMarginBoxes);
         }
         FootnotesUtil.addFootnotesToPage(pageNum,
-                new ArrayList<>(footnotes.keySet()), pageMarginBoxes, footnotesProperties);
+                new ArrayList<>(footnotes.values()), pageMarginBoxes, footnotesProperties);
         latestFootnoteNumber.put(pageNum, latestFootnoteNumber.containsKey(pageNum) ?
                 (latestFootnoteNumber.get(pageNum) + footnotes.size()) : footnotes.size());
 
