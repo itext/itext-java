@@ -44,6 +44,7 @@ import com.itextpdf.kernel.pdf.ReaderProperties;
 import com.itextpdf.kernel.pdf.VersionConforming;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
+import com.itextpdf.kernel.utils.CompareToolResult;
 import com.itextpdf.kernel.utils.objectpathitems.ObjectPath;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -267,7 +268,7 @@ public class StandardHandlerUsingAesGcmTest extends ExtendedITextTest {
 // Outside test class for porting
 class CToolNoDeveloperExtension extends CompareTool {
     @Override
-    protected boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareResult compareResult) {
+    protected boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath, CompareToolResult compareResult) {
         if (outObj != null && outObj.isDictionary()) {
             if (((PdfDictionary) outObj).get(PdfName.ISO_) != null) {
                 return true;

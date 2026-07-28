@@ -87,9 +87,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+
 import org.xml.sax.SAXException;
 
 /**
@@ -112,9 +110,6 @@ import org.xml.sax.SAXException;
  * for the content of the cmpDoc and "but was" part stands for the content of the outDoc.
  */
 public class CompareTool {
-
-    private static final LazyLogger LOGGER = new LazyLogger(CompareTool.class);
-
     private static final String FILE_PROTOCOL = "file://";
     private static final String UNEXPECTED_NUMBER_OF_PAGES =
             "Unexpected number of pages for <filename>.";
@@ -131,7 +126,9 @@ public class CompareTool {
     private static final String COPYRIGHT_REPLACEMENT = "\u00a9<copyright years> Apryse Group NV";
     private static final boolean MEMORY_FIRST_WRITER_DISABLED;
 
-    private static final String NEW_LINES = "\\r|\\n";
+    private static final String NEW_LINES = "[\\r\\n]";
+
+    private static final LazyLogger LOGGER = new LazyLogger(CompareTool.class);
 
     private String cmpPdfName;
     private String outPdfName;
@@ -263,10 +260,35 @@ public class CompareTool {
      * @param cmpDocument a {@link PdfDocument} corresponding to the cmp-file, which is to be compared with output file.
      * @return the report on comparison of two files in the form of the custom class {@link CompareResult} instance.
      * @see CompareResult
+     *
+     * @deprecated in favour of {@link #compareDocumentsByCatalog(PdfDocument, PdfDocument)}
      */
+    @Deprecated
     public CompareResult compareByCatalog(PdfDocument outDocument, PdfDocument cmpDocument) {
-        CompareResult compareResult = null;
-        compareResult = new CompareResult(compareByContentErrorsLimit);
+        return wrapCompareToolResult(compareDocumentsByCatalog(outDocument, cmpDocument));
+    }
+
+    /**
+     * Compares two PDF documents by content starting from Catalog dictionary and then recursively comparing
+     * corresponding objects which are referenced from it. You can roughly imagine it as depth-first traversal
+     * of the two trees that represent pdf objects structure of the documents.
+     * <p>
+     * The main difference between this method and the {@link #compareByContent(String, String, String, String)}
+     * methods is the return value. This method returns a {@link CompareToolResult} class instance, which could be used
+     * in code, whilst compareByContent methods in case of the differences simply return String value, which could
+     * only be printed. Also, keep in mind that this method doesn't perform visual comparison of the documents.
+     * <p>
+     * For more explanations about what outDoc and cmpDoc are see last paragraph of the {@link CompareTool}
+     * class description.
+     *
+     * @param outDocument a {@link PdfDocument} corresponding to the output file, which is to be compared with cmp-file.
+     * @param cmpDocument a {@link PdfDocument} corresponding to the cmp-file, which is to be compared with output file.
+     * @return the report on comparison of two files in the form of the custom class {@link CompareToolResult} instance.
+     * @see CompareToolResult
+     */
+    public CompareToolResult compareDocumentsByCatalog(PdfDocument outDocument, PdfDocument cmpDocument) {
+        CompareToolResult compareResult = null;
+        compareResult = new CompareToolResult(compareByContentErrorsLimit);
         ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
                 outDocument.getCatalog().getPdfObject().getIndirectReference());
         Set<PdfName> ignoredCatalogEntries = new LinkedHashSet<>(Collections.singletonList(PdfName.Metadata));
@@ -303,7 +325,7 @@ public class CompareTool {
      * This behaviour is intended for the {@link CompareTool#compareByContent}
      * set of methods, because in them documents are compared in page by page basis.
      * Thus, we don't need to check if pages are of the same content when they are met in comparison process,
-     * we are sure that we will compare their content or we have already compared them.
+     * we are sure that we will compare their content, or we have already compared them.
      * <p>
      * However, if you would use {@link CompareTool#compareByCatalog} with default behaviour
      * of pages comparison, pages won't be checked at all, every time when reference to the page dictionary is met,
@@ -313,6 +335,7 @@ public class CompareTool {
      *
      * @return this {@link CompareTool} instance.
      */
+    @Deprecated
     public CompareTool disableCachedPagesComparison() {
         this.useCachedPagesForComparison = false;
         return this;
@@ -478,7 +501,7 @@ public class CompareTool {
      *                              comparison process cannot be created or accessed.
      */
     public String compareVisually(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix,
-            Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
+                                  Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         return compareVisually(outPdf, cmpPdf, outPath, differenceImagePrefix, ignoredAreas, 0);
     }
 
@@ -509,7 +532,7 @@ public class CompareTool {
      *                              comparison process cannot be created or accessed.
      */
     public String compareVisually(String outPdf, String cmpPdf, String outPath,
-            double fuzzValue)
+                                  double fuzzValue)
             throws InterruptedException, IOException {
         return compareVisually(outPdf, cmpPdf, outPath, null, null, fuzzValue);
     }
@@ -549,9 +572,9 @@ public class CompareTool {
      *                              comparison process cannot be created or accessed.
      */
     public String compareVisually(String outPdf, String cmpPdf, String outPath,
-            String differenceImagePrefix,
-            Map<Integer, List<Rectangle>> ignoredAreas,
-            double fuzzValue)
+                                  String differenceImagePrefix,
+                                  Map<Integer, List<Rectangle>> ignoredAreas,
+                                  double fuzzValue)
             throws InterruptedException, IOException {
 
         init(outPdf, cmpPdf);
@@ -654,7 +677,7 @@ public class CompareTool {
      * @see #compareVisually(String, String, String, String)
      */
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix,
-            byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
+                                   byte[] outPass, byte[] cmpPass) throws InterruptedException, IOException {
         return compareByContent(outPdf, cmpPdf, outPath, differenceImagePrefix, null, outPass, cmpPass);
     }
 
@@ -686,7 +709,7 @@ public class CompareTool {
      * @see #compareVisually(String, String, String, String)
      */
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix,
-            Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
+                                   Map<Integer, List<Rectangle>> ignoredAreas) throws InterruptedException, IOException {
         return compareByContent(outPdf, cmpPdf, outPath, differenceImagePrefix, ignoredAreas, null, null);
     }
 
@@ -723,11 +746,11 @@ public class CompareTool {
      * @see #compareVisually(String, String, String, String)
      */
     public String compareByContent(String outPdf, String cmpPdf, String outPath, String differenceImagePrefix,
-            Map<Integer, List<Rectangle>> ignoredAreas, byte[] outPass, byte[] cmpPass)
+                                   Map<Integer, List<Rectangle>> ignoredAreas, byte[] outPass, byte[] cmpPass)
             throws InterruptedException, IOException {
         init(outPdf, cmpPdf);
         System.out.println(OUT_PDF_LOG_PREFIX + UrlUtil.getNormalizedFileUriString(outPdf));
-        System.out.println(CMP_PDF_LOG_PREFIX + UrlUtil.getNormalizedFileUriString(cmpPdf)+ "\n");
+        System.out.println(CMP_PDF_LOG_PREFIX + UrlUtil.getNormalizedFileUriString(cmpPdf) + "\n");
         setPassword(outPass, cmpPass);
         return compareByContent(outPath, differenceImagePrefix, ignoredAreas);
     }
@@ -750,7 +773,7 @@ public class CompareTool {
      * <p>
      * Both out and cmp {@link PdfDictionary} shall have indirect references.
      * <p>
-     * By default page dictionaries are excluded from the comparison when met
+     * By default, page dictionaries are excluded from the comparison when met
      * and are instead compared in a special manner, simply comparing their page numbers.
      * This behavior can be disabled by calling {@link #disableCachedPagesComparison()}.
      * <p>
@@ -763,9 +786,12 @@ public class CompareTool {
      *                which is to be compared to output file dictionary.
      * @return {@link CompareResult} instance containing differences between the two dictionaries,
      * or {@code null} if dictionaries are equal.
+     *
+     * @deprecated in favour of {@link #compareDictionariesByStructure(PdfDictionary, PdfDictionary)}
      */
+    @Deprecated
     public CompareResult compareDictionariesStructure(PdfDictionary outDict, PdfDictionary cmpDict) {
-        return compareDictionariesStructure(outDict, cmpDict, null);
+        return wrapCompareToolResult(compareDictionariesByStructure(outDict, cmpDict));
     }
 
     /**
@@ -774,7 +800,31 @@ public class CompareTool {
      * <p>
      * Both out and cmp {@link PdfDictionary} shall have indirect references.
      * <p>
-     * By default page dictionaries are excluded from the comparison when met
+     * By default, page dictionaries are excluded from the comparison when met
+     * and are instead compared in a special manner, simply comparing their page numbers.
+     * This behavior can be disabled by calling {@link #disableCachedPagesComparison()}.
+     * <p>
+     * For more explanations about what outPdf and cmpPdf are see last paragraph of the {@link CompareTool}
+     * class description.
+     *
+     * @param outDict an indirect {@link PdfDictionary} from the output file,
+     *                which is to be compared to cmp-file dictionary.
+     * @param cmpDict an indirect {@link PdfDictionary} from the cmp-file file,
+     *                which is to be compared to output file dictionary.
+     * @return {@link CompareToolResult} instance containing differences between the two dictionaries,
+     * or {@code null} if dictionaries are equal.
+     */
+    public CompareToolResult compareDictionariesByStructure(PdfDictionary outDict, PdfDictionary cmpDict) {
+        return compareDictionariesByStructure(outDict, cmpDict, null);
+    }
+
+    /**
+     * Recursively compares structures of two corresponding dictionaries from out and cmp PDF documents. You can roughly
+     * imagine it as depth-first traversal of the two trees that represent pdf objects structure of the documents.
+     * <p>
+     * Both out and cmp {@link PdfDictionary} shall have indirect references.
+     * <p>
+     * By default, page dictionaries are excluded from the comparison when met
      * and are instead compared in a special manner, simply comparing their page numbers.
      * This behavior can be disabled by calling {@link #disableCachedPagesComparison()}.
      * <p>
@@ -790,14 +840,44 @@ public class CompareTool {
      *                     which are to be skipped during comparison.
      * @return {@link CompareResult} instance containing differences between the two dictionaries,
      * or {@code null} if dictionaries are equal.
+     *
+     * @deprecated in favour of {@link #compareDictionariesByStructure(PdfDictionary, PdfDictionary, Set)}
      */
     public CompareResult compareDictionariesStructure(PdfDictionary outDict, PdfDictionary cmpDict,
-            Set<PdfName> excludedKeys) {
+                                                          Set<PdfName> excludedKeys) {
+        return wrapCompareToolResult(compareDictionariesByStructure(outDict, cmpDict, excludedKeys));
+    }
+
+    /**
+     * Recursively compares structures of two corresponding dictionaries from out and cmp PDF documents. You can roughly
+     * imagine it as depth-first traversal of the two trees that represent pdf objects structure of the documents.
+     * <p>
+     * Both out and cmp {@link PdfDictionary} shall have indirect references.
+     * <p>
+     * By default, page dictionaries are excluded from the comparison when met
+     * and are instead compared in a special manner, simply comparing their page numbers.
+     * This behavior can be disabled by calling {@link #disableCachedPagesComparison()}.
+     * <p>
+     * For more explanations about what outPdf and cmpPdf are see last paragraph of the {@link CompareTool}
+     * class description.
+     *
+     * @param outDict      an indirect {@link PdfDictionary} from the output file,
+     *                     which is to be compared to cmp-file dictionary.
+     * @param cmpDict      an indirect {@link PdfDictionary} from the cmp-file file,
+     *                     which is to be compared to output file dictionary.
+     * @param excludedKeys a {@link Set} of names that designate entries from {@code outDict}
+     *                     and {@code cmpDict} dictionaries
+     *                     which are to be skipped during comparison.
+     * @return {@link CompareToolResult} instance containing differences between the two dictionaries,
+     * or {@code null} if dictionaries are equal.
+     */
+    public CompareToolResult compareDictionariesByStructure(PdfDictionary outDict, PdfDictionary cmpDict,
+                                                      Set<PdfName> excludedKeys) {
         if (outDict.getIndirectReference() == null || cmpDict.getIndirectReference() == null) {
             throw new IllegalArgumentException("The 'outDict' and 'cmpDict' objects shall have indirect references.");
         }
 
-        CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
+        CompareToolResult compareResult = new CompareToolResult(compareByContentErrorsLimit);
         final ObjectPath currentPath = new ObjectPath(cmpDict.getIndirectReference(), outDict.getIndirectReference());
         if (!compareDictionariesExtended(outDict, cmpDict, currentPath, compareResult, excludedKeys)) {
             assert !compareResult.isOk();
@@ -815,13 +895,31 @@ public class CompareTool {
      * For more explanations about what outPdf and cmpPdf are see last paragraph of the {@link CompareTool}
      * class description.
      *
-     * @param outStream      a {@link PdfStream} from the output file, which is to be compared to cmp-file stream.
-     * @param cmpStream     a {@link PdfStream} from the cmp-file file, which is to be compared to output file stream.
+     * @param outStream a {@link PdfStream} from the output file, which is to be compared to cmp-file stream.
+     * @param cmpStream a {@link PdfStream} from the cmp-file file, which is to be compared to output file stream.
      * @return {@link CompareResult} instance containing differences between the two streams,
      * or {@code null} if streams are equal.
+     *
+     * @deprecated in favour of {@link #compareStreamsByStructure(PdfStream, PdfStream)}
      */
     public CompareResult compareStreamsStructure(PdfStream outStream, PdfStream cmpStream) {
-        CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
+        return wrapCompareToolResult(compareStreamsByStructure(outStream, cmpStream));
+    }
+
+    /**
+     * Compares structures of two corresponding streams from out and cmp PDF documents. You can roughly
+     * imagine it as depth-first traversal of the two trees that represent pdf objects structure of the documents.
+     * <p>
+     * For more explanations about what outPdf and cmpPdf are see last paragraph of the {@link CompareTool}
+     * class description.
+     *
+     * @param outStream a {@link PdfStream} from the output file, which is to be compared to cmp-file stream.
+     * @param cmpStream a {@link PdfStream} from the cmp-file file, which is to be compared to output file stream.
+     * @return {@link CompareToolResult} instance containing differences between the two streams,
+     * or {@code null} if streams are equal.
+     */
+    public CompareToolResult compareStreamsByStructure(PdfStream outStream, PdfStream cmpStream) {
+        CompareToolResult compareResult = new CompareToolResult(compareByContentErrorsLimit);
         final ObjectPath currentPath = new ObjectPath(cmpStream.getIndirectReference(),
                 outStream.getIndirectReference());
         if (!compareStreamsExtended(outStream, cmpStream, currentPath, compareResult)) {
@@ -864,6 +962,7 @@ public class CompareTool {
      * @param cmpName name to compare.
      * @return true if names are equal, otherwise false.
      */
+    @Deprecated
     public boolean compareNames(PdfName outName, PdfName cmpName) {
         return cmpName.equals(outName);
     }
@@ -897,6 +996,7 @@ public class CompareTool {
      * @param cmpBoolean boolean to compare.
      * @return true if booleans are equal, otherwise false.
      */
+    @Deprecated
     public boolean compareBooleans(PdfBoolean outBoolean, PdfBoolean cmpBoolean) {
         return cmpBoolean.getValue() == outBoolean.getValue();
     }
@@ -926,11 +1026,11 @@ public class CompareTool {
     public String compareXmp(String outPdf, String cmpPdf, boolean ignoreDateAndProducerProperties) {
         init(outPdf, cmpPdf);
         try (PdfReader readerCmp = CompareTool.createOutputReader(this.cmpPdf);
-                PdfDocument cmpDocument = new PdfDocument(readerCmp,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                PdfReader readerOut = CompareTool.createOutputReader(this.outPdf);
-                PdfDocument outDocument = new PdfDocument(readerOut,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+             PdfDocument cmpDocument = new PdfDocument(readerCmp,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+             PdfReader readerOut = CompareTool.createOutputReader(this.outPdf);
+             PdfDocument outDocument = new PdfDocument(readerOut,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             byte[] cmpBytes = cmpDocument.getXmpMetadataBytes();
             byte[] outBytes = outDocument.getXmpMetadataBytes();
             if (ignoreDateAndProducerProperties) {
@@ -968,7 +1068,7 @@ public class CompareTool {
      * @param xml1 first xml file data to compare.
      * @param xml2 second xml file data to compare.
      * @return true if xml structures are identical, false otherwise.
-     * @throws ParserConfigurationException if a XML DocumentBuilder cannot be created
+     * @throws ParserConfigurationException if an XML DocumentBuilder cannot be created
      *                                      which satisfies the configuration requested.
      * @throws SAXException                 if any XML parse errors occur.
      * @throws IOException                  If any IO errors occur during reading XML files.
@@ -984,7 +1084,7 @@ public class CompareTool {
      * @param outXmlFile absolute path to the out xml file to compare.
      * @param cmpXmlFile absolute path to the cmp xml file to compare.
      * @return true if xml structures are identical, false otherwise.
-     * @throws ParserConfigurationException if a XML DocumentBuilder cannot be created
+     * @throws ParserConfigurationException if an XML DocumentBuilder cannot be created
      *                                      which satisfies the configuration requested.
      * @throws SAXException                 if any XML parse errors occur.
      * @throws IOException                  If any IO errors occur during reading XML files.
@@ -1017,11 +1117,11 @@ public class CompareTool {
         String message = null;
         setPassword(outPass, cmpPass);
         try (PdfReader readerOut = CompareTool.createOutputReader(outPdf, getOutReaderProperties());
-                PdfDocument outDocument = new PdfDocument(readerOut,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf, getCmpReaderProperties());
-                PdfDocument cmpDocument = new PdfDocument(readerCmp,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+             PdfDocument outDocument = new PdfDocument(readerOut,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+             PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf, getCmpReaderProperties());
+             PdfDocument cmpDocument = new PdfDocument(readerCmp,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             String[] cmpInfo = convertDocInfoToStrings(cmpDocument.getDocumentInfo());
             String[] outInfo = convertDocInfoToStrings(outDocument.getDocumentInfo());
             for (int i = 0; i < cmpInfo.length; ++i) {
@@ -1067,11 +1167,11 @@ public class CompareTool {
         System.out.print("[itext] INFO  Comparing link annotations....");
         String message = null;
         try (PdfReader readerOut = CompareTool.createOutputReader(outPdf);
-                PdfDocument outDocument = new PdfDocument(readerOut,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf);
-                PdfDocument cmpDocument = new PdfDocument(readerCmp,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))){
+             PdfDocument outDocument = new PdfDocument(readerOut,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+             PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf);
+             PdfDocument cmpDocument = new PdfDocument(readerCmp,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             for (int i = 0; i < outDocument.getNumberOfPages() && i < cmpDocument.getNumberOfPages(); i++) {
                 List<PdfLinkAnnotation> outLinks = getLinkAnnotations(i + 1, outDocument);
                 List<PdfLinkAnnotation> cmpLinks = getLinkAnnotations(i + 1, cmpDocument);
@@ -1112,7 +1212,7 @@ public class CompareTool {
      * @return text report of the differences in documents tags.
      * @throws IOException                 is thrown if any of the input files are missing or any of the auxiliary files
      *                                     that are created during comparison process weren't possible to be created.
-     * @throws ParserConfigurationException if a XML DocumentBuilder cannot be created
+     * @throws ParserConfigurationException if an XML DocumentBuilder cannot be created
      *                                      which satisfies the configuration requested.
      * @throws SAXException                 if any XML parse errors occur.
      */
@@ -1125,15 +1225,15 @@ public class CompareTool {
 
         String message = null;
         try (PdfReader readerOut = CompareTool.createOutputReader(outPdf);
-                PdfDocument docOut = new PdfDocument(readerOut,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                OutputStream xmlOut = FileUtil.getFileOutputStream(outXmlPath)) {
+             PdfDocument docOut = new PdfDocument(readerOut,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+             OutputStream xmlOut = FileUtil.getFileOutputStream(outXmlPath)) {
             new TaggedPdfReaderTool(docOut).setRootTag("root").convertToXml(xmlOut);
         }
         try (PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf);
-                PdfDocument docCmp = new PdfDocument(readerCmp,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                OutputStream xmlCmp = FileUtil.getFileOutputStream(cmpXmlPath)) {
+             PdfDocument docCmp = new PdfDocument(readerCmp,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+             OutputStream xmlCmp = FileUtil.getFileOutputStream(cmpXmlPath)) {
             new TaggedPdfReaderTool(docCmp).setRootTag("root").convertToXml(xmlCmp);
         }
 
@@ -1150,8 +1250,9 @@ public class CompareTool {
         System.out.flush();
         return message;
     }
+
     /**
-     * Compares tag structures of the a PDF document against an xml.
+     * Compares tag structures of the PDF document against an xml.
      * <p>
      * This method creates an xml file in the same folder with outPdf file.
      * This xml file contain documents tag structures converted into the xml structure.
@@ -1162,7 +1263,7 @@ public class CompareTool {
      * @return text report of the differences in documents tags.
      * @throws IOException                 is thrown if any of the input files are missing or any of the auxiliary files
      *                                     that are created during comparison process weren't possible to be created.
-     * @throws ParserConfigurationException if a XML DocumentBuilder cannot be created
+     * @throws ParserConfigurationException if an XML DocumentBuilder cannot be created
      *                                      which satisfies the configuration requested.
      * @throws SAXException                 if any XML parse errors occur.
      */
@@ -1174,9 +1275,9 @@ public class CompareTool {
 
         String message = null;
         try (PdfReader readerOut = CompareTool.createOutputReader(outPdf);
-                PdfDocument docOut = new PdfDocument(readerOut,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                OutputStream xmlOut = FileUtil.getFileOutputStream(outXmlPath)) {
+             PdfDocument docOut = new PdfDocument(readerOut,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+             OutputStream xmlOut = FileUtil.getFileOutputStream(outXmlPath)) {
             new TaggedPdfReaderTool(docOut).setRootTag("root").convertToXml(xmlOut);
         }
         if (!compareXmls(outXmlPath, cmpXml)) {
@@ -1203,28 +1304,178 @@ public class CompareTool {
      */
     protected String[] convertDocInfoToStrings(PdfDocumentInfo info) {
         String[] convertedInfo = new String[]{"", "", "", "", ""};
-        String infoValue = info.getTitle();
-        if (infoValue != null)
-            convertedInfo[0] = infoValue;
-        infoValue = info.getAuthor();
-        if (infoValue != null)
-            convertedInfo[1] = infoValue;
-        infoValue = info.getSubject();
-        if (infoValue != null)
-            convertedInfo[2] = infoValue;
-        infoValue = info.getKeywords();
-        if (infoValue != null)
-            convertedInfo[3] = infoValue;
-        infoValue = info.getProducer();
-        if (infoValue != null) {
-            convertedInfo[4] = convertProducerLine(infoValue);
+
+        convertedInfo = addInfoToStringArray(convertedInfo, info.getTitle(), 0);
+        convertedInfo = addInfoToStringArray(convertedInfo, info.getAuthor(), 1);
+        convertedInfo = addInfoToStringArray(convertedInfo, info.getSubject(), 2);
+        convertedInfo = addInfoToStringArray(convertedInfo, info.getKeywords(), 3);
+        String producer = info.getProducer();
+        if (producer != null) {
+            convertedInfo = addInfoToStringArray(convertedInfo, convertProducerLine(producer), 4);
         }
+
+
         return convertedInfo;
+    }
+
+
+    /**
+     * Compare PDF objects.
+     *
+     * @param outObj        out object corresponding to the output file, which is to be compared with cmp object
+     * @param cmpObj        cmp object corresponding to the cmp-file, which is to be compared with out object
+     * @param currentPath   current objects {@link ObjectPath} path
+     * @param compareResult {@link CompareResult} for the results of the comparison of the two documents
+     *
+     * @return true if objects are equal, false otherwise.
+     *
+     * @deprecated in favour of {@link #compareObjects(PdfObject, PdfObject, ObjectPath, CompareToolResult)}
+     */
+    @Deprecated
+    protected boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath,
+                                     CompareResult compareResult) {
+        CompareToolResult compareToolResult = new CompareToolResult(compareResult.messageLimit);
+        compareToolResult.getDifferences().putAll(compareResult.getDifferences());
+        return compareObjects(outObj, cmpObj, currentPath, compareToolResult);
+    }
+
+    /**
+     * Compare PDF objects.
+     *
+     * @param outObj        out object corresponding to the output file, which is to be compared with cmp object
+     * @param cmpObj        cmp object corresponding to the cmp-file, which is to be compared with out object
+     * @param currentPath   current objects {@link ObjectPath} path
+     * @param compareResult {@link CompareToolResult} for the results of the comparison of the two documents
+     *
+     * @return true if objects are equal, false otherwise.
+     */
+    protected boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath,
+                                     CompareToolResult compareResult) {
+        PdfObject outDirectObj = null;
+        PdfObject cmpDirectObj = null;
+        if (outObj != null) {
+            outDirectObj = outObj.isIndirectReference() ? ((PdfIndirectReference) outObj).getRefersTo(false) : outObj;
+        }
+
+        if (cmpObj != null) {
+            cmpDirectObj = cmpObj.isIndirectReference() ? ((PdfIndirectReference) cmpObj).getRefersTo(false) : cmpObj;
+        }
+
+        if (cmpDirectObj == null && outDirectObj == null) {
+            return true;
+        }
+
+        if (outDirectObj == null) {
+            compareResult.addError(currentPath, "Expected object was not found.");
+            return false;
+        } else if (cmpDirectObj == null) {
+            compareResult.addError(currentPath, "Found object which was not expected to be found.");
+            return false;
+        } else if (cmpDirectObj.getType() != outDirectObj.getType()) {
+            compareResult.addError(currentPath, MessageFormatUtil.format(
+                    "Types do not match. Expected: {0}. Found: {1}.",
+                    cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
+            return false;
+        } else if (cmpObj.isIndirectReference() && !outObj.isIndirectReference()) {
+            compareResult.addError(currentPath, "Expected indirect object.");
+            return false;
+        } else if (!cmpObj.isIndirectReference() && outObj.isIndirectReference()) {
+            compareResult.addError(currentPath, "Expected direct object.");
+            return false;
+        }
+
+        if (currentPath != null && cmpObj.isIndirectReference() && outObj.isIndirectReference()) {
+            if (currentPath.isComparing((PdfIndirectReference) cmpObj, (PdfIndirectReference) outObj)) {
+                return true;
+            }
+
+            currentPath = currentPath.resetDirectPath((PdfIndirectReference) cmpObj, (PdfIndirectReference) outObj);
+        }
+
+        if (cmpDirectObj.isDictionary() && PdfName.Page.equals(((PdfDictionary) cmpDirectObj).getAsName(PdfName.Type))
+                && useCachedPagesForComparison) {
+            if (!outDirectObj.isDictionary() || !PdfName.Page.equals(((PdfDictionary) outDirectObj)
+                    .getAsName(PdfName.Type))) {
+                if (compareResult != null && currentPath != null) {
+                    compareResult.addError(currentPath, "Expected a page. Found not a page.");
+                }
+
+                return false;
+            }
+            PdfIndirectReference cmpRefKey =
+                    cmpObj.isIndirectReference() ? (PdfIndirectReference) cmpObj : cmpObj.getIndirectReference();
+            PdfIndirectReference outRefKey =
+                    outObj.isIndirectReference() ? (PdfIndirectReference) outObj : outObj.getIndirectReference();
+            // References to the same page
+            if (cmpPagesRef == null) {
+                cmpPagesRef = new ArrayList<>();
+                for (int i = 1; i <= cmpRefKey.getDocument().getNumberOfPages(); ++i) {
+                    cmpPagesRef.add(cmpRefKey.getDocument().getPage(i).getPdfObject().getIndirectReference());
+                }
+            }
+            if (outPagesRef == null) {
+                outPagesRef = new ArrayList<>();
+                for (int i = 1; i <= outRefKey.getDocument().getNumberOfPages(); ++i) {
+                    outPagesRef.add(outRefKey.getDocument().getPage(i).getPdfObject().getIndirectReference());
+                }
+            }
+
+            // If at least one of the page dictionaries is in the document's page tree, we don't proceed with
+            // deep comparison, because pages are compared at different level, so we compare only their index.
+            // However, only if both page dictionaries are not in the document's page trees, we continue to
+            // comparing them as normal dictionaries.
+            if (cmpPagesRef.contains(cmpRefKey) || outPagesRef.contains(outRefKey)) {
+                if (cmpPagesRef.contains(cmpRefKey)
+                        && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey)) {
+                    return true;
+                }
+                if (compareResult != null && currentPath != null) {
+                    compareResult.addError(currentPath, MessageFormatUtil.format(
+                            "The dictionaries refer to different pages. Expected page number: {0}. Found: {1}",
+                            cmpPagesRef.indexOf(cmpRefKey) + 1, outPagesRef.indexOf(outRefKey) + 1));
+                }
+
+                return false;
+            }
+        }
+
+        if (cmpDirectObj.isDictionary()) {
+            return compareDictionariesExtended((PdfDictionary) outDirectObj, (PdfDictionary) cmpDirectObj, currentPath,
+                    compareResult);
+        } else if (cmpDirectObj.isStream()) {
+            return compareStreamsExtended((PdfStream) outDirectObj, (PdfStream) cmpDirectObj, currentPath,
+                    compareResult);
+        } else if (cmpDirectObj.isArray()) {
+            return compareArraysExtended((PdfArray) outDirectObj, (PdfArray) cmpDirectObj, currentPath, compareResult);
+        } else if (cmpDirectObj.isName()) {
+            return compareNamesExtended((PdfName) outDirectObj, (PdfName) cmpDirectObj, currentPath, compareResult);
+        } else if (cmpDirectObj.isNumber()) {
+            return compareNumbersExtended((PdfNumber) outDirectObj, (PdfNumber) cmpDirectObj, currentPath,
+                    compareResult);
+        } else if (cmpDirectObj.isString()) {
+            return compareStringsExtended((PdfString) outDirectObj, (PdfString) cmpDirectObj, currentPath,
+                    compareResult);
+        } else if (cmpDirectObj.isBoolean()) {
+            return compareBooleansExtended((PdfBoolean) outDirectObj, (PdfBoolean) cmpDirectObj, currentPath,
+                    compareResult);
+        } else if (outDirectObj.isNull() && cmpDirectObj.isNull()) {
+            return true;
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     String convertProducerLine(String producer) {
         return producer.replaceAll(VERSION_REGEXP, VERSION_REPLACEMENT).replaceAll(COPYRIGHT_REGEXP,
                 COPYRIGHT_REPLACEMENT);
+    }
+
+    private static String[] addInfoToStringArray(String[] stringArray, String value, int index) {
+        if (value != null) {
+            stringArray[index] = value;
+        }
+
+        return stringArray;
     }
 
     private void init(String outPdf, String cmpPdf) {
@@ -1250,7 +1501,7 @@ public class CompareTool {
     }
 
     private String compareVisually(String outPath, String differenceImagePrefix,
-            Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages, double fuzzValue)
+                                   Map<Integer, List<Rectangle>> ignoredAreas, List<Integer> equalPages, double fuzzValue)
             throws IOException, InterruptedException {
         if (!outPath.endsWith("/")) {
             outPath = outPath + "/";
@@ -1276,7 +1527,7 @@ public class CompareTool {
         try {
             ghostscriptHelper = new GhostscriptHelper(gsExec);
         } catch (IllegalArgumentException e) {
-            throw new CompareToolExecutionException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
 
         ghostscriptHelper.runGhostScriptImageGeneration(outPdf, outPath, outImage);
@@ -1285,20 +1536,20 @@ public class CompareTool {
     }
 
     private String compareImagesOfPdfs(String outPath, String differenceImagePrefix, List<Integer> equalPages,
-            double fuzzValue) throws IOException, InterruptedException {
-        File[] imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngFileFilter(outPdfName));
-        File[] cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new CmpPngFileFilter(cmpPdfName));
+                                       double fuzzValue) throws IOException, InterruptedException {
+        File[] imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngNotCmpInfixFileFilter(outPdfName));
+        File[] cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngCmpInfixFileFilter(cmpPdfName));
         boolean bUnexpectedNumberOfPages = false;
         if (imageFiles.length != cmpImageFiles.length) {
             bUnexpectedNumberOfPages = true;
         }
         int cnt = Math.min(imageFiles.length, cmpImageFiles.length);
         if (cnt < 1) {
-            throw new CompareToolExecutionException(
+            throw new RuntimeException(
                     "No files for comparing. The result or sample pdf file is not processed by GhostScript.");
         }
-        Arrays.sort(imageFiles, new ImageNameComparator());
-        Arrays.sort(cmpImageFiles, new ImageNameComparator());
+        Arrays.sort(imageFiles, new FileNameComparator());
+        Arrays.sort(cmpImageFiles, new FileNameComparator());
 
         boolean compareExecIsOk;
         String imageMagickInitError = null;
@@ -1316,8 +1567,10 @@ public class CompareTool {
         String differentPagesFail = null;
 
         for (int i = 0; i < cnt; i++) {
-            if (equalPages != null && equalPages.contains(i))
+            if (equalPages != null && equalPages.contains(i)) {
                 continue;
+            }
+
             System.out.println("Comparing page " + (i + 1) + ": " + UrlUtil.getNormalizedFileUriString(
                     imageFiles[i].getAbsolutePath()) + " ...");
             System.out.println("Against page " + (i + 1) + ": " + UrlUtil.getNormalizedFileUriString(
@@ -1372,9 +1625,8 @@ public class CompareTool {
                 errorMessage += "\n" + imageMagickInitError;
             }
             return errorMessage;
-        } else {
-            if (bUnexpectedNumberOfPages)
-                return UNEXPECTED_NUMBER_OF_PAGES.replace("<filename>", outPdf);
+        } else if (bUnexpectedNumberOfPages) {
+            return UNEXPECTED_NUMBER_OF_PAGES.replace("<filename>", outPdf);
         }
 
         return null;
@@ -1396,11 +1648,11 @@ public class CompareTool {
         StampingProperties properties = new StampingProperties();
         properties.setEventCountingMetaInfo(metaInfo);
         try (PdfWriter outWriter = new PdfWriter(outPath + IGNORED_AREAS_PREFIX + outPdfName);
-                PdfReader readerOut = CompareTool.createOutputReader(outPdf);
-                PdfDocument pdfOutDoc = new PdfDocument(readerOut, outWriter, properties);
-                PdfWriter cmpWriter = new PdfWriter(outPath + IGNORED_AREAS_PREFIX + cmpPdfName);
-                PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf);
-                PdfDocument pdfCmpDoc = new PdfDocument(readerCmp, cmpWriter, properties)) {
+             PdfReader readerOut = CompareTool.createOutputReader(outPdf);
+             PdfDocument pdfOutDoc = new PdfDocument(readerOut, outWriter, properties);
+             PdfWriter cmpWriter = new PdfWriter(outPath + IGNORED_AREAS_PREFIX + cmpPdfName);
+             PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf);
+             PdfDocument pdfCmpDoc = new PdfDocument(readerCmp, cmpWriter, properties)) {
             for (Map.Entry<Integer, List<Rectangle>> entry : ignoredAreas.entrySet()) {
                 int pageNumber = entry.getKey();
                 List<Rectangle> rectangles = entry.getValue();
@@ -1432,16 +1684,16 @@ public class CompareTool {
         if (!FileUtil.directoryExists(outPath)) {
             FileUtil.createDirectories(outPath);
         } else {
-            imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngFileFilter(cmpPdfName));
+            imageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngNotCmpInfixFileFilter(cmpPdfName));
             for (File file : imageFiles) {
                 file.delete();
             }
-            cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new CmpPngFileFilter(cmpPdfName));
+            cmpImageFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngCmpInfixFileFilter(cmpPdfName));
             for (File file : cmpImageFiles) {
                 file.delete();
             }
 
-            diffFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new DiffPngFileFilter(differenceImagePrefix));
+            diffFiles = FileUtil.listFilesInDirectoryByFilter(outPath, new PngPrefixFileFilter(differenceImagePrefix));
             for (File file : diffFiles) {
                 file.delete();
             }
@@ -1461,11 +1713,11 @@ public class CompareTool {
         System.out.print("Comparing by content..........");
 
         try (PdfReader readerOut = CompareTool.createOutputReader(outPdf, getOutReaderProperties());
-                PdfDocument outDocument = new PdfDocument(readerOut,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo));
-                PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf, getCmpReaderProperties());
-                PdfDocument cmpDocument = new PdfDocument(readerCmp,
-                        new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
+             PdfDocument outDocument = new PdfDocument(readerOut,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo));
+             PdfReader readerCmp = CompareTool.createOutputReader(cmpPdf, getCmpReaderProperties());
+             PdfDocument cmpDocument = new PdfDocument(readerCmp,
+                     new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
 
             List<PdfDictionary> outPages = new ArrayList<>();
             outPagesRef = new ArrayList<>();
@@ -1482,12 +1734,13 @@ public class CompareTool {
                         outPath, differenceImagePrefix, ignoredAreas, null);
             }
 
-            CompareResult compareResult = new CompareResult(compareByContentErrorsLimit);
+            CompareToolResult compareResult = new CompareToolResult(compareByContentErrorsLimit);
             List<Integer> equalPages = new ArrayList<>(cmpPages.size());
             for (int i = 0; i < cmpPages.size(); i++) {
                 ObjectPath currentPath = new ObjectPath(cmpPagesRef.get(i), outPagesRef.get(i));
-                if (compareDictionariesExtended(outPages.get(i), cmpPages.get(i), currentPath, compareResult))
+                if (compareDictionariesExtended(outPages.get(i), cmpPages.get(i), currentPath, compareResult)) {
                     equalPages.add(i);
+                }
             }
 
             ObjectPath catalogPath = new ObjectPath(cmpDocument.getCatalog().getPdfObject().getIndirectReference(),
@@ -1563,8 +1816,10 @@ public class CompareTool {
         System.out.println(compareByContentReport);
         System.out.flush();
         String message = compareVisually(outPath, differenceImagePrefix, ignoredAreas, equalPages, 0);
-        if (message == null || message.length() == 0)
+        if (message == null || message.isEmpty()) {
             return "Compare by content fails. No visual differences";
+        }
+
         return message;
     }
 
@@ -1577,7 +1832,7 @@ public class CompareTool {
     }
 
     private void compareDocumentsEncryption(PdfDocument outDocument, PdfDocument cmpDocument,
-            CompareResult compareResult) {
+                                            CompareToolResult compareResult) {
         PdfDictionary outEncrypt = outDocument.getTrailer().getAsDictionary(PdfName.Encrypt);
         PdfDictionary cmpEncrypt = cmpDocument.getTrailer().getAsDictionary(PdfName.Encrypt);
 
@@ -1621,7 +1876,8 @@ public class CompareTool {
         }
     }
 
-    private void compareDocumentsMac(PdfDocument outDocument, PdfDocument cmpDocument, CompareResult compareResult) {
+    private void compareDocumentsMac(PdfDocument outDocument, PdfDocument cmpDocument,
+                                     CompareToolResult compareResult) {
         PdfDictionary outAuthCode = outDocument.getTrailer().getAsDictionary(PdfName.AuthCode);
         PdfDictionary cmpAuthCode = cmpDocument.getTrailer().getAsDictionary(PdfName.AuthCode);
         if (outAuthCode == null && cmpAuthCode == null) {
@@ -1661,12 +1917,12 @@ public class CompareTool {
     }
 
     private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath,
-            CompareResult compareResult) {
+                                                CompareToolResult compareResult) {
         return compareDictionariesExtended(outDict, cmpDict, currentPath, compareResult, null);
     }
 
     private boolean compareDictionariesExtended(PdfDictionary outDict, PdfDictionary cmpDict, ObjectPath currentPath,
-            CompareResult compareResult, Set<PdfName> excludedKeys) {
+                                                CompareToolResult compareResult, Set<PdfName> excludedKeys) {
         if (cmpDict != null && outDict == null || outDict != null && cmpDict == null) {
             compareResult.addError(currentPath, "One of the dictionaries is null, the other is not.");
             return false;
@@ -1706,8 +1962,8 @@ public class CompareTool {
                                     key.toString(), cmpObj.toString(), outObj.toString()));
                         dictsAreSame = false;
                     } else {
-                        String cmpName = cmpObj.toString().substring(cmpObj.toString().indexOf('+'));
-                        String outName = outObj.toString().substring(outObj.toString().indexOf('+'));
+                        String cmpName = getPdfObjectName(cmpObj);
+                        String outName = getPdfObjectName(outObj);
                         if (!cmpName.equals(outName)) {
                             if (compareResult != null && currentPath != null)
                                 compareResult.addError(currentPath, MessageFormatUtil.format(
@@ -1795,6 +2051,10 @@ public class CompareTool {
         return dictsAreSame;
     }
 
+    private static String getPdfObjectName(PdfObject object) {
+        String objString = object.toString();
+        return objString.substring(objString.indexOf('+'));
+    }
 
     private PdfNumber flattenNumTree(PdfDictionary dictionary, PdfNumber leftOver, LinkedList<PdfObject> items) {
         PdfArray nums = dictionary.getAsArray(PdfName.Nums);
@@ -1823,124 +2083,8 @@ public class CompareTool {
         return null;
     }
 
-    /**
-     * Compare PDF objects.
-     *
-     * @param outObj        out object corresponding to the output file, which is to be compared with cmp object
-     * @param cmpObj        cmp object corresponding to the cmp-file, which is to be compared with out object
-     * @param currentPath   current objects {@link ObjectPath} path
-     * @param compareResult {@link CompareResult} for the results of the comparison of the two documents
-     *
-     * @return true if objects are equal, false otherwise.
-     */
-    protected boolean compareObjects(PdfObject outObj, PdfObject cmpObj, ObjectPath currentPath,
-            CompareResult compareResult) {
-        PdfObject outDirectObj = null;
-        PdfObject cmpDirectObj = null;
-        if (outObj != null)
-            outDirectObj = outObj.isIndirectReference() ? ((PdfIndirectReference) outObj).getRefersTo(false) : outObj;
-        if (cmpObj != null)
-            cmpDirectObj = cmpObj.isIndirectReference() ? ((PdfIndirectReference) cmpObj).getRefersTo(false) : cmpObj;
-
-        if (cmpDirectObj == null && outDirectObj == null)
-            return true;
-
-        if (outDirectObj == null) {
-            compareResult.addError(currentPath, "Expected object was not found.");
-            return false;
-        } else if (cmpDirectObj == null) {
-            compareResult.addError(currentPath, "Found object which was not expected to be found.");
-            return false;
-        } else if (cmpDirectObj.getType() != outDirectObj.getType()) {
-            compareResult.addError(currentPath, MessageFormatUtil.format(
-                    "Types do not match. Expected: {0}. Found: {1}.",
-                    cmpDirectObj.getClass().getSimpleName(), outDirectObj.getClass().getSimpleName()));
-            return false;
-        } else if (cmpObj.isIndirectReference() && !outObj.isIndirectReference()) {
-            compareResult.addError(currentPath, "Expected indirect object.");
-            return false;
-        } else if (!cmpObj.isIndirectReference() && outObj.isIndirectReference()) {
-            compareResult.addError(currentPath, "Expected direct object.");
-            return false;
-        }
-
-        if (currentPath != null && cmpObj.isIndirectReference() && outObj.isIndirectReference()) {
-            if (currentPath.isComparing((PdfIndirectReference) cmpObj, (PdfIndirectReference) outObj))
-                return true;
-            currentPath = currentPath.resetDirectPath((PdfIndirectReference) cmpObj, (PdfIndirectReference) outObj);
-        }
-
-        if (cmpDirectObj.isDictionary() && PdfName.Page.equals(((PdfDictionary) cmpDirectObj).getAsName(PdfName.Type))
-                && useCachedPagesForComparison) {
-            if (!outDirectObj.isDictionary() || !PdfName.Page.equals(((PdfDictionary) outDirectObj)
-                    .getAsName(PdfName.Type))) {
-                if (compareResult != null && currentPath != null)
-                    compareResult.addError(currentPath, "Expected a page. Found not a page.");
-                return false;
-            }
-            PdfIndirectReference cmpRefKey =
-                    cmpObj.isIndirectReference() ? (PdfIndirectReference) cmpObj : cmpObj.getIndirectReference();
-            PdfIndirectReference outRefKey =
-                    outObj.isIndirectReference() ? (PdfIndirectReference) outObj : outObj.getIndirectReference();
-            // References to the same page
-            if (cmpPagesRef == null) {
-                cmpPagesRef = new ArrayList<>();
-                for (int i = 1; i <= cmpRefKey.getDocument().getNumberOfPages(); ++i) {
-                    cmpPagesRef.add(cmpRefKey.getDocument().getPage(i).getPdfObject().getIndirectReference());
-                }
-            }
-            if (outPagesRef == null) {
-                outPagesRef = new ArrayList<>();
-                for (int i = 1; i <= outRefKey.getDocument().getNumberOfPages(); ++i) {
-                    outPagesRef.add(outRefKey.getDocument().getPage(i).getPdfObject().getIndirectReference());
-                }
-            }
-
-            // If at least one of the page dictionaries is in the document's page tree, we don't proceed with
-            // deep comparison, because pages are compared at different level, so we compare only their index.
-            // However only if both page dictionaries are not in the document's page trees, we continue to
-            // comparing them as normal dictionaries.
-            if (cmpPagesRef.contains(cmpRefKey) || outPagesRef.contains(outRefKey)) {
-                if (cmpPagesRef.contains(cmpRefKey)
-                        && cmpPagesRef.indexOf(cmpRefKey) == outPagesRef.indexOf(outRefKey)) {
-                    return true;
-                }
-                if (compareResult != null && currentPath != null)
-                    compareResult.addError(currentPath, MessageFormatUtil.format(
-                            "The dictionaries refer to different pages. Expected page number: {0}. Found: {1}",
-                            cmpPagesRef.indexOf(cmpRefKey) + 1, outPagesRef.indexOf(outRefKey) + 1));
-                return false;
-            }
-        }
-
-        if (cmpDirectObj.isDictionary()) {
-            return compareDictionariesExtended((PdfDictionary) outDirectObj, (PdfDictionary) cmpDirectObj, currentPath,
-                    compareResult);
-        } else if (cmpDirectObj.isStream()) {
-            return compareStreamsExtended((PdfStream) outDirectObj, (PdfStream) cmpDirectObj, currentPath,
-                    compareResult);
-        } else if (cmpDirectObj.isArray()) {
-            return compareArraysExtended((PdfArray) outDirectObj, (PdfArray) cmpDirectObj, currentPath, compareResult);
-        } else if (cmpDirectObj.isName()) {
-            return compareNamesExtended((PdfName) outDirectObj, (PdfName) cmpDirectObj, currentPath, compareResult);
-        } else if (cmpDirectObj.isNumber()) {
-            return compareNumbersExtended((PdfNumber) outDirectObj, (PdfNumber) cmpDirectObj, currentPath,
-                    compareResult);
-        } else if (cmpDirectObj.isString()) {
-            return compareStringsExtended((PdfString) outDirectObj, (PdfString) cmpDirectObj, currentPath,
-                    compareResult);
-        } else if (cmpDirectObj.isBoolean()) {
-            return compareBooleansExtended((PdfBoolean) outDirectObj, (PdfBoolean) cmpDirectObj, currentPath,
-                    compareResult);
-        } else if (outDirectObj.isNull() && cmpDirectObj.isNull()) {
-            return true;
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
     private boolean compareStreamsExtended(PdfStream outStream, PdfStream cmpStream, ObjectPath currentPath,
-            CompareResult compareResult) {
+                                           CompareToolResult compareResult) {
         final boolean toDecodeOut = PdfName.FlateDecode.equals(outStream.get(PdfName.Filter));
         final boolean toDecodeCmp = PdfName.FlateDecode.equals(cmpStream.get(PdfName.Filter));
 
@@ -2025,7 +2169,7 @@ public class CompareTool {
     }
 
     private boolean compareArraysExtended(PdfArray outArray, PdfArray cmpArray, ObjectPath currentPath,
-            CompareResult compareResult) {
+                                          CompareToolResult compareResult) {
         if (outArray == null) {
             if (compareResult != null && currentPath != null)
                 compareResult.addError(currentPath, "Found null. Expected PdfArray.");
@@ -2054,7 +2198,7 @@ public class CompareTool {
     }
 
     private boolean compareNamesExtended(PdfName outName, PdfName cmpName, ObjectPath currentPath,
-            CompareResult compareResult) {
+                                         CompareToolResult compareResult) {
         if (cmpName.equals(outName)) {
             return true;
         } else {
@@ -2066,7 +2210,7 @@ public class CompareTool {
     }
 
     private boolean compareNumbersExtended(PdfNumber outNumber, PdfNumber cmpNumber, ObjectPath currentPath,
-            CompareResult compareResult) {
+                                           CompareToolResult compareResult) {
         if (cmpNumber.getValue() == outNumber.getValue()) {
             return true;
         } else {
@@ -2078,7 +2222,7 @@ public class CompareTool {
     }
 
     private boolean compareStringsExtended(PdfString outString, PdfString cmpString, ObjectPath currentPath,
-            CompareResult compareResult) {
+                                           CompareToolResult compareResult) {
         if (Arrays.equals(convertPdfStringToBytes(cmpString), convertPdfStringToBytes(outString))) {
             return true;
         } else {
@@ -2157,7 +2301,7 @@ public class CompareTool {
     }
 
     private boolean compareBooleansExtended(PdfBoolean outBoolean, PdfBoolean cmpBoolean, ObjectPath currentPath,
-            CompareResult compareResult) {
+                                            CompareToolResult compareResult) {
         if (cmpBoolean.getValue() == outBoolean.getValue()) {
             return true;
         } else {
@@ -2180,7 +2324,7 @@ public class CompareTool {
     }
 
     private boolean compareLinkAnnotations(PdfLinkAnnotation cmpLink, PdfLinkAnnotation outLink,
-            PdfDocument cmpDocument, PdfDocument outDocument) {
+                                           PdfDocument cmpDocument, PdfDocument outDocument) {
         // Compare link rectangles, page numbers the links refer to,
         // and simple parameters (non-indirect, non-arrays, non-dictionaries)
         PdfObject cmpDestObject = cmpLink.getDestinationObject();
@@ -2270,66 +2414,161 @@ public class CompareTool {
         throw new IllegalArgumentException("PdfLinkAnnotation comparison: Page not found.");
     }
 
-    private static class PngFileFilter implements FileFilter {
-        private String currentOutPdfName;
-
-        public PngFileFilter (String currentOutPdfName) {
-            this.currentOutPdfName = currentOutPdfName;
+    private static CompareResult wrapCompareToolResult(CompareToolResult compareToolResult) {
+        if (compareToolResult == null) {
+            return null;
         }
 
-        public boolean accept(File pathname) {
-            String ap = pathname.getName();
-            boolean b1 = ap.endsWith(".png");
-            boolean b2 = ap.contains("cmp_");
-            return b1 && !b2 && ap.contains(currentOutPdfName);
-        }
+        CompareResult result = new CompareResult(compareToolResult.getMessageLimit());
+        result.differences = compareToolResult.getDifferences();
+        return result;
     }
 
-    private static class CmpPngFileFilter implements FileFilter {
-        private String currentCmpPdfName;
+    /**
+     * Filters files.
+     * <p>
+     * Accepted files must have a {@code .png} extension,
+     * not contain the {@code "cmp_"} prefix in the file name
+     * and contain the specified infix.
+     */
+    private static class PngNotCmpInfixFileFilter implements FileFilter {
 
-        public CmpPngFileFilter (String currentCmpPdfName) {
-            this.currentCmpPdfName = currentCmpPdfName;
+        /**
+         * Infix used to identify files.
+         */
+        private final String fileNameInfix;
+
+        /**
+         * Creates a new filter.
+         *
+         * @param fileNameInfix the infix that matching file names must contain
+         */
+        public PngNotCmpInfixFileFilter(String fileNameInfix) {
+            this.fileNameInfix = fileNameInfix;
         }
 
+        /**
+         * Determines whether the specified file should be accepted.
+         *
+         * @param pathname the file to test
+         *
+         * @return {@code true} if file matches requirements, {@code false} otherwise
+         */
+        @Override
         public boolean accept(File pathname) {
             String ap = pathname.getName();
-            boolean b1 = ap.endsWith(".png");
-            boolean b2 = ap.contains("cmp_");
-            return b1 && b2 && ap.contains(currentCmpPdfName);
-        }
-    }
-
-    private static class DiffPngFileFilter implements FileFilter {
-        private String differenceImagePrefix;
-
-        public DiffPngFileFilter(String differenceImagePrefix) {
-            this.differenceImagePrefix = differenceImagePrefix;
-        }
-
-        public boolean accept(File pathname) {
-            String ap = pathname.getName();
-            boolean b1 = ap.endsWith(".png");
-            boolean b2 = ap.startsWith(differenceImagePrefix);
-            return b1 && b2;
-        }
-    }
-
-    private static class ImageNameComparator implements Comparator<File> {
-        public int compare(File f1, File f2) {
-            String f1Name = f1.getName();
-            String f2Name = f2.getName();
-            return f1Name.compareTo(f2Name);
+            return ap.endsWith(".png") && !ap.contains("cmp_") && ap.contains(fileNameInfix);
         }
     }
 
     /**
-     * Class containing results of the comparison of two documents.
+     * Filters files.
+     * <p>
+     * Accepted files must have a {@code .png} extension,
+     * contain the {@code "cmp_"} prefix in the file name
+     * and contain the specified infix.
      */
+    private static class PngCmpInfixFileFilter implements FileFilter {
+
+        /**
+         * Infix used to identify files.
+         */
+        private final String fileNameInfix;
+
+        /**
+         * Creates a new filter.
+         *
+         * @param fileNameInfix the infix that matching file names must contain
+         */
+        public PngCmpInfixFileFilter(String fileNameInfix) {
+            this.fileNameInfix = fileNameInfix;
+        }
+
+        /**
+         * Determines whether the specified file should be accepted.
+         *
+         * @param pathname the file to test
+         *
+         * @return {@code true} if file matches requirements, {@code false} otherwise
+         */
+        @Override
+        public boolean accept(File pathname) {
+            String ap = pathname.getName();
+            return ap.endsWith(".png") && ap.contains("cmp_") && ap.contains(fileNameInfix);
+        }
+    }
+
+    /**
+     * Filters files.
+     * <p>
+     * Accepted files must have a {@code .png} extension
+     * and a file name that starts with the configured prefix.
+     */
+    private static class PngPrefixFileFilter implements FileFilter {
+
+        /**
+         * Prefix used to identify files.
+         */
+        private final String fileNamePrefix;
+
+        /**
+         * Creates a new filter.
+         *
+         * @param fileNamePrefix the prefix that matching file names must start with
+         */
+        public PngPrefixFileFilter(String fileNamePrefix) {
+            this.fileNamePrefix = fileNamePrefix;
+        }
+
+        /**
+         * Determines whether the specified file should be accepted.
+         *
+         * @param pathname the file to test
+         *
+         * @return {@code true} if file matches requirements, {@code false} otherwise
+         */
+        @Override
+        public boolean accept(File pathname) {
+            String ap = pathname.getName();
+            return ap.endsWith(".png") && ap.startsWith(fileNamePrefix);
+        }
+    }
+
+    /**
+     * Compares {@link File} objects by their file names lexicographically using
+     * {@link File#getName()}.
+     */
+    private static final class FileNameComparator implements Comparator<File> {
+
+        /**
+         * Compares two files by their names.
+         *
+         * @param f1 the first file to be compared
+         *
+         * @param f2 the second file to be compared
+         *
+         * @return a negative integer, zero, or a positive integer if the
+         *         name of the first file is less than, equal to, or greater (lexicographically)
+         *         than the name of the second file
+         */
+        @Override
+        public int compare(File f1, File f2) {
+            return f1.getName().compareTo(f2.getName());
+        }
+    }
+
+    /**
+     * Class containing results of the comparison of two pdf documents.
+     *
+     * @deprecated in favour of {@link CompareToolResult}
+     */
+    @Deprecated
     public static class CompareResult {
         // LinkedHashMap to retain order. HashMap has different order in Java6/7 and Java8
         protected Map<ObjectPath, String> differences = new LinkedHashMap<>();
         protected int messageLimit = 1;
+
+        private final CompareToolResult compareToolResult;
 
         /**
          * Creates new empty instance of CompareResult with given limit of difference messages.
@@ -2337,7 +2576,7 @@ public class CompareTool {
          * @param messageLimit maximum number of difference messages to be handled by this CompareResult.
          */
         public CompareResult(int messageLimit) {
-            this.messageLimit = messageLimit;
+            compareToolResult = new CompareToolResult(messageLimit);
         }
 
         /**
@@ -2346,7 +2585,7 @@ public class CompareTool {
          * @return true if documents are equal, false otherwise.
          */
         public boolean isOk() {
-            return differences.size() == 0;
+            return compareToolResult.isOk();
         }
 
         /**
@@ -2355,7 +2594,7 @@ public class CompareTool {
          * @return number of differences.
          */
         public int getErrorCount() {
-            return differences.size();
+            return compareToolResult.getErrorCount();
         }
 
         /**
@@ -2364,16 +2603,7 @@ public class CompareTool {
          * @return text report on the differences between two documents.
          */
         public String getReport() {
-            StringBuilder sb = new StringBuilder();
-            boolean firstEntry = true;
-            for (Map.Entry<ObjectPath, String> entry : differences.entrySet()) {
-                if (!firstEntry)
-                    sb.append("-----------------------------").append("\n");
-                ObjectPath diffPath = entry.getKey();
-                sb.append(entry.getValue()).append("\n").append(diffPath.toString()).append("\n");
-                firstEntry = false;
-            }
-            return sb.toString();
+            return compareToolResult.getReport();
         }
 
         /**
@@ -2382,7 +2612,7 @@ public class CompareTool {
          * @return differences map which could be used to find in the document the objects that are different.
          */
         public Map<ObjectPath, String> getDifferences() {
-            return differences;
+            return compareToolResult.getDifferences();
         }
 
         /**
@@ -2395,23 +2625,7 @@ public class CompareTool {
          *                                      an unrecoverable error occurs during the course of the transformation.
          */
         public void writeReportToXml(OutputStream stream) throws ParserConfigurationException, TransformerException {
-            final Document xmlReport = XmlUtils.initNewXmlDocument();
-            Element root = xmlReport.createElement("report");
-            Element errors = xmlReport.createElement("errors");
-            errors.setAttribute("count", String.valueOf(differences.size()));
-            root.appendChild(errors);
-            for (Map.Entry<ObjectPath, String> entry : differences.entrySet()) {
-                Node errorNode = xmlReport.createElement("error");
-                Node message = xmlReport.createElement("message");
-                message.appendChild(xmlReport.createTextNode(entry.getValue()));
-                Node path = entry.getKey().toXmlNode(xmlReport);
-                errorNode.appendChild(message);
-                errorNode.appendChild(path);
-                errors.appendChild(errorNode);
-            }
-            xmlReport.appendChild(root);
-
-            XmlUtils.writeXmlDocToStream(xmlReport, stream);
+            compareToolResult.writeReportToXml(stream);
         }
 
         /**
@@ -2420,7 +2634,7 @@ public class CompareTool {
          * @return true if limit of difference messages is reached, false otherwise.
          */
         protected boolean isMessageLimitReached() {
-            return differences.size() >= messageLimit;
+            return compareToolResult.isMessageLimitReached();
         }
 
         /**
@@ -2430,9 +2644,7 @@ public class CompareTool {
          * @param message an error message
          */
         protected void addError(ObjectPath path, String message) {
-            if (differences.size() < messageLimit) {
-                differences.put(new ObjectPath(path), message);
-            }
+            compareToolResult.addError(path, message);
         }
     }
 
@@ -2440,6 +2652,7 @@ public class CompareTool {
      * Exceptions thrown when errors occur during generation and comparison of images obtained on the basis of pdf
      * files.
      */
+    @Deprecated
     public static class CompareToolExecutionException extends RuntimeException {
         /**
          * Creates a new {@link CompareToolExecutionException}.

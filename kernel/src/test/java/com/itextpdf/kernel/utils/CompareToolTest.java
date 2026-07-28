@@ -216,7 +216,7 @@ public class CompareToolTest extends ExtendedITextTest {
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
 
-        Exception e = Assertions.assertThrows(CompareTool.CompareToolExecutionException.class,
+        Exception e = Assertions.assertThrows(RuntimeException.class,
                 () -> new CompareTool("unspecified", null).compareVisually(outPdf, cmpPdf, destinationFolder, "diff_")
         );
         Assertions.assertEquals(IoExceptionMessageConstant.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());

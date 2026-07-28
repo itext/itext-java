@@ -37,8 +37,8 @@ import com.itextpdf.kernel.pdf.tagging.PdfMcrDictionary;
 import com.itextpdf.kernel.pdf.tagging.PdfMcrNumber;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
+import com.itextpdf.kernel.utils.CompareToolResult;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
@@ -568,7 +568,7 @@ public class ParentTreeTest extends ExtendedITextTest {
         PdfDocument outDocument = new PdfDocument(outReader);
         PdfReader cmpReader = CompareTool.createOutputReader(cmpFileName);
         PdfDocument cmpDocument = new PdfDocument(cmpReader);
-        CompareResult result = new CompareTool().compareByCatalog(outDocument, cmpDocument);
+        CompareToolResult result = new CompareTool().compareDocumentsByCatalog(outDocument, cmpDocument);
         if (!result.isOk()) {
             System.out.println(result.getReport());
         }

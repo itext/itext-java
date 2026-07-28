@@ -128,8 +128,8 @@ public class PdfStreamTest extends ExtendedITextTest {
         PdfStream cmpStreamIm2 = srcDoc.getFirstPage().getResources().getResource(PdfName.XObject)
                 .getAsStream(new PdfName("Im2"));
 
-        Assertions.assertNull(new CompareTool().compareStreamsStructure(outStreamIm1, cmpStreamIm1));
-        Assertions.assertNull(new CompareTool().compareStreamsStructure(outStreamIm2, cmpStreamIm2));
+        Assertions.assertNull(new CompareTool().compareStreamsByStructure(outStreamIm1, cmpStreamIm1));
+        Assertions.assertNull(new CompareTool().compareStreamsByStructure(outStreamIm2, cmpStreamIm2));
 
         srcDoc.close();
         outDoc.close();
