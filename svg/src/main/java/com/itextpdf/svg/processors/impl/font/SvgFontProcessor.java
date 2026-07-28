@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.processors.impl.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
@@ -37,12 +38,13 @@ import com.itextpdf.svg.css.impl.SvgStyleResolver;
 import java.util.Collection;
 
 import com.itextpdf.svg.processors.impl.SvgProcessorContext;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class that processes and add resolved css fonts to the FontProvider
  */
 public class SvgFontProcessor {
+
+    private static final LazyLogger LOGGER = new LazyLogger(SvgFontProcessor.class);
 
     private final SvgProcessorContext context;
 
@@ -74,9 +76,8 @@ public class SvgFontProcessor {
                     }
                 }
                 if (!findSupportedSrc) {
-                    LoggerFactory.getLogger(SvgFontProcessor.class)
-                            .error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_FONT,
-                                    fontFace));
+                    LOGGER.error(() -> MessageFormatUtil.format(
+                            StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_FONT, fontFace));
                 }
             }
         }

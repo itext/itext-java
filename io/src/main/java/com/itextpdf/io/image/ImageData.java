@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -30,13 +31,13 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 import com.itextpdf.io.util.StreamUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.Map;
 
 public abstract class ImageData {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ImageData.class);
 
     /** a static that is used for attributing a unique id to each image. */
     private static long serialId = 0;
@@ -310,13 +311,12 @@ public abstract class ImageData {
      * @return if the image can be inline
      */
     public boolean canImageBeInline() {
-        Logger logger = LoggerFactory.getLogger(ImageData.class);
         if (imageSize > 4096) {
-            logger.warn(IoLogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB);
+            LOGGER.warn(() -> IoLogMessageConstant.IMAGE_SIZE_CANNOT_BE_MORE_4KB);
             return false;
         }
         if (imageMask != null) {
-            logger.warn(IoLogMessageConstant.IMAGE_HAS_MASK);
+            LOGGER.warn(() -> IoLogMessageConstant.IMAGE_HAS_MASK);
             return false;
         }
         return true;

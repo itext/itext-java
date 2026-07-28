@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
@@ -62,13 +63,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents a renderer for block elements.
  */
 public abstract class BlockRenderer extends AbstractRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(BlockRenderer.class);
 
     // Use that value so that layout is independent of whether we are in the bottom of the page or in the
     // top of the page
@@ -452,8 +453,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
-                    LoggerFactory.getLogger(getClass())
-                            .warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                    LOGGER.warn(() -> MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
                                     "It fits by height so it will be forced placed"));
                 } else if (!initialForcePlacementForRotationAdjustments) {
                     floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
@@ -483,9 +483,8 @@ public abstract class BlockRenderer extends AbstractRenderer {
 
     @Override
     public void draw(DrawContext drawContext) {
-        Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
         if (occupiedArea == null) {
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
                     "Drawing won't be performed."));
             return;
         }
@@ -537,7 +536,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 // TODO DEVSIX-1655 This check is necessary because, in some cases, our renderer's hierarchy may contain
                 //  a renderer from the different page that was already flushed
                 if (page.isFlushed()) {
-                    logger.error(MessageFormatUtil.format(
+                    LOGGER.error(() -> MessageFormatUtil.format(
                             IoLogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED,
                             "area clipping"));
                     clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
@@ -586,14 +585,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Rectangle bBox = occupiedArea.getBBox().clone();
         Float rotationAngle = this.<Float>getProperty(Property.ROTATION_ANGLE);
         if (rotationAngle != null) {
-            if (!hasOwnProperty(Property.ROTATION_INITIAL_WIDTH) || !hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
-                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(
-                        MessageFormatUtil.format(IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER,
-                                getClass().getSimpleName()));
-            } else {
+            if (hasOwnProperty(Property.ROTATION_INITIAL_WIDTH) && hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
                 bBox.setWidth((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
                 bBox.setHeight((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
+            } else {
+                LOGGER.error(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER,
+                        getClass().getSimpleName()));
             }
         }
         return bBox;
@@ -780,14 +778,13 @@ public abstract class BlockRenderer extends AbstractRenderer {
     protected void beginRotationIfApplied(PdfCanvas canvas) {
         Float angle = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
         if (angle != null) {
-            if (!hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
-                Logger logger = LoggerFactory.getLogger(BlockRenderer.class);
-                logger.error(
-                        MessageFormatUtil.format(IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER,
-                                getClass().getSimpleName()));
-            } else {
+            if (hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
                 AffineTransform transform = createRotationTransformInsideOccupiedArea();
                 canvas.saveState().concatMatrix(transform);
+            } else {
+                LOGGER.error(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER,
+                        getClass().getSimpleName()));
             }
         }
     }

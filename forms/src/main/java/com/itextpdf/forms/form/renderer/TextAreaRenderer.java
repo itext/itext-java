@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
 import com.itextpdf.forms.fields.PdfFormCreator;
@@ -50,8 +51,6 @@ import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.LineRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -60,6 +59,9 @@ import java.util.Map;
  * The {@link AbstractTextFieldRenderer} implementation for text area fields.
  */
 public class TextAreaRenderer extends AbstractTextFieldRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(TextAreaRenderer.class);
+
     /**
      * Creates a new {@link TextAreaRenderer} instance.
      *
@@ -133,8 +135,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
             if (width == null) {
                 UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
                 if (!fontSize.isPointValue()) {
-                    Logger logger = LoggerFactory.getLogger(TextAreaRenderer.class);
-                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                             Property.FONT_SIZE));
                 }
                 float fontSizeValue = fontSize.getValue();
@@ -159,7 +160,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         updatePdfFont((ParagraphRenderer) flatRenderer);
         Rectangle flatBBox = flatRenderer.getOccupiedArea().getBBox();
         if (flatLines.isEmpty() || font == null) {
-            LoggerFactory.getLogger(getClass()).error(MessageFormatUtil.format(
+            LOGGER.error(() -> MessageFormatUtil.format(
                     FormsLogMessageConstants.ERROR_WHILE_LAYOUT_OF_FORM_FIELD_WITH_TYPE, "text area"));
             setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             flatBBox.setHeight(0);
@@ -190,8 +191,7 @@ public class TextAreaRenderer extends AbstractTextFieldRenderer {
         String name = getModelId();
         UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (!fontSize.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(TextAreaRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.FONT_SIZE));
         }
         PdfDocument doc = drawContext.getDocument();

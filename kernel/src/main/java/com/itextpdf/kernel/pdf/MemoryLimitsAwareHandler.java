@@ -22,13 +22,11 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.MemoryLimitsAwareException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Enforces configurable limits intended to protect PDF reading/parsing against excessive memory consumption.
@@ -47,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryLimitsAwareHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MemoryLimitsAwareHandler.class);
+    private static final LazyLogger LOGGER = new LazyLogger(MemoryLimitsAwareHandler.class);
 
     private static final int SINGLE_SCALE_COEFFICIENT = 100;
     private static final int SUM_SCALE_COEFFICIENT = 500;
@@ -111,7 +109,7 @@ public class MemoryLimitsAwareHandler {
         to.maxNumberOfElementsInXrefStructure = this.maxNumberOfElementsInXrefStructure;
         to.maxXObjectsSizePerPage = this.maxXObjectsSizePerPage;
         if (this.getClass() != MemoryLimitsAwareHandler.class) {
-            LOGGER.warn(KernelLogMessageConstant.MEMORYLIMITAWAREHANDLER_OVERRIDE_CREATENEWINSTANCE_METHOD);
+            LOGGER.warn(() -> KernelLogMessageConstant.MEMORYLIMITAWAREHANDLER_OVERRIDE_CREATENEWINSTANCE_METHOD);
         }
 
         return to;

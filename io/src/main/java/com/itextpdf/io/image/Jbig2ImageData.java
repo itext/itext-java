@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -31,9 +32,6 @@ import com.itextpdf.io.source.IRandomAccessSource;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
 import java.net.URL;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Jbig2ImageData extends ImageData {
 
@@ -80,8 +78,8 @@ public class Jbig2ImageData extends ImageData {
 
     @Override
     public boolean canImageBeInline() {
-        Logger logger = LoggerFactory.getLogger(ImageData.class);
-        logger.warn(IoLogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER);
+        LazyLogger logger = new LazyLogger(ImageData.class);
+        logger.warn(() -> IoLogMessageConstant.IMAGE_HAS_JBIG2DECODE_FILTER);
         return false;
     }
 }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.filespec;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -29,12 +30,13 @@ import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfEncryptedPayload;
 import com.itextpdf.kernel.pdf.PdfName;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class PdfEncryptedPayloadFileSpecFactory {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfEncryptedPayloadFileSpecFactory.class);
 
     /**
      * Embed a encrypted payload to a PdfDocument.
@@ -158,8 +160,8 @@ public class PdfEncryptedPayloadFileSpecFactory {
 
     public static PdfFileSpec wrap(PdfDictionary dictionary) {
         if (!PdfName.EncryptedPayload.equals(dictionary.getAsName(PdfName.AFRelationship))) {
-            LoggerFactory.getLogger(PdfEncryptedPayloadFileSpecFactory.class)
-                    .error(IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
+            LOGGER.error(() ->
+                    IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
         }
         PdfDictionary ef = dictionary.getAsDictionary(PdfName.EF);
         if (ef == null || (ef.getAsStream(PdfName.F) == null) && (ef.getAsStream(PdfName.UF) == null)) {

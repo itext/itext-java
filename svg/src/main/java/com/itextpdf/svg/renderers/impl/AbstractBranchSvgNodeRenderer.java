@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Point;
@@ -45,8 +46,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class that will be the superclass for any element that can function
@@ -54,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRenderer implements IBranchSvgNodeRenderer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBranchSvgNodeRenderer.class);
+    private static final LazyLogger LOGGER = new LazyLogger(AbstractBranchSvgNodeRenderer.class);
 
     /**
      * The number of viewBox values.
@@ -195,9 +194,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
     void calculateAndApplyViewBox(SvgDrawContext context, float[] values, Rectangle currentViewPort) {
         // If viewBox width or height is zero we should disable rendering of the element.
         if (Math.abs(values[2]) < EPS || Math.abs(values[3]) < EPS) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info(SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO);
-            }
+            LOGGER.info(() -> SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO);
             context.getCurrentCanvas().concatMatrix(AffineTransform.getScaleInstance(0, 0));
             return;
         }
@@ -263,8 +260,7 @@ public abstract class AbstractBranchSvgNodeRenderer extends AbstractSvgNodeRende
         try {
             transform = transform.createInverse();
         } catch (NoninvertibleTransformException e) {
-            Logger logger = LoggerFactory.getLogger(AbstractBranchSvgNodeRenderer.class);
-            logger.warn(SvgLogMessageConstant.UNABLE_TO_GET_INVERSE_MATRIX_DUE_TO_ZERO_DETERMINANT);
+            LOGGER.warn(() -> SvgLogMessageConstant.UNABLE_TO_GET_INVERSE_MATRIX_DUE_TO_ZERO_DETERMINANT);
             // Case with zero determiner (see PDF 32000-1:2008 - 8.3.4 Transformation Matrices - NOTE 3)
             // for example with a, b, c, d in cm equal to 0
             return new Rectangle(0, 0, 0, 0);

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.font.CjkResourceLoader;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.cmap.CMapContentParser;
@@ -49,18 +50,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for font processing.
  */
 public class FontUtil {
+
+    private static final LazyLogger LOGGER = new LazyLogger(FontUtil.class);
+
     private static final SecureRandom NUMBER_GENERATOR = new SecureRandom();
 
     private static final HashMap<String, CMapToUnicode> uniMaps = new HashMap<>();
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(FontUtil.class);
 
     private static final String UNIVERSAL_CMAP_DIR = "toUnicode/";
 
@@ -98,7 +98,7 @@ public class FontUtil {
                 cMapToUnicode = new CMapToUnicode();
                 CMapParser.parseCid("", cMapToUnicode, lb);
             } catch (Exception e) {
-                LOGGER.error(IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP, e);
+                LOGGER.error(() -> IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP, e);
                 cMapToUnicode = CMapToUnicode.EMPTY_CMAP;
             }
         } else if (PdfName.IdentityH.equals(toUnicode)) {
@@ -225,7 +225,7 @@ public class FontUtil {
         try {
             CMapParser.parseCid(cmapRelPath, cMapToUnicode, new CMapLocationResource());
         } catch (Exception e) {
-            LOGGER.error(IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP, e);
+            LOGGER.error(() -> IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP, e);
             return null;
         }
         return cMapToUnicode;
@@ -258,8 +258,7 @@ public class FontUtil {
         int[] res = new int[256];
         Arrays.fill(res, missingWidth);
         if (widthsArray == null) {
-            Logger logger = LoggerFactory.getLogger(FontUtil.class);
-            logger.warn(IoLogMessageConstant.FONT_DICTIONARY_WITH_NO_WIDTHS);
+            LOGGER.warn(() -> IoLogMessageConstant.FONT_DICTIONARY_WITH_NO_WIDTHS);
             return res;
         }
 

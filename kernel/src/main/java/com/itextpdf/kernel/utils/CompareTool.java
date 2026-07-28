@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.SystemUtil;
@@ -86,7 +87,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -112,6 +112,9 @@ import org.xml.sax.SAXException;
  * for the content of the cmpDoc and "but was" part stands for the content of the outDoc.
  */
 public class CompareTool {
+
+    private static final LazyLogger LOGGER = new LazyLogger(CompareTool.class);
+
     private static final String FILE_PROTOCOL = "file://";
     private static final String UNEXPECTED_NUMBER_OF_PAGES =
             "Unexpected number of pages for <filename>.";
@@ -1306,7 +1309,7 @@ public class CompareTool {
         } catch (IllegalArgumentException e) {
             compareExecIsOk = false;
             imageMagickInitError = e.getMessage();
-            LoggerFactory.getLogger(CompareTool.class).warn(e.getMessage());
+            LOGGER.warn(() -> e.getMessage());
         }
 
         List<Integer> diffPages = new ArrayList<>();
@@ -1729,8 +1732,7 @@ public class CompareTool {
                 PdfNumber outLeftover = flattenNumTree(outNumTree, null, outItems);
                 PdfNumber cmpLeftover = flattenNumTree(cmpNumTree, null, cmpItems);
                 if (outLeftover != null) {
-                    LoggerFactory.getLogger(CompareTool.class)
-                            .warn(IoLogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
+                    LOGGER.warn(() -> IoLogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
                     if (cmpLeftover == null) {
                         if (compareResult != null && currentPath != null) {
                             compareResult.addError(currentPath, "Number tree unexpectedly ends with a key");
@@ -1739,7 +1741,7 @@ public class CompareTool {
                     }
                 }
                 if (cmpLeftover != null) {
-                    LoggerFactory.getLogger(CompareTool.class).warn(IoLogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
+                    LOGGER.warn(() -> IoLogMessageConstant.NUM_TREE_SHALL_NOT_END_WITH_KEY);
                     if (outLeftover == null) {
                         if (compareResult != null && currentPath != null) {
                             compareResult.addError(currentPath, "Number tree was expected to end with a key"

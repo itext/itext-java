@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.pdf.PdfAConformance;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -35,8 +36,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * PdfA3Checker defines the requirements of the PDF/A-3 standard and contains a
@@ -46,6 +45,9 @@ import org.slf4j.LoggerFactory;
  * The specification implemented by this class is ISO 19005-3
  */
 public class PdfA3Checker extends PdfA2Checker{
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfAChecker.class);
+
     protected static final Set<PdfName> allowedAFRelationships = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(
                     PdfName.Source,
@@ -111,8 +113,7 @@ public class PdfA3Checker extends PdfA2Checker{
                         PdfaExceptionMessageConstant.EMBEDDED_FILE_SHALL_CONTAIN_PARAMS_KEY_WITH_VALID_MODDATE_KEY);
             }
         } else {
-            Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
-            logger.warn(PdfAConformanceLogMessageConstant.EMBEDDED_FILE_SHOULD_CONTAIN_PARAMS_KEY);
+            LOGGER.warn(() -> PdfAConformanceLogMessageConstant.EMBEDDED_FILE_SHOULD_CONTAIN_PARAMS_KEY);
         }
     }
 }

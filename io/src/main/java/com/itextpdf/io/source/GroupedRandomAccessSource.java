@@ -22,16 +22,16 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A RandomAccessSource that is based on a set of underlying sources,
  * treating the sources as if they were a contiguous block of data.
  */
 class GroupedRandomAccessSource implements IRandomAccessSource {
+
+    private static final LazyLogger LOGGER = new LazyLogger(GroupedRandomAccessSource.class);
 
     /**
      * The underlying sources (along with some meta data to quickly determine where each source begins and ends)
@@ -202,12 +202,10 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
                 if (firstThrownIOExc == null) {
                     firstThrownIOExc = ex;
                 } else {
-                    Logger logger = LoggerFactory.getLogger(GroupedRandomAccessSource.class);
-                    logger.error(IoLogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
+                    LOGGER.error(() -> IoLogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
                 }
             } catch (Exception ex) {
-                Logger logger = LoggerFactory.getLogger(GroupedRandomAccessSource.class);
-                logger.error(IoLogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
+                LOGGER.error(() -> IoLogMessageConstant.ONE_OF_GROUPED_SOURCES_CLOSING_FAILED, ex);
             }
         }
         if (firstThrownIOExc != null) {

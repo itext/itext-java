@@ -24,6 +24,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
@@ -51,8 +52,6 @@ import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import com.itextpdf.layout.utils.LayoutInfiniteLoopResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +66,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     /**
      * The Logger instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RootRenderer.class);
+    private static final LazyLogger LOGGER = new LazyLogger(RootRenderer.class);
 
     private static final int MAX_AMOUNT_OF_ELEMENT_LAYOUTS = 1_000_000;
 
@@ -170,8 +169,8 @@ public abstract class RootRenderer extends AbstractRenderer {
                         } else {
                             ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                             result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
-                            LOGGER.warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
-                                    ""));
+                            LOGGER.warn(() -> MessageFormatUtil.format(
+                                    LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                         }
                     } else {
                         if (currentArea.isEmptyArea() && result.getAreaBreak() == null &&
@@ -236,7 +235,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (renderer != null && result != null) {
                 if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.KEEP_WITH_NEXT))) {
                     if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
-                        LOGGER.warn(IoLogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
+                        LOGGER.warn(() -> IoLogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
                         shrinkCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
                     } else {
                         keepWithNextHangingRenderer = renderer;
@@ -591,7 +590,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
             }
             if (!ableToProcessKeepWithNext) {
-                LOGGER.warn(IoLogMessageConstant.RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT);
+                LOGGER.warn(() -> IoLogMessageConstant.RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT);
                 keepWithNextHangingRendererLayoutResult = keepWithNextHangingRenderer.layout(new LayoutContext(currentArea.clone()));
                 shrinkCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
             }
@@ -644,9 +643,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             return false;
         } else {
             overflowRenderer.setProperty(Property.FORCED_PLACEMENT, true);
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
-            }
+            LOGGER.warn(() -> MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
             return true;
         }
     }
@@ -672,11 +669,9 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
 
         toDisableKeepTogether.setProperty(Property.KEEP_TOGETHER, false);
-        if (LOGGER.isWarnEnabled()) {
-            LOGGER.warn(MessageFormatUtil.format(
-                    LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
-                    "KeepTogether property will be ignored."));
-        }
+        LOGGER.warn(() -> MessageFormatUtil.format(
+                LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                "KeepTogether property will be ignored."));
         if (!rendererIsFloat) {
             rootRendererStateHandler.attemptGoBackToStoredPreviousStateAndStoreNextState(this);
         }

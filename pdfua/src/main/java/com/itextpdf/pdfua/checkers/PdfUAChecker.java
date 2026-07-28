@@ -23,6 +23,7 @@
 package com.itextpdf.pdfua.checkers;
 
 import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
@@ -52,7 +53,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.Function;
-import org.slf4j.LoggerFactory;
 
 /**
  * An abstract class that will run through all necessary checks defined in the different PDF/UA standards. A number of
@@ -67,6 +67,8 @@ import org.slf4j.LoggerFactory;
  * pdfua project.
  */
 public abstract class PdfUAChecker implements IValidationChecker {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfUAChecker.class);
 
     static final Function<String, PdfException> EXCEPTION_SUPPLIER = (msg) -> new PdfUAConformanceException(msg);
 
@@ -84,7 +86,7 @@ public abstract class PdfUAChecker implements IValidationChecker {
      */
     public void warnOnPageFlush() {
         if (!warnedOnPageFlush) {
-            LoggerFactory.getLogger(PdfUAChecker.class).warn(PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED);
+            LOGGER.warn(() -> PdfUALogMessageConstants.PAGE_FLUSHING_DISABLED);
             warnedOnPageFlush = true;
         }
     }

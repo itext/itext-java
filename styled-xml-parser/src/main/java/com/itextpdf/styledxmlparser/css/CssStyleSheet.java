@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.CssRuleSetComparator;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
@@ -37,8 +38,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class that stores all the CSS statements, and thus acts as a CSS style sheet.
@@ -183,9 +182,9 @@ public class CssStyleSheet {
         if (CssDeclarationValidationMaster.checkDeclaration(cssDeclaration)) {
                 stylesMap.put(cssDeclaration.getProperty(), cssDeclaration);
         } else {
-            Logger logger = LoggerFactory.getLogger(ICssResolver.class);
-            logger.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
-                    cssDeclaration));
+            LazyLogger logger = new LazyLogger(ICssResolver.class);
+            logger.warn(() -> MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, cssDeclaration));
         }
     }
 

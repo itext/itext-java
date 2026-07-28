@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -71,7 +72,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import org.slf4j.LoggerFactory;
 
 /**
  * An abstract class that will run through all necessary checks defined in the
@@ -90,6 +90,8 @@ import org.slf4j.LoggerFactory;
  * iText - pdfa project.
  */
 public abstract class PdfAChecker implements IValidationChecker {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfAChecker.class);
 
     /**
      * The Red-Green-Blue color profile as defined by the International Color
@@ -293,12 +295,12 @@ public abstract class PdfAChecker implements IValidationChecker {
             if (!alreadyLoggedThatPageFlushingWasNotPerformed) {
                 alreadyLoggedThatPageFlushingWasNotPerformed = true;
                 // This log message will be printed once for one instance of the document.
-                LoggerFactory.getLogger(PdfAChecker.class).warn(PdfALogMessageConstant.PDFA_PAGE_FLUSHING_WAS_NOT_PERFORMED);
+                LOGGER.warn(() -> PdfALogMessageConstant.PDFA_PAGE_FLUSHING_WAS_NOT_PERFORMED);
             }
         } else if (!alreadyLoggedThatObjectFlushingWasNotPerformed) {
             alreadyLoggedThatObjectFlushingWasNotPerformed = true;
             // This log message will be printed once for one instance of the document.
-            LoggerFactory.getLogger(PdfAChecker.class).warn(PdfALogMessageConstant.PDFA_OBJECT_FLUSHING_WAS_NOT_PERFORMED);
+            LOGGER.warn(() -> PdfALogMessageConstant.PDFA_OBJECT_FLUSHING_WAS_NOT_PERFORMED);
 
         }
         return false;

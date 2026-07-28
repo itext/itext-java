@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.borders;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
@@ -31,13 +32,12 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.properties.TransparentColor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Represents a border.
  */
 public abstract class Border {
+
+    private static final LazyLogger LOGGER = new LazyLogger(Border.class);
 
     /**
      * The null Border, i.e. the presence of such border is equivalent to the absence of the border
@@ -264,9 +264,10 @@ public abstract class Border {
      * @param borderWidthBefore defines width of the border that is before the current one
      * @param borderWidthAfter  defines width of the border that is after the current one
      */
-    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float horizontalRadius1, float verticalRadius1, float horizontalRadius2, float verticalRadius2, Side defaultSide, float borderWidthBefore, float borderWidthAfter) {
-        Logger logger = LoggerFactory.getLogger(Border.class);
-        logger.warn(MessageFormatUtil.format(
+    public void draw(PdfCanvas canvas, float x1, float y1, float x2, float y2, float horizontalRadius1,
+            float verticalRadius1, float horizontalRadius2, float verticalRadius2, Side defaultSide,
+            float borderWidthBefore, float borderWidthAfter) {
+        LOGGER.warn(() -> MessageFormatUtil.format(
                 IoLogMessageConstant.METHOD_IS_NOT_IMPLEMENTED_BY_DEFAULT_OTHER_METHOD_WILL_BE_USED,
                 "Border#draw(PdfCanvas, float, float, float, float, float, float, float, float, Side, float, float",
                 "Border#draw(PdfCanvas, float, float, float, float, Side, float, float)"));

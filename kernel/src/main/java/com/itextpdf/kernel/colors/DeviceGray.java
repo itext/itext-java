@@ -22,15 +22,16 @@
  */
 package com.itextpdf.kernel.colors;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Color space to specify shades of gray color.
  */
 public class DeviceGray extends Color {
+
+    private static final LazyLogger LOGGER = new LazyLogger(DeviceGray.class);
 
     /**
      * Predefined white DeviceGray color.
@@ -57,8 +58,7 @@ public class DeviceGray extends Color {
     public DeviceGray(float value) {
         super(new PdfDeviceCs.Gray(), new float[] {value > 1 ? 1 : (value > 0 ? value : 0)});
         if (value > 1 || value < 0) {
-            Logger LOGGER = LoggerFactory.getLogger(DeviceGray.class);
-            LOGGER.warn(IoLogMessageConstant.COLORANT_INTENSITIES_INVALID);
+            LOGGER.warn(() -> IoLogMessageConstant.COLORANT_INTENSITIES_INVALID);
         }
     }
 

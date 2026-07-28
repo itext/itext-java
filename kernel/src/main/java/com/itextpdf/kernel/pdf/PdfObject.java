@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -31,11 +32,10 @@ import com.itextpdf.kernel.utils.NullCopyFilter;
 import com.itextpdf.kernel.validation.context.PdfObjectValidationContext;
 
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class PdfObject {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfObject.class);
 
     public static final byte ARRAY = 1;
     public static final byte BOOLEAN = 2;
@@ -142,15 +142,14 @@ public abstract class PdfObject {
         if (isFlushed() || getIndirectReference() == null || getIndirectReference().isFree()) {
 // TODO DEVSIX-744: here we should take into account and log the case when object is MustBeIndirect,
 //  but has no indirect reference
-//            Logger logger = LoggerFactory.getLogger(PdfObject.class);
 //            if (isFlushed()) {
-//                logger.warn("Meaningless call, the object has already flushed");
+//                LOGGER.warn(() -> "Meaningless call, the object has already flushed");
 //            } else if (isIndirect()){
-//                logger.warn("Meaningless call, the object will be transformed into indirect on closing," +
+//                LOGGER.warn(() -> "Meaningless call, the object will be transformed into indirect on closing," +
 //                " but at the moment it doesn't have an indirect reference and therefore couldn't be flushed. " +
 //                        "To flush it now call makeIndirect(PdfDocument) method before calling flush() method.");
 //            } else {
-//                logger.warn("Meaningless call, the object is direct object. It will be flushed along with" +
+//                LOGGER.warn(() -> "Meaningless call, the object is direct object. It will be flushed along with" +
 //                " the indirect object that contains it.");
 //            }
             return;
@@ -159,8 +158,7 @@ public abstract class PdfObject {
             PdfDocument document = getIndirectReference().getDocument();
             if (document != null) {
                 if (document.isAppendMode() && !isModified()) {
-                    Logger logger = LoggerFactory.getLogger(PdfObject.class);
-                    logger.info(IoLogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
+                    LOGGER.info(() -> IoLogMessageConstant.PDF_OBJECT_FLUSHING_NOT_PERFORMED);
                     return;
                 }
                 document.checkIsoConformance(new PdfObjectValidationContext(this));
@@ -439,8 +437,7 @@ public abstract class PdfObject {
     public void release() {
         // In case ForbidRelease flag is set, release will not be performed.
         if (isReleaseForbidden()) {
-            Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(IoLogMessageConstant.FORBID_RELEASE_IS_SET);
+            LOGGER.warn(() -> IoLogMessageConstant.FORBID_RELEASE_IS_SET);
         } else {
             if (indirectReference != null && indirectReference.getReader() != null
                     && !indirectReference.checkState(FLUSHED)) {

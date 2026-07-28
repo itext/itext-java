@@ -24,11 +24,10 @@ package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -42,7 +41,7 @@ import java.security.GeneralSecurityException;
  */
 public class AESCipher {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AESCipher.class);
+    private static final LazyLogger LOGGER = new LazyLogger(AESCipher.class);
 
     private static final String CIPHER_WITH_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
 
@@ -83,7 +82,7 @@ public class AESCipher {
         try {
             return cipher.doFinal();
         } catch (IllegalBlockSizeException | BadPaddingException e) {
-            LOGGER.info(KernelLogMessageConstant.ERROR_WHILE_FINALIZING_AES_CIPHER, e);
+            LOGGER.info(() -> KernelLogMessageConstant.ERROR_WHILE_FINALIZING_AES_CIPHER, e);
             return null;
         }
     }

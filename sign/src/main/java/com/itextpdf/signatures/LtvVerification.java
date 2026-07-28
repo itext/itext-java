@@ -28,9 +28,11 @@ import com.itextpdf.commons.bouncycastle.asn1.IDEROctetString;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponse;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IOCSPResponseStatus;
 import com.itextpdf.commons.bouncycastle.asn1.ocsp.IResponseBytes;
+import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.font.PdfEncodings;
@@ -71,8 +73,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Add verification according to PAdES-LTV (part 4).
@@ -81,7 +81,7 @@ public class LtvVerification {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LtvVerification.class);
+    private static final LazyLogger LOGGER = new LazyLogger(LtvVerification.class);
 
     private final PdfDocument document;
     private final SignatureUtil sgnUtil;
@@ -241,7 +241,7 @@ public class LtvVerification {
 
         checkSignatureExists(signatureName);
         PdfPKCS7 pk = sgnUtil.readSignatureData(signatureName, securityProviderCode);
-        LOGGER.info("Adding verification for " + signatureName);
+        LOGGER.info(() -> "Adding verification for " + signatureName);
         Certificate[] certificateChain = pk.getCertificates();
         X509Certificate signingCert = pk.getSigningCertificate();
         ValidationData validationData = new ValidationData();
@@ -385,7 +385,8 @@ public class LtvVerification {
                 retrieveMissingCertificates(certChain) : certChain;
         for (Certificate certificate : fullChain) {
             X509Certificate cert = (X509Certificate) certificate;
-            LOGGER.info(MessageFormatUtil.format("Certificate: {0}", BOUNCY_CASTLE_FACTORY.createX500Name(cert)));
+            IX500Name x500Name = BOUNCY_CASTLE_FACTORY.createX500Name(cert);
+            LOGGER.info(() -> MessageFormatUtil.format("Certificate: {0}", x500Name));
             if ((certOption == CertificateOption.SIGNING_CERTIFICATE && !cert.equals(signingCert))
                     || processedCerts.contains(cert)) {
                 continue;
@@ -402,7 +403,8 @@ public class LtvVerification {
         processedCerts.add(cert);
         byte[] validityAssured = SignUtils.getExtensionValueByOid(cert, X509Extensions.VALIDITY_ASSURED_SHORT_TERM);
         if (validityAssured != null) {
-            LOGGER.info(MessageFormatUtil.format(SignLogMessageConstant.REVOCATION_DATA_NOT_ADDED_VALIDITY_ASSURED,
+            LOGGER.info(() -> MessageFormatUtil.format(
+                    SignLogMessageConstant.REVOCATION_DATA_NOT_ADDED_VALIDITY_ASSURED,
                     cert.getSubjectX500Principal()));
             return;
         }
@@ -416,7 +418,7 @@ public class LtvVerification {
                 ocsps.add(LtvVerification.buildOCSPResponse(ocspEnc));
                 validationData.setOcsps(ocsps);
                 revocationDataAdded = true;
-                LOGGER.info("OCSP added");
+                LOGGER.info(() -> "OCSP added");
                 if (certOption == CertificateOption.ALL_CERTIFICATES) {
                     addRevocationDataForOcspCert(ocspEnc, signingCert, ocsp, crl, level, certInclude, certOption,
                             validationData, processedCerts);
@@ -443,7 +445,7 @@ public class LtvVerification {
                         List<byte[]> crls = validationData.getCrls();
                         crls.add(cim);
                         validationData.setCrls(crls);
-                        LOGGER.info("CRL added");
+                        LOGGER.info(() -> "CRL added");
                         if (certOption == CertificateOption.ALL_CERTIFICATES) {
                             Certificate[] certsList = issuingCertificateRetriever.getCrlIssuerCertificates(
                                     SignUtils.parseCrlFromStream(new ByteArrayInputStream(cim)));

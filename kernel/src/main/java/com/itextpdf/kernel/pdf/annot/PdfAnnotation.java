@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.colors.Color;
@@ -43,15 +44,13 @@ import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This is a super class for the annotation dictionary wrappers. Derived classes represent
  * different standard types of annotations. See ISO-320001 12.5.6, "Annotation Types."
  */
 public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfAnnotation.class);
 
     /**
      * Annotation flag.
@@ -1059,8 +1058,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      */
     public void addAssociatedFile(PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
-            Logger logger = LoggerFactory.getLogger(PdfAnnotation.class);
-            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            LOGGER.error(() -> IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
         if (afArray == null) {

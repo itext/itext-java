@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteArrayOutputStream;
@@ -35,10 +36,10 @@ import com.itextpdf.kernel.pdf.filters.FlateDecodeFilter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfOutputStream.class);
 
     private static final byte[] stream = ByteUtils.getIsoBytes("stream\n");
     private static final byte[] endstream = ByteUtils.getIsoBytes("\nendstream");
@@ -46,7 +47,6 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
     private static final byte[] closeDict = ByteUtils.getIsoBytes(">>");
     private static final byte[] endIndirect = ByteUtils.getIsoBytes(" R");
     private static final byte[] endIndirectWithZeroGenNr = ByteUtils.getIsoBytes(" 0 R");
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfOutputStream.class);
 
     /**
      * Document associated with PdfOutputStream.
@@ -423,7 +423,8 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
             write(key);
             PdfObject value = pdfDictionary.get(key, false);
             if (value == null) {
-                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.INVALID_KEY_VALUE_KEY_0_HAS_NULL_VALUE, key));
                 value = PdfNull.PDF_NULL;
             }
             if ((value.getType() == PdfObject.NUMBER
@@ -454,12 +455,12 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
             throw new PdfException(KernelExceptionMessageConstant.PDF_INDIRECT_OBJECT_BELONGS_TO_OTHER_PDF_DOCUMENT);
         }
         if (indirectReference.isFree()) {
-            LOGGER.error(IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE);
+            LOGGER.error(() -> IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_FREE_REFERENCE);
             write(PdfNull.PDF_NULL);
         } else if (indirectReference.refersTo == null
                 && (indirectReference.checkState(PdfObject.MODIFIED) || indirectReference.getReader() == null
                 || !(indirectReference.getOffset() > 0 || indirectReference.getIndex() >= 0))) {
-            LOGGER.error(IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT);
+            LOGGER.error(() -> IoLogMessageConstant.FLUSHED_OBJECT_CONTAINS_REFERENCE_WHICH_NOT_REFER_TO_ANY_OBJECT);
             write(PdfNull.PDF_NULL);
         } else if (indirectReference.getGenNumber() == 0) {
             writeInteger(indirectReference.getObjNumber()).
@@ -509,16 +510,6 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
         }
     }
 
-    private boolean isNotMetadataPdfStream(PdfStream pdfStream) {
-        return pdfStream.getAsName(PdfName.Type) == null ||
-                (pdfStream.getAsName(PdfName.Type) != null && !pdfStream.getAsName(PdfName.Type)
-                        .equals(PdfName.Metadata));
-    }
-
-    private boolean isXRefStream(PdfStream pdfStream) {
-        return PdfName.XRef.equals(pdfStream.getAsName(PdfName.Type));
-    }
-
     private void write(PdfStream pdfStream) {
         try {
             boolean userDefinedCompression =
@@ -532,47 +523,7 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
             boolean toCompress = pdfStream.getCompressionLevel() != CompressionConstants.NO_COMPRESSION;
             boolean allowCompression = !pdfStream.containsKey(PdfName.Filter) && isNotMetadataPdfStream(pdfStream);
 
-            if (pdfStream.getInputStream() != null) {
-                java.io.OutputStream fout = this;
-                OutputStream def = null;
-                OutputStreamEncryption ose = null;
-
-                long beginStreamContent;
-                if (crypto != null &&
-                        (!crypto.isEmbeddedFilesOnly() || document.doesStreamBelongToEmbeddedFile(pdfStream))) {
-                    updateCryptFilterForEmbeddedFilesOnlyMode(pdfStream);
-
-                    // We should store current position here because crypto.getEncryptionStream(fout) may already
-                    // output something into the stream (iv vector for AES256)
-                    beginStreamContent = writePdfStreamAndGetPosition(pdfStream);
-                    fout = ose = crypto.getEncryptionStream(fout);
-                } else if (toCompress && (allowCompression || userDefinedCompression)) {
-                    updateCompressionFilter(pdfStream);
-                    beginStreamContent = writePdfStreamAndGetPosition(pdfStream);
-                    fout = def = getCompressionStrategy().createNewOutputStream(fout, pdfStream);
-                } else {
-                    beginStreamContent = writePdfStreamAndGetPosition(pdfStream);
-                }
-
-                byte[] buf = new byte[4192];
-                while (true) {
-                    int n = pdfStream.getInputStream().read(buf);
-                    if (n <= 0) {
-                        break;
-                    }
-                    fout.write(buf, 0, n);
-                }
-                if (def instanceof IFinishable) {
-                    ((IFinishable) def).finish();
-                }
-                if (ose != null) {
-                    ose.finish();
-                }
-                PdfNumber length = pdfStream.getAsNumber(PdfName.Length);
-                length.setValue((int) (getCurrentPos() - beginStreamContent));
-                pdfStream.updateLength(length.intValue());
-                writeBytes(PdfOutputStream.endstream);
-            } else {
+            if (pdfStream.getInputStream() == null) {
                 //When document is opened in stamping mode the output stream can be uninitialized.
                 //We have to initialize it and write all data from streams input to streams output.
                 if (pdfStream.getOutputStream() == null && pdfStream.getIndirectReference().getReader() != null) {
@@ -637,10 +588,60 @@ public class PdfOutputStream extends HighPrecisionOutputStream<PdfOutputStream> 
                 byteArrayStream.writeTo(this);
                 byteArrayStream.close();
                 writeBytes(PdfOutputStream.endstream);
+            } else {
+                OutputStream fout = this;
+                OutputStream def = null;
+                OutputStreamEncryption ose = null;
+
+                long beginStreamContent;
+                if (crypto != null &&
+                        (!crypto.isEmbeddedFilesOnly() || document.doesStreamBelongToEmbeddedFile(pdfStream))) {
+                    updateCryptFilterForEmbeddedFilesOnlyMode(pdfStream);
+
+                    // We should store current position here because crypto.getEncryptionStream(fout) may already
+                    // output something into the stream (iv vector for AES256)
+                    beginStreamContent = writePdfStreamAndGetPosition(pdfStream);
+                    fout = ose = crypto.getEncryptionStream(fout);
+                } else if (toCompress && (allowCompression || userDefinedCompression)) {
+                    updateCompressionFilter(pdfStream);
+                    beginStreamContent = writePdfStreamAndGetPosition(pdfStream);
+                    fout = def = getCompressionStrategy().createNewOutputStream(fout, pdfStream);
+                } else {
+                    beginStreamContent = writePdfStreamAndGetPosition(pdfStream);
+                }
+
+                byte[] buf = new byte[4192];
+                while (true) {
+                    int n = pdfStream.getInputStream().read(buf);
+                    if (n <= 0) {
+                        break;
+                    }
+                    fout.write(buf, 0, n);
+                }
+                if (def instanceof IFinishable) {
+                    ((IFinishable) def).finish();
+                }
+                if (ose != null) {
+                    ose.finish();
+                }
+                PdfNumber length = pdfStream.getAsNumber(PdfName.Length);
+                length.setValue((int) (getCurrentPos() - beginStreamContent));
+                pdfStream.updateLength(length.intValue());
+                writeBytes(PdfOutputStream.endstream);
             }
         } catch (IOException e) {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_WRITE_TO_PDF_STREAM, e, pdfStream);
         }
+    }
+
+    private boolean isNotMetadataPdfStream(PdfStream pdfStream) {
+        return pdfStream.getAsName(PdfName.Type) == null ||
+                (pdfStream.getAsName(PdfName.Type) != null && !pdfStream.getAsName(PdfName.Type)
+                        .equals(PdfName.Metadata));
+    }
+
+    private boolean isXRefStream(PdfStream pdfStream) {
+        return PdfName.XRef.equals(pdfStream.getAsName(PdfName.Type));
     }
 
     private long writePdfStreamAndGetPosition(PdfStream pdfStream) {

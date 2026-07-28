@@ -25,9 +25,11 @@ package com.itextpdf.signatures;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.AbstractOCSPException;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
@@ -65,8 +67,14 @@ public class LtvVerifier extends RootStoreVerifier {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    /** The Logger instance */
+    /**
+     * The Logger instance.
+     */
+    @Deprecated
+    // on removal of slf4j logger field rename `LAZY_LOGGER` into LOGGER
     protected static final Logger LOGGER = LoggerFactory.getLogger(LtvVerifier.class);
+
+    private  static final LazyLogger LAZY_LOGGER = new LazyLogger(LtvVerifier.class);
 
     /** Option to specify level of verification; signing certificate only or the entire chain. */
     protected CertificateOption option = CertificateOption.SIGNING_CERTIFICATE;
@@ -185,7 +193,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws IOException              signals that an I/O exception has occurred
      */
     public List<VerificationOK> verifySignature() throws GeneralSecurityException, IOException {
-        LOGGER.info("Verifying signature.");
+        LAZY_LOGGER.info(() -> "Verifying signature.");
         List<VerificationOK> result = new ArrayList<>();
         // Get the certificate chain
         Certificate[] chain = pkcs7.getSignCertificateChain();
@@ -207,7 +215,8 @@ public class LtvVerifier extends RootStoreVerifier {
                 issuerCert = (X509Certificate) chain[i];
             }
             // now lets verify the certificate
-            LOGGER.info(BOUNCY_CASTLE_FACTORY.createX500Name(signCert).toString());
+            IX500Name x500Name = BOUNCY_CASTLE_FACTORY.createX500Name(signCert);
+            LAZY_LOGGER.info(() -> x500Name.toString());
             List<VerificationOK> list = verify(signCert, issuerCert, signDate);
             if (list.size() == 0) {
                 try {
@@ -254,7 +263,7 @@ public class LtvVerifier extends RootStoreVerifier {
                 chain[i - 1].verify(chain[i].getPublicKey());
             }
         }
-        LOGGER.info("All certificates are valid on " + signDate.toString());
+        LAZY_LOGGER.info(() -> "All certificates are valid on " + signDate.toString());
     }
 
     /**
@@ -294,7 +303,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * @throws GeneralSecurityException if some problems with signature or security occurred
      */
     public void switchToPreviousRevision() throws IOException, GeneralSecurityException {
-        LOGGER.info("Switching to previous revision.");
+        LAZY_LOGGER.info(() -> "Switching to previous revision.");
         latestRevision = false;
         dss = document.getCatalog().getPdfObject().getAsDictionary(PdfName.DSS);
         Calendar cal = pkcs7.getTimeStampDate();
@@ -312,13 +321,12 @@ public class LtvVerifier extends RootStoreVerifier {
                 names = sgnUtil.getSignatureNames();
                 signatureName = names.get(names.size() - 1);
                 pkcs7 = coversWholeDocument();
-                LOGGER.info(
-                        MessageFormatUtil.format("Checking {0}signature {1}", pkcs7.isTsp()
+                LAZY_LOGGER.info(() -> MessageFormatUtil.format("Checking {0}signature {1}", pkcs7.isTsp()
                                 ? "document-level timestamp "
                                 : "", signatureName));
             }
         } else {
-            LOGGER.info("No signatures in revision");
+            LAZY_LOGGER.info(() -> "No signatures in revision");
             pkcs7 = null;
         }
     }
@@ -398,12 +406,11 @@ public class LtvVerifier extends RootStoreVerifier {
         signatureName = names.get(names.size() - 1);
         this.signDate = DateTimeUtil.getCurrentTimeDate();
         pkcs7 = coversWholeDocument();
-        LOGGER.info(
-                MessageFormatUtil.format(
-                        "Checking {0}signature {1}", pkcs7.isTsp()
-                                ? "document-level timestamp "
-                                : "",
-                        signatureName));
+        LAZY_LOGGER.info(() -> MessageFormatUtil.format(
+                "Checking {0}signature {1}", pkcs7.isTsp()
+                        ? "document-level timestamp "
+                        : "",
+                signatureName));
     }
 
     /**
@@ -417,12 +424,12 @@ public class LtvVerifier extends RootStoreVerifier {
     protected PdfPKCS7 coversWholeDocument() throws GeneralSecurityException {
         PdfPKCS7 pkcs7 = sgnUtil.readSignatureData(signatureName, securityProviderCode);
         if (sgnUtil.signatureCoversWholeDocument(signatureName)) {
-            LOGGER.info("The timestamp covers whole document.");
+            LAZY_LOGGER.info(() -> "The timestamp covers whole document.");
         } else {
             throw new VerificationException((Certificate) null, "Signature doesn't cover whole document.");
         }
         if (pkcs7.verifySignatureIntegrityAndAuthenticity()) {
-            LOGGER.info("The signed document has not been modified.");
+            LAZY_LOGGER.info(() -> "The signed document has not been modified.");
             return pkcs7;
         } else {
             throw new VerificationException((Certificate) null,

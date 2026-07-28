@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -34,8 +35,6 @@ import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.renderer.CanvasRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is used for adding content directly onto a specified {@link PdfCanvas}.
@@ -45,6 +44,8 @@ import org.slf4j.LoggerFactory;
  * API and the low-level <em>kernel</em> API.
  */
 public class Canvas extends RootElement<Canvas> {
+
+    private static final LazyLogger LOGGER = new LazyLogger(Canvas.class);
 
     protected PdfCanvas pdfCanvas;
     protected Rectangle rootArea;
@@ -159,8 +160,7 @@ public class Canvas extends RootElement<Canvas> {
      */
     public void enableAutoTagging(PdfPage page) {
         if (isCanvasOfPage() && this.page != page) {
-            Logger logger = LoggerFactory.getLogger(Canvas.class);
-            logger.error(IoLogMessageConstant.PASSED_PAGE_SHALL_BE_ON_WHICH_CANVAS_WILL_BE_RENDERED);
+            LOGGER.error(() -> IoLogMessageConstant.PASSED_PAGE_SHALL_BE_ON_WHICH_CANVAS_WILL_BE_RENDERED);
         }
         this.page = page;
         this.pdfCanvas.setDrawingOnPage(this.isAutoTaggingEnabled());

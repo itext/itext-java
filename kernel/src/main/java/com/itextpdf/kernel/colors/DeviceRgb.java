@@ -22,16 +22,16 @@
  */
 package com.itextpdf.kernel.colors;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Color space to specify colors according to RGB color model.
  */
 public class DeviceRgb extends Color {
+
     /**
      * Predefined black DeviceRgb color
      */
@@ -89,8 +89,8 @@ public class DeviceRgb extends Color {
                 b > 1 ? 1 : (b > 0 ? b : 0)
         });
         if (r > 1 || r < 0 || g > 1 || g < 0 || b > 1 || b < 0) {
-            Logger LOGGER = LoggerFactory.getLogger(DeviceRgb.class);
-            LOGGER.warn(IoLogMessageConstant.COLORANT_INTENSITIES_INVALID);
+            LazyLogger logger = new LazyLogger(DeviceRgb.class);
+            logger.warn(() -> IoLogMessageConstant.COLORANT_INTENSITIES_INVALID);
         }
     }
 
@@ -106,8 +106,9 @@ public class DeviceRgb extends Color {
     public DeviceRgb(java.awt.Color color) {
         this(color.getRed(), color.getGreen(), color.getBlue());
         if (color.getAlpha() != 255) {
-            Logger LOGGER = LoggerFactory.getLogger(DeviceRgb.class);
-            LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.COLOR_ALPHA_CHANNEL_IS_IGNORED, color.getAlpha()));
+            LazyLogger logger = new LazyLogger(DeviceRgb.class);
+            logger.warn(() -> MessageFormatUtil.format(
+                    IoLogMessageConstant.COLOR_ALPHA_CHANNEL_IS_IGNORED, color.getAlpha()));
         }
     }
     // Android-Conversion-Skip-Block-End

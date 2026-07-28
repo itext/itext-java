@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.colors.IccProfile;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -61,8 +62,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * PdfA4Checker defines the requirements of the PDF/A-4 standard and contains a
@@ -123,7 +122,7 @@ public class PdfA4Checker extends PdfA3Checker {
     private static final String TRANSPARENCY_ERROR_MESSAGE =
             PdfaExceptionMessageConstant.THE_DOCUMENT_AND_THE_PAGE_DO_NOT_CONTAIN_A_PDFA_OUTPUTINTENT_BUT_PAGE_CONTAINS_TRANSPARENCY_AND_DOES_NOT_CONTAIN_BLENDING_COLOR_SPACE;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfAChecker.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PdfAChecker.class);
 
     private static final Set<PdfName> forbiddenActionsE = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(
@@ -297,7 +296,7 @@ public class PdfA4Checker extends PdfA3Checker {
                     PdfaExceptionMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHALL_CONTAIN_F_KEY_AND_UF_KEY);
         }
         if (!fileSpec.containsKey(PdfName.Desc)) {
-            LOGGER.warn(PdfAConformanceLogMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHOULD_CONTAIN_DESC_KEY);
+            LOGGER.warn(() -> PdfAConformanceLogMessageConstant.FILE_SPECIFICATION_DICTIONARY_SHOULD_CONTAIN_DESC_KEY);
         }
     }
 

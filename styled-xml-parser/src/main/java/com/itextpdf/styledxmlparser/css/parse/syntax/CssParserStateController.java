@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.parse.syntax;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CssAtRule;
 import com.itextpdf.styledxmlparser.css.CssAtRuleFactory;
@@ -52,14 +53,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * State machine that will parse content into a style sheet.
  */
 public final class CssParserStateController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CssParserStateController.class);
+    private static final LazyLogger LOGGER = new LazyLogger(CssParserStateController.class);
 
     /** Set of the supported rules. */
     private static final Set<String> SUPPORTED_RULES = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
@@ -495,7 +494,7 @@ public final class CssParserStateController {
 
             if (isPositionCorrect) {
                 if (resourceResolver == null) {
-                    LOGGER.error(StyledXmlParserLogMessageConstant.IMPORT_RULE_URL_CAN_NOT_BE_RESOLVED);
+                    LOGGER.error(() -> StyledXmlParserLogMessageConstant.IMPORT_RULE_URL_CAN_NOT_BE_RESOLVED);
                     return;
                 }
 
@@ -510,10 +509,10 @@ public final class CssParserStateController {
                         styleSheetFromImport.appendCssStyleSheet(externalStyleSheet);
                     }
                 } catch (IOException e) {
-                    LOGGER.error(StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, e);
+                    LOGGER.error(() -> StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, e);
                 }
             } else {
-                LOGGER.warn(StyledXmlParserLogMessageConstant.IMPORT_MUST_COME_BEFORE);
+                LOGGER.warn(() -> StyledXmlParserLogMessageConstant.IMPORT_MUST_COME_BEFORE);
             }
         } else {
             styleSheet.addStatement(atRule);
@@ -541,7 +540,7 @@ public final class CssParserStateController {
     private boolean isCurrentRuleSupported() {
         boolean isSupported = nestedAtRules.isEmpty() || SUPPORTED_RULES.contains(nestedAtRules.peek().getRuleName());
         if (!isSupported) {
-            LOGGER.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.RULE_IS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(StyledXmlParserLogMessageConstant.RULE_IS_NOT_SUPPORTED,
                     nestedAtRules.peek().getRuleName()));
         }
         return isSupported;

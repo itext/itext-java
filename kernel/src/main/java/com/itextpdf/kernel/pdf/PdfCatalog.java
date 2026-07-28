@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -46,14 +47,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The root of a document’s object hierarchy.
  */
 public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfCatalog.class);
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfCatalog.class);
+
     private static final String ROOT_OUTLINE_TITLE = "Outlines";
     private static final Set<PdfName> PAGE_MODES = Collections.unmodifiableSet(new HashSet<>(
             Arrays.asList(PdfName.UseNone, PdfName.UseOutlines, PdfName.UseThumbs,
@@ -163,8 +164,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
      */
     @Override
     public void flush() {
-        Logger logger = LoggerFactory.getLogger(PdfDocument.class);
-        logger.warn("PdfCatalog cannot be flushed manually");
+        LOGGER.warn(() -> "PdfCatalog cannot be flushed manually");
     }
 
     /**
@@ -682,7 +682,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                         throw new PdfException(MessageFormatUtil.format(
                                 KernelExceptionMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP, first));
                     }
-                    LOGGER.warn(MessageFormatUtil.format(
+                    LOGGER.warn(() -> MessageFormatUtil.format(
                             KernelLogMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP, first));
                     return;
                 }
@@ -696,7 +696,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                         throw new PdfException(MessageFormatUtil.format(
                                 KernelExceptionMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP, next));
                     }
-                    LOGGER.warn(MessageFormatUtil.format(
+                    LOGGER.warn(() -> MessageFormatUtil.format(
                             KernelLogMessageConstant.CORRUPTED_OUTLINE_DICTIONARY_HAS_INFINITE_LOOP, next));
                     return;
                 }
@@ -823,7 +823,7 @@ public class PdfCatalog extends PdfObjectWrapper<PdfDictionary> {
                 pageObj = getDocument().getPage(pageNumber).getPdfObject();
             } catch (IndexOutOfBoundsException ex) {
                 pageObj = null;
-                LOGGER.warn(MessageFormatUtil.format(
+                LOGGER.warn(() -> MessageFormatUtil.format(
                         IoLogMessageConstant.OUTLINE_DESTINATION_PAGE_NUMBER_IS_OUT_OF_BOUNDS, pageNumber)
                 );
             }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
@@ -30,10 +31,10 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfTokenizer implements Closeable {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfTokenizer.class);
 
 
     public enum TokenType {
@@ -338,9 +339,12 @@ public class PdfTokenizer implements Closeable {
                             } catch (Exception ex) {
                                 //warn about incorrect reference number
                                 //Exception: NumberFormatException for java, FormatException or OverflowException for .NET
-                                Logger logger = LoggerFactory.getLogger(PdfTokenizer.class);
-                                logger.error(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE,
-                                        new String(n1), new String(n2)));
+                                final byte[] logN1 = n1;
+                                final byte[] logN2 = n2;
+                                LOGGER.error(() -> MessageFormatUtil.format(
+                                        IoLogMessageConstant.INVALID_INDIRECT_REFERENCE,
+                                        new String(logN1, StandardCharsets.ISO_8859_1),
+                                        new String(logN2, StandardCharsets.ISO_8859_1)));
                                 reference = -1;
                                 generation = 0;
                             }

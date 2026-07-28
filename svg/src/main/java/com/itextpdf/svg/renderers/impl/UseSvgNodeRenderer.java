@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -36,12 +37,13 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgTextUtil;
 
-import org.slf4j.LoggerFactory;
-
 /**
  * Renderer implementing the use tag. This tag allows you to reuse previously defined elements.
  */
 public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(UseSvgNodeRenderer.class);
+
     @Override
     protected void doDraw(SvgDrawContext context) {
         if (this.attributesAndStyles != null) {
@@ -75,8 +77,7 @@ public class UseSvgNodeRenderer extends AbstractSvgNodeRenderer {
                                 try {
                                     inverseMatrix = translation.createInverse();
                                 } catch (NoninvertibleTransformException ex) {
-                                    LoggerFactory.getLogger(UseSvgNodeRenderer.class)
-                                            .warn(SvgLogMessageConstant.NONINVERTIBLE_TRANSFORMATION_MATRIX_USED_IN_CLIP_PATH, ex);
+                                    LOGGER.warn(() -> SvgLogMessageConstant.NONINVERTIBLE_TRANSFORMATION_MATRIX_USED_IN_CLIP_PATH, ex);
                                 }
                             }
                         }

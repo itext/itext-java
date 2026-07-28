@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser.util;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -36,8 +37,6 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.filters.FilterHandlers;
 import com.itextpdf.kernel.pdf.filters.IFilterHandler;
 import com.itextpdf.kernel.pdf.filters.FlateDecodeStrictFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,7 +48,7 @@ import java.util.Map;
  */
 public final class InlineImageParsingUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InlineImageParsingUtils.class);
+    private static final LazyLogger LOGGER = new LazyLogger(InlineImageParsingUtils.class);
 
     private InlineImageParsingUtils() {
     }
@@ -503,7 +502,7 @@ public final class InlineImageParsingUtils {
 
         @Override
         public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-            LOGGER.error(MessageFormatUtil.format(
+            LOGGER.error(() -> MessageFormatUtil.format(
                     KernelExceptionMessageConstant.UNSUPPORTED_ENCODING_FOR_INLINE_IMAGE, name));
             throw new UnsupportedOperationException();
         }

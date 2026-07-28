@@ -22,6 +22,7 @@
  */
 package com.itextpdf.signatures.validation.lotl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.TimerUtil;
 import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
@@ -36,7 +37,6 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -503,7 +503,7 @@ public class LotlService implements AutoCloseable {
 
 
     private static final class LoggableResourceRetriever extends DefaultResourceRetriever {
-        private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LotlService.class);
+        private static final LazyLogger LOGGER = new LazyLogger(LotlService.class);
 
         public LoggableResourceRetriever() {
             // Default constructor
@@ -511,7 +511,7 @@ public class LotlService implements AutoCloseable {
 
         @Override
         public byte[] getByteArrayByUrl(URL url) throws IOException {
-            LOGGER.info(MessageFormatUtil.format("Fetching resource from URL: {0}", url));
+            LOGGER.info(() -> MessageFormatUtil.format("Fetching resource from URL: {0}", url));
             return super.getByteArrayByUrl(url);
         }
     }

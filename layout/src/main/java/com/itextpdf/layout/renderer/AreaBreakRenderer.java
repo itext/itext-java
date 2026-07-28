@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.IPropertyContainer;
 import com.itextpdf.layout.element.AreaBreak;
@@ -30,9 +31,6 @@ import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Renderer for the {@link AreaBreak} layout element. Will terminate the
@@ -43,7 +41,7 @@ public class AreaBreakRenderer extends AbstractBreakRenderer {
     protected AreaBreak areaBreak;
     protected LayoutArea occupiedArea;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AreaBreakRenderer.class);
+    private static final LazyLogger LOGGER = new LazyLogger(AreaBreakRenderer.class);
 
     /**
      * Creates an AreaBreakRenderer.
@@ -63,7 +61,7 @@ public class AreaBreakRenderer extends AbstractBreakRenderer {
     @Override
     public void addChild(IRenderer renderer) {
         if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
-            LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
+            LOGGER.warn(() -> LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
         }
     }
 
@@ -71,7 +69,7 @@ public class AreaBreakRenderer extends AbstractBreakRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS))) {
             if (occupiedArea == null) {
-                LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_IGNORED);
+                LOGGER.warn(() -> LayoutLogMessageConstant.AREA_BREAK_IGNORED);
             }
             Rectangle layoutContextAreaBbox = layoutContext.getArea().getBBox();
             Rectangle occupiedAreaBbox =
@@ -92,7 +90,7 @@ public class AreaBreakRenderer extends AbstractBreakRenderer {
     @Override
     public void draw(DrawContext drawContext) {
         if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
-            LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
+            LOGGER.warn(() -> LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
         }
     }
 
@@ -126,7 +124,7 @@ public class AreaBreakRenderer extends AbstractBreakRenderer {
     @Override
     public void move(float dx, float dy) {
         if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
-            LOGGER.warn(LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
+            LOGGER.warn(() -> LayoutLogMessageConstant.AREA_BREAK_UNEXPECTED);
         }
     }
 

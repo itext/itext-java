@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font.cmap;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
@@ -33,13 +34,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a CMap file.
  */
 public class CMapToUnicode extends AbstractCMap {
+
+    private static final LazyLogger LOGGER = new LazyLogger(CMapToUnicode.class);
 
     public static final CMapToUnicode EMPTY_CMAP = new CMapToUnicode(true);
     private static final String CMAP_TO_UNICODE_CREATE_TO_UNICODE_CMAP_IS_NOT_SUPPORTED_FOR_FONT_SPECIFIC_ENCODING =
@@ -182,8 +183,7 @@ public class CMapToUnicode extends AbstractCMap {
             char[] dest = createCharsFromDoubleBytes((byte[]) code.getValue());
             byteMappings.put((mark.charAt(0) << 8) + mark.charAt(1), dest);
         } else {
-            Logger logger = LoggerFactory.getLogger(CMapToUnicode.class);
-            logger.warn(IoLogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
+            LOGGER.warn(() -> IoLogMessageConstant.TOUNICODE_CMAP_MORE_THAN_2_BYTES_NOT_SUPPORTED);
         }
     }
 

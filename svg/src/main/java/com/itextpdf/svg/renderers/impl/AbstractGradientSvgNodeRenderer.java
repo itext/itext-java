@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.colors.gradients.GradientSpreadMethod;
@@ -37,7 +38,6 @@ import com.itextpdf.svg.utils.TransformUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link ISvgNodeRenderer} abstract implementation for gradient tags
@@ -66,7 +66,7 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
         if (Values.USER_SPACE_ON_USE.equals(gradientUnits)) {
             return false;
         } else if (gradientUnits != null && !Values.OBJECT_BOUNDING_BOX.equals(gradientUnits)) {
-            LoggerFactory.getLogger(this.getClass()).warn(MessageFormatUtil.format(
+            new LazyLogger(this.getClass()).warn(() -> MessageFormatUtil.format(
                     SvgLogMessageConstant.GRADIENT_INVALID_GRADIENT_UNITS_LOG, gradientUnits));
         }
         return true;
@@ -123,8 +123,9 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
             case Values.SPREAD_METHOD_REPEAT:
                 return GradientSpreadMethod.REPEAT;
             default:
-                LoggerFactory.getLogger(this.getClass()).warn(MessageFormatUtil.format(
-                        SvgLogMessageConstant.GRADIENT_INVALID_SPREAD_METHOD_LOG, spreadMethodValue));
+                final String spreadMethodToLog = spreadMethodValue;
+                new LazyLogger(this.getClass()).warn(() -> MessageFormatUtil.format(
+                        SvgLogMessageConstant.GRADIENT_INVALID_SPREAD_METHOD_LOG, spreadMethodToLog));
                 return GradientSpreadMethod.PAD;
         }
     }

@@ -22,12 +22,12 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.commons.logs.LazyLogger;
+
 import java.lang.reflect.Method;
 import java.nio.BufferUnderflowException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A RandomAccessSource that is based on an underlying {@link java.nio.ByteBuffer}.  This class takes steps to ensure
@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
  * is completely freed from memory during {@link ByteBufferRandomAccessSource#close()} if unmapping functionality is enabled
  */
 class ByteBufferRandomAccessSource implements IRandomAccessSource {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ByteBufferRandomAccessSource.class);
 
     /**
      * A flag to allow unmapping hack for cleaning mapped buffer
@@ -190,8 +192,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
             success = Boolean.TRUE;
         } catch (Exception e) {
             // This really is a show stopper on windows
-            Logger logger = LoggerFactory.getLogger(ByteBufferRandomAccessSource.class);
-            logger.debug(e.getMessage());
+            LOGGER.debug(() -> e.getMessage());
         }
         return success;
     }

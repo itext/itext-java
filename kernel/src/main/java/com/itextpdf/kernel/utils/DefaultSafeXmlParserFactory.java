@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.util.XmlUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -37,8 +38,6 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -52,7 +51,7 @@ import org.xml.sax.XMLReader;
  */
 public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSafeXmlParserFactory.class);
+    private static final LazyLogger LOGGER = new LazyLogger(DefaultSafeXmlParserFactory.class);
 
     /**
      * Feature for disallowing DOCTYPE declaration.
@@ -202,8 +201,8 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         try {
             factory.setFeature(feature, value);
         } catch (ParserConfigurationException e) {
-            LOGGER.info(MessageFormatUtil
-                    .format(KernelLogMessageConstant.FEATURE_IS_NOT_SUPPORTED, e.getMessage(), feature));
+            LOGGER.info(() -> MessageFormatUtil.format(
+                    KernelLogMessageConstant.FEATURE_IS_NOT_SUPPORTED, e.getMessage(), feature));
         }
     }
 
@@ -211,8 +210,8 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
         try {
             factory.setFeature(feature, value);
         } catch (ParserConfigurationException | SAXNotRecognizedException | SAXNotSupportedException e) {
-            LOGGER.info(MessageFormatUtil
-                    .format(KernelLogMessageConstant.FEATURE_IS_NOT_SUPPORTED, e.getMessage(), feature));
+            LOGGER.info(() -> MessageFormatUtil.format(
+                    KernelLogMessageConstant.FEATURE_IS_NOT_SUPPORTED, e.getMessage(), feature));
         }
     }
 

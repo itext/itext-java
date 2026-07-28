@@ -24,6 +24,7 @@ package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -32,12 +33,12 @@ import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class SecurityHandler {
+
+    private static final LazyLogger LOGGER = new LazyLogger(SecurityHandler.class);
+
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityHandler.class);
 
     /**
      * The global encryption key
@@ -132,7 +133,7 @@ public abstract class SecurityHandler {
         try {
             md5 = MessageDigest.getInstance("MD5");
             if (FACTORY.isInApprovedOnlyMode()) {
-                LOGGER.warn(KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT);
+                LOGGER.warn(() -> KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT);
             }
         } catch (Exception e) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);

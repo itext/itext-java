@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
@@ -36,10 +37,9 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 class DocType1Font extends Type1Font implements IDocFontProgram {
+
+    private static final LazyLogger LOGGER = new LazyLogger(DocType1Font.class);
 
 
     private PdfStream fontFile;
@@ -149,8 +149,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
 
     static void fillFontDescriptor(DocType1Font font, PdfDictionary fontDesc) {
         if (fontDesc == null) {
-            Logger logger = LoggerFactory.getLogger(FontUtil.class);
-            logger.warn(IoLogMessageConstant.FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR);
+            LOGGER.warn(() -> IoLogMessageConstant.FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR);
             return;
         }
         PdfNumber v = fontDesc.getAsNumber(PdfName.Ascent);

@@ -22,8 +22,7 @@
  */
 package com.itextpdf.signatures;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.commons.logs.LazyLogger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,6 +32,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that allows you to verify a certificate against
@@ -44,8 +45,14 @@ import java.util.List;
 @Deprecated
 public class CRLVerifier extends RootStoreVerifier {
 
-    /** The Logger instance */
+    /**
+     * The Logger instance.
+     */
+    @Deprecated
+    // on removal of slf4j logger field rename `LAZY_LOGGER` into LOGGER
     protected static final Logger LOGGER = LoggerFactory.getLogger(CRLVerifier.class);
+
+    private  static final LazyLogger LAZY_LOGGER = new LazyLogger(CRLVerifier.class);
 
     /** The list of CRLs to check for revocation date. */
     List<X509CRL> crls;
@@ -92,7 +99,8 @@ public class CRLVerifier extends RootStoreVerifier {
             }
         }
         // show how many valid CRLs were found
-        LOGGER.info("Valid CRLs found: " + validCrlsFound);
+        String logMessage = "Valid CRLs found: " + validCrlsFound;
+        LAZY_LOGGER.info(() -> logMessage);
         if (validCrlsFound > 0) {
             result.add(new VerificationOK(signCert, this.getClass(),
                     "Valid CRLs found: " + validCrlsFound + (online ? " (online)" : "")));
@@ -145,7 +153,7 @@ public class CRLVerifier extends RootStoreVerifier {
             if (crlurl.isEmpty()) {
                 return null;
             }
-            LOGGER.info("Getting CRL from " + crlurl.get(0));
+            LAZY_LOGGER.info(() -> "Getting CRL from " + crlurl.get(0));
             return (X509CRL) SignUtils.parseCrlFromStream(new URL(crlurl.get(0)).openStream());
         } catch (IOException | GeneralSecurityException e) {
             return null;
@@ -165,7 +173,7 @@ public class CRLVerifier extends RootStoreVerifier {
                 crl.verify(crlIssuer.getPublicKey());
                 return true;
             } catch (GeneralSecurityException e) {
-                LOGGER.warn("CRL not issued by the same authority as the certificate that is being checked");
+                LAZY_LOGGER.warn(() -> "CRL not issued by the same authority as the certificate that is being checked");
             }
         }
         // check the CRL against trusted anchors

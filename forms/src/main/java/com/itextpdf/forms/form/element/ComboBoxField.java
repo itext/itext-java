@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.FormDefaultAccessibilityProperties;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
@@ -31,14 +32,11 @@ import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.renderer.IRenderer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A field that represents a control for selecting one of the provided options.
  */
 public class ComboBoxField extends AbstractSelectField {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComboBoxField.class);
+    private static final LazyLogger LOGGER = new LazyLogger(ComboBoxField.class);
 
     private String selectedExportValue;
 
@@ -97,7 +95,7 @@ public class ComboBoxField extends AbstractSelectField {
                     option.getElement().setProperty(FormProperty.FORM_FIELD_SELECTED, true);
                     found = true;
                 } else {
-                    LOGGER.warn(FormsLogMessageConstants.DUPLICATE_EXPORT_VALUE);
+                    LOGGER.warn(() -> FormsLogMessageConstants.DUPLICATE_EXPORT_VALUE);
                 }
             }
         }
@@ -135,7 +133,7 @@ public class ComboBoxField extends AbstractSelectField {
             }
         }
         if (found) {
-            LOGGER.warn(FormsLogMessageConstants.DUPLICATE_EXPORT_VALUE);
+            LOGGER.warn(() -> FormsLogMessageConstants.DUPLICATE_EXPORT_VALUE);
         }
         super.addOption(option);
     }

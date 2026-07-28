@@ -23,19 +23,20 @@
 package com.itextpdf.styledxmlparser.css.resolve;
 
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper class that allows you to get the default values of CSS properties.
  */
 public class CssDefaults {
+
+    private static final LazyLogger LOGGER = new LazyLogger(CssDefaults.class);
 
     /** A map with properties and their default values. */
     private static final Map<String, String> defaultValues = new HashMap<>();
@@ -158,10 +159,8 @@ public class CssDefaults {
     public static String getDefaultValue(String property) {
         String defaultVal = defaultValues.get(property);
         if (defaultVal == null) {
-            Logger logger = LoggerFactory.getLogger(CssDefaults.class);
-            logger.error(
-                    MessageFormatUtil.format(StyledXmlParserLogMessageConstant.DEFAULT_VALUE_OF_CSS_PROPERTY_UNKNOWN,
-                            property));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.DEFAULT_VALUE_OF_CSS_PROPERTY_UNKNOWN, property));
         }
         return defaultVal;
     }

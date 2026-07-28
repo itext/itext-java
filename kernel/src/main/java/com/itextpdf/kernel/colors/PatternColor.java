@@ -105,8 +105,9 @@ public class PatternColor extends Color {
     }
 
     private static PdfColorSpace ensureNotPatternCs(PdfColorSpace underlyingCS) {
-        if (underlyingCS instanceof PdfSpecialCs.Pattern)
+        if (underlyingCS instanceof PdfSpecialCs.Pattern) {
             throw new IllegalArgumentException("underlyingCS");
+        }
         return underlyingCS;
     }
 }

@@ -22,13 +22,12 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.LinkedList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A RandomAccessSource that is based on an underlying {@link java.nio.channels.FileChannel}.  The channel is mapped into memory using a paging scheme to allow for efficient reads of very large files.
@@ -36,6 +35,9 @@ import org.slf4j.LoggerFactory;
  * mapped page more efficient - and to close each page as another is opened
  */
 class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implements IRandomAccessSource {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PagedChannelRandomAccessSource.class);
+
     // these values were selected based on parametric testing with extracting text content from a 2.3GB file.  These settings resulted in the best improvement over
     // the single size MRU case (24% speed improvement)
     public static final int DEFAULT_TOTAL_BUFSIZE = 1 << 26;
@@ -144,8 +146,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
             try {
                 channel.close();
             } catch (Exception ex) {
-                Logger logger = LoggerFactory.getLogger(PagedChannelRandomAccessSource.class);
-                logger.error(IoLogMessageConstant.FILE_CHANNEL_CLOSING_FAILED, ex);
+                LOGGER.error(() -> IoLogMessageConstant.FILE_CHANNEL_CLOSING_FAILED, ex);
             }
         }
     }

@@ -22,8 +22,6 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,10 +105,10 @@ public class PdfVersion implements Comparable<PdfVersion> {
     @Override
     public int compareTo(PdfVersion o) {
         int majorResult = Integer.compare(major, o.major);
-        if (majorResult != 0) {
-            return majorResult;
-        } else {
+        if (majorResult == 0) {
             return Integer.compare(minor, o.minor);
+        } else {
+            return majorResult;
         }
     }
 

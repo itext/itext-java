@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -29,9 +30,6 @@ import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This renderer represents a collection of elements (simple shapes and paths).
@@ -43,6 +41,8 @@ import org.slf4j.LoggerFactory;
  * thus, we need to draw the clipped elements multiple times if the clipping path consists of multiple elements.
  */
 public class ClipPathSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ClipPathSvgNodeRenderer.class);
 
     private AbstractSvgNodeRenderer clippedRenderer;
 
@@ -102,8 +102,7 @@ public class ClipPathSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
             try {
                 context.getCurrentCanvas().concatMatrix(context.getClippingElementTransform().createInverse());
             } catch (NoninvertibleTransformException e) {
-                Logger logger = LoggerFactory.getLogger(ClipPathSvgNodeRenderer.class);
-                logger.warn(SvgLogMessageConstant.NONINVERTIBLE_TRANSFORMATION_MATRIX_USED_IN_CLIP_PATH);
+                LOGGER.warn(() -> SvgLogMessageConstant.NONINVERTIBLE_TRANSFORMATION_MATRIX_USED_IN_CLIP_PATH);
             }
         }
         clippedRenderer.preDraw(context);

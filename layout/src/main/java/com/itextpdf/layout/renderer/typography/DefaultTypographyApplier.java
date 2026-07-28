@@ -25,6 +25,7 @@ package com.itextpdf.layout.renderer.typography;
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.datastructures.ConcurrentWeakMap;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.TrueTypeFont;
@@ -39,13 +40,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class DefaultTypographyApplier extends AbstractTypographyApplier {
 
     private static final String SCRIPT = "script";
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTypographyApplier.class);
+    private static final LazyLogger LOGGER = new LazyLogger(DefaultTypographyApplier.class);
     private static final ConcurrentWeakMap<SequenceId, Collection<String>> IDS_WITH_WARNING =
             new ConcurrentWeakMap<SequenceId, Collection<String>>();
     private static final ConcurrentWeakMap<SequenceId, Collection<String>> IDS_WITH_INFO =
@@ -147,7 +146,7 @@ public final class DefaultTypographyApplier extends AbstractTypographyApplier {
             for (String part : messageParts) {
                 message.append(part).append(' ');
             }
-            LOGGER.warn(MessageFormatUtil.format(LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING, message));
+            LOGGER.warn(() -> MessageFormatUtil.format(LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_WARNING, message));
         }
     }
 
@@ -163,7 +162,8 @@ public final class DefaultTypographyApplier extends AbstractTypographyApplier {
                 IDS_WITH_INFO.put(id, new HashSet<>(Collections.singleton(script)));
             }
 
-            LOGGER.info(MessageFormatUtil.format(LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_INFO, script, features));
+            LOGGER.info(() -> MessageFormatUtil.format(
+                    LayoutLogMessageConstant.TYPOGRAPHY_NOT_FOUND_INFO, script, features));
         }
     }
 }

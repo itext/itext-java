@@ -22,16 +22,17 @@
  */
 package com.itextpdf.io.font.otf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class OtfClass {
+
+    private static final LazyLogger LOGGER = new LazyLogger(OtfClass.class);
 
     public static final int GLYPH_BASE = 1;
     public static final int GLYPH_LIGATURE = 2;
@@ -71,8 +72,8 @@ public class OtfClass {
         try {
             otfClass = new OtfClass(rf, classLocation);
         } catch (IOException e) {
-            Logger logger = LoggerFactory.getLogger(OtfClass.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OPENTYPE_GDEF_TABLE_ERROR, e.getMessage()));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    IoLogMessageConstant.OPENTYPE_GDEF_TABLE_ERROR, e.getMessage()));
             otfClass = null;
         }
         return otfClass;

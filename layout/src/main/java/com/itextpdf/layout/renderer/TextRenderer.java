@@ -25,6 +25,7 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontMetrics;
 import com.itextpdf.io.font.FontProgram;
@@ -81,14 +82,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the {@link IRenderer renderer} object for a {@link Text}
  * object. It will draw the glyphs of the textual content on the {@link DrawContext}.
  */
 public class TextRenderer extends AbstractRenderer implements ILeafElementRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(TextRenderer.class);
 
     protected static final float TEXT_SPACE_COEFF = FontProgram.UNITS_NORMALIZATION;
     static final float TYPO_ASCENDER_SCALE_COEFF = 1.2f;
@@ -217,8 +218,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         int currentTextPos = text.getStart();
         UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (!fontSize.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.FONT_SIZE));
         }
         float textRise = (float) this.getPropertyAsFloat(Property.TEXT_RISE);
@@ -834,8 +834,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     @Override
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
-            Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
                     "Drawing won't be performed."));
             return;
         }
@@ -870,8 +869,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         if (line.getEnd() > line.getStart() || savedWordBreakAtLineEnding != null) {
             UnitValue fontSize = this.getPropertyAsUnitValue(Property.FONT_SIZE);
             if (!fontSize.isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                         Property.FONT_SIZE));
             }
             TransparentColor fontColor = getPropertyAsTransparentColor(Property.FONT_COLOR);
@@ -995,8 +993,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
         UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (!fontSize.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.FONT_SIZE));
         }
         Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
@@ -1504,8 +1501,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     protected float calculateLineWidth() {
         UnitValue fontSize = this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (!fontSize.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.FONT_SIZE));
         }
         return getGlyphLineWidth(line, fontSize.getValue(),
                 (float) this.getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f),
@@ -1575,8 +1572,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      */
     protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
         if (TextRenderer.class != this.getClass()) {
-            Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN));
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN));
         }
         TextRenderer copy = new TextRenderer(this);
         copy.setProcessedGlyphLineAndFont(gl, font);
@@ -1859,8 +1855,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             } catch (ClassCastException cce) {
                 newFont = resolveFirstPdfFont();
                 if (!strToBeConverted.isEmpty()) {
-                    Logger logger = LoggerFactory.getLogger(TextRenderer.class);
-                    logger.error(IoLogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT);
+                    LOGGER.error(() -> IoLogMessageConstant.FONT_PROPERTY_MUST_BE_PDF_FONT_OBJECT);
                 }
             }
             GlyphLine newText = newFont.createGlyphLine(strToBeConverted);

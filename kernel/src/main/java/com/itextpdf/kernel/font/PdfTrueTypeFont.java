@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontNames;
@@ -39,14 +40,13 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import java.io.IOException;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Note. For TrueType FontNames.getStyle() is the same to Subfamily(). So, we shouldn't add style to /BaseFont.
  */
 public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfTrueTypeFont.class);
 
     PdfTrueTypeFont(TrueTypeFont ttf, String encoding, boolean embedded) {
         super();
@@ -164,8 +164,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     fontStream = getPdfFontStream(fontStreamBytes, new int[]{fontStreamBytes.length});
                     fontStream.put(PdfName.Subtype, new PdfName("Type1C"));
                 } catch (PdfException e) {
-                    Logger logger = LoggerFactory.getLogger(PdfTrueTypeFont.class);
-                    logger.error(e.getMessage());
+                    LOGGER.error(() -> e.getMessage());
                     fontStream = null;
                 }
             } else {
@@ -191,8 +190,7 @@ public class PdfTrueTypeFont extends PdfSimpleFont<TrueTypeFont> {
                     }
                     fontStream = getPdfFontStream(fontStreamBytes, new int[]{fontStreamBytes.length});
                 } catch (PdfException e) {
-                    Logger logger = LoggerFactory.getLogger(PdfTrueTypeFont.class);
-                    logger.error(e.getMessage());
+                    LOGGER.error(() -> e.getMessage());
                     fontStream = null;
                 }
             }

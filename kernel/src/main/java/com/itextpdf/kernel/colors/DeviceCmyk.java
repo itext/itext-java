@@ -22,15 +22,16 @@
  */
 package com.itextpdf.kernel.colors;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.colorspace.PdfDeviceCs;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Color space to specify colors according to CMYK color model.
  */
 public class DeviceCmyk extends Color {
+
+    private static final LazyLogger LOGGER = new LazyLogger(DeviceCmyk.class);
 
     /**
      * Predefined cyan DeviceCmyk color
@@ -91,8 +92,7 @@ public class DeviceCmyk extends Color {
                 k > 1 ? 1 : (k > 0 ? k : 0)
         });
         if (c > 1 || c < 0 || m > 1 || m < 0 || y > 1 || y < 0 || k > 1 || k < 0) {
-            Logger LOGGER = LoggerFactory.getLogger(DeviceCmyk.class);
-            LOGGER.warn(IoLogMessageConstant.COLORANT_INTENSITIES_INVALID);
+            LOGGER.warn(() -> IoLogMessageConstant.COLORANT_INTENSITIES_INVALID);
         }
     }
 

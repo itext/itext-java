@@ -22,17 +22,16 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class to store escape characters and their processing logic.
  * This class is used in {@link CssUtils#splitString(String, char, EscapeGroup...)} method.
  */
 public class EscapeGroup {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EscapeGroup.class);
+    private static final LazyLogger LOGGER = new LazyLogger(EscapeGroup.class);
 
     private final char openCharacter;
     private final char closeCharacter;
@@ -89,7 +88,8 @@ public class EscapeGroup {
             } else if (nextCharacter == closeCharacter) {
                 --counter;
                 if (counter < 0) {
-                    LOGGER.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.INCORRECT_CHARACTER_SEQUENCE));
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            StyledXmlParserLogMessageConstant.INCORRECT_CHARACTER_SEQUENCE));
                     counter = 0;
                 }
             }

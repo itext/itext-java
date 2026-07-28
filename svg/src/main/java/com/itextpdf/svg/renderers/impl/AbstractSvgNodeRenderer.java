@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -53,8 +54,6 @@ import com.itextpdf.svg.renderers.ISvgPaintServer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.TransformUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +67,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     private static final MarkerVertexType[] MARKER_VERTEX_TYPES = new MarkerVertexType[] {MarkerVertexType.MARKER_START,
             MarkerVertexType.MARKER_MID, MarkerVertexType.MARKER_END};
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSvgNodeRenderer.class);
+    private static final LazyLogger LOGGER = new LazyLogger(AbstractSvgNodeRenderer.class);
 
     /**
      * Map that contains attributes and styles used for drawing operations.
@@ -358,7 +357,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             try {
                 context.getCurrentCanvas().concatMatrix(transform.createInverse());
             } catch (NoninvertibleTransformException e) {
-                LOGGER.warn(SvgLogMessageConstant.NON_INVERTIBLE_TRANSFORMATION_MATRIX_FOR_NON_SCALING_STROKE);
+                LOGGER.warn(() -> SvgLogMessageConstant.NON_INVERTIBLE_TRANSFORMATION_MATRIX_FOR_NON_SCALING_STROKE);
                 transform = null;
             }
         }

@@ -79,23 +79,25 @@ public class PdfTextArray extends PdfArray {
 
     public boolean add(float number) {
         // adding zero doesn't modify the TextArray at all
-        if (number != 0) {
-            if (!Float.isNaN(lastNumber)) {
-                lastNumber = number + lastNumber;
-                if (lastNumber != 0) {
-                    set(size() - 1, new PdfNumber(lastNumber));
-                } else {
-                    remove(size() - 1);
-                    lastNumber = Float.NaN;
-                }
-            } else {
-                lastNumber = number;
-                super.add(new PdfNumber(lastNumber));
-            }
-            lastString = null;
-            return true;
+        if (number == 0) {
+            return false;
         }
-        return false;
+
+        if (Float.isNaN(lastNumber)) {
+            lastNumber = number;
+            super.add(new PdfNumber(lastNumber));
+        } else {
+            lastNumber = number + lastNumber;
+            if (lastNumber == 0) {
+                remove(size() - 1);
+                lastNumber = Float.NaN;
+            } else {
+                set(size() - 1, new PdfNumber(lastNumber));
+            }
+        }
+        lastString = null;
+        return true;
+
     }
 
     public boolean add(String text, PdfFont font) {
@@ -108,18 +110,20 @@ public class PdfTextArray extends PdfArray {
     }
 
     protected boolean add(String text) {
-        if (text.length() > 0) {
-            if (lastString != null) {
-                lastString.append(text);
-                set(size() - 1, new PdfString(lastString.toString()));
-            } else {
-                lastString = new StringBuilder(text);
-                super.add(new PdfString(lastString.toString()));
-            }
-            lastNumber = Float.NaN;
-            return true;
+        if (text.length() == 0) {
+            return false;
         }
-        return false;
+
+        if (lastString == null) {
+            lastString = new StringBuilder(text);
+            super.add(new PdfString(lastString.toString()));
+        } else {
+            lastString.append(text);
+            set(size() - 1, new PdfString(lastString.toString()));
+        }
+        lastNumber = Float.NaN;
+        return true;
+
     }
 
 }

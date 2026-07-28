@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -36,8 +37,6 @@ import com.itextpdf.kernel.pdf.PdfUAConformance;
 import com.itextpdf.kernel.pdf.action.PdfAction;
 import com.itextpdf.kernel.pdf.navigation.PdfDestination;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A link annotation represents either a hypertext link to a destination elsewhere in the document
@@ -45,8 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfLinkAnnotation extends PdfAnnotation {
 
-
-    private static final Logger logger = LoggerFactory.getLogger(PdfLinkAnnotation.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PdfLinkAnnotation.class);
 
     /**
      * Highlight modes.
@@ -106,10 +104,10 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     public PdfLinkAnnotation setDestination(PdfObject destination) {
         if (getPdfObject().containsKey(PdfName.A)) {
             getPdfObject().remove(PdfName.A);
-            logger.warn(IoLogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET);
+            LOGGER.warn(() -> IoLogMessageConstant.DESTINATION_NOT_PERMITTED_WHEN_ACTION_IS_SET);
         }
         if (destination.isArray() && ((PdfArray)destination).get(0).isNumber())
-            LoggerFactory.getLogger(PdfLinkAnnotation.class).warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
+            LOGGER.warn(() -> IoLogMessageConstant.INVALID_DESTINATION_TYPE);
         return (PdfLinkAnnotation) put(PdfName.Dest, destination);
     }
 
@@ -172,7 +170,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
     public PdfLinkAnnotation setAction(PdfAction action) {
         if (getDestinationObject() != null) {
             removeDestination();
-            logger.warn(IoLogMessageConstant.ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION);
+            LOGGER.warn(() -> IoLogMessageConstant.ACTION_WAS_SET_TO_LINK_ANNOTATION_WITH_DESTINATION);
         }
         return (PdfLinkAnnotation) put(PdfName.A, action.getPdfObject());
     }

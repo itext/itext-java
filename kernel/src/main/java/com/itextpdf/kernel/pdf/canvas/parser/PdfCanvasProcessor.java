@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.canvas.parser;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.source.PdfTokenizer;
@@ -87,16 +88,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Processor for a PDF content stream.
  */
 public class PdfCanvasProcessor {
-    public static final String DEFAULT_OPERATOR = "DefaultOperator";
+    private static final LazyLogger LOGGER = new LazyLogger(PdfCanvasProcessor.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfCanvasProcessor.class);
+    public static final String DEFAULT_OPERATOR = "DefaultOperator";
 
     /**
      * Listener that will be notified of render events
@@ -757,7 +756,7 @@ public class PdfCanvasProcessor {
                 float f = ((PdfNumber) operands.get(5)).floatValue();
                 parsedMatrix = new Matrix(a, b, c, d, e, f);
             } else {
-                LOGGER.warn(MessageFormatUtil.format(
+                LOGGER.warn(() -> MessageFormatUtil.format(
                         KernelLogMessageConstant.UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS, operator,
                         Arrays.toString((Object[])operands.toArray())));
                 parsedMatrix = new Matrix();
@@ -975,7 +974,7 @@ public class PdfCanvasProcessor {
                 processor.getGraphicsState().updateCtm(matrix);
             } catch (PdfException exception) {
                 if (exception.getCause() instanceof NoninvertibleTransformException) {
-                    LOGGER.error(KernelLogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX);
+                    LOGGER.error(() -> KernelLogMessageConstant.FAILED_TO_PROCESS_A_TRANSFORMATION_MATRIX);
                 } else {
                     throw exception;
                 }
@@ -1046,7 +1045,7 @@ public class PdfCanvasProcessor {
             }
         }
 
-        LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE,
+        LOGGER.warn(() -> MessageFormatUtil.format(KernelLogMessageConstant.UNABLE_TO_PARSE_COLOR_WITHIN_COLORSPACE,
                 Arrays.toString((Object[])operands.toArray()), pdfColorSpace.getPdfObject()));
 
         return null;
@@ -1294,16 +1293,14 @@ public class PdfCanvasProcessor {
             PdfName dictionaryName = ((PdfName) operand1);
             PdfDictionary properties = resources.getResource(PdfName.Properties);
             if (null == properties) {
-                LOGGER.warn(
-                        MessageFormatUtil.format(KernelLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY,
-                                PdfName.Properties));
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        KernelLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY, PdfName.Properties));
                 return null;
             }
             PdfDictionary propertiesDictionary = properties.getAsDictionary(dictionaryName);
             if (null == propertiesDictionary) {
-                LOGGER.warn(
-                        MessageFormatUtil.format(KernelLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY,
-                                dictionaryName));
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        KernelLogMessageConstant.PDF_REFERS_TO_NOT_EXISTING_PROPERTY_DICTIONARY, dictionaryName));
                 return null;
             }
             return properties.getAsDictionary(dictionaryName);
@@ -1406,7 +1403,7 @@ public class PdfCanvasProcessor {
                 float miterLimit = ((PdfNumber) operands.get(0)).floatValue();
                 processor.getGraphicsState().setMiterLimit(miterLimit);
             } else {
-                LOGGER.warn(MessageFormatUtil.format(
+                LOGGER.warn(() -> MessageFormatUtil.format(
                         KernelLogMessageConstant.UNABLE_TO_PARSE_OPERATOR_WRONG_NUMBER_OF_OPERANDS, operator,
                         Arrays.toString((Object[])operands.toArray())));
             }

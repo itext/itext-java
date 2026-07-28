@@ -22,13 +22,12 @@
  */
 package com.itextpdf.layout.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.font.Type3Font;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +49,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see FontProvider
  */
 public final class FontSet {
+
+    private static final LazyLogger LOGGER = new LazyLogger(FontSet.class);
+
     // FontSet MUST be final to avoid overriding #add(FontInfo) method or remove functionality.
 
     private static final AtomicLong lastId = new AtomicLong();
@@ -127,8 +129,7 @@ public final class FontSet {
             return false;
         }
         if (fontProgram instanceof Type3Font) {
-            Logger logger = LoggerFactory.getLogger(FontSet.class);
-            logger.error(IoLogMessageConstant.TYPE3_FONT_CANNOT_BE_ADDED);
+            LOGGER.error(() -> IoLogMessageConstant.TYPE3_FONT_CANNOT_BE_ADDED);
             return false;
         }
         FontInfo fi = FontInfo.create(fontProgram, encoding, alias, unicodeRange);

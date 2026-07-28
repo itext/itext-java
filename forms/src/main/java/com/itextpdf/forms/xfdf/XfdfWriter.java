@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.xfdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.pdf.PdfName;
 
 import java.io.OutputStream;
@@ -30,16 +31,14 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 class XfdfWriter {
 
-    private OutputStream outputStream;
+    private static final LazyLogger LOGGER = new LazyLogger(XfdfWriter.class);
 
-    private static Logger logger = LoggerFactory.getLogger(XfdfWriter.class);
+    private final OutputStream outputStream;
 
     /**
      * Creates a XfdfWriter for output stream specified.
@@ -64,18 +63,17 @@ class XfdfWriter {
         Element field = document.createElement("field");
         field.setAttribute("name", fieldObject.getName());
 
-
-        if (!childrenFields.isEmpty()) {
-            for (FieldObject childField : childrenFields) {
-                addField(childField, field, document, fieldList);
-            }
-        } else {
-            if (fieldObject.getValue() != null && !fieldObject.getValue().isEmpty()) {
+        if (childrenFields.isEmpty()) {
+            if (fieldObject.getValue() == null || fieldObject.getValue().isEmpty()) {
+                LOGGER.info(() -> XfdfConstants.EMPTY_FIELD_VALUE_ELEMENT);
+            } else {
                 Element value = document.createElement("value");
                 value.setTextContent(fieldObject.getValue());
                 field.appendChild(value);
-            } else {
-                logger.info(XfdfConstants.EMPTY_FIELD_VALUE_ELEMENT);
+            }
+        } else {
+            for (FieldObject childField : childrenFields) {
+                addField(childField, field, document, fieldList);
             }
         }
         parentElement.appendChild(field);
@@ -205,7 +203,7 @@ class XfdfWriter {
                 addActionObject(annotObject.getAction(), onActivation, document);
                 annot.appendChild(onActivation);
             } else {
-                logger.error("Dest and OnActivation elements are both missing");
+                LOGGER.error(() -> "Dest and OnActivation elements are both missing");
             }
 
             if (annotObject.getBorderStyleAlt() != null) {
@@ -397,7 +395,7 @@ class XfdfWriter {
                 file.setAttribute(XfdfConstants.ORIGINAL_NAME, actionObject.getFileOriginalName());
                 goToR.appendChild(file);
             } else {
-                logger.error("Dest or File elements are missing.");
+                LOGGER.error(() -> "Dest or File elements are missing.");
             }
 
             action.appendChild(goToR);
@@ -415,7 +413,7 @@ class XfdfWriter {
                 file.setAttribute(XfdfConstants.ORIGINAL_NAME, actionObject.getFileOriginalName());
                 launch.appendChild(file);
             } else {
-                logger.error("File element is missing");
+                LOGGER.error(() -> "File element is missing");
             }
             if (actionObject.isNewWindow()) {
                 launch.setAttribute(XfdfConstants.NEW_WINDOW, "true");

@@ -26,6 +26,7 @@ import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
 import com.itextpdf.commons.bouncycastle.pkcs.AbstractPKCSException;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.fields.properties.SignedAppearanceText;
 import com.itextpdf.forms.form.element.SignatureFieldAppearance;
@@ -73,8 +74,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Tag("IntegrationTest")
 public class PdfUASignerTest extends ExtendedITextTest {
@@ -85,7 +84,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/PdfUASignerTest/";
 
     private static final String FONT = "./src/test/resources/com/itextpdf/signatures/font/FreeSans.ttf";
-    private static final Logger logger = LoggerFactory.getLogger(PdfUASignerTest.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PdfUASignerTest.class);
 
     public static final String CERTIFICATE_FOLDER = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
@@ -385,7 +384,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
 
         signingAction.accept(signer);
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
-        logger.info("Out pdf: " + UrlUtil.getNormalizedFileUriString(outPdf));
+        LOGGER.info(() -> "Out pdf: " + UrlUtil.getNormalizedFileUriString(outPdf));
         return outPdf;
     }
 
@@ -404,7 +403,7 @@ public class PdfUASignerTest extends ExtendedITextTest {
         signingAction.accept(signer);
         signer.signDetached(new BouncyCastleDigest(), pks, signChain, null, null, null, 0, PdfSigner.CryptoStandard.CADES);
 
-        logger.info("Out pdf: " + UrlUtil.getNormalizedFileUriString(outPdf));
+        LOGGER.info(() -> "Out pdf: " + UrlUtil.getNormalizedFileUriString(outPdf));
         return outPdf;
     }
 

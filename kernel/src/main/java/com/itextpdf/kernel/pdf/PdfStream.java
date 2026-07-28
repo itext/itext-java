@@ -22,13 +22,12 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.utils.ICopyFilter;
 import com.itextpdf.kernel.utils.NullCopyFilter;
-
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +37,7 @@ import java.io.InputStream;
  */
 public class PdfStream extends PdfDictionary {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfStream.class);
 
     protected int compressionLevel;
     // Output stream associated with PDF stream.
@@ -222,8 +222,7 @@ public class PdfStream extends PdfDictionary {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_OPERATE_WITH_FLUSHED_PDF_STREAM);
         }
         if (inputStream != null) {
-            LoggerFactory.getLogger(PdfStream.class).warn("PdfStream was created by InputStream." +
-                    "getBytes() always returns null in this case");
+            LOGGER.warn(() -> "PdfStream was created by InputStream.getBytes() always returns null in this case");
             return null;
         }
         byte[] bytes = null;

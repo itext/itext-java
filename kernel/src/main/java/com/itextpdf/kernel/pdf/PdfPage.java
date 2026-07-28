@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -61,10 +62,11 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfPage.class);
+
     private static final List<PdfName> PAGE_EXCLUDED_KEYS = new ArrayList<>(Arrays.asList(
             PdfName.Parent,
             PdfName.Annots,
@@ -595,12 +597,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         int mediaBoxSize;
         if ((mediaBoxSize = mediaBox.size()) != 4) {
             if (mediaBoxSize > 4) {
-                Logger logger = LoggerFactory.getLogger(PdfPage.class);
-                if (logger.isErrorEnabled()) {
-                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS,
-                            mediaBoxSize));
+                LOGGER.error(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, mediaBoxSize));
 
-                }
             }
             if (mediaBoxSize < 4) {
                 throw new PdfException(KernelExceptionMessageConstant.WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS)
@@ -1225,8 +1224,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
-            Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            LOGGER.error(() -> IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         if (null != description) {
             PdfString key = new PdfString(description);
@@ -1418,8 +1416,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             copier.copy(this, page);
         } else {
             if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().hasAcroForm()) {
-                Logger logger = LoggerFactory.getLogger(PdfPage.class);
-                logger.warn(IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
+                LOGGER.warn(() -> IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
                 toDocument.getWriter().isUserWarnedAboutAcroFormCopying = true;
             }
         }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
@@ -40,8 +41,6 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,14 +57,14 @@ import java.util.Map;
  */
 public class PdfPageFormCopier implements IPdfPageFormCopier {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfPageFormCopier.class);
+
     private PdfAcroForm formFrom;
     private PdfAcroForm formTo;
     private PdfDocument documentFrom;
     private PdfDocument documentTo;
 
     private final Set<PdfObject> collectedFieldObjects = new LinkedHashSet<PdfObject>();
-
-    private static Logger logger = LoggerFactory.getLogger(PdfPageFormCopier.class);
 
     @Override
     public void copy(PdfPage fromPage, PdfPage toPage) {
@@ -104,7 +103,8 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
         try {
             for (PdfAnnotation annot : annots) {
                 if (annot.getSubtype() == null) {
-                    logger.warn(MessageFormatUtil.format(FormsLogMessageConstants.ANNOTATION_WITHOUT_SUBTYPE_NOT_COPIED,
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            FormsLogMessageConstants.ANNOTATION_WITHOUT_SUBTYPE_NOT_COPIED,
                             annot.getPdfObject().getIndirectReference()));
                     continue;
                 }
@@ -136,7 +136,7 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
     private AbstractPdfFormField makeFormField(PdfObject fieldDict) {
         AbstractPdfFormField field = PdfFormField.makeFormFieldOrAnnotation(fieldDict, documentTo);
         if (field == null) {
-            logger.warn(MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD,
+            LOGGER.warn(() -> MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_CREATE_FORMFIELD,
                     fieldDict.getIndirectReference()));
         }
         return field;
@@ -157,10 +157,7 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
             copyParentFormField(fieldsTo, currentAnnot, parentField);
         } else {
             PdfString annotName = currentAnnot.getPdfObject().getAsString(PdfName.T);
-            String annotNameString = null;
-            if (annotName != null) {
-                annotNameString = annotName.toUnicodeString();
-            }
+            String annotNameString = annotName == null ? null : annotName.toUnicodeString();
             if (annotNameString != null && fieldsFrom.containsKey(annotNameString)) {
                 // In this piece on code we expect annotation with T field
                 // It could mean only merged form field and annotation
@@ -172,7 +169,7 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
 
                 if (!collectedFieldObjects.contains(field.getPdfObject())) {
                     if (fieldsTo.get(annotNameString) != null) {
-                        logger.warn(MessageFormatUtil.format(IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD,
+                        LOGGER.warn(() -> MessageFormatUtil.format(IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD,
                                 annotNameString));
                     }
 
@@ -192,7 +189,8 @@ public class PdfPageFormCopier implements IPdfPageFormCopier {
 
         if (!collectedFieldObjects.contains(field.getPdfObject())) {
             if (existingField != null) {
-                logger.warn(MessageFormatUtil.format(IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, parentName));
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.DOCUMENT_ALREADY_HAS_FIELD, parentName));
             }
 
             collectedFieldObjects.add(field.getPdfObject());

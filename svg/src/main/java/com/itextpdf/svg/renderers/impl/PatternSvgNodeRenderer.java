@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.colors.Color;
@@ -44,15 +45,12 @@ import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.TemplateResolveUtils;
 import com.itextpdf.svg.utils.TransformUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Implementation for the svg &lt;pattern&gt; tag.
  */
 public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implements ISvgPaintServer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PatternSvgNodeRenderer.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PatternSvgNodeRenderer.class);
 
     private static final double CONVERT_COEFF = 0.75;
 
@@ -239,8 +237,9 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
         if (Values.USER_SPACE_ON_USE.equals(patternUnits)) {
             return false;
         } else if (patternUnits != null && !Values.OBJECT_BOUNDING_BOX.equals(patternUnits)) {
-            LoggerFactory.getLogger(this.getClass()).warn(MessageFormatUtil.format(
-                    SvgLogMessageConstant.PATTERN_INVALID_PATTERN_UNITS_LOG, patternUnits));
+            final String patternUnitsToLog = patternUnits;
+            LOGGER.warn(() -> MessageFormatUtil.format(
+                    SvgLogMessageConstant.PATTERN_INVALID_PATTERN_UNITS_LOG, patternUnitsToLog));
         }
         return true;
     }
@@ -254,8 +253,9 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
             return true;
         } else if (patternContentUnits != null && !Values.USER_SPACE_ON_USE
                 .equals(patternContentUnits)) {
-            LoggerFactory.getLogger(this.getClass()).warn(MessageFormatUtil.format(
-                    SvgLogMessageConstant.PATTERN_INVALID_PATTERN_CONTENT_UNITS_LOG, patternContentUnits));
+            final String patternContentUnitsToLog = patternContentUnits;
+            LOGGER.warn(() -> MessageFormatUtil.format(
+                    SvgLogMessageConstant.PATTERN_INVALID_PATTERN_CONTENT_UNITS_LOG, patternContentUnitsToLog));
         }
         return false;
     }
@@ -286,16 +286,10 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
 
     private static boolean xStepYStepAreValid(double xStep, double yStep) {
         if (xStep < 0 || yStep < 0) {
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn(MessageFormatUtil
-                        .format(SvgLogMessageConstant.PATTERN_WIDTH_OR_HEIGHT_IS_NEGATIVE));
-            }
+            LOGGER.warn(() -> MessageFormatUtil.format(SvgLogMessageConstant.PATTERN_WIDTH_OR_HEIGHT_IS_NEGATIVE));
             return false;
         } else if (xStep == 0 || yStep == 0) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info(MessageFormatUtil
-                        .format(SvgLogMessageConstant.PATTERN_WIDTH_OR_HEIGHT_IS_ZERO));
-            }
+            LOGGER.info(() -> MessageFormatUtil.format(SvgLogMessageConstant.PATTERN_WIDTH_OR_HEIGHT_IS_ZERO));
             return false;
         } else {
             return true;
@@ -306,9 +300,7 @@ public class PatternSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implem
         // if viewBox width or height is zero we should disable rendering
         // of the element (according to the viewBox documentation)
         if (viewBoxValues[2] == 0 || viewBoxValues[3] == 0) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info(SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO);
-            }
+            LOGGER.info(() -> SvgLogMessageConstant.VIEWBOX_WIDTH_OR_HEIGHT_IS_ZERO);
             return true;
         } else {
             return false;

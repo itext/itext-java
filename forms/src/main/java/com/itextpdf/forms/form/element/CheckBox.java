@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.element;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.FormDefaultAccessibilityProperties;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
@@ -35,16 +36,13 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Extension of the {@link FormField} class representing a checkbox so that
  * a {@link CheckBoxRenderer} is used instead of the default renderer for fields.
  */
 public class CheckBox extends FormField<CheckBox> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CheckBox.class);
+    private static final LazyLogger LOGGER = new LazyLogger(CheckBox.class);
 
     /**
      * Creates a new {@link CheckBox} instance.
@@ -90,7 +88,7 @@ public class CheckBox extends FormField<CheckBox> {
      */
     public CheckBox setCheckBoxType(CheckBoxType checkBoxType) {
         if (checkBoxType == null) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     FormsLogMessageConstants.INVALID_VALUE_FALLBACK_TO_DEFAULT, "checkBoxType", null));
             return this;
         }
@@ -107,7 +105,7 @@ public class CheckBox extends FormField<CheckBox> {
      */
     public CheckBox setSize(float size) {
         if (size <= 0) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     FormsLogMessageConstants.INVALID_VALUE_FALLBACK_TO_DEFAULT, "size", size));
             return this;
         }

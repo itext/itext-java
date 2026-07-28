@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.resolver.resource;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.StringNormalizer;
@@ -35,8 +36,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utilities class to resolve resources.
@@ -53,7 +52,7 @@ public class ResourceResolver {
      */
     public static final String DATA_SCHEMA_PREFIX = "data:";
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceResolver.class);
+    private static final LazyLogger LOGGER = new LazyLogger(ResourceResolver.class);
 
     /**
      * The {@link UriResolver} instance.
@@ -153,7 +152,7 @@ public class ResourceResolver {
             }
         }
         if (isDataSrc(src)) {
-            logger.error(MessageFormatUtil.format(
+            LOGGER.error(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_DATA_URI, src));
         } else {
             byte[] bytes = null;
@@ -164,11 +163,11 @@ public class ResourceResolver {
             }
 
             if (bytes == null) {
-                logger.error(MessageFormatUtil.format(
+                LOGGER.error(() -> MessageFormatUtil.format(
                         StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI,
                         uriResolver.getBaseUri(), src));
             } else {
-                logger.error(MessageFormatUtil.format(
+                LOGGER.error(() -> MessageFormatUtil.format(
                         StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_IMAGE_WITH_GIVEN_BASE_URI,
                         uriResolver.getBaseUri(), src));
             }
@@ -193,7 +192,7 @@ public class ResourceResolver {
             URL url = uriResolver.resolveAgainstBaseUri(src);
             return retriever.getByteArrayByUrl(url);
         } catch (Exception e) {
-            logger.error(MessageFormatUtil.format(
+            LOGGER.error(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI,
                     uriResolver.getBaseUri(), src), e);
             return null;
@@ -216,7 +215,7 @@ public class ResourceResolver {
             URL url = uriResolver.resolveAgainstBaseUri(src);
             return retriever.getInputStreamByUrl(url);
         } catch (Exception e) {
-            logger.error(MessageFormatUtil.format(
+            LOGGER.error(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_STREAM_WITH_GIVEN_BASE_URI,
                     uriResolver.getBaseUri(), src), e);
             return null;

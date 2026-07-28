@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.properties.margins;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -46,9 +47,6 @@ import com.itextpdf.layout.renderer.SectionBreakRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,7 +57,7 @@ import java.util.Objects;
  * Class to store information about all page margin boxes for a single page.
  */
 public class PageMarginBoxes {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PageMarginBoxes.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PageMarginBoxes.class);
 
     private final Map<MarginBoxName, PageMarginContent> margins = new LinkedHashMap<>();
     private final Map<Integer, PageFootnotesContent> footnotes = new LinkedHashMap<>();
@@ -114,7 +112,7 @@ public class PageMarginBoxes {
         if (rendererToDraw == null) {
             // Margin box elements have overflow property set to HIDDEN, therefore it is expected to neither get
             // LayoutResult other than FULL nor get no split renderer (result NOTHING) even if result is not FULL.
-            LOGGER.error(MessageFormatUtil.format(
+            LOGGER.error(() -> MessageFormatUtil.format(
                     LayoutLogMessageConstant.PAGE_CONTENT_CANNOT_BE_DRAWN, marginBoxName, pageNumber));
             return;
         }

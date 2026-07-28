@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -48,14 +49,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
 import com.itextpdf.kernel.pdf.tagutils.TagTreeIteratorFlusher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents a wrapper-class for structure tree root dictionary. See ISO-32000-1 "14.7.2 Structure hierarchy".
  */
 public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfStructTreeRoot.class);
 
     private PdfDocument document;
     private ParentTreeHandler parentTreeHandler;
@@ -173,9 +173,8 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
         PdfDictionary roleMap = getRoleMap();
         PdfObject prevVal = roleMap.put(convertRoleToPdfName(fromRole), convertRoleToPdfName(toRole));
         if (prevVal != null && prevVal instanceof PdfName) {
-            Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
-            logger.warn(MessageFormat.format(IoLogMessageConstant.MAPPING_IN_STRUCT_ROOT_OVERWRITTEN, fromRole, prevVal,
-                    toRole));
+            LOGGER.warn(() -> MessageFormat.format(
+                    IoLogMessageConstant.MAPPING_IN_STRUCT_ROOT_OVERWRITTEN, fromRole, prevVal, toRole));
         }
 
         if (roleMap.isIndirect()) {
@@ -418,8 +417,7 @@ public class PdfStructTreeRoot extends PdfObjectWrapper<PdfDictionary> implement
      */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
-            Logger logger = LoggerFactory.getLogger(PdfStructTreeRoot.class);
-            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            LOGGER.error(() -> IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         if (null != description) {
             getDocument().getCatalog().getNameTree(PdfName.EmbeddedFiles).addEntry(description, fs.getPdfObject());

@@ -23,6 +23,7 @@
 package com.itextpdf.commons.utils;
 
 import com.itextpdf.commons.logs.CommonsLogMessageConstant;
+import com.itextpdf.commons.logs.LazyLogger;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
@@ -39,8 +40,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for JSON serialization and deserialization operations. Not for public use.
@@ -49,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public final class JsonUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonUtil.class);
+    private static final LazyLogger LOGGER = new LazyLogger(JsonUtil.class);
 
     private JsonUtil() {
         // empty constructor
@@ -160,7 +159,7 @@ public final class JsonUtil {
         try {
             return objectMapper.readValue(content, objectType);
         } catch (IOException ex) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     CommonsLogMessageConstant.UNABLE_TO_DESERIALIZE_JSON, ex.getClass(), ex.getMessage()));
             return null;
         }
@@ -209,7 +208,7 @@ public final class JsonUtil {
         try {
             return objectMapper.readValue(content, objectType);
         } catch (JsonProcessingException ex) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     CommonsLogMessageConstant.UNABLE_TO_DESERIALIZE_JSON, ex.getClass(), ex.getMessage()));
             return null;
         }
@@ -243,7 +242,7 @@ public final class JsonUtil {
         try {
             createAndConfigureObjectWriter(prettyPrinter).writeValue(outputStream, value);
         } catch (IOException ex) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     CommonsLogMessageConstant.UNABLE_TO_SERIALIZE_OBJECT, ex.getClass(), ex.getMessage()));
         }
     }
@@ -260,7 +259,7 @@ public final class JsonUtil {
         try {
             return createAndConfigureObjectWriter(prettyPrinter).writeValueAsString(value);
         } catch (JsonProcessingException ex) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     CommonsLogMessageConstant.UNABLE_TO_SERIALIZE_OBJECT, ex.getClass(), ex.getMessage()));
             return null;
         }

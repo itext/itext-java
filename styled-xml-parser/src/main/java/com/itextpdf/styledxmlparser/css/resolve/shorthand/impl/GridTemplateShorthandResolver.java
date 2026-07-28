@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
@@ -29,8 +30,6 @@ import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,7 @@ public class GridTemplateShorthandResolver implements IShorthandResolver {
     public GridTemplateShorthandResolver() {
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GridTemplateShorthandResolver.class);
+    private static final LazyLogger LOGGER = new LazyLogger(GridTemplateShorthandResolver.class);
 
     /**
      * {@inheritDoc}
@@ -54,7 +53,7 @@ public class GridTemplateShorthandResolver implements IShorthandResolver {
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {
         shorthandExpression = shorthandExpression.trim();
         if (shorthandExpression.isEmpty()) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
                     CommonCssConstants.GRID_TEMPLATE
             ));

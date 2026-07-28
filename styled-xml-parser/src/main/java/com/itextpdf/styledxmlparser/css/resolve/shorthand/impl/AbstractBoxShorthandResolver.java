@@ -22,14 +22,13 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +38,8 @@ import java.util.List;
  * Abstract {@link IShorthandResolver} implementation for box definitions.
  */
 public abstract class AbstractBoxShorthandResolver implements IShorthandResolver {
+
+    private static final LazyLogger LOGGER = new LazyLogger(AbstractBoxShorthandResolver.class);
 
     /** The template for -left properties. */
     private static final String _0_LEFT_1 = "{0}-left{1}";
@@ -85,10 +86,8 @@ public abstract class AbstractBoxShorthandResolver implements IShorthandResolver
         } else {
             for (String prop : props) {
                 if (CommonCssConstants.INHERIT.equals(prop) || CommonCssConstants.INITIAL.equals(prop)) {
-                    Logger logger = LoggerFactory.getLogger(AbstractBoxShorthandResolver.class);
-                    logger.warn(
-                            MessageFormatUtil.format(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
-                                    shorthandExpression));
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
                     return Collections.<CssDeclaration>emptyList();
                 }
             }

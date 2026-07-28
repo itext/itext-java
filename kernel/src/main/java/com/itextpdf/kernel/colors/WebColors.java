@@ -22,10 +22,9 @@
  */
 package com.itextpdf.kernel.colors;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -36,6 +35,8 @@ import java.util.StringTokenizer;
  * http://en.wikipedia.org/wiki/Web_colors )
  */
 public class WebColors extends HashMap<String, int[]> {
+
+    private static final LazyLogger LOGGER = new LazyLogger(WebColors.class);
 
     /**
      * HashMap containing all the names and corresponding color values.
@@ -287,8 +288,7 @@ public class WebColors extends HashMap<String, int[]> {
                     color[1] = (float) (Integer.parseInt(colorName.substring(2, 4), 16) / RGB_MAX_VAL);
                     color[2] = (float) (Integer.parseInt(colorName.substring(4), 16) / RGB_MAX_VAL);
                 } else {
-                    Logger logger = LoggerFactory.getLogger(WebColors.class);
-                    logger.error(IoLogMessageConstant.UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB);
+                    LOGGER.error(() -> IoLogMessageConstant.UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB);
                 }
             } else if (colorName.startsWith("rgb(")) {
                 final String delim = "rgb(), \t\r\n\f";

@@ -22,11 +22,10 @@
  */
 package com.itextpdf.styledxmlparser.node.impl.jsoup.node;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Node;
 import com.itextpdf.styledxmlparser.node.INode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +35,8 @@ import java.util.List;
  * Implementation of the {@link INode} interface; wrapper for the JSoup {@link Node} class.
  */
 public class JsoupNode implements INode {
+
+    private static final LazyLogger LOGGER = new LazyLogger(JsoupNode.class);
 
     /** The JSoup node instance. */
     private Node node;
@@ -72,8 +73,7 @@ public class JsoupNode implements INode {
             childNodes.add(node);
             ((JsoupNode) node).parentNode = this;
         } else {
-            Logger logger = LoggerFactory.getLogger(JsoupNode.class);
-            logger.error(StyledXmlParserLogMessageConstant.ERROR_ADDING_CHILD_NODE);
+            LOGGER.error(() -> StyledXmlParserLogMessageConstant.ERROR_ADDING_CHILD_NODE);
         }
     }
 

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -49,12 +50,12 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitApplyingResult;
 import com.itextpdf.layout.renderer.objectfit.ObjectFitCalculator;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class ImageRenderer extends AbstractRenderer implements ILeafElementRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ImageRenderer.class);
 
     protected Float fixedXPosition;
     protected Float fixedYPosition;
@@ -207,14 +208,12 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
 
         UnitValue leftMargin = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
         if (!leftMargin.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_LEFT));
         }
         UnitValue topMargin = this.getPropertyAsUnitValue(Property.MARGIN_TOP);
         if (!topMargin.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_TOP));
         }
 
@@ -258,8 +257,7 @@ public class ImageRenderer extends AbstractRenderer implements ILeafElementRende
     @Override
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
-            Logger logger = LoggerFactory.getLogger(ImageRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
                     "Drawing won't be performed."));
             return;
         }

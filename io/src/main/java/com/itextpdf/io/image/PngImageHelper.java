@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -32,13 +33,14 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
-import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 class PngImageHelper {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PngImageHelper.class);
 
     private static class PngParameters {
         PngParameters(PngImageData image) {
@@ -169,8 +171,8 @@ class PngImageHelper {
         readPng(pngStream, png);
         int colorType = png.image.getColorType();
         if (png.iccProfile != null && png.iccProfile.getNumComponents() != getExpectedNumberOfColorComponents(png)) {
-            LoggerFactory.getLogger(PngImageHelper.class)
-                    .warn(IoLogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS);
+            LOGGER.warn(() ->
+                    IoLogMessageConstant.PNG_IMAGE_HAS_ICC_PROFILE_WITH_INCOMPATIBLE_NUMBER_OF_COLOR_COMPONENTS);
         }
         try {
             int pal0 = 0;

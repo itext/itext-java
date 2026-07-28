@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.utils.annotationsflattening;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -36,9 +37,6 @@ import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This class is used to flatten annotations.
  * The default implementation first tries to draw the normal appearance stream of the annotation.
@@ -46,8 +44,8 @@ import org.slf4j.LoggerFactory;
  * implementation.
  */
 public class DefaultAnnotationFlattener implements IAnnotationFlattener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(
-            DefaultAnnotationFlattener.class);
+
+    private static final LazyLogger LOGGER = new LazyLogger(DefaultAnnotationFlattener.class);
 
     /**
      * Creates a new {@link DefaultAnnotationFlattener} instance.
@@ -93,9 +91,8 @@ public class DefaultAnnotationFlattener implements IAnnotationFlattener {
             return true;
         }
 
-        final String message = MessageFormatUtil.format(KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED,
-                annotation.getSubtype());
-        LOGGER.warn(message);
+        LOGGER.warn(() -> MessageFormatUtil.format(KernelLogMessageConstant.FLATTENING_IS_NOT_YET_SUPPORTED,
+                annotation.getSubtype()));
         return false;
     }
 

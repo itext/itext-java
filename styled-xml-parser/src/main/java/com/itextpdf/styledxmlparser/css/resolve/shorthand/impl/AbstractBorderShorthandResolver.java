@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
@@ -29,9 +30,6 @@ import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +40,8 @@ import java.util.List;
  * Abstract {@link IShorthandResolver} implementation for borders.
  */
 public abstract class AbstractBorderShorthandResolver implements IShorthandResolver {
+
+    private static final LazyLogger LOGGER = new LazyLogger(AbstractBorderShorthandResolver.class);
 
     /** The template for -width properties. */
     private static final String _0_WIDTH = "{0}-width";
@@ -83,9 +83,8 @@ public abstract class AbstractBorderShorthandResolver implements IShorthandResol
 
         for (String value : props) {
             if (CommonCssConstants.INITIAL.equals(value) || CommonCssConstants.INHERIT.equals(value)) {
-                Logger logger = LoggerFactory.getLogger(AbstractBorderShorthandResolver.class);
-                logger.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
-                        shorthandExpression));
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
                 return Collections.<CssDeclaration>emptyList();
             }
             if (CommonCssConstants.BORDER_WIDTH_VALUES.contains(value) || CssTypesValidationUtils.isNumber(value)

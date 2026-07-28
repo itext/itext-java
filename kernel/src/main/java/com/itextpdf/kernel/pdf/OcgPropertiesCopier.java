@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -36,11 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 final class OcgPropertiesCopier {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OcgPropertiesCopier.class);
+    private static final LazyLogger LOGGER = new LazyLogger(OcgPropertiesCopier.class);
 
     private OcgPropertiesCopier() {
         // Empty constructor
@@ -75,7 +73,7 @@ final class OcgPropertiesCopier {
             OcgPropertiesCopier.copyDDictionary(ocgsToCopy, fromOcProperties.getAsDictionary(PdfName.D),
                     toOcProperties, destinationDocument);
         } catch (Exception e) {
-            LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.OCG_COPYING_ERROR, e.toString()));
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.OCG_COPYING_ERROR, e.toString()));
         }
     }
 
@@ -245,7 +243,7 @@ final class OcgPropertiesCopier {
         }
 
         if (hasConflictingNames) {
-            LOGGER.warn(IoLogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES);
+            LOGGER.warn(() -> IoLogMessageConstant.DOCUMENT_HAS_CONFLICTING_OCG_NAMES);
         }
     }
 
@@ -304,10 +302,8 @@ final class OcgPropertiesCopier {
         if (PdfOCProperties.checkDDictonaryFieldValue(fieldToCopy, fromName)) {
             toDict.put(fieldToCopy, fromName);
         } else {
-            Logger logger = LoggerFactory.getLogger(OcgPropertiesCopier.class);
-            String warnText = MessageFormatUtil.format(KernelLogMessageConstant.INVALID_DDICTIONARY_FIELD_VALUE,
-                    fieldToCopy, fromName);
-            logger.warn(warnText);
+            LOGGER.warn(() -> MessageFormatUtil.format(KernelLogMessageConstant.INVALID_DDICTIONARY_FIELD_VALUE,
+                    fieldToCopy, fromName));
         }
     }
 
@@ -320,10 +316,8 @@ final class OcgPropertiesCopier {
         if (PdfOCProperties.checkDDictonaryFieldValue(fieldToCopy, fromString)) {
             toDict.put(fieldToCopy,fromString);
         } else {
-            Logger logger = LoggerFactory.getLogger(OcgPropertiesCopier.class);
-            String warnText = MessageFormatUtil.format(KernelLogMessageConstant.INVALID_DDICTIONARY_FIELD_VALUE,
-                    fieldToCopy, fromString);
-            logger.warn(warnText);
+            LOGGER.warn(() -> MessageFormatUtil.format(KernelLogMessageConstant.INVALID_DDICTIONARY_FIELD_VALUE,
+                    fieldToCopy, fromString));
         }
     }
 

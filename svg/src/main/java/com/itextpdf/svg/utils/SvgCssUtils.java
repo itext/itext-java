@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.utils;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -37,15 +38,13 @@ import com.itextpdf.svg.renderers.impl.AbstractSvgNodeRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility class that facilitates parsing values from CSS.
  */
 public final class SvgCssUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SvgCssUtils.class);
+    private static final LazyLogger LOGGER = new LazyLogger(SvgCssUtils.class);
 
     private SvgCssUtils() {}
 
@@ -177,19 +176,17 @@ public final class SvgCssUtils {
         if (values != null) {
             // the value for viewBox should be 4 numbers according to the viewBox documentation
             if (values.length != SvgConstants.Values.VIEWBOX_VALUES_NUMBER) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn(MessageFormatUtil.format(
-                            SvgLogMessageConstant.VIEWBOX_VALUE_MUST_BE_FOUR_NUMBERS, vbString));
-                }
+                final String vbStringToLog = vbString;
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        SvgLogMessageConstant.VIEWBOX_VALUE_MUST_BE_FOUR_NUMBERS, vbStringToLog));
                 return null;
             }
             // in case when viewBox width or height is negative value is an error and
             // invalidates the ‘viewBox’ attribute (according to the viewBox documentation)
             if (values[2] < 0 || values[3] < 0) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn(MessageFormatUtil.format(
-                            SvgLogMessageConstant.VIEWBOX_WIDTH_AND_HEIGHT_CANNOT_BE_NEGATIVE, vbString));
-                }
+                final String vbStringToLog = vbString;
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        SvgLogMessageConstant.VIEWBOX_WIDTH_AND_HEIGHT_CANNOT_BE_NEGATIVE, vbStringToLog));
                 return null;
             }
         }

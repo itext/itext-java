@@ -86,8 +86,8 @@ public class SharpenConfigCustomMembers {
                         "        public DeviceRgb(System.Drawing.Color color)\n" +
                         "            : this(color.R, color.G, color.B) {\n" +
                         "            if (color.A != 255) {\n" +
-                        "                ILogger LOGGER = ITextLogManager.GetLogger(typeof(iText.Kernel.Colors.DeviceRgb));\n" +
-                        "                LOGGER.LogWarning(MessageFormatUtil.Format(iText.IO.Logs.IoLogMessageConstant.COLOR_ALPHA_CHANNEL_IS_IGNORED, color.A));\n" +
+                        "                LazyLogger logger = new LazyLogger(typeof(iText.Kernel.Colors.DeviceRgb));\n" +
+                        "                logger.Warn(() => MessageFormatUtil.Format(iText.IO.Logs.IoLogMessageConstant.COLOR_ALPHA_CHANNEL_IS_IGNORED, color.A));\n" +
                         "            }\n" +
                         "        }";
     }

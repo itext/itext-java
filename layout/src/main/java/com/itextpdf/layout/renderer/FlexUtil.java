@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
@@ -37,8 +38,6 @@ import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
 import com.itextpdf.layout.properties.JustifyContent;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,7 +51,7 @@ final class FlexUtil {
 
     private static final float FLEX_SHRINK_INITIAL_VALUE = 1F;
 
-    private static final Logger logger = LoggerFactory.getLogger(FlexUtil.class);
+    private static final LazyLogger LOGGER = new LazyLogger(FlexUtil.class);
 
     private FlexUtil() {
         // Do nothing
@@ -749,9 +748,9 @@ final class FlexUtil {
                             info.hypotheticalCrossSize);
                 }
             } else {
-                logger.error(LayoutLogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL);
+                LOGGER.error(() -> LayoutLogMessageConstant.FLEX_ITEM_LAYOUT_RESULT_IS_NOT_FULL);
                 if (result.getAreaBreak() != null || result.getSectionBreak() != null) {
-                    logger.warn(LayoutLogMessageConstant.FLEX_ITEM_CONTAINS_AREA_BREAK_OR_SECTION_BREAK);
+                    LOGGER.warn(() -> LayoutLogMessageConstant.FLEX_ITEM_CONTAINS_AREA_BREAK_OR_SECTION_BREAK);
                 }
                 info.hypotheticalCrossSize = 0;
             }

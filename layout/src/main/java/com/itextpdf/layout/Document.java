@@ -23,6 +23,7 @@
 package com.itextpdf.layout;
 
 import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -41,8 +42,6 @@ import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.RootRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +61,7 @@ import java.util.function.Predicate;
  * {@link #setRenderer(com.itextpdf.layout.renderer.DocumentRenderer) }.
  */
 public class Document extends RootElement<Document> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Document.class);
+    private static final LazyLogger LOGGER = new LazyLogger(Document.class);
 
     private final Map<Integer, PageMarginBoxes> pageMargins = new HashMap<>();
     private final List<Tuple2<Predicate<Integer>, PageMarginBoxes>> pageMarginsRules = new ArrayList<>();
@@ -450,11 +449,11 @@ public class Document extends RootElement<Document> {
             if (FootnoteNumberingConfig.PER_DOCUMENT == footnotesProperties.getFootnoteNumberingConfig()) {
                 if (this.hasOwnProperty(Property.FOOTNOTES_PROPERTIES) &&
                         FootnoteNumberingConfig.PER_DOCUMENT != footnoteNumberingConfig) {
-                    LOGGER.warn(LayoutLogMessageConstant.FOOTNOTE_NUM_PER_DOCUMENT_SHOULD_BE_FIRST);
+                    LOGGER.warn(() -> LayoutLogMessageConstant.FOOTNOTE_NUM_PER_DOCUMENT_SHOULD_BE_FIRST);
                     footnotesProperties.setFootnoteNumberingConfig(footnoteNumberingConfig);
                 }
             } else if (FootnoteNumberingConfig.PER_DOCUMENT == footnoteNumberingConfig) {
-                LOGGER.warn(LayoutLogMessageConstant.FOOTNOTE_NUM_PER_DOCUMENT_CANNOT_BE_CHANGED);
+                LOGGER.warn(() -> LayoutLogMessageConstant.FOOTNOTE_NUM_PER_DOCUMENT_CANNOT_BE_CHANGED);
                 footnotesProperties.setFootnoteNumberingConfig(FootnoteNumberingConfig.PER_DOCUMENT);
             }
         }

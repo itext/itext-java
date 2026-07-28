@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.node.impl.jsoup;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
@@ -46,8 +47,6 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class that uses JSoup to parse HTML.
@@ -55,7 +54,7 @@ import org.slf4j.LoggerFactory;
 public class JsoupXmlParser implements IXmlParser {
 
     /** The logger. */
-    private static Logger logger = LoggerFactory.getLogger(JsoupXmlParser.class);
+    private static final LazyLogger LOGGER = new LazyLogger(JsoupXmlParser.class);
 
     /* (non-Javadoc)
      * @see com.itextpdf.styledxmlparser.html.IXmlParser#parse(java.io.InputStream, java.lang.String)
@@ -111,8 +110,8 @@ public class JsoupXmlParser implements IXmlParser {
         } else if (jsoupNode instanceof Comment) {
             // Ignore. We should do this to avoid redundant log message
         } else {
-            logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.ERROR_PARSING_COULD_NOT_MAP_NODE,
-                    jsoupNode.getClass()));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.ERROR_PARSING_COULD_NOT_MAP_NODE, jsoupNode.getClass()));
         }
 
         for (Node node : jsoupNode.childNodes()) {

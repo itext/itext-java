@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.xobject;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -33,9 +34,6 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.layer.IPdfOCG;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * An abstract wrapper for supported types of XObject.
  *
@@ -44,6 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfXObject.class);
 
     protected PdfXObject(PdfStream pdfObject) {
         super(pdfObject);
@@ -159,8 +158,7 @@ public abstract class PdfXObject extends PdfObjectWrapper<PdfStream> {
      */
     public void addAssociatedFile(PdfFileSpec fs) {
         if (null == ((PdfDictionary)fs.getPdfObject()).get(PdfName.AFRelationship)) {
-            Logger logger = LoggerFactory.getLogger(PdfXObject.class);
-            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            LOGGER.error(() -> IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         PdfArray afArray = getPdfObject().getAsArray(PdfName.AF);
         if (afArray == null) {

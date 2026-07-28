@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.font.AdobeGlyphList;
@@ -35,14 +36,13 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class allow to parse document font's encoding.
  */
 class DocFontEncoding extends FontEncoding {
 
+    private static final LazyLogger LOGGER = new LazyLogger(DocFontEncoding.class);
 
     protected DocFontEncoding() {
     }
@@ -103,8 +103,7 @@ class DocFontEncoding extends FontEncoding {
                 if (obj.isNumber()) {
                     currentNumber = ((PdfNumber) obj).intValue();
                 } else if (currentNumber > 255) {
-                    Logger LOGGER = LoggerFactory.getLogger(DocFontEncoding.class);
-                    LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES,
+                    LOGGER.warn(() -> MessageFormatUtil.format(IoLogMessageConstant.DOCFONT_HAS_ILLEGAL_DIFFERENCES,
                             ((PdfName) obj).getValue()));
                     /* don't return or break, because differences subarrays may
                      * be in any order:

@@ -17,13 +17,11 @@
 
 package com.itextpdf.layout.hyphenation;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.util.ResourceUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -45,7 +43,7 @@ public final class Hyphenator {
     /**
      * Logging instance.
      */
-    private static Logger log = LoggerFactory.getLogger(Hyphenator.class);
+    private static final LazyLogger LOGGER = new LazyLogger(Hyphenator.class);
 
     private static HyphenationTreeCache hTreeCache;
 
@@ -149,11 +147,11 @@ public final class Hyphenator {
             String llKey = HyphenationTreeCache.constructLlccKey(lang, null);
             if (!cache.isMissing(llKey)) {
                 hTree = getHyphenationTree2(lang, null, hyphPathNames);
-                if (hTree != null && log.isDebugEnabled()) {
-                    log.debug("Couldn't find hyphenation pattern "
-                              + "for lang=\"" + lang + "\",country=\"" + country + "\"."
-                              + " Using general language pattern "
-                              + "for lang=\"" + lang + "\" instead.");
+                if (hTree != null) {
+                    LOGGER.debug(() -> "Couldn't find hyphenation pattern "
+                            + "for lang=\"" + lang + "\",country=\"" + country + "\"."
+                            + " Using general language pattern "
+                            + "for lang=\"" + lang + "\" instead.");
                 }
                 if (hTree == null) {
                     // no fallback; register as missing
@@ -168,12 +166,12 @@ public final class Hyphenator {
         if (hTree == null) {
             // (lang,country) and (lang) tried; register as missing
             cache.noteMissing(llccKey);
-            log.error("Couldn't find hyphenation pattern "
-                      + "for lang=\"" + lang + "\""
-                      + (country != null && !country.equals("none")
-                              ? ",country=\"" + country + "\""
-                              : "")
-                      + ".");
+            LOGGER.error(() -> "Couldn't find hyphenation pattern "
+                    + "for lang=\"" + lang + "\""
+                    + (country != null && !country.equals("none")
+                    ? ",country=\"" + country + "\""
+                    : "")
+                    + ".");
         }
 
         return hTree;
@@ -242,9 +240,7 @@ public final class Hyphenator {
             InputStream fis = FileUtil.getInputStreamForFile(searchDirectory + File.separator + name);
             return getHyphenationTree(fis, name);
         } catch (IOException ioe) {
-            if (log.isDebugEnabled()) {
-                log.debug("I/O problem while trying to load " + name + ": " + ioe.getMessage());
-            }
+            LOGGER.debug(() -> "I/O problem while trying to load " + name + ": " + ioe.getMessage());
             return null;
         }
     }
@@ -266,7 +262,7 @@ public final class Hyphenator {
             hTree.loadPatterns(in, name);
         }
         catch (HyphenationException ex) {
-            log.error("Can't load user patterns from XML file " + name + ": " + ex.getMessage());
+            LOGGER.error(() -> "Can't load user patterns from XML file " + name + ": " + ex.getMessage());
             return null;
         }
         finally {

@@ -22,10 +22,9 @@
  */
 package com.itextpdf.io.codec;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
@@ -43,6 +42,9 @@ import java.util.TreeSet;
  * in a PDF.
  */
 public class Jbig2SegmentReader {
+
+    private static final LazyLogger LOGGER = new LazyLogger(Jbig2SegmentReader.class);
+
     //see 7.4.2.
     public static final int SYMBOL_DICTIONARY = 0;
 
@@ -673,8 +675,7 @@ public class Jbig2SegmentReader {
             }
             os.close();
         } catch (java.io.IOException e) {
-            Logger logger = LoggerFactory.getLogger(Jbig2SegmentReader.class);
-            logger.debug(e.getMessage());
+            LOGGER.debug(() -> e.getMessage());
         }
 
         return streamBytes;

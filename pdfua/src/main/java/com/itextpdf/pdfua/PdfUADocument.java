@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfua;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.contrast.ColorContrastChecker;
 import com.itextpdf.kernel.pdf.DocumentProperties;
@@ -47,8 +48,6 @@ import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Creates a Pdf/UA document.
@@ -56,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * It will add necessary validation to guide the user to create a PDF/UA compliant document.
  */
 public class PdfUADocument extends PdfDocument {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfUADocument.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PdfUADocument.class);
 
     /**
      * Creates a PdfUADocument instance.
@@ -112,7 +111,7 @@ public class PdfUADocument extends PdfDocument {
     public PdfUADocument(PdfReader reader, PdfWriter writer, StampingProperties properties, PdfUAConfig config) {
         super(reader, writer, properties);
         if (!getConformance().isPdfUA()) {
-            LOGGER.warn(PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED);
+            LOGGER.warn(() -> PdfUALogMessageConstants.PDF_TO_PDF_UA_CONVERSION_IS_NOT_SUPPORTED);
         }
 
         setupUAConfiguration(config);
@@ -169,12 +168,12 @@ public class PdfUADocument extends PdfDocument {
         writer.getProperties().addPdfUaXmpMetadata(uaConformance);
         if (writer.getPdfVersion() != null) {
             if (uaConformance == PdfUAConformance.PDF_UA_1 && !PdfVersion.PDF_1_7.equals(writer.getPdfVersion())) {
-                LOGGER.warn(MessageFormatUtil.format(
+                LOGGER.warn(() -> MessageFormatUtil.format(
                         PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_1_7));
                 writer.getProperties().setPdfVersion(PdfVersion.PDF_1_7);
             }
             if (uaConformance == PdfUAConformance.PDF_UA_2 && !PdfVersion.PDF_2_0.equals(writer.getPdfVersion())) {
-                LOGGER.warn(MessageFormatUtil.format(
+                LOGGER.warn(() -> MessageFormatUtil.format(
                         PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_2_0));
                 writer.getProperties().setPdfVersion(PdfVersion.PDF_2_0);
             }

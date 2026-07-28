@@ -22,11 +22,9 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,7 +40,7 @@ import java.util.zip.InflaterInputStream;
 public final class FilterUtil {
 
     /** The Logger instance. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(FilterUtil.class);
+    private static final LazyLogger LOGGER = new LazyLogger(FilterUtil.class);
 
     private FilterUtil() {
     }
@@ -76,7 +74,7 @@ public final class FilterUtil {
                 output.close();
             }catch(Exception e){
                 //Log the error
-                LOGGER.error(e.getMessage(),e);
+                LOGGER.error(() -> e.getMessage(),e);
             }
         }
     }

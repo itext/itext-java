@@ -30,10 +30,9 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IRevokedStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.signatures.logs.SignLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,6 +46,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that allows you to verify a certificate against
@@ -61,9 +62,13 @@ public class OCSPVerifier extends RootStoreVerifier {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     /**
-     * The Logger instance
+     * The Logger instance.
      */
+    @Deprecated
+    // on removal of slf4j logger field rename `LAZY_LOGGER` into LOGGER
     protected static final Logger LOGGER = LoggerFactory.getLogger(OCSPVerifier.class);
+
+    private  static final LazyLogger LAZY_LOGGER = new LazyLogger(OCSPVerifier.class);
 
     protected final static String id_kp_OCSPSigning = "1.3.6.1.5.5.7.3.9";
 
@@ -160,7 +165,8 @@ public class OCSPVerifier extends RootStoreVerifier {
             online = true;
         }
         // Show how many valid OCSP responses were found.
-        LOGGER.info("Valid OCSPs found: " + validOCSPsFound);
+        String logMessage = "Valid OCSPs found: " + validOCSPsFound;
+        LAZY_LOGGER.info(() -> logMessage);
         if (validOCSPsFound > 0) {
             result.add(new VerificationOK(signCert, this.getClass(),
                     "Valid OCSPs Found: " + validOCSPsFound + (online ?
@@ -206,7 +212,7 @@ public class OCSPVerifier extends RootStoreVerifier {
                     issuerCert = signCert;
                 }
                 if (!SignUtils.checkIfIssuersMatch(iSingleResp.getCertID(), issuerCert)) {
-                    LOGGER.info("OCSP: Issuers doesn't match.");
+                    LAZY_LOGGER.info(() -> "OCSP: Issuers doesn't match.");
                     continue;
                 }
             } catch (IOException e) {
@@ -222,8 +228,8 @@ public class OCSPVerifier extends RootStoreVerifier {
             // If nextUpdate is not set, the responder is indicating that newer revocation information
             // is available all the time.
             if (iSingleResp.getNextUpdate() != null && signDate.after(iSingleResp.getNextUpdate())) {
-                LOGGER.info(MessageFormatUtil.format("OCSP is no longer valid: {0} after {1}", signDate,
-                        iSingleResp.getNextUpdate()));
+                LAZY_LOGGER.info(() -> MessageFormatUtil.format(
+                        "OCSP is no longer valid: {0} after {1}", signDate, iSingleResp.getNextUpdate()));
                 continue;
             }
             // Check the status of the certificate:
@@ -234,7 +240,7 @@ public class OCSPVerifier extends RootStoreVerifier {
                 // Check if the OCSP response was genuine.
                 isValidResponse(ocspResp, issuerCert, signDate);
                 if (!isStatusGood) {
-                    LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED,
+                    LAZY_LOGGER.warn(() -> MessageFormatUtil.format(SignLogMessageConstant.VALID_CERTIFICATE_IS_REVOKED,
                             revokedStatus.getRevocationTime()));
                 }
                 return true;

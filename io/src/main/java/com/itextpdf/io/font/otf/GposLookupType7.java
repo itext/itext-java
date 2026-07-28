@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font.otf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.otf.lookuptype7.PosTableLookup7Format2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -30,8 +31,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Lookup Type 7:
@@ -39,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GposLookupType7 extends OpenTableLookup {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GposLookupType7.class);
+    private static final LazyLogger LOGGER = new LazyLogger(GposLookupType7.class);
 
     protected List<ContextualTable<ContextualPositionRule>> subTables;
 
@@ -101,8 +100,8 @@ public class GposLookupType7 extends OpenTableLookup {
                 break;
             case 1:
             case 3:
-                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.GPOS_LOOKUP_SUBTABLE_FORMAT_NOT_SUPPORTED,
-                        substFormat, 7));
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.GPOS_LOOKUP_SUBTABLE_FORMAT_NOT_SUPPORTED, substFormat, 7));
                 break;
             default:
                 throw new IllegalArgumentException("Bad subtable format identifier: " + substFormat);

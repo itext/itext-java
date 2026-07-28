@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfua.checkers;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -73,8 +74,6 @@ import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The class defines the requirements of the PDF/UA-2 standard and contains
@@ -84,6 +83,8 @@ import org.slf4j.LoggerFactory;
  * The specification implemented by this class is ISO 14289-2.
  */
 public class PdfUA2Checker extends PdfUAChecker {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfUA2Checker.class);
 
     private final PdfDocument pdfDocument;
     private final PdfUAValidationContext context;
@@ -269,8 +270,7 @@ public class PdfUA2Checker extends PdfUAChecker {
                     int maxIters = 100;
                     while (roleMappingResolver.resolveNextMapping()) {
                         if (++i > maxIters) {
-                            Logger logger = LoggerFactory.getLogger(PdfUA2Checker.class);
-                            logger.error(MessageFormatUtil.format(PdfUALogMessageConstants.
+                            LOGGER.error(() -> MessageFormatUtil.format(PdfUALogMessageConstants.
                                     CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, role, namespace));
                             break;
                         }

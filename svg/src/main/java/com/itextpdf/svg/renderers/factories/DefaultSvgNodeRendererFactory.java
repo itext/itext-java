@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.factories;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.node.IElementNode;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
@@ -36,9 +37,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of {@link ISvgNodeRendererFactory} that will be
@@ -69,8 +67,8 @@ public class DefaultSvgNodeRendererFactory implements ISvgNodeRendererFactory {
         final ISvgNodeRendererCreator svgNodeRendererCreator = rendererMap.get(tag.name());
 
         if (svgNodeRendererCreator == null) {
-            Logger logger = LoggerFactory.getLogger(this.getClass());
-            logger.warn(MessageFormatUtil.format(SvgLogMessageConstant.UNMAPPED_TAG, tag.name()));
+            LazyLogger logger = new LazyLogger(this.getClass());
+            logger.warn(() -> MessageFormatUtil.format(SvgLogMessageConstant.UNMAPPED_TAG, tag.name()));
             return null;
         }
 

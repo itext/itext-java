@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.AbstractPdfFormField;
@@ -52,8 +53,6 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ImageRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -62,6 +61,9 @@ import java.util.Map;
  * The {@link AbstractTextFieldRenderer} implementation for SigFields.
  */
 public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(SignatureAppearanceRenderer.class);
+
     /**
      * Extra space at the top.
      */
@@ -232,8 +234,7 @@ public class SignatureAppearanceRenderer extends AbstractTextFieldRenderer {
         String name = getModelId();
         UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (!fontSize.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(SignatureAppearanceRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.FONT_SIZE));
         }
         PdfDocument doc = drawContext.getDocument();

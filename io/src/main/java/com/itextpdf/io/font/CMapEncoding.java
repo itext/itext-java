@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.font.cmap.CMapCidToCodepoint;
 import com.itextpdf.io.font.cmap.CMapCodepointToCid;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
@@ -33,12 +34,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class representing CMap encoding in pdf document.
  */
 public class CMapEncoding {
+
+    private static final LazyLogger LOGGER = new LazyLogger(CMapEncoding.class);
 
     private static final List<byte[]> IDENTITY_H_V_CODESPACE_RANGES = Arrays.asList(new byte[] {0, 0}, new byte[] {(byte)0xff, (byte)0xff});
 
@@ -102,7 +104,7 @@ public class CMapEncoding {
             code2Cid = CMapEncoding.getCodeToCidCmap(cmap, cid2Code);
             this.codeSpaceRanges = cid2Code.getCodeSpaceRanges();
         } catch (IOException e) {
-            LoggerFactory.getLogger(getClass()).error(IoLogMessageConstant.FAILED_TO_PARSE_ENCODING_STREAM);
+            LOGGER.error(() -> IoLogMessageConstant.FAILED_TO_PARSE_ENCODING_STREAM);
         }
     }
 

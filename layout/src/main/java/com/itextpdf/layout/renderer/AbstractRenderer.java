@@ -23,6 +23,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.NumberUtil;
@@ -80,8 +81,6 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.Transform;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,6 +97,12 @@ import java.util.Set;
  * this default implementation.
  */
 public abstract class AbstractRenderer implements IRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(AbstractRenderer.class);
+
+    /**
+     * The overlap epsilon.
+     */
     public static final float OVERLAP_EPSILON = 1e-4f;
 
     /**
@@ -552,8 +557,7 @@ public abstract class AbstractRenderer implements IRenderer {
             }
             Rectangle backgroundArea = getBackgroundArea(applyMargins(bBox, false));
             if (backgroundArea.getWidth() <= 0 || backgroundArea.getHeight() <= 0) {
-                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.info(MessageFormatUtil.format(
+                LOGGER.info(() -> MessageFormatUtil.format(
                         IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
             } else {
                 boolean backgroundAreaIsClipped = false;
@@ -641,8 +645,7 @@ public abstract class AbstractRenderer implements IRenderer {
         double backgroundRectangleHeight = (double) colorBackgroundArea.getHeight() +
                 background.getExtraTop() + background.getExtraBottom();
         if (backgroundRectangleWidth < EPS || backgroundRectangleHeight < EPS) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.info(MessageFormatUtil.format(
+            LOGGER.info(() -> MessageFormatUtil.format(
                     IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES, "background"));
             return;
         }
@@ -715,8 +718,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 originBackgroundArea.getTop() - imageWidthAndHeight[1] - yPosition.getValue(),
                 imageWidthAndHeight[0], imageWidthAndHeight[1]);
         if (imageRectangle.getWidth() <= 0 || imageRectangle.getHeight() <= 0) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.info(MessageFormatUtil.format(
+            LOGGER.info(() -> MessageFormatUtil.format(
                     IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_OR_ZERO_SIZES,
                     "background-image"));
         } else {
@@ -1136,8 +1138,8 @@ public abstract class AbstractRenderer implements IRenderer {
 
             Rectangle bBox = getBorderAreaBBox();
             if (bBox.getWidth() < 0 || bBox.getHeight() < 0) {
-                Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, "border"));
+                LOGGER.error(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.RECTANGLE_HAS_NEGATIVE_SIZE, "border"));
                 return;
             }
             float x1 = bBox.getX();
@@ -1235,9 +1237,8 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     @Override
     public void move(float dxRight, float dyUp) {
-        Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
         if (occupiedArea == null) {
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
                     "Moving won't be performed."));
             return;
         }
@@ -1790,8 +1791,8 @@ public abstract class AbstractRenderer implements IRenderer {
     protected Float retrieveUnitValue(float baseValue, int property, boolean pointOnly) {
         UnitValue value = this.<UnitValue>getProperty(property);
         if (pointOnly && value.getUnitType() == UnitValue.POINT) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, property));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, property));
         }
         if (value != null) {
             if (value.getUnitType() == UnitValue.PERCENT) {
@@ -1861,23 +1862,19 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     protected Rectangle applyMargins(Rectangle rect, UnitValue[] margins, boolean reverse) {
         if (!margins[TOP_SIDE].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_TOP));
         }
         if (!margins[RIGHT_SIDE].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_RIGHT));
         }
         if (!margins[BOTTOM_SIDE].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_BOTTOM));
         }
         if (!margins[LEFT_SIDE].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.MARGIN_LEFT));
         }
         return rect.applyMargins(
@@ -1919,23 +1916,19 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     protected Rectangle applyPaddings(Rectangle rect, UnitValue[] paddings, boolean reverse) {
         if (paddings[0] != null && !paddings[0].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_TOP));
         }
         if (paddings[1] != null && !paddings[1].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_RIGHT));
         }
         if (paddings[2] != null && !paddings[2].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_BOTTOM));
         }
         if (paddings[3] != null && !paddings[3].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_LEFT));
         }
         return rect.applyMargins(paddings[0] != null ? paddings[0].getValue() : 0,
@@ -1991,8 +1984,7 @@ public abstract class AbstractRenderer implements IRenderer {
                 }
             }
         } catch (Exception exc) {
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
                     "Absolute positioning might be applied incorrectly."));
         }
     }
@@ -2053,13 +2045,11 @@ public abstract class AbstractRenderer implements IRenderer {
             if (destinationName != null) {
                 int pageNumber = occupiedArea.getPageNumber();
                 if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
-                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
                     String logMessageArg =
                             "Property.DESTINATION, which specifies this element location as destination, " +
                                     "see ElementPropertyContainer.setDestination.";
-                    logger.warn(MessageFormatUtil.format(
-                            IoLogMessageConstant
-                                    .UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN,
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            IoLogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN,
                             logMessageArg));
                     return;
                 }
@@ -2105,7 +2095,6 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void applyLinkAnnotation(PdfDocument document) {
-        Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
         PdfLinkAnnotation linkAnnotation = this.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION);
         if (linkAnnotation == null) {
             return;
@@ -2114,7 +2103,7 @@ public abstract class AbstractRenderer implements IRenderer {
         int pageNumber = occupiedArea.getPageNumber();
         if (pageNumber < 1 || pageNumber > document.getNumberOfPages()) {
             String logMessageArg = "Property.LINK_ANNOTATION, which specifies a link associated with this element content area, see com.itextpdf.layout.element.Link.";
-            logger.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     IoLogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN,
                     logMessageArg));
             return;
@@ -2132,7 +2121,7 @@ public abstract class AbstractRenderer implements IRenderer {
         // TODO DEVSIX-1655 This check is necessary because, in some cases, our renderer's hierarchy may contain
         //  a renderer from the different page that was already flushed
         if (page.isFlushed()) {
-            logger.error(MessageFormatUtil.format(
+            LOGGER.error(() -> MessageFormatUtil.format(
                     IoLogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED, "link annotation applying"));
         } else {
             page.addAnnotation(linkAnnotation);
@@ -2181,8 +2170,7 @@ public abstract class AbstractRenderer implements IRenderer {
     void updateHeightsOnSplit(float usedHeight, boolean wasHeightClipped, AbstractRenderer splitRenderer, AbstractRenderer overflowRenderer, boolean enlargeOccupiedAreaOnHeightWasClipped) {
         if (wasHeightClipped) {
             // if height was clipped, max height exists and can be resolved
-            Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-            logger.warn(IoLogMessageConstant.CLIP_ELEMENT);
+            LOGGER.warn(() -> IoLogMessageConstant.CLIP_ELEMENT);
 
             if (enlargeOccupiedAreaOnHeightWasClipped) {
                 Float maxHeight = retrieveMaxHeight();
@@ -2360,8 +2348,8 @@ public abstract class AbstractRenderer implements IRenderer {
                             break;
                     }
                 } catch (NullPointerException e) {
-                    Logger logger = LoggerFactory.getLogger(AbstractRenderer.class);
-                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+                    LOGGER.error(() -> MessageFormatUtil.format(
+                            IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
                             "Some of the children might not end up aligned horizontally."));
                 }
             }
@@ -2899,8 +2887,8 @@ public abstract class AbstractRenderer implements IRenderer {
 
     boolean logWarningIfGetNextRendererNotOverridden(Class<?> baseClass, Class<?> rendererClass) {
         if (baseClass != rendererClass) {
-            final Logger logger = LoggerFactory.getLogger(baseClass);
-            logger.warn(MessageFormatUtil.format(IoLogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN));
+            final LazyLogger logger = new LazyLogger(baseClass);
+            logger.warn(() -> MessageFormatUtil.format(IoLogMessageConstant.GET_NEXT_RENDERER_SHOULD_BE_OVERRIDDEN));
             return false;
         } else {
             return true;

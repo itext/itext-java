@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -43,10 +44,10 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
+
+    private static final LazyLogger LOGGER = new LazyLogger(StandardHandlerUsingAes256.class);
 
     private static final int VALIDATION_SALT_OFFSET = 32;
     private static final int KEY_SALT_OFFSET = 40;
@@ -295,8 +296,8 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             Boolean encryptMetadataEntry = encryptionDictionary.getAsBool(PdfName.EncryptMetadata);
             if (permissionsDecoded != permissions || encryptMetadataEntry != null &&
                     encryptMetadata != encryptMetadataEntry) {
-                Logger logger = LoggerFactory.getLogger(StandardHandlerUsingAes256.class);
-                logger.error(IoLogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY);
+                LOGGER.error(() ->
+                        IoLogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY);
             }
             this.permissions = permissionsDecoded;
             this.encryptMetadata = encryptMetadata;

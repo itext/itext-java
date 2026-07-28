@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
@@ -32,15 +33,13 @@ import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link IShorthandResolver} implementation for marker.
  */
 public class MarkerShorthandResolver implements IShorthandResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MarkerShorthandResolver.class);
+    private static final LazyLogger LOGGER = new LazyLogger(MarkerShorthandResolver.class);
 
     /**
      * Creates a new {@link MarkerShorthandResolver} instance.
@@ -58,12 +57,12 @@ public class MarkerShorthandResolver implements IShorthandResolver {
         }
         String expression = shorthandExpression.trim();
         if (expression.isEmpty()) {
-            LOGGER.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
-                    CommonCssConstants.MARKER));
+            LOGGER.warn(() -> MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY, CommonCssConstants.MARKER));
             return new ArrayList<>();
         }
         if (!expression.startsWith(CommonCssConstants.URL + "(") || !expression.endsWith(")")) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
             return new ArrayList<>();
         }

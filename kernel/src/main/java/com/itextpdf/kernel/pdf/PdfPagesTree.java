@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.datastructures.ISimpleList;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.di.pagetree.IPageTreeListFactory;
@@ -33,15 +34,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Algorithm for construction {@link PdfPages} tree
  */
 class PdfPagesTree {
+    private static final LazyLogger LOGGER = new LazyLogger(PdfPagesTree.class);
+
     static final int DEFAULT_LEAF_SIZE = 10;
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfPagesTree.class);
 
     private final int leafSize = DEFAULT_LEAF_SIZE;
     private ISimpleList<PdfIndirectReference> pageRefs;
@@ -107,13 +107,14 @@ class PdfPagesTree {
                     pdfPage = document.getPageFactory().createPdfPage((PdfDictionary) pageObject);
                     pdfPage.parentPages = parents.get(parentIndex);
                 } else {
-                    LOGGER.error(
-                            MessageFormatUtil.format(IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE,
-                                    pageNum + 1));
+                    final int pageNumForLog = pageNum + 1;
+                    LOGGER.error(() -> MessageFormatUtil.format(
+                            IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, pageNumForLog));
                 }
             } else {
-                LOGGER.error(MessageFormatUtil.format(IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE,
-                        pageNum + 1));
+                final int pageNumForLog = pageNum + 1;
+                LOGGER.error(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.PAGE_TREE_IS_BROKEN_FAILED_TO_RETRIEVE_PAGE, pageNumForLog));
             }
             pages.set(pageNum, pdfPage);
         }
@@ -246,7 +247,7 @@ class PdfPagesTree {
     public PdfPage removePage(int pageNum) {
         PdfPage pdfPage = getPage(pageNum);
         if (pdfPage.isFlushed()) {
-            LOGGER.warn(IoLogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED);
+            LOGGER.warn(() -> IoLogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED);
         }
         if (internalRemovePage(--pageNum)) {
             return pdfPage;
@@ -272,7 +273,7 @@ class PdfPagesTree {
      */
     protected PdfObject generateTree() {
         if (pageRefs.isEmpty()) {
-            LOGGER.info(IoLogMessageConstant.ATTEMPT_TO_GENERATE_PDF_PAGES_TREE_WITHOUT_ANY_PAGES);
+            LOGGER.info(() -> IoLogMessageConstant.ATTEMPT_TO_GENERATE_PDF_PAGES_TREE_WITHOUT_ANY_PAGES);
             document.addNewPage();
         }
         if (generated) {

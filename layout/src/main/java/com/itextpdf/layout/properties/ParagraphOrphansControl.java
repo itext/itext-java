@@ -22,18 +22,19 @@
  */
 package com.itextpdf.layout.properties;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A specialized class holding configurable parameters related to {@link com.itextpdf.layout.element.Paragraph}'s
  * orphans restrictions. This class is meant to be used as the value for the {@link Property#ORPHANS_CONTROL} key.
  */
 public class ParagraphOrphansControl {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ParagraphOrphansControl.class);
+
     private int minOrphans;
 
     /**
@@ -74,14 +75,14 @@ public class ParagraphOrphansControl {
      * @param message  {@link String} explaining the reason for violation
      */
     public void handleViolatedOrphans(ParagraphRenderer renderer, String message) {
-        Logger logger = LoggerFactory.getLogger(ParagraphOrphansControl.class);
-        if (renderer.getOccupiedArea() != null && renderer.getLines() != null) {
-            int pageNumber = renderer.getOccupiedArea().getPageNumber();
-            String warnText = MessageFormatUtil.format(IoLogMessageConstant.ORPHANS_CONSTRAINT_VIOLATED, pageNumber,
-                    minOrphans, renderer.getLines().size(), message);
-            logger.warn(warnText);
-        } else {
-            logger.warn(IoLogMessageConstant.PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD);
-        }
+        LOGGER.warn(() -> {
+            if (renderer.getOccupiedArea() != null && renderer.getLines() != null) {
+                int pageNumber = renderer.getOccupiedArea().getPageNumber();
+                return MessageFormatUtil.format(IoLogMessageConstant.ORPHANS_CONSTRAINT_VIOLATED, pageNumber,
+                        minOrphans, renderer.getLines().size(), message);
+            } else {
+                return IoLogMessageConstant.PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD;
+            }
+        });
     }
 }

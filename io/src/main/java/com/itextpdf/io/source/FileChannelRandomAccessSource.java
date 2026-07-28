@@ -22,17 +22,18 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 
 import java.nio.channels.FileChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A RandomAccessSource that is based on an underlying {@link java.nio.channels.FileChannel}.
  * The entire channel will be mapped into memory for efficient reads.
  */
 public class FileChannelRandomAccessSource implements IRandomAccessSource {
+
+    private static final LazyLogger LOGGER = new LazyLogger(FileChannelRandomAccessSource.class);
 
     /**
      * The channel this source is based on
@@ -69,8 +70,7 @@ public class FileChannelRandomAccessSource implements IRandomAccessSource {
             try {
                 channel.close();
             } catch (Exception ex) {
-                Logger logger = LoggerFactory.getLogger(FileChannelRandomAccessSource.class);
-                logger.error(IoLogMessageConstant.FILE_CHANNEL_CLOSING_FAILED, ex);
+                LOGGER.error(() -> IoLogMessageConstant.FILE_CHANNEL_CLOSING_FAILED, ex);
             }
         }
     }

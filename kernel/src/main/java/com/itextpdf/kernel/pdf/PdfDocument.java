@@ -28,6 +28,7 @@ import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
 import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.DIContainer;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -72,8 +73,6 @@ import com.itextpdf.kernel.xmp.XMPException;
 import com.itextpdf.kernel.xmp.XMPMeta;
 import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.kernel.xmp.options.SerializeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -105,7 +104,7 @@ public class PdfDocument implements Closeable {
             PdfName.AuthCode
     };
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfDocument.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PdfDocument.class);
 
     protected final StampingProperties properties;
     /**
@@ -284,10 +283,10 @@ public class PdfDocument implements Closeable {
 
         boolean writerHasEncryption = writerHasEncryption();
         if (properties.appendMode && writerHasEncryption) {
-            LOGGER.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
+            LOGGER.warn(() -> IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_APPEND);
         }
         if (properties.preserveEncryption && writerHasEncryption) {
-            LOGGER.warn(IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_PRESERVE);
+            LOGGER.warn(() -> IoLogMessageConstant.WRITER_ENCRYPTION_IS_IGNORED_PRESERVE);
         }
 
         open(writer.properties.pdfVersion);
@@ -347,7 +346,7 @@ public class PdfDocument implements Closeable {
         try {
             getXmpMetadata();
         } catch (XMPException e) {
-            LOGGER.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+            LOGGER.error(() -> IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
     }
 
@@ -1141,7 +1140,7 @@ public class PdfDocument implements Closeable {
                 try {
                     writer.finish();
                 } catch (Exception e) {
-                    LOGGER.error(IoLogMessageConstant.PDF_WRITER_CLOSING_FAILED, e);
+                    LOGGER.error(() -> IoLogMessageConstant.PDF_WRITER_CLOSING_FAILED, e);
                 }
             }
 
@@ -1149,7 +1148,7 @@ public class PdfDocument implements Closeable {
                 try {
                     reader.close();
                 } catch (Exception e) {
-                    LOGGER.error(IoLogMessageConstant.PDF_READER_CLOSING_FAILED, e);
+                    LOGGER.error(() -> IoLogMessageConstant.PDF_READER_CLOSING_FAILED, e);
                 }
             }
 
@@ -1457,7 +1456,7 @@ public class PdfDocument implements Closeable {
                     ((IPdfPageFormCopier) copier).recreateAcroformToProcessCopiedFields(toDocument);
                 }
             } else {
-                LOGGER.warn(IoLogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
+                LOGGER.warn(() -> IoLogMessageConstant.NOT_TAGGED_PAGES_IN_TAGGED_DOCUMENT);
             }
         }
         if (catalog.isOutlineMode()) {
@@ -1624,7 +1623,7 @@ public class PdfDocument implements Closeable {
     public void addNamedDestination(PdfString key, PdfObject value) {
         checkClosingStatus();
         if (value.isArray() && ((PdfArray) value).get(0).isNumber()) {
-            LOGGER.warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
+            LOGGER.warn(() -> IoLogMessageConstant.INVALID_DESTINATION_TYPE);
         }
         catalog.addNamedDestination(key, value);
     }
@@ -1723,7 +1722,7 @@ public class PdfDocument implements Closeable {
      */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
-            LOGGER.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            LOGGER.error(() -> IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
 
         PdfArray afArray = catalog.getPdfObject().getAsArray(PdfName.AF);
@@ -1778,7 +1777,7 @@ public class PdfDocument implements Closeable {
                         }
                     }
                 } catch (PdfException e) {
-                    LOGGER.error(e.getMessage());
+                    LOGGER.error(() -> e.getMessage());
                 }
             }
         }
@@ -1801,7 +1800,7 @@ public class PdfDocument implements Closeable {
             throw new PdfException(KernelExceptionMessageConstant.CANNOT_SET_ENCRYPTED_PAYLOAD_TO_ENCRYPTED_DOCUMENT);
         }
         if (!PdfName.EncryptedPayload.equals(((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship))) {
-            LOGGER.error(
+            LOGGER.error(() ->
                     IoLogMessageConstant.ENCRYPTED_PAYLOAD_FILE_SPEC_SHALL_HAVE_AFRELATIONSHIP_FILED_EQUAL_TO_ENCRYPTED_PAYLOAD);
         }
         PdfEncryptedPayload encryptedPayload = PdfEncryptedPayload.extractFrom(fs);
@@ -1811,7 +1810,7 @@ public class PdfDocument implements Closeable {
         }
         PdfCollection collection = getCatalog().getCollection();
         if (collection != null) {
-            LOGGER.warn(IoLogMessageConstant.COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED);
+            LOGGER.warn(() -> IoLogMessageConstant.COLLECTION_DICTIONARY_ALREADY_EXISTS_IT_WILL_BE_MODIFIED);
         } else {
             collection = new PdfCollection();
             getCatalog().setCollection(collection);
@@ -2278,7 +2277,7 @@ public class PdfDocument implements Closeable {
                 setXmpMetadata(xmpMeta);
             }
         } catch (XMPException e) {
-            LOGGER.error(IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
+            LOGGER.error(() -> IoLogMessageConstant.EXCEPTION_WHILE_UPDATING_XMPMETADATA, e);
         }
     }
 
@@ -2395,7 +2394,7 @@ public class PdfDocument implements Closeable {
         } catch (Exception e) {
             structTreeRoot = null;
             structParentIndex = -1;
-            LOGGER.error(IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED, e);
+            LOGGER.error(() -> IoLogMessageConstant.TAG_STRUCTURE_INIT_FAILED, e);
         }
     }
 
@@ -2625,7 +2624,7 @@ public class PdfDocument implements Closeable {
 
     private void processReadingError(String errorMessage) {
         if (StrictnessLevel.CONSERVATIVE.isStricter(reader.getStrictnessLevel())) {
-            LOGGER.error(errorMessage);
+            LOGGER.error(() -> errorMessage);
         } else {
             throw new PdfException(errorMessage);
         }
@@ -2634,9 +2633,9 @@ public class PdfDocument implements Closeable {
     private static void overrideFullCompressionInWriterProperties(WriterProperties properties,
                                                                   boolean readerHasXrefStream) {
         if (Boolean.TRUE == properties.isFullCompression && !readerHasXrefStream) {
-            LOGGER.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY);
+            LOGGER.warn(() -> KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_TABLE_INCONSISTENCY);
         } else if (Boolean.FALSE == properties.isFullCompression && readerHasXrefStream) {
-            LOGGER.warn(KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY);
+            LOGGER.warn(() -> KernelLogMessageConstant.FULL_COMPRESSION_APPEND_MODE_XREF_STREAM_INCONSISTENCY);
         }
         properties.isFullCompression = readerHasXrefStream;
     }

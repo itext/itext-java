@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.node.impl.jsoup;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.IXmlParser;
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
@@ -39,8 +40,6 @@ import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDocumentNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupDocumentTypeNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupTextNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +50,7 @@ import java.io.InputStream;
 public class JsoupHtmlParser implements IXmlParser {
 
     /** The logger. */
-    private static Logger logger = LoggerFactory.getLogger(JsoupHtmlParser.class);
+    private static final LazyLogger LOGGER = new LazyLogger(JsoupHtmlParser.class);
 
     /* (non-Javadoc)
      * @see com.itextpdf.styledxmlparser.html.IXmlParser#parse(java.io.InputStream, java.lang.String)
@@ -104,7 +103,7 @@ public class JsoupHtmlParser implements IXmlParser {
             resultNode = new JsoupDocumentTypeNode((DocumentType) jsoupNode);
         } else if (jsoupNode instanceof Comment) {
         } else {
-            logger.error(MessageFormatUtil.format("Could not map node type: {0}", jsoupNode.getClass()));
+            LOGGER.error(() -> MessageFormatUtil.format("Could not map node type: {0}", jsoupNode.getClass()));
         }
 
         for (Node node : jsoupNode.childNodes()) {

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.xfdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
@@ -47,8 +48,6 @@ import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextMarkupAnnotation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -67,7 +66,7 @@ import java.util.StringTokenizer;
  */
 public class XfdfObjectFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(XfdfObjectFactory.class);
+    private static final LazyLogger LOGGER = new LazyLogger(XfdfObjectFactory.class);
 
     /**
      * Extracts data from pdf document acroform and annotations into XfdfObject.
@@ -154,7 +153,7 @@ public class XfdfObjectFactory {
             if (href != null) {
                 xfdfObject.setF(new FObject(href.getNodeValue()));
             } else {
-                logger.info(XfdfConstants.EMPTY_F_LEMENT);
+                LOGGER.info(() -> XfdfConstants.EMPTY_F_LEMENT);
             }
         }
     }
@@ -172,7 +171,7 @@ public class XfdfObjectFactory {
             }
             xfdfObject.setIds(idsObject);
         } else {
-            logger.info(XfdfConstants.EMPTY_IDS_ELEMENT);
+            LOGGER.info(() -> XfdfConstants.EMPTY_IDS_ELEMENT);
         }
     }
 
@@ -356,7 +355,7 @@ public class XfdfObjectFactory {
                     annotObject.addAttribute(new AttributeObject(attributeName, attributeNode.getNodeValue()));
                     break;
                 default:
-                    logger.warn(IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE);
+                    LOGGER.warn(() -> IoLogMessageConstant.XFDF_UNSUPPORTED_ANNOTATION_ATTRIBUTE);
                     break;
             }
         }
@@ -403,7 +402,7 @@ public class XfdfObjectFactory {
             if (valueTextNode != null) {
                 parentField.setValue(valueTextNode.getTextContent());
             } else {
-                logger.info(XfdfConstants.EMPTY_FIELD_VALUE_ELEMENT);
+                LOGGER.info(() -> XfdfConstants.EMPTY_FIELD_VALUE_ELEMENT);
             }
             return;
         }
@@ -419,12 +418,12 @@ public class XfdfObjectFactory {
     }
 
     private void visitInnerFields(FieldObject parentField, Node parentNode, FieldsObject fieldsObject) {
-        if (parentNode.getAttributes().getLength() != 0) {
+        if (parentNode.getAttributes().getLength() == 0) {
+            LOGGER.info(() -> XfdfConstants.EMPTY_FIELD_NAME_ELEMENT);
+        } else {
             if (parentField.getName() == null) {
                 parentField.setName(parentNode.getAttributes().item(0).getNodeValue());
             }
-        } else {
-            logger.info(XfdfConstants.EMPTY_FIELD_NAME_ELEMENT);
         }
 
         NodeList children = parentNode.getChildNodes();

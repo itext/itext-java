@@ -22,14 +22,13 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.properties.Property;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -208,8 +207,8 @@ class SeparatedTableBorders extends TableBorders {
         if (neighbour == null) {
             borders.set(j, borderToAdd);
         } else {
-            Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-            logger.warn(IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING);
+            LazyLogger logger = new LazyLogger(TableRenderer.class);
+            logger.warn(() -> IoLogMessageConstant.UNEXPECTED_BEHAVIOUR_DURING_TABLE_ROW_COLLAPSING);
         }
 
         return true;

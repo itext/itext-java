@@ -78,7 +78,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethodToCustomMember("com.itextpdf.layout.layout.LayoutArea.clone", "Clone", SharpenConfigCustomMembers.cloneLayoutArea);
         configurator.mapMethodToCustomMember("com.itextpdf.layout.margincollapse.MarginsCollapse.clone", "Clone", SharpenConfigCustomMembers.cloneMarginsCollapse);
         configurator.addFullName("iText.Layout.Font.Range");
-        configurator.addCustomUsingDeclaration("com.itextpdf.layout.renderer.TypographyUtils", Arrays.asList("System.IO", "System.Reflection", "Versions.Attributes", "Microsoft.Extensions.Logging", "iText.Commons" , "iText.Commons", "iText.Commons.Internal.Runtime"));
+        configurator.addCustomUsingDeclaration("com.itextpdf.layout.renderer.TypographyUtils", Arrays.asList("System.IO", "System.Reflection", "Versions.Attributes", "iText.Commons.Logs", "iText.Commons.Internal.Runtime"));
     }
 
     @Override

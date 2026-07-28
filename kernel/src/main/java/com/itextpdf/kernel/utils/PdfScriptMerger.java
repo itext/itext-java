@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -31,8 +32,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNameTree;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,7 +43,9 @@ import java.util.Set;
  * Utility class which provides functionality to merge ECMA scripts from pdf documents
  */
 public class PdfScriptMerger {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfScriptMerger.class);
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfScriptMerger.class);
+
     private static final Set<PdfName> allowedAAEntries = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList(
                     PdfName.WC,
@@ -83,7 +84,8 @@ public class PdfScriptMerger {
         }
         for (Map.Entry<PdfName, PdfObject> entry : sourceAA.entrySet()) {
             if (destinationAA.containsKey(entry.getKey())) {
-                LOGGER.error(MessageFormatUtil.format(KernelLogMessageConstant.CANNOT_MERGE_ENTRY, entry.getKey()));
+                LOGGER.error(() -> MessageFormatUtil.format(
+                        KernelLogMessageConstant.CANNOT_MERGE_ENTRY, entry.getKey()));
                 return;
             }
             if (!allowedAAEntries.contains(entry.getKey())) {
@@ -110,7 +112,8 @@ public class PdfScriptMerger {
         }
         PdfObject destinationOpenAction = destination.getCatalog().getPdfObject().get(PdfName.OpenAction);
         if (destinationOpenAction != null) {
-            LOGGER.error(MessageFormatUtil.format(KernelLogMessageConstant.CANNOT_MERGE_ENTRY, PdfName.OpenAction));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    KernelLogMessageConstant.CANNOT_MERGE_ENTRY, PdfName.OpenAction));
             return;
         }
         destination.getCatalog().getPdfObject().put(PdfName.OpenAction, copyECMAScriptActionsDictionary(destination, sourceOpenActionDict));
@@ -130,7 +133,8 @@ public class PdfScriptMerger {
         PdfDictionary destinationNamesDict = destination.getCatalog().getPdfObject().getAsDictionary(PdfName.Names);
         if ((destinationNamesDict != null && destinationNamesDict.get(PdfName.JavaScript) != null)
                 || destination.getCatalog().nameTreeContainsKey(PdfName.JavaScript)) {
-            LOGGER.error(MessageFormatUtil.format(KernelLogMessageConstant.CANNOT_MERGE_ENTRY, PdfName.JavaScript));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    KernelLogMessageConstant.CANNOT_MERGE_ENTRY, PdfName.JavaScript));
             return;
         }
 

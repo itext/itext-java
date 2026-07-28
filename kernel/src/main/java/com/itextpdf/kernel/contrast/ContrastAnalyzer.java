@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.contrast;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -57,8 +58,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Analyzes color contrast ratios between text and backgrounds in PDF pages.
@@ -111,7 +110,7 @@ import org.slf4j.LoggerFactory;
 //TODO DEVSIX-9718 Improve clip path handling in contrast analysis
 public class ContrastAnalyzer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContrastAnalyzer.class);
+    private static final LazyLogger LOGGER = new LazyLogger(ContrastAnalyzer.class);
 
     private boolean checkForIndividualCharacters;
     private int maxAmountOfPointInPolygon = 30;
@@ -184,7 +183,7 @@ public class ContrastAnalyzer {
      */
     public List<ContrastResult> checkPageContrast(PdfPage page) {
         if (isPageOrUnderlyingStreamFlushed(page)) {
-            LOGGER.warn(KernelLogMessageConstant.PAGE_IS_FLUSHED_NO_CONTRAST);
+            LOGGER.warn(() -> KernelLogMessageConstant.PAGE_IS_FLUSHED_NO_CONTRAST);
             return new ArrayList<>();
         }
 
@@ -276,7 +275,7 @@ public class ContrastAnalyzer {
             if (hasTooManyPoints) {
                 // instead of warning we could kinda flatten the paths here to reduce the amount of points
                 // the big amount of background mainly happens on svg images with lot of details
-                LOGGER.warn("Skipping contrast calculation between text and background for "
+                LOGGER.warn(() -> "Skipping contrast calculation between text and background for "
                         + "text: '" + textContrastInfo.getText() + "' on page " + pageNumber
                         + " because one of them has too "
                         + "many points in polygon. Text points: " + textContrastInfo.getPath().getSubpaths().size()
@@ -348,7 +347,7 @@ public class ContrastAnalyzer {
             } else if (components.length == 3) {
                 return new DeviceRgb(components[0], components[1], components[2]);
             } else {
-                LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNSUPPORTED_COLOR_SPACE_CONTRAST,
+                LOGGER.warn(() -> MessageFormatUtil.format(KernelLogMessageConstant.UNSUPPORTED_COLOR_SPACE_CONTRAST,
                         color.getClass().getName()));
                 return null;
             }

@@ -24,6 +24,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
 import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.font.otf.GlyphLine;
@@ -56,8 +57,6 @@ import com.itextpdf.layout.properties.TextAnchor;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.LastFittingChildRendererData;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRendererSequenceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,7 +73,7 @@ public class LineRenderer extends AbstractRenderer {
     // AbstractRenderer.EPS is not enough here
     private static final float MIN_MAX_WIDTH_CORRECTION_EPS = 0.001f;
 
-    private static final Logger logger = LoggerFactory.getLogger(LineRenderer.class);
+    private static final LazyLogger LOGGER = new LazyLogger(LineRenderer.class);
 
     protected float maxAscent;
     protected float maxDescent;
@@ -391,9 +390,7 @@ public class LineRenderer extends AbstractRenderer {
                         bbox.setWidth(inlineBlockWidth);
 
                         if (childBlockMinMaxWidth.getMinWidth() > bbox.getWidth()) {
-                            if (logger.isWarnEnabled()) {
-                                logger.warn(IoLogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
-                            }
+                            LOGGER.warn(() -> IoLogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
                             childRenderer.setProperty(Property.FORCED_PLACEMENT, true);
                         }
                     }
@@ -662,9 +659,7 @@ public class LineRenderer extends AbstractRenderer {
                         } else if (isInlineBlockChild
                                 && childResult.getOverflowRenderer().getChildRenderers().isEmpty()
                                 && childResult.getStatus() == LayoutResult.PARTIAL) {
-                            if (logger.isWarnEnabled()) {
-                                logger.warn(IoLogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
-                            }
+                            LOGGER.warn(() -> IoLogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
                         } else {
                             split[1].addChildRenderer(childResult.getOverflowRenderer());
                         }
@@ -1057,7 +1052,7 @@ public class LineRenderer extends AbstractRenderer {
             case Leading.MULTIPLIED:
                 UnitValue fontSize = this.<UnitValue>getProperty(Property.FONT_SIZE, UnitValue.createPointValue(0f));
                 if (!fontSize.isPointValue()) {
-                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                             Property.FONT_SIZE));
                 }
                 // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending
@@ -1084,7 +1079,7 @@ public class LineRenderer extends AbstractRenderer {
             case Leading.MULTIPLIED:
                 UnitValue fontSize = this.<UnitValue>getProperty(Property.FONT_SIZE, UnitValue.createPointValue(0f));
                 if (!fontSize.isPointValue()) {
-                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                    LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                             Property.FONT_SIZE));
                 }
                 // In HTML, depending on whether <!DOCTYPE html> is present or not, and if present then depending
@@ -1177,22 +1172,22 @@ public class LineRenderer extends AbstractRenderer {
                 if (child instanceof TextRenderer) {
                     currentWidth = ((TextRenderer) child).calculateLineWidth();
                     UnitValue[] margins = ((TextRenderer) child).getMargins();
-                    if (!margins[1].isPointValue() && logger.isErrorEnabled()) {
-                        logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                                "right margin"));
+                    if (!margins[1].isPointValue()) {
+                        LOGGER.error(() -> MessageFormatUtil.format(
+                                IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "right margin"));
                     }
-                    if (!margins[3].isPointValue() && logger.isErrorEnabled()) {
-                        logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                                "left margin"));
+                    if (!margins[3].isPointValue()) {
+                        LOGGER.error(() -> MessageFormatUtil.format(
+                                IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "left margin"));
                     }
                     UnitValue[] paddings = ((TextRenderer) child).getPaddings();
-                    if (!paddings[1].isPointValue() && logger.isErrorEnabled()) {
-                        logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                                "right padding"));
+                    if (!paddings[1].isPointValue()) {
+                        LOGGER.error(() -> MessageFormatUtil.format(
+                                IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "right padding"));
                     }
-                    if (!paddings[3].isPointValue() && logger.isErrorEnabled()) {
-                        logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                                "left padding"));
+                    if (!paddings[3].isPointValue()) {
+                        LOGGER.error(() -> MessageFormatUtil.format(
+                                IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, "left padding"));
                     }
                     currentWidth += margins[1].getValue() + margins[3].getValue() +
                             paddings[1].getValue() + paddings[3].getValue();

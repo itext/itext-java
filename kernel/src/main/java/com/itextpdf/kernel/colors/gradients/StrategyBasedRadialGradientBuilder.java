@@ -185,13 +185,6 @@ public class StrategyBasedRadialGradientBuilder extends AbstractRadialGradientBu
         return new Tuple2<RadialGradientPoint, AffineTransform>(new RadialGradientPoint(center, rX), transform);
     }
 
-    private double[] getRadiusForManualStrategy(Rectangle targetBoundingBox) {
-        double rX = evaluateValueOnSegment(0, targetBoundingBox.getWidth(), true, xRadius, xRadiusRelative);
-        double rY = evaluateValueOnSegment(0, targetBoundingBox.getHeight(), true, yRadius, yRadiusRelative);
-
-        return new double[] {rX, rY};
-    }
-
     private double[] getRadiusForCenterBasedStrategy(Rectangle targetBoundingBox, Point center) {
         switch (gradientStrategy) {
             case CLOSEST_SIDE:
@@ -205,6 +198,30 @@ public class StrategyBasedRadialGradientBuilder extends AbstractRadialGradientBu
             default:
                 return evaluateFarthestCornerRadius(targetBoundingBox, center);
         }
+    }
+
+    private double[] evaluateClosestCornerRadius(Rectangle targetBoundingBox, Point center) {
+        Point[] vertices = targetBoundingBox.toPointsArray();
+        Point closestCorner = vertices[0];
+        for (int i = 1; i < vertices.length; ++i) {
+            if (center.distance(closestCorner) > center.distance(vertices[i])) {
+                closestCorner = vertices[i];
+            }
+        }
+
+        return evaluateRadiusForCorner(center, closestCorner);
+    }
+
+    private double[] evaluateFarthestCornerRadius(Rectangle targetBoundingBox, Point center) {
+        Point[] vertices = targetBoundingBox.toPointsArray();
+        Point farthestCorner = vertices[0];
+        for (int i = 1; i < vertices.length; ++i) {
+            if (center.distance(farthestCorner) < center.distance(vertices[i])) {
+                farthestCorner = vertices[i];
+            }
+        }
+
+        return evaluateRadiusForCorner(center, farthestCorner);
     }
 
     private double[] evaluateClosestSideRadius(Rectangle targetBoundingBox, Point center) {
@@ -241,30 +258,6 @@ public class StrategyBasedRadialGradientBuilder extends AbstractRadialGradientBu
         }
     }
 
-    private double[] evaluateClosestCornerRadius(Rectangle targetBoundingBox, Point center) {
-        Point[] vertices = targetBoundingBox.toPointsArray();
-        Point closestCorner = vertices[0];
-        for (int i = 1; i < vertices.length; ++i) {
-            if (center.distance(closestCorner) > center.distance(vertices[i])) {
-                closestCorner = vertices[i];
-            }
-        }
-
-        return evaluateRadiusForCorner(center, closestCorner);
-    }
-
-    private double[] evaluateFarthestCornerRadius(Rectangle targetBoundingBox, Point center) {
-        Point[] vertices = targetBoundingBox.toPointsArray();
-        Point farthestCorner = vertices[0];
-        for (int i = 1; i < vertices.length; ++i) {
-            if (center.distance(farthestCorner) < center.distance(vertices[i])) {
-                farthestCorner = vertices[i];
-            }
-        }
-
-        return evaluateRadiusForCorner(center, farthestCorner);
-    }
-
     private double[] evaluateRadiusForCorner(Point center, Point corner) {
         if (isCircular) {
             double distance = center.distance(corner);
@@ -277,6 +270,13 @@ public class StrategyBasedRadialGradientBuilder extends AbstractRadialGradientBu
             double yR = aspectRatio * xR;
             return new double[] {xR, yR};
         }
+    }
+
+    private double[] getRadiusForManualStrategy(Rectangle targetBoundingBox) {
+        double rX = evaluateValueOnSegment(0, targetBoundingBox.getWidth(), true, xRadius, xRadiusRelative);
+        double rY = evaluateValueOnSegment(0, targetBoundingBox.getHeight(), true, yRadius, yRadiusRelative);
+
+        return new double[] {rX, rY};
     }
 
     private static double evaluateValueOnSegment(double segmentStart, double segmentEnd,

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteBuffer;
@@ -53,8 +54,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Reads a PDF document.
@@ -68,7 +67,7 @@ public class PdfReader implements Closeable {
     /**
      * The Logger instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfReader.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PdfReader.class);
 
     private static final String endstream1 = "endstream";
     private static final String endstream2 = "\nendstream";
@@ -860,44 +859,6 @@ public class PdfReader implements Closeable {
         return readObject(readAsDirect, false);
     }
 
-    protected PdfObject readReference(boolean readAsDirect) {
-        int num = tokens.getObjNr();
-        if (num < 0) {
-            return createPdfNullInstance(readAsDirect);
-        }
-        PdfXrefTable table = pdfDocument.getXref();
-        PdfIndirectReference reference = table.get(num);
-        if (reference != null) {
-            if (reference.isFree()) {
-                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
-                        tokens.getGenNr()));
-                return createPdfNullInstance(readAsDirect);
-            }
-            if (reference.getGenNumber() != tokens.getGenNr()) {
-                if (fixedXref) {
-                    LOGGER.warn(
-                            MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
-                                    tokens.getGenNr()));
-                    return createPdfNullInstance(readAsDirect);
-                } else {
-                    throw new PdfException(MessageFormatUtil.format(
-                            KernelExceptionMessageConstant.INVALID_INDIRECT_REFERENCE
-                            , reference.getObjNumber(), reference.getGenNumber()), reference);
-                }
-            }
-        } else {
-            if (table.isReadingCompleted()) {
-                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(),
-                        tokens.getGenNr()));
-                return createPdfNullInstance(readAsDirect);
-            } else {
-                reference = table.add((PdfIndirectReference) new PdfIndirectReference(pdfDocument,
-                        num, tokens.getGenNr(), 0).setState(PdfObject.READING));
-            }
-        }
-        return reference;
-    }
-
     protected PdfObject readObject(boolean readAsDirect, boolean objStm) throws IOException {
         tokens.nextValidToken();
         PdfTokenizer.TokenType type = tokens.getTokenType();
@@ -967,6 +928,44 @@ public class PdfReader implements Closeable {
                 }
                 return null;
         }
+    }
+
+    protected PdfObject readReference(boolean readAsDirect) {
+        int num = tokens.getObjNr();
+        if (num < 0) {
+            return createPdfNullInstance(readAsDirect);
+        }
+        PdfXrefTable table = pdfDocument.getXref();
+        PdfIndirectReference reference = table.get(num);
+        if (reference != null) {
+            if (reference.isFree()) {
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                return createPdfNullInstance(readAsDirect);
+            }
+            if (reference.getGenNumber() != tokens.getGenNr()) {
+                if (fixedXref) {
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            IoLogMessageConstant.INVALID_INDIRECT_REFERENCE, tokens.getObjNr(), tokens.getGenNr()));
+                    return createPdfNullInstance(readAsDirect);
+                } else {
+                    throw new PdfException(MessageFormatUtil.format(
+                            KernelExceptionMessageConstant.INVALID_INDIRECT_REFERENCE
+                            , reference.getObjNumber(), reference.getGenNumber()), reference);
+                }
+            }
+        } else {
+            if (table.isReadingCompleted()) {
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.INVALID_INDIRECT_REFERENCE,
+                        tokens.getObjNr(), tokens.getGenNr()));
+                return createPdfNullInstance(readAsDirect);
+            } else {
+                reference = table.add((PdfIndirectReference) new PdfIndirectReference(pdfDocument,
+                        num, tokens.getGenNr(), 0).setState(PdfObject.READING));
+            }
+        }
+        return reference;
     }
 
     protected PdfName readPdfName(boolean readAsDirect) {
@@ -1448,7 +1447,7 @@ public class PdfReader implements Closeable {
         final String error = MessageFormatUtil.format(KernelExceptionMessageConstant.UNEXPECTED_TOKEN,
                 new String(tokens.getByteContent(), StandardCharsets.UTF_8));
         if (StrictnessLevel.CONSERVATIVE.isStricter(this.getStrictnessLevel())) {
-            LOGGER.error(error);
+            LOGGER.error(() -> error);
         } else {
             tokens.throwError(error);
         }
@@ -1643,15 +1642,15 @@ public class PdfReader implements Closeable {
 
     private static void logXrefException(RuntimeException ex) {
         if (ex.getCause() != null) {
-            LOGGER.error(MessageFormatUtil.format(
-                    IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
-                    , ex.getCause().getMessage()));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE,
+                    ex.getCause().getMessage()));
         } else if (ex.getMessage() != null) {
-            LOGGER.error(MessageFormatUtil.format(
-                    IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE
-                    , ex.getMessage()));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT_WITH_CAUSE,
+                    ex.getMessage()));
         } else {
-            LOGGER.error(IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT);
+            LOGGER.error(() -> IoLogMessageConstant.XREF_ERROR_WHILE_READING_TABLE_WILL_BE_REBUILT);
         }
     }
 

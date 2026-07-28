@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -32,8 +33,6 @@ import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A wrapper for namespace dictionaries (ISO 32000-2 section 14.7.4).
@@ -43,6 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfNamespace.class);
 
     /**
      * Constructs namespace from the given {@link PdfDictionary} that represents namespace dictionary.
@@ -224,13 +224,14 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
 
     private void logOverwritingOfMappingIfNeeded(String thisNsRole, PdfObject prevVal) {
         if (prevVal != null) {
-            Logger logger = LoggerFactory.getLogger(PdfNamespace.class);
-            String nsNameStr = getNamespaceName();
-            if (nsNameStr == null) {
-                nsNameStr = "this";
-            }
-            logger.warn(MessageFormatUtil.format(IoLogMessageConstant.MAPPING_IN_NAMESPACE_OVERWRITTEN, thisNsRole,
-                    nsNameStr));
+            LOGGER.warn(() -> {
+                String nsNameStr = getNamespaceName();
+                if (nsNameStr == null) {
+                    nsNameStr = "this";
+                }
+                return MessageFormatUtil.format(IoLogMessageConstant.MAPPING_IN_NAMESPACE_OVERWRITTEN, thisNsRole,
+                        nsNameStr);
+            });
         }
     }
 }

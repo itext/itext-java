@@ -22,14 +22,15 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.DecimalFormatUtil;
 
 import java.nio.charset.StandardCharsets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class ByteUtils {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ByteUtils.class);
 
     static boolean HighPrecision = false;
 
@@ -117,8 +118,7 @@ public final class ByteUtils {
                 }
             }
             if (Double.isNaN(d)) {
-                Logger logger = LoggerFactory.getLogger(ByteUtils.class);
-                logger.error(IoLogMessageConstant.ATTEMPT_PROCESS_NAN);
+                LOGGER.error(() -> IoLogMessageConstant.ATTEMPT_PROCESS_NAN);
                 d = 0;
             }
             byte[] result = DecimalFormatUtil.formatNumber(d, "0.######").getBytes(StandardCharsets.ISO_8859_1);
@@ -225,8 +225,7 @@ public final class ByteUtils {
                 v = Long.MAX_VALUE;
             } else {
                 if (Double.isNaN(d)) {
-                    Logger logger = LoggerFactory.getLogger(ByteUtils.class);
-                    logger.error(IoLogMessageConstant.ATTEMPT_PROCESS_NAN);
+                    LOGGER.error(() -> IoLogMessageConstant.ATTEMPT_PROCESS_NAN);
                     // in java NaN casted to long results in 0, but in .NET it results in long.MIN_VALUE
                     d = 0;
                 }

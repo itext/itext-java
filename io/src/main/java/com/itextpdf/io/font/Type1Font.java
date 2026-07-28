@@ -22,14 +22,13 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +36,8 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 
 public class Type1Font extends FontProgram {
+
+    private static final LazyLogger LOGGER = new LazyLogger(Type1Font.class);
 
 
     private Type1Parser fontParser;
@@ -230,13 +231,11 @@ public class Type1Font extends FontProgram {
             int bytePtr = 0;
             for (int k = 0; k < 3; ++k) {
                 if (raf.read() != 0x80) {
-                    Logger logger = LoggerFactory.getLogger(Type1Font.class);
-                    logger.error(IoLogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE);
+                    LOGGER.error(() -> IoLogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE);
                     return null;
                 }
                 if (raf.read() != PFB_TYPES[k]) {
-                    Logger logger = LoggerFactory.getLogger(Type1Font.class);
-                    logger.error("incorrect.segment.type.in.pfb.file");
+                    LOGGER.error(() -> "incorrect.segment.type.in.pfb.file");
                     return null;
                 }
                 int size = raf.read();
@@ -247,8 +246,7 @@ public class Type1Font extends FontProgram {
                 while (size != 0) {
                     int got = raf.read(fontStreamBytes, bytePtr, size);
                     if (got < 0) {
-                        Logger logger = LoggerFactory.getLogger(Type1Font.class);
-                        logger.error("premature.end.in.pfb.file");
+                        LOGGER.error(() -> "premature.end.in.pfb.file");
                         return null;
                     }
                     bytePtr += got;
@@ -257,8 +255,7 @@ public class Type1Font extends FontProgram {
             }
             return fontStreamBytes;
         } catch (Exception e) {
-            Logger logger = LoggerFactory.getLogger(Type1Font.class);
-            logger.error("type1.font.file.exception");
+            LOGGER.error(() -> "type1.font.file.exception");
             return null;
         } finally {
             if (raf != null) {

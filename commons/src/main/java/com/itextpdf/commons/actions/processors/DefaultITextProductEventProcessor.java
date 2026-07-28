@@ -24,12 +24,11 @@ package com.itextpdf.commons.actions.processors;
 
 import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
 import com.itextpdf.commons.actions.confirmations.ConfirmEvent;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.EncodingUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicLong;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Defines a default strategy of product event processing.
@@ -52,7 +51,7 @@ public class DefaultITextProductEventProcessor extends AbstractITextProductEvent
                        "b2lkIHRoaXMgbWVzc2FnZS4KSWYgeW91J3JlIG5vdCBhIGN1c3RvbWVyLCB3ZSdsbCB" +
                        "leHBsYWluIHRoZSBiZW5lZml0cyBvZiBiZWNvbWluZyBhIGN1c3RvbWVyLg==");
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultITextProductEventProcessor.class);
+    private static final LazyLogger LOGGER = new LazyLogger(DefaultITextProductEventProcessor.class);
 
     private static final long[] REPEAT = {10000L, 5000L, 1000L};
 
@@ -95,7 +94,7 @@ public class DefaultITextProductEventProcessor extends AbstractITextProductEvent
 
         if (isNeededToLogMessage) {
             String message = new String(MESSAGE_FOR_LOGGING, StandardCharsets.ISO_8859_1);
-            LOGGER.info(message);
+            LOGGER.info(() -> message);
             // System out added with purpose. This is not a debug code
             System.out.println(message);
         }

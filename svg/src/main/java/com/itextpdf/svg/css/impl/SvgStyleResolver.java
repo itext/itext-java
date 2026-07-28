@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.css.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.util.DecimalFormatUtil;
 import com.itextpdf.io.util.ResourceUtil;
@@ -76,8 +77,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of SVG`s styles and attribute resolver .
@@ -95,7 +94,7 @@ public class SvgStyleResolver implements ICssResolver {
             Tags.MARKER, Tags.LINEAR_GRADIENT, StringNormalizer.toLowerCase(Tags.LINEAR_GRADIENT), Tags.PATTERN
     };
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SvgStyleResolver.class);
+    private static final LazyLogger LOGGER = new LazyLogger(SvgStyleResolver.class);
 
     private CssStyleSheet css;
     private static final String DEFAULT_CSS_PATH = "com/itextpdf/svg/default.css";
@@ -138,7 +137,7 @@ public class SvgStyleResolver implements ICssResolver {
         try (InputStream defaultCss = ResourceUtil.getResourceStream(DEFAULT_CSS_PATH)) {
             this.css = CssStyleSheetParser.parse(defaultCss);
         } catch (IOException e) {
-            LOGGER.warn(SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS, e);
+            LOGGER.warn(() -> SvgLogMessageConstant.ERROR_INITIALIZING_DEFAULT_CSS, e);
             this.css = new CssStyleSheet();
         }
         this.resourceResolver = context.getResourceResolver();
@@ -304,7 +303,7 @@ public class SvgStyleResolver implements ICssResolver {
             parentStyles = parentNode.getStyles();
 
             if (parentStyles == null && !(parentNode instanceof IElementNode)) {
-                LOGGER.error(StyledXmlParserLogMessageConstant.ERROR_RESOLVING_PARENT_STYLES);
+                LOGGER.error(() -> StyledXmlParserLogMessageConstant.ERROR_RESOLVING_PARENT_STYLES);
             }
         }
 
@@ -361,7 +360,7 @@ public class SvgStyleResolver implements ICssResolver {
             try {
                 xlinkValue = this.resourceResolver.resolveAgainstBaseUri(attr.getValue()).toExternalForm();
             } catch (MalformedURLException mue) {
-                LOGGER.error(StyledXmlParserLogMessageConstant.UNABLE_TO_RESOLVE_IMAGE_URL, mue);
+                LOGGER.error(() -> StyledXmlParserLogMessageConstant.UNABLE_TO_RESOLVE_IMAGE_URL, mue);
             }
         }
         attributesMap.put(attr.getKey(), xlinkValue);
@@ -425,7 +424,7 @@ public class SvgStyleResolver implements ICssResolver {
                 this.css.appendCssStyleSheet(styleSheet);
             }
         } catch (Exception exc) {
-            LOGGER.error(StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc);
+            LOGGER.error(() -> StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_EXTERNAL_CSS_FILE, exc);
         }
     }
 

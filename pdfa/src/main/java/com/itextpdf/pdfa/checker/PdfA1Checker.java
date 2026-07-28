@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa.checker;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.font.PdfEncodings;
@@ -66,8 +67,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * PdfA1Checker defines the requirements of the PDF/A-1 standard and contains
@@ -115,7 +114,7 @@ public class PdfA1Checker extends PdfAChecker {
                     PdfName.Saturation)));
     private static final int MAX_NUMBER_OF_DEVICEN_COLOR_COMPONENTS = 8;
 
-    private static final Logger logger = LoggerFactory.getLogger(PdfAChecker.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PdfAChecker.class);
 
     /**
      * Creates a PdfA1Checker with the required conformance
@@ -473,7 +472,7 @@ public class PdfA1Checker extends PdfAChecker {
                 throw new PdfAConformanceException(PdfaExceptionMessageConstant.A_CATALOG_SHALL_INCLUDE_MARK_INFO_DICTIONARY_WITH_MARKED_TRUE_VALUE);
             }
             if (!catalog.containsKey(PdfName.Lang)) {
-                logger.warn(PdfAConformanceLogMessageConstant.CATALOG_SHOULD_CONTAIN_LANG_ENTRY);
+                LOGGER.warn(() -> PdfAConformanceLogMessageConstant.CATALOG_SHOULD_CONTAIN_LANG_ENTRY);
             }
         }
     }
@@ -696,7 +695,7 @@ public class PdfA1Checker extends PdfAChecker {
 
         if (checkStructure(conformance)) {
             if (contentAnnotations.contains(subtype) && !annotDic.containsKey(PdfName.Contents)) {
-                logger.warn(MessageFormatUtil.format(
+                LOGGER.warn(() -> MessageFormatUtil.format(
                         PdfAConformanceLogMessageConstant.ANNOTATION_OF_TYPE_0_SHOULD_HAVE_CONTENTS_KEY, subtype.getValue()));
             }
         }

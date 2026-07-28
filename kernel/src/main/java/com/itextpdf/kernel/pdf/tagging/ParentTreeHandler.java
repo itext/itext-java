@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -48,8 +49,6 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -57,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * for specified page, by MCID or by struct parent index.
  */
 class ParentTreeHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ParentTreeHandler.class);
+    private static final LazyLogger LOGGER = new LazyLogger(ParentTreeHandler.class);
 
 
     private PdfStructTreeRoot structTreeRoot;
@@ -156,7 +155,7 @@ class ParentTreeHandler {
     private void registerMcr(PdfMcr mcr, boolean registeringOnInit) {
         PdfIndirectReference mcrPageIndRef = mcr.getPageIndirectReference();
         if (mcrPageIndRef == null || (!(mcr instanceof PdfObjRef) && mcr.getMcid() < 0)) {
-            LOGGER.error(IoLogMessageConstant.ENCOUNTERED_INVALID_MCR);
+            LOGGER.error(() -> IoLogMessageConstant.ENCOUNTERED_INVALID_MCR);
             return;
         }
         PageMcrsContainer pageMcrs = pageToPageMcrs.get(mcrPageIndRef);
@@ -191,7 +190,7 @@ class ParentTreeHandler {
                 xObjectToStructParentsInd.put(stmIndRef, maxStructParentIndex);
                 xObjectStream.put(PdfName.StructParents, new PdfNumber(maxStructParentIndex));
                 structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
-                LOGGER.warn(KernelLogMessageConstant.XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED);
+                LOGGER.warn(() -> KernelLogMessageConstant.XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED);
             } else {
                 throw new PdfException(KernelExceptionMessageConstant.XOBJECT_STRUCT_PARENT_INDEX_MISSED);
             }
@@ -215,7 +214,7 @@ class ParentTreeHandler {
                 pageMcrs.putObjectReferenceMcr(maxStructParentIndex, mcr, structTreeRoot.getPdfObject());
                 obj.put(PdfName.StructParent, new PdfNumber(maxStructParentIndex));
                 structTreeRoot.getPdfObject().put(PdfName.ParentTreeNextKey, new PdfNumber(maxStructParentIndex + 1));
-                LOGGER.warn(KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED);
+                LOGGER.warn(() -> KernelLogMessageConstant.STRUCT_PARENT_INDEX_MISSED_AND_RECREATED);
             } else {
                 throw new PdfException(KernelExceptionMessageConstant.STRUCT_PARENT_INDEX_NOT_FOUND_IN_TAGGED_OBJECT);
             }
@@ -424,7 +423,7 @@ class ParentTreeHandler {
                 objRefs.put(structParentIndex, mcr);
                 return;
             }
-            LOGGER.warn(KernelLogMessageConstant.DUPLICATE_STRUCT_PARENT_INDEX_IN_TAGGED_OBJECT_REFERENCES);
+            LOGGER.warn(() -> KernelLogMessageConstant.DUPLICATE_STRUCT_PARENT_INDEX_IN_TAGGED_OBJECT_REFERENCES);
             if (findStructTreeRoot(((PdfStructElem) mcr.getParent()).getPdfObject(), structTreeRootObject)) {
                 objRefs.put(structParentIndex, mcr);
             }

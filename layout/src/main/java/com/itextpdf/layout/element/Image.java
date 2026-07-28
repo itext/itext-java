@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -40,8 +41,6 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ImageRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +50,8 @@ import java.util.LinkedHashSet;
  * A layout element that represents an image for inclusion in the document model.
  */
 public class Image extends AbstractElement<Image> implements ILeafElement, IAccessibleElement {
+
+    private static final LazyLogger LOGGER = new LazyLogger(Image.class);
 
     protected PdfXObject xObject;
     protected DefaultAccessibilityProperties tagProperties;
@@ -483,8 +484,7 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
         if (hasProperty(Property.AUTO_SCALE_WIDTH) && hasProperty(Property.AUTO_SCALE_HEIGHT) && autoScale &&
                 ((boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_WIDTH) ||
                         (boolean) this.<Boolean>getProperty(Property.AUTO_SCALE_HEIGHT))) {
-            Logger logger = LoggerFactory.getLogger(Image.class);
-            logger.warn(IoLogMessageConstant.IMAGE_HAS_AMBIGUOUS_SCALE);
+            LOGGER.warn(() -> IoLogMessageConstant.IMAGE_HAS_AMBIGUOUS_SCALE);
         }
         setProperty(Property.AUTO_SCALE, autoScale);
         return this;

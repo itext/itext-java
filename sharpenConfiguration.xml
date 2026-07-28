@@ -84,6 +84,9 @@
                 <file path="com/itextpdf/commons/json/JsonValueDeserializer.java"/>
                 <file path="com/itextpdf/commons/json/JsonValueSerializer.java"/>
             </fileset>
+            <fileset reason="Implementing library classes/interfaces which are different on Java and .NET">
+                <file path="com/itextpdf/commons/logs/TestLogger.java"/>
+            </fileset>
             <!-- io -->
             <fileset reason="LimitedInputStream extends InputStream, which has different interfaces in Java and .NET">
                 <file path="com/itextpdf/io/resolver/resource/LimitedInputStream.java" />

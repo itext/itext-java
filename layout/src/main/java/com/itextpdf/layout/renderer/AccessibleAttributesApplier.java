@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -51,8 +52,6 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.layout.properties.UnitValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -61,6 +60,8 @@ import java.util.List;
  * based on the layout element properties and renderer layout results.
  */
 public class AccessibleAttributesApplier {
+
+    private static final LazyLogger LOGGER = new LazyLogger(AccessibleAttributesApplier.class);
 
     public static PdfStructureAttributes getLayoutAttributes(AbstractRenderer renderer, TagTreePointer taggingPointer) {
         IRoleMappingResolver resolvedMapping = resolveMappingToStandard(taggingPointer);
@@ -172,8 +173,7 @@ public class AccessibleAttributesApplier {
         UnitValue spaceBefore = margins[marginsOrder[0]];
         if (spaceBefore != null) {
             if (!spaceBefore.isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                         Property.MARGIN_TOP));
             }
             if (0 != spaceBefore.getValue()) {
@@ -184,8 +184,7 @@ public class AccessibleAttributesApplier {
         UnitValue spaceAfter = margins[marginsOrder[1]];
         if (spaceAfter != null) {
             if (!spaceAfter.isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                         Property.MARGIN_BOTTOM));
             }
             if (0 != spaceAfter.getValue()) {
@@ -197,8 +196,7 @@ public class AccessibleAttributesApplier {
         UnitValue startIndent = margins[marginsOrder[2]];
         if (startIndent != null) {
             if (!startIndent.isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                         Property.MARGIN_LEFT));
             }
             if (0 != startIndent.getValue()) {
@@ -209,8 +207,7 @@ public class AccessibleAttributesApplier {
         UnitValue endIndent = margins[marginsOrder[3]];
         if (endIndent != null) {
             if (!endIndent.isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                         Property.MARGIN_RIGHT));
             }
             if (0 != endIndent.getValue()) {
@@ -278,8 +275,7 @@ public class AccessibleAttributesApplier {
         if (underlines != null) {
             UnitValue fontSize = renderer.getPropertyAsUnitValue(Property.FONT_SIZE);
             if (!fontSize.isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                         Property.FONT_SIZE));
             }
             Underline underline = null;
@@ -330,23 +326,19 @@ public class AccessibleAttributesApplier {
         };
 
         if (!paddingsUV[0].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_TOP));
         }
         if (!paddingsUV[1].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_RIGHT));
         }
         if (!paddingsUV[2].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_BOTTOM));
         }
         if (!paddingsUV[3].isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(AccessibleAttributesApplier.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.PADDING_LEFT));
         }
 

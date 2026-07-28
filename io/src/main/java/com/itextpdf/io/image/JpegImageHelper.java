@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.image;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -33,11 +34,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 class JpegImageHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpegImageHelper.class);
+    private static final LazyLogger LOGGER = new LazyLogger(JpegImageHelper.class);
 
     /**
      * This is a type of marker.
@@ -152,7 +150,7 @@ class JpegImageHelper {
             try {
                 image.setProfile(IccProfile.getInstance(ficc, image.getColorEncodingComponentsNumber()));
             } catch (Exception e) {
-                LOGGER.error(MessageFormatUtil.format(
+                LOGGER.error(() -> MessageFormatUtil.format(
                         IoLogMessageConstant.DURING_CONSTRUCTION_OF_ICC_PROFILE_ERROR_OCCURRED,
                         e.getClass().getSimpleName(), e.getMessage()));
             }
@@ -320,19 +318,23 @@ class JpegImageHelper {
                         if (unitsx == 1 || unitsx == 2) {
                             dx = (unitsx == 2 ? (int) (dx * 2.54f + 0.5f) : dx);
                             // make sure this is consistent with JFIF data
-                            if (image.getDpiX() != 0 && image.getDpiX() != dx) {
-                                LOGGER.debug(MessageFormatUtil.format("Inconsistent metadata (dpiX: {0} vs {1})", image.getDpiX(), dx));
-                            } else {
+                            if (image.getDpiX() == 0 || image.getDpiX() == dx) {
                                 image.setDpi(dx, image.getDpiY());
+                            } else {
+                                final int logDx = dx;
+                                LOGGER.debug(() -> MessageFormatUtil.format(
+                                        "Inconsistent metadata (dpiX: {0} vs {1})", image.getDpiX(), logDx));
                             }
                         }
                         if (unitsy == 1 || unitsy == 2) {
                             dy = (unitsy == 2 ? (int) (dy * 2.54f + 0.5f) : dy);
                             // make sure this is consistent with JFIF data
-                            if (image.getDpiY() != 0 && image.getDpiY() != dy) {
-                                LOGGER.debug(MessageFormatUtil.format("Inconsistent metadata (dpiY: {0} vs {1})", image.getDpiY(), dy));
-                            } else {
+                            if (image.getDpiY() == 0 || image.getDpiY() == dy) {
                                 image.setDpi(image.getDpiX(), dx);
+                            } else {
+                                final int logDy = dy;
+                                LOGGER.debug(() -> MessageFormatUtil.format(
+                                        "Inconsistent metadata (dpiY: {0} vs {1})", image.getDpiY(), logDy));
                             }
                         }
                     }

@@ -25,14 +25,13 @@ package com.itextpdf.kernel.actions.events;
 import com.itextpdf.commons.actions.AbstractITextConfigurationEvent;
 import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.actions.data.ITextCoreProductData;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.FingerPrint;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
@@ -44,7 +43,7 @@ public final class AddFingerPrintEvent extends AbstractITextConfigurationEvent {
 
     private final WeakReference<PdfDocument> document;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AddFingerPrintEvent.class);
+    private static final LazyLogger LOGGER = new LazyLogger(AddFingerPrintEvent.class);
 
     private static final String AGPL_MODE = "AGPL";
 
@@ -89,7 +88,7 @@ public final class AddFingerPrintEvent extends AbstractITextConfigurationEvent {
                 return;
             }
 
-            LOGGER.warn(KernelLogMessageConstant.FINGERPRINT_DISABLED_BUT_NO_REQUIRED_LICENCE);
+            LOGGER.warn(() -> KernelLogMessageConstant.FINGERPRINT_DISABLED_BUT_NO_REQUIRED_LICENCE);
         }
 
 
