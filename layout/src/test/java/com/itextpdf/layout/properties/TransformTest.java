@@ -72,15 +72,15 @@ public class TransformTest extends ExtendedITextTest {
     public void getAffineTransformDiffSingleTransformTest() {
         final float txUnitValue = 20f;
         final float tyUnitValue2 = 30f;
-        Transform transform = new Transform(4);
-        transform.addSingleTransform(createSingleTransform(UnitValue.createPercentValue(txUnitValue),
+        Transform transform = new Transform();
+        transform.addTransform(createSingleTransform(UnitValue.createPercentValue(txUnitValue),
                 UnitValue.createPointValue(tyUnitValue2)));
-        transform.addSingleTransform(createSingleTransform(UnitValue.createPointValue(txUnitValue),
+        transform.addTransform(createSingleTransform(UnitValue.createPointValue(txUnitValue),
                 UnitValue.createPercentValue(tyUnitValue2)));
-        transform.addSingleTransform(
+        transform.addTransform(
                 createSingleTransform(UnitValue.createPercentValue(txUnitValue),
                         UnitValue.createPercentValue(tyUnitValue2)));
-        transform.addSingleTransform(createSingleTransform(UnitValue.createPointValue(txUnitValue),
+        transform.addTransform(createSingleTransform(UnitValue.createPointValue(txUnitValue),
                 UnitValue.createPointValue(tyUnitValue2)));
         Assertions.assertEquals(new AffineTransform(new float[] {-524f, -105f, 140f, -419f, -788f, 2220f, type}),
                 Transform.getAffineTransform(transform, 60f, 80f));
@@ -88,21 +88,21 @@ public class TransformTest extends ExtendedITextTest {
 
     @Test
     public void getAffineTransformOneSingleTransformFewTimesTest() {
-        Transform transform = new Transform(4);
+        Transform transform = new Transform();
         Transform.SingleTransform singleTransform = createSingleTransform(UnitValue.createPointValue(20f),
                 UnitValue.createPointValue(30f));
-        transform.addSingleTransform(singleTransform);
-        transform.addSingleTransform(singleTransform);
-        transform.addSingleTransform(singleTransform);
-        transform.addSingleTransform(singleTransform);
+        transform.addTransform(singleTransform);
+        transform.addTransform(singleTransform);
+        transform.addTransform(singleTransform);
+        transform.addTransform(singleTransform);
         Assertions.assertEquals(new AffineTransform(new float[] {-524f, -105f, 140f, -419f, -700f, 2100f, type}),
                 Transform.getAffineTransform(transform, 60f, 60f));
     }
 
     @Test
     public void getAffineTransformDifferentWidthHeightTest() {
-        Transform transform = new Transform(1);
-        transform.addSingleTransform(createSingleTransform(UnitValue.createPercentValue(20f),
+        Transform transform = new Transform();
+        transform.addTransform(createSingleTransform(UnitValue.createPercentValue(20f),
                 UnitValue.createPercentValue(30f)));
         Assertions.assertEquals(new AffineTransform(new float[] {-2f, 3f, -4f, -5f, -10f, -6f, type}),
                 Transform.getAffineTransform(transform, -50f, -20f));
@@ -121,8 +121,8 @@ public class TransformTest extends ExtendedITextTest {
         final float height = 80f;
 
         // create Transform
-        Transform transform = new Transform(1);
-        transform.addSingleTransform(createSingleTransform(new UnitValue(txUnitValueType, txUnitValue),
+        Transform transform = new Transform();
+        transform.addTransform(createSingleTransform(new UnitValue(txUnitValueType, txUnitValue),
                 new UnitValue(tyUnitValueType, tyUnitValue)));
 
         // get AffineTransform

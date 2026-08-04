@@ -37,6 +37,7 @@ import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutPosition;
 import com.itextpdf.layout.properties.ObjectFit;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.Transform;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ImageRenderer;
@@ -198,14 +199,35 @@ public class Image extends AbstractElement<Image> implements ILeafElement, IAcce
     }
 
     /**
-     * Sets the rotation radAngle.
+     * Sets the rotation angle for this image.
      *
-     * @param radAngle a value in radians
+     * <p>
+     * The angle is specified in radians and stored in {@link Property#ROTATION_ANGLE}.
+     * Positive values rotate counter-clockwise; negative values rotate clockwise.
+     *
+     * <p>
+     * Rotation is applied during rendering, and layout computes an occupied area that
+     * encloses the rotated image.
+     *
+     * @param radAngle the rotation angle, in radians
      *
      * @return this element
      */
     public Image setRotationAngle(double radAngle) {
         setProperty(Property.ROTATION_ANGLE, radAngle);
+        return this;
+    }
+
+    /**
+     * Sets a transformation to be applied to this block element during rendering.
+     *
+     * @param transform a {@link Transform} describing the sequence of transform operations
+     *                  (for example, translate, scale, rotate, skew)
+     *
+     * @return this element
+     */
+    public Image setTransform(Transform transform) {
+        setProperty(Property.TRANSFORM, transform);
         return this;
     }
 
