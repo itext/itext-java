@@ -119,8 +119,14 @@ public class DocumentRenderer extends RootRenderer {
     public IRenderer getNextRenderer() {
         DocumentRenderer renderer = new DocumentRenderer(document, immediateFlush);
         renderer.targetCounterHandler = new TargetCounterHandler(targetCounterHandler);
-        renderer.marginBoxesHandler = marginBoxesHandler.setDocumentRenderer(renderer);
         return renderer;
+    }
+
+    /**
+     * Removes renderer-owned event handlers before relayout replaces this renderer instance.
+     */
+    public void removeEventHandlersForRelayout() {
+        document.getPdfDocument().removeEventHandler(marginBoxesHandler);
     }
 
     @Override

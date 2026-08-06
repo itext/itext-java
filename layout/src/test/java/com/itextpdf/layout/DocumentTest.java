@@ -30,6 +30,10 @@ import com.itextpdf.commons.actions.sequence.SequenceIdManager;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
 import com.itextpdf.kernel.exceptions.PdfException;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
+import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
+import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -39,10 +43,16 @@ import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
+import com.itextpdf.layout.properties.margins.MarginBoxName;
+import com.itextpdf.layout.properties.margins.PageMarginBoxes;
+import com.itextpdf.layout.properties.margins.PageMarginContent;
+import com.itextpdf.layout.renderer.DocumentRenderer;
+import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.testutil.TestConfigurationEvent;
 import com.itextpdf.layout.testutil.TestProductEvent;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -121,6 +131,169 @@ public class DocumentTest extends ExtendedITextTest {
 
             Assertions.assertTrue(events.get(0) instanceof ITextCoreProductEvent);
             Assertions.assertTrue(events.get(1) instanceof TestProductEvent);
+        }
+    }
+
+    @Test
+    public void relayoutWithImmediateFlushTest() {
+        try (Document document = new Document(new PdfDocument(new PdfWriter(new ByteArrayOutputStream())))) {
+            IllegalStateException exception = (IllegalStateException) Assertions.assertThrows(
+                    IllegalStateException.class, () -> document.relayout());
+            Assertions.assertEquals("Operation not supported with immediate flush", exception.getMessage());
+        }
+    }
+
+    @Test
+    public void relayoutWithInvalidNextRendererTest() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument, pdfDocument.getDefaultPageSize(), false);
+        NullNextRendererDocumentRenderer customRenderer = new NullNextRendererDocumentRenderer(document);
+        document.setRenderer(customRenderer);
+        try {
+            document.add(new Paragraph("fallback renderer paragraph"));
+
+            document.relayout();
+
+            Assertions.assertTrue(customRenderer.isRemoveMarginBoxesEventHandlerCalled());
+            Assertions.assertNotSame(customRenderer, document.getRenderer());
+            Assertions.assertEquals(DocumentRenderer.class, document.getRenderer().getClass());
+            Assertions.assertDoesNotThrow(() -> document.close());
+        } finally {
+            if (!pdfDocument.isClosed()) {
+                document.close();
+            }
+        }
+    }
+
+    @Test
+    public void relayoutWithSameNextRendererTest() {
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument, pdfDocument.getDefaultPageSize(), false);
+        SameNextRendererDocumentRenderer customRenderer = new SameNextRendererDocumentRenderer(document);
+        document.setRenderer(customRenderer);
+        try {
+            document.add(new Paragraph("same renderer paragraph"));
+
+            document.relayout();
+
+            Assertions.assertFalse(customRenderer.isRemoveMarginBoxesEventHandlerCalled());
+            Assertions.assertSame(customRenderer, document.getRenderer());
+            Assertions.assertDoesNotThrow(() -> document.close());
+        } finally {
+            if (!pdfDocument.isClosed()) {
+                document.close();
+            }
+        }
+    }
+
+    @Test
+    public void relayoutDoesNotKeepWrongEventHandlersDocumentRendererTest() {
+        ThrowOnTooManyGetPagePdfDocument pdfDocument =
+                new ThrowOnTooManyGetPagePdfDocument(new PdfWriter(new ByteArrayOutputStream()));
+        Document document = new Document(pdfDocument, pdfDocument.getDefaultPageSize(), false);
+        try {
+            pdfDocument.addEventHandler(PdfDocumentEvent.END_PAGE, new GetPageProbeOnEndPageEventHandler());
+            document.setPageMargins(1, new PageMarginBoxes(Collections.singletonList(
+                    new PageMarginContent(MarginBoxName.TOP, 24f))));
+            document.add(new Paragraph("test paragraph"));
+            document.relayout();
+
+            pdfDocument.resetGetPageCalls();
+            pdfDocument.setMaxGetPageCalls(5);
+            Assertions.assertDoesNotThrow(() -> document.close());
+            Assertions.assertEquals(5, pdfDocument.getPageCalls());
+        } finally {
+            if (!pdfDocument.isClosed()) {
+                document.close();
+            }
+        }
+    }
+
+    private static final class ThrowOnTooManyGetPagePdfDocument extends PdfDocument {
+        private int pageCalls = 0;
+        private int maxGetPageCalls = Integer.MAX_VALUE;
+
+        public ThrowOnTooManyGetPagePdfDocument(PdfWriter writer) {
+            super(writer);
+        }
+
+        @Override
+        public PdfPage getPage(int pageNum) {
+            ++pageCalls;
+            if (pageCalls > maxGetPageCalls) {
+                throw new IllegalStateException("getPage(int) called too many times: " + pageCalls
+                        + " (max " + maxGetPageCalls + ")");
+            }
+            return super.getPage(pageNum);
+        }
+
+        public void resetGetPageCalls() {
+            pageCalls = 0;
+        }
+
+        public void setMaxGetPageCalls(int maxGetPageCalls) {
+            this.maxGetPageCalls = maxGetPageCalls;
+        }
+
+        public int getPageCalls() {
+            return pageCalls;
+        }
+    }
+
+    private static final class GetPageProbeOnEndPageEventHandler extends AbstractPdfDocumentEventHandler {
+        @Override
+        public void onAcceptedEvent(AbstractPdfDocumentEvent event) {
+            if (event instanceof PdfDocumentEvent) {
+                PdfDocumentEvent pageEvent = (PdfDocumentEvent) event;
+                int pageNumber = event.getDocument().getPageNumber(pageEvent.getPage());
+                event.getDocument().getPage(pageNumber);
+            }
+        }
+    }
+
+    private static final class NullNextRendererDocumentRenderer extends DocumentRenderer {
+        private boolean removeMarginBoxesEventHandlerCalled;
+
+        public NullNextRendererDocumentRenderer(Document document) {
+            super(document, false);
+        }
+
+        @Override
+        public IRenderer getNextRenderer() {
+            return null;
+        }
+
+        @Override
+        public void removeEventHandlersForRelayout() {
+            removeMarginBoxesEventHandlerCalled = true;
+            super.removeEventHandlersForRelayout();
+        }
+
+        public boolean isRemoveMarginBoxesEventHandlerCalled() {
+            return removeMarginBoxesEventHandlerCalled;
+        }
+    }
+
+    private static final class SameNextRendererDocumentRenderer extends DocumentRenderer {
+        private boolean removeMarginBoxesEventHandlerCalled;
+
+        public SameNextRendererDocumentRenderer(Document document) {
+            super(document, false);
+        }
+
+        @Override
+        public IRenderer getNextRenderer() {
+            return this;
+        }
+
+        @Override
+        public void removeEventHandlersForRelayout() {
+            removeMarginBoxesEventHandlerCalled = true;
+            super.removeEventHandlersForRelayout();
+        }
+
+        public boolean isRemoveMarginBoxesEventHandlerCalled() {
+            return removeMarginBoxesEventHandlerCalled;
         }
     }
 }

@@ -211,6 +211,10 @@ public class Document extends RootElement<Document> {
             nextRelayoutRenderer = new DocumentRenderer(this, immediateFlush);
         }
 
+        if (rootRenderer instanceof DocumentRenderer && rootRenderer != nextRelayoutRenderer) {
+            ((DocumentRenderer) rootRenderer).removeEventHandlersForRelayout();
+        }
+
         // Even though #relayout() only makes sense when immediateFlush=false and therefore no elements
         // should have been written to document, still empty pages are created during layout process
         // because we need to know the effective page size which may differ from page to page.
