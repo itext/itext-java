@@ -66,12 +66,17 @@ public class PageSize extends Rectangle implements Cloneable {
     }
 
     /**
-     * Rotates {@link PageSize} clockwise.
+     * Rotates {@link PageSize} 90 degrees clockwise around the origin {@code (0, 0)}.
      *
-     * @return the rotated {@link PageSize}.
+     * <p>
+     * This method applies the clockwise point transform to the page origin itself:
+     * {@code (x, y) -> (y, -x)}, and swaps width and height. The resulting page is therefore anchored
+     * at the rotated origin point.
+     *
+     * @return the rotated {@link PageSize}
      */
     public PageSize rotate() {
-        return new PageSize(height, width);
+        return new PageSize(new Rectangle(y, -x, height, width));
     }
 
     /**

@@ -132,7 +132,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets page size, considering page rotation.
      *
-     * @return {@link Rectangle} that specify size of rotated page.
+     * <p>
+     * Rotation is applied as successive 90-degree clockwise quarter-turns using
+     * {@link PageSize#rotate()}. The resulting rectangle is anchored at the rotated
+     * origin point (its lower-left corner is rotated together with the page), rather
+     * than being rebased to the lower-left corner of an enclosing axis-aligned
+     * bounding box.
+     *
+     * @return {@link Rectangle} that specifies size and position of the rotated page
      */
     public Rectangle getPageSizeWithRotation() {
         PageSize rect = new PageSize(getPageSize());

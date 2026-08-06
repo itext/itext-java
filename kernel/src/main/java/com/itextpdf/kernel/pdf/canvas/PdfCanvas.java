@@ -2550,17 +2550,18 @@ public class PdfCanvas {
     }
 
     private void applyRotation(PdfPage page) {
+        // Rotate around (0, 0)
         Rectangle rectangle = page.getPageSizeWithRotation();
         int rotation = page.getRotation();
         switch (rotation) {
             case 90:
-                concatMatrix(0, 1, -1, 0, rectangle.getTop(), 0);
+                concatMatrix(0, 1, -1, 0, rectangle.getHeight(), 0);
                 break;
             case 180:
-                concatMatrix(-1, 0, 0, -1, rectangle.getRight(), rectangle.getTop());
+                concatMatrix(-1, 0, 0, -1, rectangle.getWidth(), rectangle.getHeight());
                 break;
             case 270:
-                concatMatrix(0, -1, 1, 0, 0, rectangle.getRight());
+                concatMatrix(0, -1, 1, 0, 0, rectangle.getWidth());
                 break;
         }
     }
