@@ -2085,8 +2085,13 @@ public class CompareTool {
 
     private boolean compareStreamsExtended(PdfStream outStream, PdfStream cmpStream, ObjectPath currentPath,
                                            CompareToolResult compareResult) {
-        final boolean toDecodeOut = PdfName.FlateDecode.equals(outStream.get(PdfName.Filter));
-        final boolean toDecodeCmp = PdfName.FlateDecode.equals(cmpStream.get(PdfName.Filter));
+        PdfObject outStreamFilter = outStream.get(PdfName.Filter);
+        PdfObject cmpStreamFilter = cmpStream.get(PdfName.Filter);
+
+        final boolean toDecodeOut = PdfName.FlateDecode.equals(outStreamFilter)
+                || PdfName.BrotliDecode.equals(outStreamFilter);
+        final boolean toDecodeCmp = PdfName.FlateDecode.equals(cmpStreamFilter)
+                || PdfName.BrotliDecode.equals(cmpStreamFilter);
 
         byte[] outStreamBytes = decompressedStreams.get(outStream);
         if (outStreamBytes == null) {
