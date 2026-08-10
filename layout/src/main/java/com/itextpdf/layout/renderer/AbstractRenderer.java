@@ -79,9 +79,11 @@ import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.VerticalTextOrientation;
 import com.itextpdf.layout.properties.Transform;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.WritingMode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2922,6 +2924,14 @@ public abstract class AbstractRenderer implements IRenderer {
             if (isRendererInSplitRendererTree(positionedRenderer, childRenderer)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    boolean isVerticalWriting() {
+        if (this.<WritingMode>getProperty(Property.WRITING_MODE) == WritingMode.VERTICAL_LR) {
+            return this.<VerticalTextOrientation>getProperty(Property.TEXT_ORIENTATION)
+                    == VerticalTextOrientation.UPRIGHT;
         }
         return false;
     }

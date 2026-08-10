@@ -187,8 +187,14 @@ public class LineRenderer extends AbstractRenderer {
             IRenderer childRenderer = unwrapChildRendererIfNeeded(directChildRenderer);
 
             LayoutResult childResult = null;
-            Rectangle bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(),
-                    layoutBox.getWidth() - curWidth, layoutBox.getHeight());
+            Rectangle bbox;
+            if (isVerticalWriting()) {
+                bbox = new Rectangle(layoutBox.getX(), layoutBox.getY(),
+                        layoutBox.getWidth(), layoutBox.getHeight() - curWidth);
+            } else {
+                bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(),
+                        layoutBox.getWidth() - curWidth, layoutBox.getHeight());
+            }
 
             if (childRenderer instanceof AbsolutelyPositionedRenderer) {
                 childRenderer.layout(new LayoutContext(
@@ -526,8 +532,9 @@ public class LineRenderer extends AbstractRenderer {
                         shouldBreakLayouting = false;
                         firstChildToRelayout = childPos;
                     } else {
-                        curWidth -= TextSequenceWordWrapping.getCurWidthRelayoutedTextSequenceDecrement(childPos,
-                                lastFittingChildRendererData.childIndex, specialScriptLayoutResults);
+                        curWidth -=
+                                TextSequenceWordWrapping.getCurWidthRelayoutedTextSequenceDecrement(
+                                        childPos, lastFittingChildRendererData.childIndex, specialScriptLayoutResults);
                         childPos = lastFittingChildRendererData.childIndex;
                         childResult = lastFittingChildRendererData.childLayoutResult;
                         specialScriptLayoutResults.put(childPos, childResult);
@@ -551,8 +558,9 @@ public class LineRenderer extends AbstractRenderer {
                         shouldBreakLayouting = false;
                         firstChildToRelayout = childPos;
                     } else {
-                        curWidth -= TextSequenceWordWrapping.getCurWidthRelayoutedTextSequenceDecrement(childPos,
-                                lastFittingChildRendererData.childIndex, textRendererLayoutResults);
+                        curWidth -=
+                                TextSequenceWordWrapping.getCurWidthRelayoutedTextSequenceDecrement(
+                                        childPos, lastFittingChildRendererData.childIndex, textRendererLayoutResults);
                         childAscentDescent =
                                 updateAscentDescentAfterTextRendererSequenceProcessing(
                                         (lastFittingChildRendererData.childLayoutResult.getStatus()
@@ -592,7 +600,8 @@ public class LineRenderer extends AbstractRenderer {
                     IRenderer tabRenderer = getChildRenderers().get(lastTabIndex);
                     List<IRenderer> affectedRenderers = new ArrayList<>();
                     affectedRenderers.addAll(getChildRenderers().subList(lastTabIndex + 1, childPos + 1));
-                    float tabWidth = calculateTab(layoutBox, curWidth, hangingTabStop, affectedRenderers, tabRenderer);
+                    float tabWidth = calculateTab(
+                            layoutBox, curWidth, hangingTabStop, affectedRenderers, tabRenderer);
 
                     tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox),
                             wasParentsHeightClipped));
@@ -618,15 +627,25 @@ public class LineRenderer extends AbstractRenderer {
                     hangingTabStop = null;
                 } else if (null == hangingTabStop) {
                     if (childResult.getOccupiedArea() != null && childResult.getOccupiedArea().getBBox() != null) {
-                        curWidth += childResult.getOccupiedArea().getBBox().getWidth();
+                        curWidth += isVerticalWriting() ?
+                                childResult.getOccupiedArea().getBBox().getHeight() :
+                                childResult.getOccupiedArea().getBBox().getWidth();
                     }
                     widthHandler.updateMinChildWidth(minChildWidth + currChildTextIndent);
                     widthHandler.updateMaxChildWidth(maxChildWidth + currChildTextIndent);
                 }
                 if (!forceOverflowForTextRendererPartialResult) {
-                    occupiedArea.setBBox(
-                            new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight,
-                                    curWidth, maxHeight));
+                    if (isVerticalWriting()) {
+                        float maxLineWidth = Math.max(occupiedArea.getBBox().getWidth(),
+                                childResult.getOccupiedArea().getBBox().getWidth());
+                        occupiedArea.setBBox(new Rectangle(layoutBox.getX(),
+                                layoutBox.getY() + layoutBox.getHeight() - curWidth,
+                                maxLineWidth, curWidth));
+                    } else {
+                        occupiedArea.setBBox(
+                                new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight,
+                                        curWidth, maxHeight));
+                    }
                 }
             }
 
@@ -974,22 +993,25 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     protected LineRenderer adjustChildrenYLine() {
-        if (RenderingMode.HTML_MODE == this.<RenderingMode>getProperty(Property.RENDERING_MODE) &&
-                hasInlineBlocksWithVerticalAlignment()) {
-            InlineVerticalAlignmentHelper.adjustChildrenYLineHtmlMode(this);
-        } else {
-            adjustChildrenYLineDefaultMode();
+        if (!isVerticalWriting()) {
+            if (RenderingMode.HTML_MODE == this.<RenderingMode>getProperty(Property.RENDERING_MODE) &&
+                    hasInlineBlocksWithVerticalAlignment()) {
+                InlineVerticalAlignmentHelper.adjustChildrenYLineHtmlMode(this);
+            } else {
+                adjustChildrenYLineDefaultMode();
+            }
         }
-
         return this;
     }
 
     protected void applyLeading(float deltaY) {
-        occupiedArea.getBBox().moveUp(deltaY);
-        occupiedArea.getBBox().decreaseHeight(deltaY);
-        for (final IRenderer child : getChildRenderers()) {
-            if (!FloatingHelper.isRendererFloating(child)) {
-                child.move(0, deltaY);
+        if (!isVerticalWriting()) {
+            occupiedArea.getBBox().moveUp(deltaY);
+            occupiedArea.getBBox().decreaseHeight(deltaY);
+            for (final IRenderer child : getChildRenderers()) {
+                if (!FloatingHelper.isRendererFloating(child)) {
+                    child.move(0, deltaY);
+                }
             }
         }
     }
@@ -1006,7 +1028,12 @@ public class LineRenderer extends AbstractRenderer {
         lastRenderer = unwrapChildRendererIfNeeded(lastRenderer);
         if (lastRenderer instanceof TextRenderer && lastIndex >= 0) {
             float trimmedSpace = ((TextRenderer) lastRenderer).trimLast();
-            occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - trimmedSpace);
+            if (isVerticalWriting()) {
+                occupiedArea.getBBox().setHeight(occupiedArea.getBBox().getHeight() - trimmedSpace);
+                occupiedArea.getBBox().setY(occupiedArea.getBBox().getY() + trimmedSpace);
+            } else {
+                occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() - trimmedSpace);
+            }
         }
         return this;
     }

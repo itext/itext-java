@@ -292,9 +292,12 @@ public class ParagraphRenderer extends BlockRenderer {
             boolean lineHasContent = processedRenderer != null && processedRenderer.getOccupiedArea().getBBox().getHeight() > 0;
             boolean isFit = processedRenderer != null;
             float deltaY = 0;
-            if (isFit && !RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
+            if (isFit && this.<RenderingMode>getProperty(Property.RENDERING_MODE) != RenderingMode.HTML_MODE &&
+                    !isVerticalWriting()) {
                 if (lineHasContent) {
-                    float indentFromLastLine = previousDescent - lastLineBottomLeadingIndent - (leading != null ? processedRenderer.getTopLeadingIndent(leading) : 0) - processedRenderer.getMaxAscent();
+                    float indentFromLastLine = previousDescent - lastLineBottomLeadingIndent -
+                            (leading != null ? processedRenderer.getTopLeadingIndent(leading) : 0) -
+                            processedRenderer.getMaxAscent();
                     if (processedRenderer.containsImage()) {
                         indentFromLastLine += previousDescent;
                     }
@@ -311,9 +314,12 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
 
                 if (isLastLineReLaidOut) {
-                    isFit = leading == null || processedRenderer.getOccupiedArea().getBBox().getY() + deltaY - lastLineBottomLeadingIndent >= layoutBox.getY();
+                    isFit = leading == null ||
+                            processedRenderer.getOccupiedArea().getBBox().getY() + deltaY - lastLineBottomLeadingIndent
+                                    >= layoutBox.getY();
                 } else {
-                    isFit = leading == null || processedRenderer.getOccupiedArea().getBBox().getY() + deltaY >= layoutBox.getY();
+                    isFit = leading == null ||
+                            processedRenderer.getOccupiedArea().getBBox().getY() + deltaY >= layoutBox.getY();
                 }
             }
 
@@ -432,7 +438,14 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
                 firstLineInBox = false;
 
-                layoutBox.setHeight(processedRenderer.getOccupiedArea().getBBox().getY() - layoutBox.getY());
+                if (isVerticalWriting()) {
+                    // TODO DEVSIX-10137 Distance between lines is currently equal to two line widths.
+                    float lineWidth = processedRenderer.getOccupiedArea().getBBox().getWidth();
+                    layoutBox.setX(processedRenderer.getOccupiedArea().getBBox().getX() + (lineWidth * 2));
+                    layoutBox.setWidth(layoutBox.getWidth() - (lineWidth * 2));
+                } else {
+                    layoutBox.setHeight(processedRenderer.getOccupiedArea().getBBox().getY() - layoutBox.getY());
+                }
                 lines.add(processedRenderer);
 
                 anythingPlaced = true;
@@ -448,7 +461,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
             }
         }
-        if (!RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
+        if (this.<RenderingMode>getProperty(Property.RENDERING_MODE) != RenderingMode.HTML_MODE) {
             float moveDown = lastLineBottomLeadingIndent;
             if (isOverflowFit(overflowY) && moveDown > occupiedArea.getBBox().getY() - layoutBox.getY()) {
                 moveDown = occupiedArea.getBBox().getY() - layoutBox.getY();
