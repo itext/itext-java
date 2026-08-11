@@ -37,7 +37,7 @@ public class RotationMinMaxWidth extends MinMaxWidth {
     private double maxWidthHeight;
 
     /**
-     * Create new instance
+     * Creates new instance
      *
      * @param minWidth min-width of rotated element
      * @param maxWidth max-width of rotated element
@@ -77,6 +77,7 @@ public class RotationMinMaxWidth extends MinMaxWidth {
      * @param angle rotation angle in radians
      * @param area the constant area
      * @param elementMinMaxWidth NOT rotated element min-max-width
+     *
      * @return possible min-max-width of element after rotation
      */
     public static RotationMinMaxWidth calculate(double angle, double area, MinMaxWidth elementMinMaxWidth) {
@@ -91,7 +92,8 @@ public class RotationMinMaxWidth extends MinMaxWidth {
      * @param angle rotation angle in radians
      * @param area the constant area
      * @param elementMinMaxWidth NOT rotated element min-max-width
-     * @param availableWidth the maximum width of area the element will occupy after rotation.
+     * @param availableWidth the maximum width of area the element will occupy after rotation
+     *
      * @return possible min-max-width of element after rotation
      */
     public static RotationMinMaxWidth calculate(double angle, double area, MinMaxWidth elementMinMaxWidth, double availableWidth) {
@@ -118,19 +120,33 @@ public class RotationMinMaxWidth extends MinMaxWidth {
      *
      * @param area the initial area
      * @param angle the rotation angle in radians
-     * @return width of rotated area
+     *
+     * @return width of the rotated area
      */
     public static double calculateRotatedWidth(Rectangle area, double angle) {
         return  area.getWidth() * cos(angle) + area.getHeight() * sin(angle);
     }
 
     /**
-     * This method use derivative of function defined on interval: [xMin, xMax] to find its local minimum and maximum.
+     * Utility method for calculating rotated height of area in a similar way to other calculations in this class.
+     *
+     * @param area the initial area
+     * @param angle the rotation angle in radians
+     *
+     * @return height of the rotated area
+     */
+    public static double calculateRotatedHeight(Rectangle area, double angle) {
+        return  area.getHeight() * cos(angle) + area.getWidth() * sin(angle);
+    }
+
+    /**
+     * This method uses derivative of function defined on interval: [xMin, xMax] to find its local minimum and maximum.
      * It also calculate other handy values needed for the creation of {@link RotationMinMaxWidth}.
      *
      * @param func the {@link WidthFunction#getRotatedWidth(double)} of this instance is used as analysed function
      * @param xMin the smallest possible value of function argument
      * @param xMax the biggest possible value of function argument
+     *
      * @return the calculated {@link RotationMinMaxWidth}
      */
     private static RotationMinMaxWidth calculate(WidthFunction func, double xMin, double xMax) {
@@ -191,7 +207,7 @@ public class RotationMinMaxWidth extends MinMaxWidth {
         private double area;
 
         /**
-         * Create new instance
+         * Creates new instance
          *
          * @param angle rotation angle in radians
          * @param area the constant area
@@ -206,6 +222,7 @@ public class RotationMinMaxWidth extends MinMaxWidth {
          * Function used for width calculations of rotated element. This function is continuous on interval: (0, Infinity)
          *
          * @param x width value of NOT rotated element
+         *
          * @return width of rotated element
          */
         public double getRotatedWidth(double x) {
@@ -216,6 +233,7 @@ public class RotationMinMaxWidth extends MinMaxWidth {
          * Function used for height calculations of rotated element. This function is continuous on interval: (0, Infinity)
          *
          * @param x width value of NOT rotated element
+         *
          * @return width of rotated element
          */
         public double getRotatedHeight(double x) {
@@ -223,10 +241,12 @@ public class RotationMinMaxWidth extends MinMaxWidth {
         }
 
         /**
-         * Get's possible values of NOT rotated width of all element that have therer rotated width less that availableWidth
+         * Gets possible values of NOT rotated width of all elements that have their rotated width less
+         * than availableWidth
          *
-         * @param availableWidth the highest possible width of rotated element.
-         * @return interval that specify biggest and smallest possible values of NOT rotated width of such elements.
+         * @param availableWidth the highest possible width of rotated element
+         *
+         * @return interval that specify biggest and smallest possible values of NOT rotated width of such elements
          */
         public Interval getValidOriginalWidths(double availableWidth) {
             double minWidth;

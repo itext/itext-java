@@ -246,7 +246,7 @@ public class FlexContainerRenderer extends DivRenderer {
         }
 
         if (this.getPropertyAsFloat(Property.ROTATION_ANGLE) != null) {
-            return RotationUtils.countRotationMinMaxWidth(minMaxWidth, this);
+            return RotationUtils.calculateRotationMinMaxWidth(minMaxWidth, this);
         }
 
         return minMaxWidth;

@@ -30,7 +30,10 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -206,9 +209,6 @@ public class RotationTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
-    })
     @Test
     public void staticTextRotationTest02() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "staticTextRotationTest02.pdf";
@@ -228,9 +228,6 @@ public class RotationTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
-    })
     @Test
     public void staticTextRotationTest03() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "staticTextRotationTest03.pdf";
@@ -350,9 +347,6 @@ public class RotationTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH)
-    })
     @Test
     public void tableRotationTest02() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "tableRotationTest02.pdf";
@@ -374,9 +368,6 @@ public class RotationTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
-    })
     @Test
     public void tableRotationTest03() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "tableRotationTest03.pdf";
@@ -482,12 +473,11 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void cellRotationNoSizesSetTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationNoSizesSetTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationNoSizesSetTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1);
@@ -508,7 +498,7 @@ public class RotationTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableWidthTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableWidthTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1);
@@ -526,20 +516,22 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void cellRotationTableHeightTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableHeightTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableHeightTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1);
         table.setHeight(60);
+        table.setBackgroundColor(ColorConstants.LIGHT_GRAY);
 
         Cell cell = new Cell()
-                .add(new Paragraph("The quick brown fox jumps over the lazy dog."))
-                .setRotationAngle(Math.toRadians(90));
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog.").setBackgroundColor(ColorConstants.BLUE))
+                .setRotationAngle(Math.toRadians(90))
+                .setBackgroundColor(ColorConstants.YELLOW)
+                .setOpacity(0.5f);
 
         table.addCell(cell);
 
@@ -553,7 +545,7 @@ public class RotationTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableSetSizeTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableSetSizeTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1);
@@ -575,7 +567,7 @@ public class RotationTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "cellRotationCellWidthTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationCellWidthTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1);
@@ -593,13 +585,12 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT),
-    @LogMessage(messageTemplate = IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void cellRotationCellHeightTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationCellHeightTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationCellHeightTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1);
@@ -617,11 +608,42 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH),
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
+    public void fixedTableCellRotationCellSizesTest() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "fixedTableCellRotationCellSizesTest.pdf";
+        String cmpFileName = SOURCE_FOLDER + cmpPrefix + "fixedTableCellRotationCellSizesTest.pdf";
+
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+        Document doc = new Document(pdfDocument);
+
+        Table table = new Table(1);
+        table.setFixedPosition(72, 72, 72);
+
+        Cell cell = new Cell()
+                .add(new Paragraph("The quick brown fox jumps over the lazy dog. The end.")) // The end.
+                .setHeight(72)
+                .setWidth(144)
+                .setRotationAngle(Math.toRadians(90));
+
+        cell.setPaddingTop(3f);
+        cell.setPaddingBottom(0f);
+        cell.setBorder(new SolidBorder(1));
+
+        table.addCell(cell);
+
+        doc.add(table);
+        doc.close();
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void cellRotationCellSizesTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationCellSizesTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationCellSizesTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1);
@@ -640,12 +662,13 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH),
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void cellRotationTableAndCellSizesTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableAndCellSizesTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableAndCellSizesTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1)
@@ -666,12 +689,13 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH),
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void cellRotationTableWidthCellSizesTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableWidthCellSizesTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableWidthCellSizesTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1)
@@ -696,7 +720,7 @@ public class RotationTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableHeightCellSizesTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableHeightCellSizesTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1)
@@ -716,12 +740,13 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH),
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void cellRotationTableSizesCellHeightTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableSizesCellHeightTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableSizesCellHeightTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1)
@@ -741,12 +766,11 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void cellRotationTableSizesCellWidthTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableSizesCellWidthTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableSizesCellWidthTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1)
@@ -766,12 +790,11 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA))
     public void cellRotationTableWidthCellWidthTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableWidthCellWidthTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableWidthCellWidthTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1)
@@ -790,12 +813,13 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH))
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.TABLE_WIDTH_IS_MORE_THAN_EXPECTED_DUE_TO_MIN_WIDTH),
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void cellRotationTableWidthCellHeightTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableWidthCellHeightTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableWidthCellHeightTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1)
@@ -814,13 +838,12 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT),
-            @LogMessage(messageTemplate = IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER)})
+    @LogMessages(messages = {@LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT)})
     public void cellRotationTableHeightCellHeightTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableHeightCellHeightTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableHeightCellHeightTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1)
@@ -839,12 +862,11 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void cellRotationTableHeightCellWidthTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cellRotationTableHeightCellWidthTest.pdf";
         String cmpFileName = SOURCE_FOLDER + cmpPrefix + "cellRotationTableHeightCellWidthTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         Table table = new Table(1)
@@ -863,7 +885,9 @@ public class RotationTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-5029 Content of the first cell is missing
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 2)
+    })
     public void cellRotationParagraphIsGone() throws IOException, InterruptedException {
         String testName = "cellRotationParagraphIsGone.pdf";
         String outFileName = DESTINATION_FOLDER + testName;
@@ -977,10 +1001,6 @@ public class RotationTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 
-
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
-    })
     @Test
     public void listRotationTest02() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "listRotationTest02.pdf";
@@ -1171,7 +1191,7 @@ public class RotationTest extends ExtendedITextTest {
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT),
+            @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 6),
             @LogMessage(messageTemplate = IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER, count = 2)
     })
     public void imageInRotatedBlockTest02() throws IOException, InterruptedException {

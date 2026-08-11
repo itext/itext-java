@@ -177,6 +177,7 @@ public class LinkTest extends ExtendedITextTest {
      * in the question.
      */
     @Test
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)})
     public void testCreateLocalLinkInRotatedCell() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "linkInRotatedCell.pdf";
         String cmpFileName = sourceFolder + "cmp_linkInRotatedCell.pdf";

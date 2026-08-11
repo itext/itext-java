@@ -46,6 +46,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidthUtils;
+import com.itextpdf.layout.minmaxwidth.RotationMinMaxWidth;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.properties.ContinuousContainer;
@@ -113,12 +114,12 @@ public abstract class BlockRenderer extends AbstractRenderer {
             marginsCollapseHandler = new MarginsCollapseHandler(this, layoutContext.getMarginsCollapseInfo());
         }
         Float blockWidth = retrieveWidth(parentBBox.getWidth());
-        if (rotation != null || isFixedLayout()) {
-            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
-        }
         if (rotation != null && !FloatingHelper.isRendererFloating(this, floatPropertyValue) &&
                 !(this instanceof FlexContainerRenderer)) {
-            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
+            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), parentBBox.getHeight(), this);
+        }
+        if (rotation != null || isFixedLayout()) {
+            parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
         boolean includeFloatsInOccupiedArea = BlockFormattingContextUtil.isRendererCreateBfc(this);
         float clearHeightCorrection = FloatingHelper.calculateClearHeightCorrection(this, floatRendererAreas,
@@ -586,14 +587,22 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Float rotationAngle = this.<Float>getProperty(Property.ROTATION_ANGLE);
         if (rotationAngle != null) {
             if (hasOwnProperty(Property.ROTATION_INITIAL_WIDTH) && hasOwnProperty(Property.ROTATION_INITIAL_HEIGHT)) {
-                bBox.setWidth((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH));
-                bBox.setHeight((float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT));
+                final float initialWidth = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_WIDTH);
+                final float initialHeight = (float) this.getPropertyAsFloat(Property.ROTATION_INITIAL_HEIGHT);
+                bBox.setWidth(initialWidth);
+                bBox.setHeight(initialHeight);
+
+                // Keep top edge stable for the pre-rotation box
+                final float newHeight =
+                        (float) RotationMinMaxWidth.calculateRotatedHeight(bBox, rotationAngle.floatValue());
+                bBox.setY(occupiedArea.getBBox().getTop() - newHeight);
             } else {
                 LOGGER.error(() -> MessageFormatUtil.format(
                         IoLogMessageConstant.ROTATION_WAS_NOT_CORRECTLY_PROCESSED_FOR_RENDERER,
                         getClass().getSimpleName()));
             }
         }
+
         return bBox;
     }
 
@@ -1134,7 +1143,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
 
         if (this.getPropertyAsFloat(Property.ROTATION_ANGLE) != null) {
-            return RotationUtils.countRotationMinMaxWidth(minMaxWidth, this);
+            return RotationUtils.calculateRotationMinMaxWidth(minMaxWidth, this);
         }
 
         return minMaxWidth;

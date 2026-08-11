@@ -76,6 +76,8 @@ public final class LayoutLogMessageConstant {
     public static final String AREA_BREAK_IGNORED =
             "Area break has been ignored. Most likely it was put inside an element that does not support it.";
 
+    public static final String ROTATED_LAYOUT_ELEMENT_DOES_NOT_FIT_AREA =
+            "Layout element does not fit current area with infinite height.";
 
     private LayoutLogMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly.

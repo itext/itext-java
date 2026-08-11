@@ -149,11 +149,12 @@ public class ParagraphRenderer extends BlockRenderer {
                 ? OverflowPropertyValue.FIT
                 : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
 
+        if (rotation != null && !FloatingHelper.isRendererFloating(this)) {
+            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), parentBBox.getHeight(), this);
+        }
+
         if (rotation != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
-        }
-        if (rotation != null && !FloatingHelper.isRendererFloating(this)) {
-            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
         }
 
         if (marginsCollapsingEnabled) {
@@ -716,7 +717,7 @@ public class ParagraphRenderer extends BlockRenderer {
             minMaxWidth.setAdditionalWidth(calculateAdditionalWidth(this));
         }
 
-        return rotation != null ? RotationUtils.countRotationMinMaxWidth(minMaxWidth, this) : minMaxWidth;
+        return rotation != null ? RotationUtils.calculateRotationMinMaxWidth(minMaxWidth, this) : minMaxWidth;
     }
 
     protected ParagraphRenderer[] split() {
