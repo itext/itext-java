@@ -30,56 +30,55 @@ import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
 @Tag("UnitTest")
-class AssertUtilTest extends ExtendedITextTest{
+class AssertUtilTest extends ExtendedITextTest {
 
     @Test
     void assertPassedWithinTimeoutTestKeepsFailing() {
         AtomicInteger callCount = new AtomicInteger();
         Assertions.assertThrows(AssertionFailedError.class, () ->
-        AssertUtil.assertPassedWithinTimeout(()->{
-            callCount.getAndIncrement();
-            Assertions.fail();
-        }, Duration.ofMillis(500)));
-
-        Assertions.assertTrue(callCount.get() > 1);
-    }
-
-
-    @Test
-    void assertPassedWithinTimeoutTestFailsFirstTime() {
-        AtomicInteger callCount = new AtomicInteger();
-        Assertions.assertDoesNotThrow(() ->
-                AssertUtil.assertPassedWithinTimeout(()->{
-                    if (callCount.getAndIncrement() < 1) {
-                        Assertions.fail();
-                    }
+                AssertUtil.assertPassedWithinTimeout(() -> {
+                    callCount.getAndIncrement();
+                    Assertions.fail();
                 }, Duration.ofMillis(500)));
 
         Assertions.assertTrue(callCount.get() > 1);
     }
 
+
     @Test
-    void assertPassedWithinTimeoutTestFailsFirstTimes() {
+    void assertPassedWithinTimeoutTestFailsFirstTime() throws Exception {
         AtomicInteger callCount = new AtomicInteger();
-        Assertions.assertDoesNotThrow(() ->
-                AssertUtil.assertPassedWithinTimeout(()->{
-                    if (callCount.getAndIncrement() < 2) {
-                        Assertions.fail();
-                    }
-                }, Duration.ofMillis(500)));
+
+        AssertUtil.assertPassedWithinTimeout(() -> {
+            if (callCount.getAndIncrement() < 1) {
+                Assertions.fail();
+            }
+        }, Duration.ofMillis(500));
 
         Assertions.assertTrue(callCount.get() > 1);
     }
 
     @Test
-    void assertPassedWithinRandomTimeoutTestFailsFirstTimes() {
+    void assertPassedWithinTimeoutTestFailsFirstTimes() throws Exception {
         AtomicInteger callCount = new AtomicInteger();
-        Assertions.assertDoesNotThrow(() ->
-                AssertUtil.assertPassedWithinRandomTimeout(()->{
-                    if (callCount.getAndIncrement() < 2) {
-                        Assertions.fail();
-                    }
-                }, Duration.ofMillis(500), Duration.ofMillis(100)));
+
+        AssertUtil.assertPassedWithinTimeout(() -> {
+            if (callCount.getAndIncrement() < 2) {
+                Assertions.fail();
+            }
+        }, Duration.ofMillis(500));
+
+        Assertions.assertTrue(callCount.get() > 1);
+    }
+
+    @Test
+    void assertPassedWithinRandomTimeoutTestFailsFirstTimes() throws Exception {
+        AtomicInteger callCount = new AtomicInteger();
+        AssertUtil.assertPassedWithinRandomTimeout(() -> {
+            if (callCount.getAndIncrement() < 2) {
+                Assertions.fail();
+            }
+        }, Duration.ofMillis(500), Duration.ofMillis(100));
 
         Assertions.assertTrue(callCount.get() > 1);
     }
