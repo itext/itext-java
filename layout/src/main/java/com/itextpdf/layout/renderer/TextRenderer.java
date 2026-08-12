@@ -1095,6 +1095,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         return occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE);
     }
 
+    private float getXLine() {
+        return occupiedArea.getBBox().getX();
+    }
+
     /**
      * Moves the vertical position to the parameter's value.
      *
@@ -1502,12 +1506,22 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             if (doStroke) {
                 canvas.setLineWidth(underline.getStrokeWidth());
             }
-            float yLine = getYLine();
-            float underlineYPosition = underline.getYPosition(fontSize) + yLine;
-            float italicWidthSubtraction = .5f * fontSize * italicAngleTan;
-            Rectangle innerAreaBbox = getInnerAreaBBox();
-            Rectangle underlineBBox = new Rectangle(innerAreaBbox.getX(), underlineYPosition - underlineThickness / 2,
-                    innerAreaBbox.getWidth() - italicWidthSubtraction, underlineThickness);
+            Rectangle underlineBBox;
+            if (isVerticalWriting()) {
+                float xLine = getXLine();
+                float underlineXPosition = xLine + underline.getYPosition(fontSize);
+                Rectangle innerAreaBbox = getInnerAreaBBox();
+                underlineBBox = new Rectangle(underlineXPosition - underlineThickness/2,
+                        innerAreaBbox.getY(), underlineThickness, innerAreaBbox.getHeight());
+            } else {
+                float yLine = getYLine();
+                float underlineYPosition = underline.getYPosition(fontSize) + yLine;
+                float italicWidthSubtraction = .5f * fontSize * italicAngleTan;
+                Rectangle innerAreaBbox = getInnerAreaBBox();
+                underlineBBox = new Rectangle(innerAreaBbox.getX(),
+                        underlineYPosition - underlineThickness / 2,
+                        innerAreaBbox.getWidth() - italicWidthSubtraction, underlineThickness);
+            }
             canvas.rectangle(underlineBBox);
 
             if (isClippingMode) {

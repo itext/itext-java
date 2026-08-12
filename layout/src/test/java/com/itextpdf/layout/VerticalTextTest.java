@@ -36,6 +36,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.VerticalTextOrientation;
+import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.test.ExtendedITextTest;
@@ -411,5 +412,128 @@ public class VerticalTextTest extends ExtendedITextTest {
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void lineTroughWithTextRiseTest() throws IOException, InterruptedException {
+        //TODO DEVSIX-10137 :Support baselining and line width for vertical drawing
+        String outFileName = DESTINATION_FOLDER + "lineTroughWithTextRise.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_lineTroughWithTextRise.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+        Text textUp = new Text("textRise10f_with_lineThrough");
+        textUp.setTextRise(-10f);
+        textUp.setLineThrough();
+        textUp.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+        textUp.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+
+        Text textDown = new Text("textRise-10f_with_lineThrough");
+        textDown.setTextRise(-10f);
+        textDown.setLineThrough();
+        textDown.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+        textDown.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+
+        Paragraph n = new Paragraph("baseline");
+        n.add(textUp).add(textDown);
+        n.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+        n.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+
+        document.add(n);
+        document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
+    }
+
+    @Test
+    public void underlineTest() throws IOException, InterruptedException {
+        //TODO DEVSIX-10137 :Support line width for vertical drawing should
+        // fix issue for the last part of pages 2 and 3.
+        String outFileName = DESTINATION_FOLDER + "underline.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_underline.pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+                Document document = new Document(pdfDocument)) {
+
+            Paragraph p = new Paragraph("Yellow text with pink stroked dashed underline.")
+                    .setFontSize(45).setFontColor(ColorConstants.YELLOW);
+            Underline underline = new Underline(null, 0, 0.1f, 0, -0.1f, PdfCanvasConstants.LineCapStyle.BUTT)
+                    .setStrokeWidth(2).setStrokeColor(new TransparentColor(ColorConstants.PINK, 0.5f))
+                    .setDashPattern(new float[]{5, 5, 10, 5}, 5);
+            p.setUnderline(underline);
+            p.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            p.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+
+            TransparentColor strokeColor = new TransparentColor(ColorConstants.GREEN, 0.5f);
+            Paragraph p2 = new Paragraph("Text with line-through and default underline.")
+                    .setFontSize(50).setStrokeWidth(1).setFontColor(ColorConstants.DARK_GRAY)
+                    .setStrokeColor(strokeColor);
+            Underline underline2 = new Underline(ColorConstants.DARK_GRAY, 0, 0.1f, 0, 0.3f,
+                    PdfCanvasConstants.LineCapStyle.BUTT)
+                    .setStrokeWidth(1).setStrokeColor(strokeColor);
+            p2.setUnderline(underline2);
+            p2.setUnderline();
+            p2.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            p2.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+
+            Underline underline3 = new Underline(null, 0, 0.1f, 0, 0.9f, PdfCanvasConstants.LineCapStyle.BUTT);
+            Paragraph p3 = new Paragraph("Text with null font color and default overline.").setFontSize(50)
+                    .setFontColor((TransparentColor) null);
+            p3.setUnderline(underline3);
+            p3.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            p3.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+
+            //This line should be around the middle of the text compared to horizontal text.
+            Underline underline4 = new Underline(null, 0, 0.1f, 15, 0f, PdfCanvasConstants.LineCapStyle.BUTT);
+            Paragraph p4 = new Paragraph("Text with custom yPosition (15).").setFontSize(50);
+
+            p4.setUnderline(underline4);
+
+            p4.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            p4.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+
+            document.add(p);
+            document.add(p2);
+            document.add(p3);
+            document.add(p4);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
+    }
+
+    @Test
+    public void fontStyleSimulationTest01() throws IOException, InterruptedException {
+        String outFileName = DESTINATION_FOLDER + "fontStyleSimulationTest01.pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_fontStyleSimulationTest01.pdf";
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+
+        Document document = new Document(pdfDocument);
+
+        Paragraph p = new Paragraph("I'm underlined").setUnderline();
+        p.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+        p.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+
+        document.add(p);
+        p = new Paragraph("I'm strikethrough").setLineThrough();
+        p.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+        p.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+        document.add(p);
+        p = new Paragraph(new Text("I'm a bold simulation font").setBackgroundColor(ColorConstants.GREEN)).simulateBold();
+        p.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+        p.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+        document.add(p);
+        p = new Paragraph(new Text("I'm an italic simulation font").setBackgroundColor(ColorConstants.GREEN)).simulateItalic();
+        p.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+        p.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+        document.add(p);
+        p = new Paragraph(new Text("I'm a super bold italic underlined linethrough piece of text and no one can be better than me, even if " +
+                "such a long description will cause me to occupy two lines").setBackgroundColor(ColorConstants.GREEN))
+                .simulateItalic().simulateBold().setUnderline().setLineThrough();
+        p.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+        p.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+        document.add(p);
+
+        document.close();
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));
     }
 }
