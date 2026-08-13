@@ -61,14 +61,46 @@ final class InlineVerticalAlignmentHelper {
                 alignment -> true);
     }
 
+    static void adjustChildrenXLineVerticalText(LineRenderer lineRenderer) {
+        float baseline = lineRenderer.occupiedArea.getBBox().getX() +
+                lineRenderer.occupiedArea.getBBox().getWidth() / 2;
+        float[] fontInfo = LineHeightHelper.getActualFontInfo(lineRenderer);
+        float fontWidth = fontInfo[LineHeightHelper.ASCENDER_INDEX] - fontInfo[LineHeightHelper.DESCENDER_INDEX] -
+                fontInfo[LineHeightHelper.LEADING_INDEX];
+        float textLeft = baseline - fontWidth / 2;
+        float textRight = baseline + fontWidth / 2;
+        float maxRight = Float.MIN_VALUE;
+        float minLeft = Float.MAX_VALUE;
+        for (final IRenderer renderer : lineRenderer.getChildRenderers()) {
+            if (FloatingHelper.isRendererFloating(renderer)) {
+                continue;
+            }
+            InlineVerticalAlignment alignment = renderer.<InlineVerticalAlignment>getProperty(Property.INLINE_VERTICAL_ALIGNMENT);
+            if (alignment == null) {
+                alignment = new InlineVerticalAlignment();
+            }
+
+            Rectangle childBBox = getAdjustedArea(renderer);
+            Rectangle parentBBox = lineRenderer.occupiedArea.getBBox().clone();
+            float offset = calculateOffsetVerticalText(childBBox, alignment, parentBBox, textLeft, textRight);
+            if (Math.abs(offset) > ADJUSTMENT_THRESHOLD) {
+                renderer.move(offset, 0);
+            }
+            Rectangle cBbox = getAdjustedArea(renderer);
+            maxRight = Math.max(maxRight, cBbox.getRight());
+            minLeft = Math.min(minLeft, cBbox.getLeft());
+        }
+        adjustBBoxVertical(lineRenderer, maxRight, minLeft);
+    }
+
     private static boolean isBoxOrientedVerticalAlignment(InlineVerticalAlignment alignment) {
         return alignment.getType() == InlineVerticalAlignmentType.TOP ||
                 alignment.getType() == InlineVerticalAlignmentType.BOTTOM;
     }
 
     private static void processRenderers(LineRenderer lineRenderer, List<IRenderer> renderers, float actualYLine,
-            Predicate<InlineVerticalAlignment> needProcess,
-            Predicate<InlineVerticalAlignment> needRecalculateSizes) {
+                                         Predicate<InlineVerticalAlignment> needProcess,
+                                         Predicate<InlineVerticalAlignment> needRecalculateSizes) {
         float[] fontInfo = LineHeightHelper.getActualFontInfo(lineRenderer);
         float textTop = actualYLine + fontInfo[LineHeightHelper.ASCENDER_INDEX] -
                 fontInfo[LineHeightHelper.LEADING_INDEX] / 2;
@@ -85,9 +117,7 @@ final class InlineVerticalAlignmentHelper {
             if (FloatingHelper.isRendererFloating(renderer)) {
                 continue;
             }
-            InlineVerticalAlignment alignment = renderer.<InlineVerticalAlignment>getProperty(
-
-                    Property.INLINE_VERTICAL_ALIGNMENT);
+            InlineVerticalAlignment alignment = renderer.<InlineVerticalAlignment>getProperty(Property.INLINE_VERTICAL_ALIGNMENT);
             if (alignment == null) {
                 alignment = new InlineVerticalAlignment();
             }
@@ -132,6 +162,50 @@ final class InlineVerticalAlignmentHelper {
         return rect;
     }
 
+    private static float calculateOffsetVerticalText(Rectangle cBBox, InlineVerticalAlignment alignment,
+                                                     Rectangle pBBox, float textLeft, float textRight) {
+        switch (alignment.getType()) {
+            case TEXT_TOP:
+                return textRight - cBBox.getRight();
+            case TEXT_BOTTOM:
+                return textLeft - cBBox.getLeft();
+            case FIXED:
+                return alignment.getValue();
+            case SUPER:
+            case SUB:
+            case FRACTION:
+                float offsetFraction = 0;
+                if (alignment.getType() == InlineVerticalAlignmentType.SUPER) {
+                    offsetFraction = SUPER_OFFSET;
+                } else if (alignment.getType() == InlineVerticalAlignmentType.SUB) {
+                    offsetFraction = SUB_OFFSET;
+                } else {
+                    offsetFraction = alignment.getValue();
+                }
+                return pBBox.getWidth() * offsetFraction;
+            case BOTTOM:
+                return pBBox.getLeft() - cBBox.getLeft();
+            case TOP:
+                return pBBox.getRight() - cBBox.getRight();
+            case BASELINE:
+            case MIDDLE:
+            default:
+                return 0;
+        }
+    }
+
+    private static void adjustBBoxVertical(LineRenderer lineRenderer, float maxRight, float minLeft) {
+        float originalRight = lineRenderer.occupiedArea.getBBox().getRight();
+        float originalLeft = lineRenderer.occupiedArea.getBBox().getLeft();
+
+        float deltaRight = maxRight > originalRight ? maxRight - originalRight : 0;
+        float deltaLeft = minLeft < originalLeft ? originalLeft - minLeft : 0;
+        lineRenderer.occupiedArea.getBBox().increaseWidth(deltaRight + deltaLeft);
+
+        for (final IRenderer renderer : lineRenderer.getChildRenderers()) {
+            renderer.move(deltaLeft, 0);
+        }
+    }
 
     private static void adjustBBox(LineRenderer lineRenderer, float maxHeight, float maxTop, float minBottom) {
         LineHeight lineHeight = lineRenderer.<LineHeight>getProperty(Property.LINE_HEIGHT);
@@ -157,7 +231,8 @@ final class InlineVerticalAlignmentHelper {
     }
 
     private static float calculateOffset(IRenderer renderer, Rectangle cBBox, InlineVerticalAlignment alignment,
-            float baseline, float textTop, float textBottom, float leading, float xHeight, Rectangle pBBox) {
+                                         float baseline, float textTop, float textBottom, float leading, float xHeight,
+                                         Rectangle pBBox) {
         switch (alignment.getType()) {
             case BASELINE:
                 return baseline - getChildBaseline(renderer, leading);

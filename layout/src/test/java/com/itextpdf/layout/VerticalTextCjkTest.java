@@ -37,6 +37,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.layout.properties.VerticalTextOrientation;
 import com.itextpdf.layout.properties.WritingMode;
@@ -78,6 +79,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         CjkTextSpec spec = new CjkTextSpec("你好，这是一段竖排中文文本。汉字应保持直立。", loadCjkFont(NOTO_SANS_SC), 24);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, spec));
@@ -99,6 +101,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
                 "こんにちは、これは縦書きの日本語のテキストです。ちょっと難しいです。ラーメン。", loadCjkFont(NOTO_SANS_JP), 24);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, spec));
@@ -120,6 +123,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         CjkTextSpec spec = new CjkTextSpec("안녕하세요, 이것은 세로쓰기 한국어 텍스트입니다.", loadCjkFont(NOTO_SANS_KR), 24);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, spec));
@@ -139,6 +143,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         CjkTextSpec spec = new CjkTextSpec("ᠮᠣᠩᠭᠣᠯ ᠪᠢᠴᠢᠭ ᠣᠷᠴᠢᠨ ᠴᠠᠭ", loadCjkFont(NOTO_SANS_MONGOLIAN), 24);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, spec));
@@ -158,6 +163,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         CjkTextSpec spec = new CjkTextSpec("彼は「こんにちは」と言った。それから、『さようなら』も言った。", loadCjkFont(NOTO_SANS_JP), 24);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, spec));
@@ -178,6 +184,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
                 "今日は2026年8月19日、iTextのバージョンは8です。ABC123もテストします。", loadCjkFont(NOTO_SANS_JP), 20);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, spec));
@@ -204,6 +211,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
                 .backgroundColor(ColorConstants.CYAN);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, sansSpec));
             document.add(buildParagraph(true, serifSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
@@ -225,6 +233,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         CjkTextSpec spec = new CjkTextSpec(text, loadCjkFont(NOTO_SANS_SC), 20).backgroundColor(ColorConstants.LIGHT_GRAY);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             Paragraph verticalParagraph = buildParagraph(true, spec);
             verticalParagraph.setHeight(150);
             document.add(verticalParagraph);
@@ -253,6 +262,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
                 .underline(new Underline(ColorConstants.BLUE, 1, .75F, 0, 0, 1 / 2F, PdfCanvasConstants.LineCapStyle.BUTT));
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, underlinedSpec, strikethroughSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, underlinedSpec, strikethroughSpec));
@@ -279,6 +289,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
                 .backgroundColor(ColorConstants.LIGHT_GRAY);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, regularSpec, simulatedBoldItalicSpec, realBoldSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, regularSpec, simulatedBoldItalicSpec, realBoldSpec));
@@ -303,6 +314,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
                 .backgroundColor(ColorConstants.CYAN);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, ideographicSpec));
             document.add(buildParagraph(true, regularSpaceSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
@@ -326,6 +338,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
                 .backgroundColor(ColorConstants.CYAN);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, defaultLeadingSpec));
             Paragraph customLeadingVertical = buildParagraph(true, customLeadingSpec);
             customLeadingVertical.setMultipliedLeading(2.5F);
@@ -352,6 +365,7 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         CjkTextSpec spec = new CjkTextSpec("全角：１２３ＡＢＣ 半角：123ABC", loadCjkFont(NOTO_SANS_SC), 20);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, spec));

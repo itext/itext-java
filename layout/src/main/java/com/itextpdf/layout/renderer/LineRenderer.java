@@ -502,17 +502,18 @@ public class LineRenderer extends AbstractRenderer {
 
             if (shouldBreakLayoutingOnTextRenderer) {
                 boolean isWordHasBeenSplitLayoutRenderingMode = ((TextLayoutResult) childResult).isWordHasBeenSplit()
-                        && RenderingMode.HTML_MODE != childRenderingMode
+                        && (RenderingMode.HTML_MODE != childRenderingMode || isVerticalWriting)
                         && directChildRenderer instanceof TextRenderer &&
                         !((TextRenderer) directChildRenderer).textContainsSpecialScriptGlyphs(true);
                 boolean enableSpecialScriptsWrapping = childRenderer instanceof TextRenderer
                         && !textSequenceOverflowXProcessing && !newLineOccurred
                         && ((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true);
-                boolean enableTextSequenceWrapping = (RenderingMode.HTML_MODE == childRenderingMode
-                        || (directChildRenderer instanceof FootnoteAnchorRenderer
-                        && childRenderer instanceof TextRenderer))
-                        && !newLineOccurred
-                        && !textSequenceOverflowXProcessing;
+                boolean enableTextSequenceWrapping =
+                        ((RenderingMode.HTML_MODE == childRenderingMode && !isVerticalWriting)
+                                || (directChildRenderer instanceof FootnoteAnchorRenderer
+                                && childRenderer instanceof TextRenderer))
+                                && !newLineOccurred
+                                && !textSequenceOverflowXProcessing;
 
                 if (isWordHasBeenSplitLayoutRenderingMode) {
                     forceOverflowForTextRendererPartialResult = isForceOverflowForTextRendererPartialResult(
@@ -639,9 +640,11 @@ public class LineRenderer extends AbstractRenderer {
                     if (isVerticalWriting) {
                         float maxLineWidth = Math.max(occupiedArea.getBBox().getWidth(),
                                 childResult.getOccupiedArea().getBBox().getWidth());
+                        // Html/css and browsers also use line height as line width for vertical text.
+                        float lineHeight = maxAscent - maxDescent;
                         occupiedArea.setBBox(new Rectangle(layoutBox.getX(),
                                 layoutBox.getY() + layoutBox.getHeight() - curMainAxisOccupiedSize,
-                                maxLineWidth, curMainAxisOccupiedSize));
+                                Math.max(lineHeight, maxLineWidth), curMainAxisOccupiedSize));
                     } else {
                         occupiedArea.setBBox(
                                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight,
@@ -791,8 +794,12 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         if (anythingPlaced || floatsPlacedInLine) {
-            toProcess.adjustChildrenYLine().trimLast();
-            toProcess.adjustChildrenXLine();
+            if (isVerticalWriting) {
+                toProcess.adjustChildrenXLineVerticalWritingMode();
+            } else {
+                toProcess.adjustChildrenYLine().adjustChildrenXLine();
+            }
+            toProcess.trimLast();
             result.setMinMaxWidth(minMaxWidth);
         }
 
@@ -994,23 +1001,21 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     protected LineRenderer adjustChildrenYLine() {
-        if (!isVerticalWriting()) {
-            if (RenderingMode.HTML_MODE == this.<RenderingMode>getProperty(Property.RENDERING_MODE) &&
-                    hasInlineBlocksWithVerticalAlignment()) {
-                InlineVerticalAlignmentHelper.adjustChildrenYLineHtmlMode(this);
-            } else {
-                adjustChildrenYLineDefaultMode();
-            }
+        if (RenderingMode.HTML_MODE == this.<RenderingMode>getProperty(Property.RENDERING_MODE) &&
+                hasInlineBlocksWithVerticalAlignment()) {
+            InlineVerticalAlignmentHelper.adjustChildrenYLineHtmlMode(this);
+        } else {
+            adjustChildrenYLineDefaultMode();
         }
         return this;
     }
 
-    protected void applyLeading(float deltaY) {
-        occupiedArea.getBBox().moveUp(deltaY);
-        occupiedArea.getBBox().decreaseHeight(deltaY);
+    protected void applyLeading(float delta) {
+        occupiedArea.getBBox().moveUp(delta);
+        occupiedArea.getBBox().decreaseHeight(delta);
         for (final IRenderer child : getChildRenderers()) {
             if (!FloatingHelper.isRendererFloating(child)) {
-                child.move(0, deltaY);
+                child.move(0, delta);
             }
         }
     }
@@ -1662,7 +1667,7 @@ public class LineRenderer extends AbstractRenderer {
                     updateChildRenderers = true;
                 }
             } else if (child instanceof FootnoteAnchorRenderer) {
-                FootnoteAnchorRenderer textRenderer = (FootnoteAnchorRenderer)child;
+                FootnoteAnchorRenderer textRenderer = (FootnoteAnchorRenderer) child;
                 textRenderer.resolveFonts(newChildRenderers);
             } else {
                 newChildRenderers.add(child);
@@ -1719,6 +1724,21 @@ public class LineRenderer extends AbstractRenderer {
             }
         }
         return false;
+    }
+
+    private void adjustChildrenXLineVerticalWritingMode() {
+        float lineWidth = (float) getOccupiedArea().getBBox().getWidth();
+        for (final IRenderer renderer : getChildRenderers()) {
+            IRenderer unwrapped = unwrapChildRendererIfNeeded(renderer);
+            if (unwrapped instanceof TextRenderer) {
+                TextRenderer textRenderer = (TextRenderer) unwrapped;
+                float textChunkWidth = textRenderer.getOccupiedArea().getBBox().getWidth();
+                textRenderer.move((lineWidth - textChunkWidth) / 2, 0);
+            }
+        }
+        if (hasInlineBlocksWithVerticalAlignment()) {
+            InlineVerticalAlignmentHelper.adjustChildrenXLineVerticalText(this);
+        }
     }
 
     private void adjustChildrenXLine() {

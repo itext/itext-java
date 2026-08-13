@@ -37,6 +37,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.VerticalTextOrientation;
 import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.layout.testutil.VerticalTextTestUtil;
@@ -82,6 +83,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
                 .backgroundColor(ColorConstants.LIGHT_GRAY);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, chineseSpec, japaneseSpec, koreanSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, chineseSpec, japaneseSpec, koreanSpec));
@@ -105,6 +107,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
                 .backgroundColor(ColorConstants.CYAN);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, chineseSpec, latinSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, chineseSpec, latinSpec));
@@ -127,6 +130,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
                 .backgroundColor(ColorConstants.CYAN);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, mongolianSpec, chineseSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, mongolianSpec, chineseSpec));
@@ -150,6 +154,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         CjkTextSpec mongolianSpec = new CjkTextSpec("ᠮᠣᠩᠭᠣᠯ 30pt", loadCjkFont(NOTO_SANS_MONGOLIAN), 30);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, chineseSpec, japaneseSpec, koreanSpec, mongolianSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, chineseSpec, japaneseSpec, koreanSpec, mongolianSpec));
@@ -176,6 +181,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
                 .backgroundColor(ColorConstants.LIGHT_GRAY);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, smallSpec, mediumSpec, largeSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, smallSpec, mediumSpec, largeSpec));
@@ -199,6 +205,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
                 .backgroundColor(ColorConstants.CYAN);
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             document.add(buildParagraph(true, simplifiedSpec, traditionalSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(false, simplifiedSpec, traditionalSpec));

@@ -839,7 +839,7 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
 
     /**
      * Sets default line-through attributes for text.
-     * See {@link #setUnderline(Color, float, float, float, float, int)} for more fine tuning.
+     * See {@link #setUnderline(Color, float, float, float, float, int)} for more fine-tuning.
      *
      * @return this element
      */

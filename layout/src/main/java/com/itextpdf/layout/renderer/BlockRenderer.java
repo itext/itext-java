@@ -308,7 +308,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 // have more areas
                 if (currentAreaPos + 1 < areas.size() &&
                         !((result.getAreaBreak() != null && result.getAreaBreak().getType() == AreaBreakType.NEXT_PAGE)
-                        || result.getSectionBreak() != null)) {
+                                || result.getSectionBreak() != null)) {
                     if (result.getStatus() == LayoutResult.PARTIAL) {
                         childRenderers.set(childPos, result.getSplitRenderer());
                         childRenderers.add(childPos + 1, result.getOverflowRenderer());
@@ -362,8 +362,6 @@ public abstract class BlockRenderer extends AbstractRenderer {
                 causeOfNothing = result.getCauseOfNothing();
             }
         }
-
-
 
         if (includeFloatsInOccupiedArea) {
             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
@@ -455,7 +453,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
                     LOGGER.warn(() -> MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
-                                    "It fits by height so it will be forced placed"));
+                            "It fits by height so it will be forced placed"));
                 } else if (!initialForcePlacementForRotationAdjustments) {
                     floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
@@ -531,7 +529,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             int pageNumber = occupiedArea.getPageNumber();
             Rectangle clippedArea;
             if (pageNumber < 1 || pageNumber > drawContext.getDocument().getNumberOfPages()) {
-                clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
+                clippedArea = new Rectangle(-INF / 2, -INF / 2, INF, INF);
             } else {
                 PdfPage page = drawContext.getDocument().getPage(pageNumber);
                 // TODO DEVSIX-1655 This check is necessary because, in some cases, our renderer's hierarchy may contain
@@ -540,7 +538,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
                     LOGGER.error(() -> MessageFormatUtil.format(
                             IoLogMessageConstant.PAGE_WAS_FLUSHED_ACTION_WILL_NOT_BE_PERFORMED,
                             "area clipping"));
-                    clippedArea = new Rectangle(-INF / 2 , -INF / 2, INF, INF);
+                    clippedArea = new Rectangle(-INF / 2, -INF / 2, INF, INF);
                 } else {
                     clippedArea = page.getPageSize();
                 }
@@ -879,7 +877,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
             overflowRenderer.deleteOwnProperty(Property.FORCED_PLACEMENT);
         }
 
-        return new AbstractRenderer[] {splitRenderer, overflowRenderer};
+        return new AbstractRenderer[]{splitRenderer, overflowRenderer};
     }
 
     boolean stopLayoutingChildrenIfChildResultNotFull(LayoutResult returnResult) {
@@ -988,7 +986,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
 
         if (blockWidth != null && (
-                        blockWidth < parentBBox.getWidth() ||
+                blockWidth < parentBBox.getWidth() ||
                         isPositioned() ||
                         rotation != null ||
                         (!isOverflowFit(overflowX)))) {
