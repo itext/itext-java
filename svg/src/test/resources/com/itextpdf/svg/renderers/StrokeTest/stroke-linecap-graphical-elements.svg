@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="675">
+  <style>
+    .case { fill: none; stroke: black; stroke-width: 12; }
+    .highlight { fill: none; stroke: red; stroke-width: 1; }
+  </style>
+
+  <text x="10" y="25">stroke-linecap: butt on path</text>
+  <path class="case" stroke-linecap="butt" d="M50,60 H200"/>
+  <text x="10" y="100">stroke-linecap: butt on polyline</text>
+  <polyline class="case" stroke-linecap="butt" points="50,140 125,120 200,140"/>
+  <text x="10" y="175">stroke-linecap: butt on line</text>
+  <line class="case" stroke-linecap="butt" x1="50" y1="210" x2="200" y2="210"/>
+
+  <text x="10" y="250">stroke-linecap: round on path</text>
+  <path class="case" stroke-linecap="round" d="M50,285 H200"/>
+  <text x="10" y="325">stroke-linecap: round on polyline</text>
+  <polyline class="case" stroke-linecap="round" points="50,365 125,345 200,365"/>
+  <text x="10" y="400">stroke-linecap: round on line</text>
+  <line class="case" stroke-linecap="round" x1="50" y1="435" x2="200" y2="435"/>
+
+  <text x="10" y="475">stroke-linecap: square on path</text>
+  <path class="case" stroke-linecap="square" d="M50,510 H200"/>
+  <text x="10" y="550">stroke-linecap: square on polyline</text>
+  <polyline class="case" stroke-linecap="square" points="50,590 125,570 200,590"/>
+  <text x="10" y="625">stroke-linecap: square on line</text>
+  <line class="case" stroke-linecap="square" x1="50" y1="660" x2="200" y2="660"/>
+
+  <path class="highlight" d="M50,60 H200
+      M50,140 L125,120 L200,140 M50,210 H200
+      M50,285 H200 M50,365 L125,345 L200,365 M50,435 H200
+      M50,510 H200 M50,590 L125,570 L200,590 M50,660 H200"/>
+</svg>

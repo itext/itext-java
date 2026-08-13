@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="720">
+  <style>
+    .case { fill: none; stroke: black; stroke-width: 3; stroke-dasharray: 6 4; font-size: 26px; }
+    .context { fill: black; font-size: 26px; }
+    .styled { fill: gray; stroke: black; stroke-width: 3; stroke-dasharray: 6 4; }
+    .highlight { fill: none; stroke: red; stroke-width: 0.5; font-size: 26px; }
+  </style>
+  <defs>
+    <path id="miter-text-path" d="M40,135 Q160,95 320,135"/>
+    <path id="round-text-path" d="M40,375 Q160,335 320,375"/>
+    <path id="bevel-text-path" d="M40,615 Q160,575 320,615"/>
+  </defs>
+
+  <text x="10" y="25">stroke-linejoin: miter on dashed text</text>
+  <text class="case" stroke-linejoin="miter" x="40" y="60">Hello World</text>
+  <text x="10" y="90">stroke-linejoin: miter on dashed textPath</text>
+  <text class="case"><textPath stroke-linejoin="miter" href="#miter-text-path">Hello World</textPath></text>
+  <text x="10" y="170">stroke-linejoin: miter on dashed tspan</text>
+  <text class="context" x="40" y="215">Hello <tspan class="styled" stroke-linejoin="miter">styled</tspan> World</text>
+
+  <text x="10" y="265">stroke-linejoin: round on dashed text</text>
+  <text class="case" stroke-linejoin="round" x="40" y="300">Hello World</text>
+  <text x="10" y="330">stroke-linejoin: round on dashed textPath</text>
+  <text class="case"><textPath stroke-linejoin="round" href="#round-text-path">Hello World</textPath></text>
+  <text x="10" y="410">stroke-linejoin: round on dashed tspan</text>
+  <text class="context" x="40" y="455">Hello <tspan class="styled" stroke-linejoin="round">styled</tspan> World</text>
+
+  <text x="10" y="505">stroke-linejoin: bevel on dashed text</text>
+  <text class="case" stroke-linejoin="bevel" x="40" y="540">Hello World</text>
+  <text x="10" y="570">stroke-linejoin: bevel on dashed textPath</text>
+  <text class="case"><textPath stroke-linejoin="bevel" href="#bevel-text-path">Hello World</textPath></text>
+  <text x="10" y="650">stroke-linejoin: bevel on dashed tspan</text>
+  <text class="context" x="40" y="695">Hello <tspan class="styled" stroke-linejoin="bevel">styled</tspan> World</text>
+
+  <text class="highlight" x="40" y="60">Hello World</text>
+  <path class="highlight" d="M40,135 Q160,95 320,135"/>
+  <text class="highlight" x="40" y="215">Hello styled World</text>
+  <text class="highlight" x="40" y="300">Hello World</text>
+  <path class="highlight" d="M40,375 Q160,335 320,375"/>
+  <text class="highlight" x="40" y="455">Hello styled World</text>
+  <text class="highlight" x="40" y="540">Hello World</text>
+  <path class="highlight" d="M40,615 Q160,575 320,615"/>
+  <text class="highlight" x="40" y="695">Hello styled World</text>
+</svg>

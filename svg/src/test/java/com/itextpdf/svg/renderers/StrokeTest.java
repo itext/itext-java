@@ -22,8 +22,11 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
@@ -102,6 +105,80 @@ public class StrokeTest extends SvgIntegrationTest {
     //TODO DEVSIX-2258: update cmp after supporting
     public void strokeAttributesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-attributes");
+    }
+
+    @Test
+    public void strokeLinecapGraphicalElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linecap-graphical-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    public void strokeLinecapTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linecap-text-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    public void strokeLinecapDashedTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linecap-dashed-text-elements");
+    }
+
+    @Test
+    public void strokeLinejoinGraphicalElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linejoin-graphical-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    public void strokeLinejoinTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linejoin-text-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    public void strokeLinejoinDashedTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linejoin-dashed-text-elements");
+    }
+
+    @Test
+    public void strokeMiterlimitGraphicalElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-miterlimit-graphical-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    public void strokeMiterlimitTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-miterlimit-text-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    public void strokeMiterlimitDashedTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-miterlimit-dashed-text-elements");
+    }
+
+    @Test
+    public void strokeCombinedGraphicalPropertiesTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-combined-graphical-properties");
     }
 
     @Test
