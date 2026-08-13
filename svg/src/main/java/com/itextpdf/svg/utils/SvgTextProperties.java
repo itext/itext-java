@@ -23,7 +23,7 @@
 package com.itextpdf.svg.utils;
 
 import com.itextpdf.kernel.colors.Color;
-import com.itextpdf.kernel.colors.DeviceGray;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.properties.Underline;
 
 import java.util.ArrayList;
@@ -34,14 +34,17 @@ import java.util.List;
  * Created for internal usage.
  */
 public class SvgTextProperties {
-    private Color fillColor = DeviceGray.BLACK;
-    private Color strokeColor = DeviceGray.BLACK;
-    private float fillOpacity = 1f;
-    private float strokeOpacity = 1f;
+    private Color fillColor = PdfCanvasConstants.DEFAULT_FILL_COLOR;
+    private Color strokeColor = PdfCanvasConstants.DEFAULT_STROKE_COLOR;
+    private float fillOpacity = PdfCanvasConstants.DEFAULT_FILL_OPACITY;
+    private float strokeOpacity = PdfCanvasConstants.DEFAULT_STROKE_OPACITY;
     private float[] dashArray = null;
     private float dashPhase = 0f;
-    private float lineWidth = 1f;
+    private float lineWidth = PdfCanvasConstants.DEFAULT_LINE_WIDTH;
     private List<Underline> textDecoration = new ArrayList<>();
+    private int lineCapStyle = PdfCanvasConstants.DEFAULT_LINE_CAP_STYLE;
+    private int lineJoinStyle = PdfCanvasConstants.DEFAULT_LINE_JOIN_STYLE;
+    private float miterLimit = PdfCanvasConstants.DEFAULT_MITER_LIMIT;
 
     /**
      * Creates new {@link SvgTextProperties} instance.
@@ -64,6 +67,72 @@ public class SvgTextProperties {
         this.dashPhase = textProperties.getDashPhase();
         this.lineWidth = textProperties.getLineWidth();
         this.textDecoration = textProperties.getTextDecoration();
+        this.lineCapStyle = textProperties.getLineCapStyle();
+        this.lineJoinStyle = textProperties.getLineJoinStyle();
+        this.miterLimit = textProperties.getMiterLimit();
+    }
+
+    /**
+     * Gets line cap style.
+     *
+     * @return line cap style
+     */
+    public int getLineCapStyle() {
+        return lineCapStyle;
+    }
+
+    /**
+     * Sets line cap style.
+     *
+     * @param lineCapStyle line cap style to set
+     *
+     * @return this same {@link SvgTextProperties} instance
+     */
+    public SvgTextProperties setLineCapStyle(int lineCapStyle) {
+        this.lineCapStyle = lineCapStyle;
+        return this;
+    }
+
+    /**
+     * Gets line join style.
+     *
+     * @return line join style
+     */
+    public int getLineJoinStyle() {
+        return lineJoinStyle;
+    }
+
+    /**
+     * Sets line join style.
+     *
+     * @param lineJoinStyle line join style to set
+     *
+     * @return this same {@link SvgTextProperties} instance
+     */
+    public SvgTextProperties setLineJoinStyle(int lineJoinStyle) {
+        this.lineJoinStyle = lineJoinStyle;
+        return this;
+    }
+
+    /**
+     * Gets miter limit.
+     *
+     * @return miter limit
+     */
+    public float getMiterLimit() {
+        return miterLimit;
+    }
+
+    /**
+     * Sets miter limit.
+     *
+     * @param miterLimit miter limit to set
+     *
+     * @return this same {@link SvgTextProperties} instance
+     */
+    public SvgTextProperties setMiterLimit(float miterLimit) {
+        this.miterLimit = miterLimit;
+        return this;
     }
 
     /**

@@ -1702,6 +1702,18 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 canvas.setStrokeColor(strokeColor.getColor());
                 strokeColor.applyStrokeTransparency(canvas);
             }
+            Integer lineCapStyle = this.getPropertyAsInteger(Property.LINE_CAP_STYLE);
+            if (lineCapStyle != null) {
+                canvas.setLineCapStyle((int) lineCapStyle);
+            }
+            Integer lineJoinStyle = this.getPropertyAsInteger(Property.LINE_JOIN_STYLE);
+            if (lineJoinStyle != null) {
+                canvas.setLineJoinStyle((int) lineJoinStyle);
+            }
+            Float miterLimit = this.getPropertyAsFloat(Property.MITER_LIMIT);
+            if (miterLimit != null) {
+                canvas.setMiterLimit((float) miterLimit);
+            }
         }
         if (fontColor != null) {
             canvas.setFillColor(fontColor.getColor());

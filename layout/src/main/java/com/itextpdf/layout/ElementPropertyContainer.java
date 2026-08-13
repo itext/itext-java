@@ -712,6 +712,99 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
     }
 
     /**
+     * Gets the line cap style for the current element.
+     *
+     * <p>
+     * The line cap style is the shape used at the end of open subpaths when they are stroked.
+     *
+     * <p>
+     * For values see {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineCapStyle}
+     *
+     * @return the current line cap style
+     */
+    public Integer getLineCapStyle() {
+        return this.<Integer>getProperty(Property.LINE_CAP_STYLE);
+    }
+
+    /**
+     * Sets the line cap style for the current element.
+     *
+     * <p>
+     * The line cap style is the shape used at the end of open subpaths when they are stroked.
+     *
+     * <p>
+     * For values see {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineCapStyle}
+     *
+     * @param lineCapStyle a new line cap style
+     *
+     * @return this Element
+     */
+    public T setLineCapStyle(int lineCapStyle) {
+        setProperty(Property.LINE_CAP_STYLE, lineCapStyle);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Gets the line join style for the current element.
+     *
+     * <p>
+     * The line join style is the shape used at the corners of paths when they are stroked.
+     *
+     * <p>
+     * For values see {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineJoinStyle}
+     *
+     * @return the current line join style
+     */
+    public Integer getLineJoinStyle() {
+        return this.<Integer>getProperty(Property.LINE_JOIN_STYLE);
+    }
+
+    /**
+     * Sets the line join style for the current element.
+     *
+     * <p>
+     * The line join style is the shape used at the corners of paths when they are stroked.
+     *
+     * <p>
+     * For values see {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineJoinStyle}
+     *
+     * @param lineJoinStyle a new line join style
+     *
+     * @return this Element
+     */
+    public T setLineJoinStyle(int lineJoinStyle) {
+        setProperty(Property.LINE_JOIN_STYLE, lineJoinStyle);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Gets the miter limit for the current element.
+     *
+     * <p>
+     * The miter limit is the maximum ratio of miter length to stroke width used to draw a miter join.
+     *
+     * @return the current miter limit
+     */
+    public Float getMiterLimit() {
+        return this.<Float>getProperty(Property.MITER_LIMIT);
+    }
+
+    /**
+     * Sets the miter limit for the current element.
+     *
+     * <p>
+     * The miter limit is the maximum ratio of miter length to stroke width used to draw a miter join.
+     *
+     * @param miterLimit a new miter limit
+     *
+     * @return this Element
+     */
+    public T setMiterLimit(float miterLimit) {
+        setProperty(Property.MITER_LIMIT, miterLimit);
+        return (T) (Object) this;
+    }
+
+    /**
      * Simulates bold style for a font.
      * Be aware that using correct bold font is highly preferred over this option.
      *

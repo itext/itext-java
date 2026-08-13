@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250124014559+03'00')/ModDate(D:20250124014559+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
+<</CreationDate(D:20260817150011+03'00')/ModDate(D:20260817150011+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -34,7 +34,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 1200 1200]/Length 1265/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1200 1200]/Length 1289/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1200 1200 re
 W
 n
@@ -43,6 +43,7 @@ q
 q
 1 1 0 RG
 2.25 w
+4 M
 % rect
 0 0 600 600 re
 B
@@ -52,6 +53,7 @@ q
 0 0.50196 0 rg
 1 0 0 RG
 0.75 w
+4 M
 % ellipse
 600 300 m
 600 465.69 465.69 600 300 600 c
@@ -64,6 +66,7 @@ q
 1 0 0 rg
 0 0 0 RG
 1.5 w
+4 M
 % rect
 87.86 87.86 424.33 424.33 re
 B
@@ -95,6 +98,7 @@ q
 q
 1 1 0 RG
 2.25 w
+4 M
 % rect
 0 0 600 600 re
 B
@@ -109,6 +113,7 @@ q
 0 0.50196 0 rg
 1 0 0 RG
 0.75 w
+4 M
 % ellipse
 600 300 m
 600 465.69 465.69 600 300 600 c
@@ -121,6 +126,7 @@ q
 1 0 0 rg
 0 0 0 RG
 1.5 w
+4 M
 % rect
 87.86 87.86 424.33 424.33 re
 B
@@ -162,8 +168,8 @@ xref
 0000000573 00000 n 
 0000000744 00000 n 
 trailer
-<</ID [<94cfc78e2522a1937626d6de65d0d61711ddd9375c56b0427c53ef9f49d11245807f7b065db874375cda42ecd7cbd172553922072433ee7fe85815f8e20b513c><94cfc78e2522a1937626d6de65d0d61711ddd9375c56b0427c53ef9f49d11245807f7b065db874375cda42ecd7cbd172553922072433ee7fe85815f8e20b513c>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<8a137291babc2ac9874bedcd8d196cc7bb78d4a4c6575b66088ced5df7fc180b1bb29da5718bcce6ad117c6fa7c083963995ce927801cad491b54373fd9269f2><8a137291babc2ac9874bedcd8d196cc7bb78d4a4c6575b66088ced5df7fc180b1bb29da5718bcce6ad117c6fa7c083963995ce927801cad491b54373fd9269f2>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-2136
+2160
 %%EOF

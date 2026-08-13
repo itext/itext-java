@@ -137,6 +137,6 @@ public class SvgIntegrationTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename + ".pdf",
                         sourceFolder + "cmp_" + filename + ".pdf",
-                        destinationFolder, "diff_"));
+                        destinationFolder));
     }
 }

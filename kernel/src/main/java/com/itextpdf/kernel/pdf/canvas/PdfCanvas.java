@@ -1443,8 +1443,9 @@ public class PdfCanvas {
      * @see PdfCanvasConstants.LineCapStyle for possible values.
      */
     public PdfCanvas setLineCapStyle(int lineCapStyle) {
-        if (currentGs.getLineCapStyle() == lineCapStyle)
+        if (currentGs.getLineCapStyle() == lineCapStyle) {
             return this;
+        }
         currentGs.setLineCapStyle(lineCapStyle);
         contentStream.getOutputStream()
                 .writeInteger(lineCapStyle).writeSpace()
@@ -1461,8 +1462,9 @@ public class PdfCanvas {
      * @see PdfCanvasConstants.LineJoinStyle for possible values.
      */
     public PdfCanvas setLineJoinStyle(int lineJoinStyle) {
-        if (currentGs.getLineJoinStyle() == lineJoinStyle)
+        if (currentGs.getLineJoinStyle() == lineJoinStyle) {
             return this;
+        }
         currentGs.setLineJoinStyle(lineJoinStyle);
         contentStream.getOutputStream()
                 .writeInteger(lineJoinStyle).writeSpace()
@@ -1478,8 +1480,9 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setMiterLimit(float miterLimit) {
-        if (currentGs.getMiterLimit() == miterLimit)
+        if (currentGs.getMiterLimit() == miterLimit) {
             return this;
+        }
         currentGs.setMiterLimit(miterLimit);
         contentStream.getOutputStream()
                 .writeFloat(miterLimit).writeSpace()

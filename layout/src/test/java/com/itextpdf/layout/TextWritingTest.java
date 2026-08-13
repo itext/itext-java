@@ -127,6 +127,18 @@ public class TextWritingTest extends ExtendedITextTest {
         text4.setDashPattern(new float[]{0.5f, 1f}, 0f);
         document.add(new Paragraph(text4));
 
+        Text text5 = new Text("Stroke with dashes and line cap/join styles").
+                setTextRenderingMode(PdfCanvasConstants.TextRenderingMode.FILL_STROKE).
+                setStrokeColor(ColorConstants.BLUE).
+                setStrokeWidth(1f).
+                setFontColor(ColorConstants.PINK).
+                setFontSize(30)
+                .setDashPattern(new float[]{1f, 2f}, 2f)
+                .setLineCapStyle(PdfCanvasConstants.LineCapStyle.ROUND)
+                .setLineJoinStyle(PdfCanvasConstants.LineJoinStyle.MITER)
+                .setMiterLimit(4f);
+        document.add(new Paragraph(text5));
+
         document.close();
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff"));

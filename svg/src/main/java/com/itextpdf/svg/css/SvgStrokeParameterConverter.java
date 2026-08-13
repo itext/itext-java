@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.css;
 
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.SvgDrawContext;
@@ -41,13 +42,14 @@ public final class SvgStrokeParameterConverter {
     }
 
     /**
-     * Convert stroke related SVG parameters and attributes into PDF line dash parameters.
+     * Converts stroke related SVG parameters and attributes into PDF line dash parameters.
      *
-     * @param strokeDashArray 'stroke-dasharray' css property value.
-     * @param strokeDashOffset 'stroke-dashoffset' css property value.
-     * @param fontSize font size of the current element.
-     * @param context the svg draw context.
-     * @return PDF line dash parameters represented by {@link PdfLineDashParameters}.
+     * @param strokeDashArray 'stroke-dasharray' css property value
+     * @param strokeDashOffset 'stroke-dashoffset' css property value
+     * @param fontSize font size of the current element
+     * @param context the svg draw context
+     *
+     * @return PDF line dash parameters represented by {@link PdfLineDashParameters}
      */
     public static PdfLineDashParameters convertStrokeDashParameters(String strokeDashArray, String strokeDashOffset,
             float fontSize, SvgDrawContext context) {
@@ -81,6 +83,65 @@ public final class SvgStrokeParameterConverter {
         }
 
         return null;
+    }
+
+    /**
+     * Converts stroke line cap style from SVG to PDF.
+     *
+     * @param strokeLineCap 'stroke-linecap' svg property value
+     *
+     * @return PDF line cap style represented by {@link PdfCanvasConstants.LineCapStyle}
+     */
+    public static int convertStrokeLineCapStyle(String strokeLineCap) {
+        if (strokeLineCap != null) {
+            switch (strokeLineCap.toLowerCase()) {
+                case SvgConstants.Values.ROUND:
+                    return PdfCanvasConstants.LineCapStyle.ROUND;
+                case SvgConstants.Values.SQUARE:
+                    return PdfCanvasConstants.LineCapStyle.PROJECTING_SQUARE;
+                default:
+                    return PdfCanvasConstants.LineCapStyle.BUTT;
+            }
+        }
+        return PdfCanvasConstants.DEFAULT_LINE_CAP_STYLE;
+    }
+
+    /**
+     * Converts stroke line join style from SVG to PDF.
+     *
+     * @param strokeLineJoin 'stroke-linejoin' svg property value
+     *
+     * @return PDF line join style represented by {@link PdfCanvasConstants.LineJoinStyle}
+     */
+    public static int convertStrokeLineJoinStyle(String strokeLineJoin) {
+        if (strokeLineJoin != null) {
+            switch (strokeLineJoin.toLowerCase()) {
+                case SvgConstants.Values.ROUND:
+                    return PdfCanvasConstants.LineJoinStyle.ROUND;
+                case SvgConstants.Values.BEVEL:
+                    return PdfCanvasConstants.LineJoinStyle.BEVEL;
+                default:
+                    return PdfCanvasConstants.LineJoinStyle.MITER;
+            }
+        }
+        return PdfCanvasConstants.DEFAULT_LINE_JOIN_STYLE;
+    }
+
+    /**
+     * Converts stroke miter limit from SVG to PDF.
+     *
+     * @param strokeMiterLimit 'stroke-miterlimit' svg property value
+     *
+     * @return PDF miter limit
+     */
+    public static float convertStrokeMiterLimit(String strokeMiterLimit) {
+        if (strokeMiterLimit != null) {
+            final Float parsed = CssDimensionParsingUtils.parseFloat(strokeMiterLimit);
+            if (parsed != null) {
+                return (float) parsed;
+            }
+        }
+        return SvgConstants.Values.DEFAULT_MITER_LIMIT;
     }
 
     /**

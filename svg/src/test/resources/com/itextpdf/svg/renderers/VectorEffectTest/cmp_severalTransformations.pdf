@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250131175836+03'00')/ModDate(D:20250131175836+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
+<</CreationDate(D:20260817150553+03'00')/ModDate(D:20260817150553+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -36,13 +36,14 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 -67.5 450 532.5]/Length 3642/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 -67.5 450 532.5]/Length 3730/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 -67.5 450 600 re
 W
 n
 q
 0 0 0 RG
 0.75 w
+4 M
 % rect
 0.75 0.75 448.5 462 re
 S
@@ -55,6 +56,7 @@ q
 q
 0 0.50196 0.50196 RG
 3.75 w
+4 M
 % rect
 3.75 7.5 7.5 37.5 re
 S
@@ -62,6 +64,7 @@ Q
 q
 0 0.50196 0.50196 RG
 3.75 w
+4 M
 % rect
 0.14699 0.29398 -0.049 -0.58796 18.54 297.5 cm
 45.92 439.65 m
@@ -77,6 +80,7 @@ q
 q
 1 0.75294 0.79608 RG
 3.75 w
+4 M
 % ellipse
 18.75 112.5 m
 18.75 116.64 15.39 120 11.25 120 c
@@ -88,6 +92,7 @@ Q
 q
 1 0.75294 0.79608 RG
 3.75 w
+4 M
 % ellipse
 0.25198 0.17639 -0.08399 -0.35278 6.07 272.25 cm
 216 497.06 m
@@ -102,6 +107,7 @@ q
 q
 1 1 0 RG
 3.75 w
+4 M
 % ellipse
 11.25 165 m
 11.25 173.28 9.57 180 7.5 180 c
@@ -113,6 +119,7 @@ Q
 q
 1 1 0 RG
 3.75 w
+4 M
 % ellipse
 0.12599 0.25198 -0.042 -0.50397 -6.34 367.5 cm
 298.49 476.65 m
@@ -127,6 +134,7 @@ q
 q
 1 0.64706 0 RG
 2.25 w
+4 M
 % line
 16.5 150 m
 16.5 217.5 l
@@ -135,6 +143,7 @@ Q
 q
 1 0.64706 0 RG
 2.25 w
+4 M
 % line
 0.08399 0.16799 -0.028 -0.33598 -4.23 267.5 cm
 489.57 594.51 m
@@ -149,6 +158,7 @@ q
 q
 1 0 0 RG
 2.25 w
+4 M
 % path
 30 105 m
 34.5 165 l
@@ -161,6 +171,7 @@ Q
 q
 1 0 0 RG
 2.25 w
+4 M
 % path
 0.11245 0.37805 0.06462 -0.70505 -8.02 353.32 cm
 141.15 342.79 m
@@ -177,6 +188,7 @@ q
 q
 0.67843 0.84706 0.90196 RG
 3.75 w
+4 M
 % polyline
 22.5 7.5 m
 26.25 18.75 l
@@ -190,6 +202,7 @@ Q
 q
 0.67843 0.84706 0.90196 RG
 3.75 w
+4 M
 % polyline
 0.03006 0.26122 0.12404 -0.45541 -2.89 74.97 cm
 210.56 153.64 m
@@ -204,6 +217,7 @@ Q
 q
 0 0 1 RG
 3.75 w
+4 M
 % polyline
 37.5 7.5 m
 41.25 18.75 l
@@ -216,6 +230,7 @@ Q
 q
 0 0 1 RG
 3.75 w
+4 M
 % polyline
 0.03006 0.26122 0.12404 -0.45541 -2.89 74.97 cm
 358.76 238.65 m
@@ -236,6 +251,7 @@ BT
 1 Tr
 1.5 w
 0 0.50196 0 RG
+4 M
 0 g
 (A)Tj
 ET
@@ -247,6 +263,7 @@ BT
 1 Tr
 1.5 w
 0.50196 0 0.50196 RG
+4 M
 0 g
 ( B)Tj
 ET
@@ -258,6 +275,7 @@ BT
 1 Tr
 1.5 w
 0 0.50196 0 RG
+4 M
 0 g
 ( C)Tj
 ET
@@ -271,6 +289,7 @@ BT
 1 Tr
 1.5 w
 0 0.50196 0 RG
+4 M
 0 g
 (A)Tj
 ET
@@ -282,6 +301,7 @@ BT
 1 Tr
 1.5 w
 0.50196 0 0.50196 RG
+4 M
 0 g
 ( B)Tj
 ET
@@ -293,6 +313,7 @@ BT
 1 Tr
 1.5 w
 0 0.50196 0 RG
+4 M
 0 g
 ( C)Tj
 ET
@@ -302,6 +323,7 @@ q
 0.6 0 0 0.6 9 127.5 cm
 0 0 0 RG
 3.75 w
+4 M
 q
 % rect
 % circle rounded rect
@@ -352,8 +374,8 @@ xref
 0000000569 00000 n 
 0000000786 00000 n 
 trailer
-<</ID [<36daed65aba0ef55cbcffcf2720e136fc9184f758f67bb22cd0aadb203e8d10899bc97aad693456273ed0f0f79c56f51242c09d0f90b38cfb3f5f045bc5e8860><36daed65aba0ef55cbcffcf2720e136fc9184f758f67bb22cd0aadb203e8d10899bc97aad693456273ed0f0f79c56f51242c09d0f90b38cfb3f5f045bc5e8860>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<f8d1cf2db9c1476c644578aa76cbce6de34d70f06753d9774c3d4a147d685eaa082f8a92dc9c5566cda7d5d6e9e3bbdba47e647c15b72edc4b472f469a0b8789><f8d1cf2db9c1476c644578aa76cbce6de34d70f06753d9774c3d4a147d685eaa082f8a92dc9c5566cda7d5d6e9e3bbdba47e647c15b72edc4b472f469a0b8789>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-4559
+4647
 %%EOF

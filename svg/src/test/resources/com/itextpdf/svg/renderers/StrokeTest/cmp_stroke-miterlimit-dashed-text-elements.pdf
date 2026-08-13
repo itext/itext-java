@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20260813180136+03'00')/ModDate(D:20260813180136+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
+<</CreationDate(D:20260817145820+03'00')/ModDate(D:20260817145820+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -34,7 +34,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 375 540]/Length 2930/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 540]/Length 2994/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 375 540 re
 W
 n
@@ -57,6 +57,7 @@ BT
 [4.5 3] 0 d
 2.25 w
 0 0 0 RG
+1 M
 (Hello World)Tj
 ET
 Q
@@ -80,6 +81,7 @@ BT
 [4.5 3] 0 d
 2.25 w
 0 0 0 RG
+4 M
 (Hello World)Tj
 ET
 Q
@@ -111,6 +113,7 @@ BT
 [4.5 3] 0 d
 2.25 w
 0 0 0 RG
+1 M
 0.50196 0.50196 0.50196 rg
 (styled)Tj
 ET
@@ -143,6 +146,7 @@ BT
 [4.5 3] 0 d
 2.25 w
 0 0 0 RG
+4 M
 (Hello World)Tj
 ET
 Q
@@ -166,6 +170,7 @@ BT
 [4.5 3] 0 d
 2.25 w
 0 0 0 RG
+4 M
 (Hello World)Tj
 ET
 Q
@@ -197,6 +202,7 @@ BT
 [4.5 3] 0 d
 2.25 w
 0 0 0 RG
+4 M
 0.50196 0.50196 0.50196 rg
 (styled)Tj
 ET
@@ -252,6 +258,7 @@ BT
 [4.5 3] 0 d
 2.25 w
 0 0 0 RG
+4 M
 (Hello World)Tj
 ET
 Q
@@ -304,6 +311,7 @@ BT
 1 Tr
 0.375 w
 1 0 0 RG
+4 M
 (Hello World)Tj
 ET
 Q
@@ -311,6 +319,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % path
 30 101.25 m
 120 71.25 240 101.25 v
@@ -324,6 +333,7 @@ BT
 1 Tr
 0.375 w
 1 0 0 RG
+4 M
 (Hello styled World)Tj
 ET
 Q
@@ -336,6 +346,7 @@ BT
 1 Tr
 0.375 w
 1 0 0 RG
+4 M
 (Hello World)Tj
 ET
 Q
@@ -343,6 +354,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % path
 30 281.25 m
 120 251.25 240 281.25 v
@@ -356,6 +368,7 @@ BT
 1 Tr
 0.375 w
 1 0 0 RG
+4 M
 (Hello styled World)Tj
 ET
 Q
@@ -368,6 +381,7 @@ BT
 1 Tr
 0.375 w
 1 0 0 RG
+4 M
 (Hello World)Tj
 ET
 Q
@@ -375,6 +389,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % path
 30 461.25 m
 120 431.25 240 461.25 v
@@ -388,6 +403,7 @@ BT
 1 Tr
 0.375 w
 1 0 0 RG
+4 M
 (Hello styled World)Tj
 ET
 Q
@@ -407,8 +423,8 @@ xref
 0000000569 00000 n 
 0000000737 00000 n 
 trailer
-<</ID [<60d64f5c8aa2fab430b15e805cdacc875577d13145addba3535c922628f4bf2cd3fd392fee7b12ec0591535661df5dba026794fc7a41b1c0ed976ce7e9198a1b><60d64f5c8aa2fab430b15e805cdacc875577d13145addba3535c922628f4bf2cd3fd392fee7b12ec0591535661df5dba026794fc7a41b1c0ed976ce7e9198a1b>]/Info 3 0 R/Root 1 0 R/Size 9>>
+<</ID [<4f2386824108da6e989a614f6c26b40096154f53a558c41a5680b6fa3261668d4acac32368ccf53b567e99fdcaa277f62ecad48869a3f86f1726844a5bf7b187><4f2386824108da6e989a614f6c26b40096154f53a558c41a5680b6fa3261668d4acac32368ccf53b567e99fdcaa277f62ecad48869a3f86f1726844a5bf7b187>]/Info 3 0 R/Root 1 0 R/Size 9>>
 %iText-Core-9.8.0-SNAPSHOT
 startxref
-3792
+3856
 %%EOF

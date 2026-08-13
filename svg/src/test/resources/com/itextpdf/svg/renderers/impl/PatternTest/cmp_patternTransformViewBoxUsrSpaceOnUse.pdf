@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250124014540+03'00')/ModDate(D:20250124014540+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
+<</CreationDate(D:20260817145857+03'00')/ModDate(D:20260817145857+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -33,7 +33,7 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[0 -93.4 450 543.4]/Length 170/Resources<</Pattern<</P1 8 0 R/P2 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 -93.4 450 543.4]/Length 178/Resources<</Pattern<</P1 8 0 R/P2 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 -93.4 450 636.81 re
 W
 n
@@ -43,6 +43,7 @@ q
 /P1 scn
 0 0.50196 0 RG
 0.75 w
+4 M
 % rect
 7.5 7.5 60 60 re
 B
@@ -53,6 +54,7 @@ q
 
 /P2 SCN
 7.5 w
+4 M
 % rect
 90 7.5 60 60 re
 B
@@ -61,10 +63,11 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[2.5 3.75 12.5 11.25]/Length 49/Matrix[1.06 1.06 -0.33731 0.72335 12.11 5.31]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 10/YStep 7.5>>stream
+<</BBox[2.5 3.75 12.5 11.25]/Length 53/Matrix[1.06 1.06 -0.33731 0.72335 12.11 5.31]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 10/YStep 7.5>>stream
 1 0 0 rg
 0 0 0 RG
 0.75 w
+4 M
 % rect
 0 0 7.5 7.5 re
 B
@@ -72,10 +75,11 @@ B
 endstream
 endobj
 9 0 obj
-<</BBox[2.5 3.75 12.5 11.25]/Length 49/Matrix[1.06 1.06 -0.33731 0.72335 12.11 5.31]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 10/YStep 7.5>>stream
+<</BBox[2.5 3.75 12.5 11.25]/Length 53/Matrix[1.06 1.06 -0.33731 0.72335 12.11 5.31]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 10/YStep 7.5>>stream
 1 0 0 rg
 0 0 0 RG
 0.75 w
+4 M
 % rect
 0 0 7.5 7.5 re
 B
@@ -92,11 +96,11 @@ xref
 0000000015 00000 n 
 0000000479 00000 n 
 0000000687 00000 n 
-0000000999 00000 n 
-0000001252 00000 n 
+0000001007 00000 n 
+0000001264 00000 n 
 trailer
-<</ID [<19bb47e2c843c4b007ca2143c12dfc196155a1af17bf816adc0099a77eb7d75b86f823bc56a2773c75a98c150d08955aa30872d68f4e6181ba85d3857a9b07d7><19bb47e2c843c4b007ca2143c12dfc196155a1af17bf816adc0099a77eb7d75b86f823bc56a2773c75a98c150d08955aa30872d68f4e6181ba85d3857a9b07d7>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<a38f015ed363304fa1c5550cab4570b280c8216428c67fc5aa276cb43ff6a024a9346c5ad0508d733bdddce94ccc974c8fe648b3f71f1d1d7de90532c7c66620><a38f015ed363304fa1c5550cab4570b280c8216428c67fc5aa276cb43ff6a024a9346c5ad0508d733bdddce94ccc974c8fe648b3f71f1d1d7de90532c7c66620>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-1505
+1521
 %%EOF

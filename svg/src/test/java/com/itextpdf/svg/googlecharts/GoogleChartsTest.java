@@ -77,7 +77,6 @@ public class GoogleChartsTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-4857 support stroke-linecap attribute
     public void calendarChart() throws IOException, java.io.IOException, InterruptedException {
         PageSize pageSize = PageSize.A4;
         TestUtils.convertSVGtoPDF(DESTINATION_FOLDER + "calendarChart.pdf",

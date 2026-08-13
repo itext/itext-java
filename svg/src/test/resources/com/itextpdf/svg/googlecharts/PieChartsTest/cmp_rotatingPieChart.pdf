@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250103180934+03'00')/ModDate(D:20250103180934+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20260817145747+03'00')/ModDate(D:20260817145747+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Bold/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -37,7 +37,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 675 375]/Length 1143/Resources<</ExtGState<</Gs1 10 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675 375]/Length 1159/Resources<</ExtGState<</Gs1 10 0 R>>/Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675 375 re
 W
 n
@@ -72,6 +72,7 @@ q
 0.06275 0.58824 0.09412 rg
 1 1 1 RG
 0.75 w
+4 M
 % path
 338.25 188.25 m
 453.03 201.12 l
@@ -86,6 +87,7 @@ q
 1 0.6 0 rg
 1 1 1 RG
 0.75 w
+4 M
 % path
 338.25 188.25 m
 452.63 172.19 l
@@ -110,6 +112,7 @@ q
 0.86275 0.22353 0.07059 rg
 1 1 1 RG
 0.75 w
+4 M
 % path
 338.25 188.25 m
 351.15 73.47 l
@@ -134,6 +137,7 @@ q
 0.2 0.4 0.8 rg
 1 1 1 RG
 0.75 w
+4 M
 % path
 338.25 188.25 m
 452 208.31 l
@@ -175,10 +179,10 @@ xref
 0000000517 00000 n 
 0000000658 00000 n 
 0000000826 00000 n 
-0000002128 00000 n 
+0000002144 00000 n 
 trailer
-<</ID [<e842073e9b69e3c8b97455124ab6817ceb7fc9abbbb07c1ef39f3092e3b5e4b1b4d6aa563f7fd606ff5dff5fc7b26ec022f4e8b8f820e62d2c6a4d527c06eb93><e842073e9b69e3c8b97455124ab6817ceb7fc9abbbb07c1ef39f3092e3b5e4b1b4d6aa563f7fd606ff5dff5fc7b26ec022f4e8b8f820e62d2c6a4d527c06eb93>]/Info 3 0 R/Root 1 0 R/Size 11>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<3f20c663a8cce374ecd1f4b727786f7d3f2c3df1eb0a71d1335f94c8a26c218b4c1524f98fbe4f3c3803e2bcff35351160366da213ab5ab17b9fee673cf44c71><3f20c663a8cce374ecd1f4b727786f7d3f2c3df1eb0a71d1335f94c8a26c218b4c1524f98fbe4f3c3803e2bcff35351160366da213ab5ab17b9fee673cf44c71>]/Info 3 0 R/Root 1 0 R/Size 11>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-2154
+2170
 %%EOF

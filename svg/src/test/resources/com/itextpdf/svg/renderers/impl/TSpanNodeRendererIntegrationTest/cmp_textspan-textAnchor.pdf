@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250108145142+03'00')/ModDate(D:20250108145142+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20260817145712+03'00')/ModDate(D:20260817145712+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -34,13 +34,14 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 225 450]/Length 11342/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 225 450]/Length 11754/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 225 450 re
 W
 n
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0 0 225 450 re
 S
@@ -52,6 +53,7 @@ q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 0.75 m
 0.75 -0.75 l
@@ -60,6 +62,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 -0.75 m
 0.75 0.75 l
@@ -68,6 +71,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 7.5 l
@@ -76,6 +80,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 7.5 m
 22.88 7.71 22.71 7.88 22.5 7.88 c
@@ -87,6 +92,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 15 l
@@ -95,6 +101,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 15 m
 22.88 15.21 22.71 15.38 22.5 15.38 c
@@ -106,6 +113,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 22.5 l
@@ -114,6 +122,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 22.5 m
 22.88 22.71 22.71 22.88 22.5 22.88 c
@@ -125,6 +134,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 30 l
@@ -133,6 +143,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 30 m
 22.88 30.21 22.71 30.38 22.5 30.38 c
@@ -186,6 +197,7 @@ q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 0.75 m
 0.75 -0.75 l
@@ -194,6 +206,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 -0.75 m
 0.75 0.75 l
@@ -202,6 +215,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 7.5 l
@@ -210,6 +224,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 7.5 m
 22.88 7.71 22.71 7.88 22.5 7.88 c
@@ -221,6 +236,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 15 l
@@ -229,6 +245,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 15 m
 22.88 15.21 22.71 15.38 22.5 15.38 c
@@ -240,6 +257,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 22.5 l
@@ -248,6 +266,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 22.5 m
 22.88 22.71 22.71 22.88 22.5 22.88 c
@@ -259,6 +278,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 30 l
@@ -267,6 +287,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 30 m
 22.88 30.21 22.71 30.38 22.5 30.38 c
@@ -284,6 +305,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (tspan no text anchor)Tj
 ET
 Q
@@ -294,6 +316,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (tspan start text anchor)Tj
 ET
 Q
@@ -304,6 +327,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (tspan middle text anchor)Tj
 ET
 Q
@@ -314,6 +338,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (tspan end text anchor)Tj
 ET
 Q
@@ -326,6 +351,7 @@ q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 0.75 m
 0.75 -0.75 l
@@ -334,6 +360,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 -0.75 m
 0.75 0.75 l
@@ -342,6 +369,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 7.5 l
@@ -350,6 +378,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 7.5 m
 22.88 7.71 22.71 7.88 22.5 7.88 c
@@ -361,6 +390,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 15 l
@@ -369,6 +399,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 15 m
 22.88 15.21 22.71 15.38 22.5 15.38 c
@@ -380,6 +411,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 22.5 l
@@ -388,6 +420,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 22.5 m
 22.88 22.71 22.71 22.88 22.5 22.88 c
@@ -399,6 +432,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 30 l
@@ -407,6 +441,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 30 m
 22.88 30.21 22.71 30.38 22.5 30.38 c
@@ -424,6 +459,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (Water is waving)Tj
 ET
 Q
@@ -434,6 +470,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (oceans are calling)Tj
 ET
 Q
@@ -444,6 +481,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (fire is burning)Tj
 ET
 Q
@@ -454,6 +492,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (deep inside)Tj
 ET
 Q
@@ -466,6 +505,7 @@ q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 0.75 m
 0.75 -0.75 l
@@ -474,6 +514,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 -0.75 m
 0.75 0.75 l
@@ -482,6 +523,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 7.5 l
@@ -490,6 +532,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 7.5 m
 22.88 7.71 22.71 7.88 22.5 7.88 c
@@ -501,6 +544,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 15 l
@@ -509,6 +553,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 15 m
 22.88 15.21 22.71 15.38 22.5 15.38 c
@@ -520,6 +565,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 22.5 l
@@ -528,6 +574,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 22.5 m
 22.88 22.71 22.71 22.88 22.5 22.88 c
@@ -539,6 +586,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 30 l
@@ -547,6 +595,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 30 m
 22.88 30.21 22.71 30.38 22.5 30.38 c
@@ -560,6 +609,7 @@ q
 q
 0 0.50196 0 RG
 0.3 w
+4 M
 % line
 22.5 7.5 m
 30 11.25 l
@@ -568,6 +618,7 @@ Q
 q
 0 0.50196 0 RG
 0.3 w
+4 M
 % ellipse
 30.75 11.25 m
 30.75 11.66 30.41 12 30 12 c
@@ -579,6 +630,7 @@ Q
 q
 0 0.50196 0 RG
 0.3 w
+4 M
 % line
 22.5 15 m
 15 18.75 l
@@ -587,6 +639,7 @@ Q
 q
 0 0.50196 0 RG
 0.3 w
+4 M
 % ellipse
 15.75 18.75 m
 15.75 19.16 15.41 19.5 15 19.5 c
@@ -598,6 +651,7 @@ Q
 q
 0 0.50196 0 RG
 0.3 w
+4 M
 % line
 22.5 22.5 m
 15 18.75 l
@@ -606,6 +660,7 @@ Q
 q
 0 0.50196 0 RG
 0.3 w
+4 M
 % ellipse
 15.75 15 m
 15.75 15.41 15.41 15.75 15 15.75 c
@@ -617,6 +672,7 @@ Q
 q
 0 0.50196 0 RG
 0.3 w
+4 M
 % line
 22.5 30 m
 30 26.25 l
@@ -625,6 +681,7 @@ Q
 q
 0 0.50196 0 RG
 0.3 w
+4 M
 % ellipse
 30.75 26.25 m
 30.75 26.66 30.41 27 30 27 c
@@ -642,6 +699,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (Heaven can wait for me as I'm grounded)Tj
 ET
 Q
@@ -652,6 +710,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (Here on earth eternally)Tj
 ET
 Q
@@ -662,6 +721,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (Do I really see what I see)Tj
 ET
 Q
@@ -672,6 +732,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (Or is it only true in my mind?)Tj
 ET
 Q
@@ -684,6 +745,7 @@ q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 0.75 m
 0.75 -0.75 l
@@ -692,6 +754,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 -0.75 m
 0.75 0.75 l
@@ -700,6 +763,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 7.5 l
@@ -708,6 +772,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 7.5 m
 22.88 7.71 22.71 7.88 22.5 7.88 c
@@ -719,6 +784,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 15 l
@@ -727,6 +793,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 15 m
 22.88 15.21 22.71 15.38 22.5 15.38 c
@@ -738,6 +805,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 22.5 l
@@ -746,6 +814,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 22.5 m
 22.88 22.71 22.71 22.88 22.5 22.88 c
@@ -757,6 +826,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 30 l
@@ -765,6 +835,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 30 m
 22.88 30.21 22.71 30.38 22.5 30.38 c
@@ -782,6 +853,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (Did I really open my eyes)Tj
 ET
 Q
@@ -792,6 +864,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (Or is it still that I look inside?)Tj
 ET
 Q
@@ -802,6 +875,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (For one moment I knew eternity)Tj
 ET
 Q
@@ -812,6 +886,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (What I felt was so peaceful and calm)Tj
 ET
 Q
@@ -824,6 +899,7 @@ q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 0.75 m
 0.75 -0.75 l
@@ -832,6 +908,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 -0.75 m
 0.75 0.75 l
@@ -840,6 +917,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 7.5 l
@@ -848,6 +926,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 7.5 m
 22.88 7.71 22.71 7.88 22.5 7.88 c
@@ -859,6 +938,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 15 l
@@ -867,6 +947,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 15 m
 22.88 15.21 22.71 15.38 22.5 15.38 c
@@ -878,6 +959,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 22.5 l
@@ -886,6 +968,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 22.5 m
 22.88 22.71 22.71 22.88 22.5 22.88 c
@@ -897,6 +980,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 30 l
@@ -905,6 +989,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 30 m
 22.88 30.21 22.71 30.38 22.5 30.38 c
@@ -922,6 +1007,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (But still I am here thanks to gravity)Tj
 ET
 Q
@@ -932,6 +1018,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (And so I keep wandering on)Tj
 ET
 Q
@@ -942,6 +1029,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (Water is waving)Tj
 ET
 Q
@@ -952,6 +1040,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (Oceans are calling)Tj
 ET
 Q
@@ -964,6 +1053,7 @@ q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 0.75 m
 0.75 -0.75 l
@@ -972,6 +1062,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 -0.75 -0.75 m
 0.75 0.75 l
@@ -980,6 +1071,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 7.5 l
@@ -988,6 +1080,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 7.5 m
 22.88 7.71 22.71 7.88 22.5 7.88 c
@@ -999,6 +1092,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 15 l
@@ -1007,6 +1101,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 15 m
 22.88 15.21 22.71 15.38 22.5 15.38 c
@@ -1018,6 +1113,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 22.5 l
@@ -1026,6 +1122,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 22.5 m
 22.88 22.71 22.71 22.88 22.5 22.88 c
@@ -1037,6 +1134,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % line
 0 0 m
 22.5 30 l
@@ -1045,6 +1143,7 @@ Q
 q
 0 0 1 RG
 0.15 w
+4 M
 % ellipse
 22.88 30 m
 22.88 30.21 22.71 30.38 22.5 30.38 c
@@ -1062,6 +1161,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (tspan no text anchor)Tj
 ET
 Q
@@ -1079,6 +1179,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (tspan middle text anchor)Tj
 ET
 Q
@@ -1089,6 +1190,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (tspan middle text anchor)Tj
 ET
 Q
@@ -1106,6 +1208,7 @@ BT
 2 Tr
 0.19844 w
 1 0 0 RG
+4 M
 (tspan end text anchor)Tj
 ET
 Q
@@ -1133,8 +1236,8 @@ xref
 0000000569 00000 n 
 0000000737 00000 n 
 trailer
-<</ID [<7e5425303a19447cc8b7663e02a7bf9031b9af0e73326ccd8a621bb9e9fc521ea0256aee010628346e02fd62fc20f495accceda3aeb25f7e8d6d1f19bbbeb214><7e5425303a19447cc8b7663e02a7bf9031b9af0e73326ccd8a621bb9e9fc521ea0256aee010628346e02fd62fc20f495accceda3aeb25f7e8d6d1f19bbbeb214>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<2cb6ee286aebe699979bb1c9d9e301aa989b16743efbb4a65303dd4a5c4c00797518d55923fef3f901289b826eb938aab7755843f7e3cae122cedd346ec264ff><2cb6ee286aebe699979bb1c9d9e301aa989b16743efbb4a65303dd4a5c4c00797518d55923fef3f901289b826eb938aab7755843f7e3cae122cedd346ec264ff>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-12205
+12617
 %%EOF

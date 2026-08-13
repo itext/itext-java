@@ -27,6 +27,7 @@ import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.IElement;
@@ -439,6 +440,11 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             context.getSvgTextProperties().setLineWidth(strokeProperties.getWidth());
             if (!CssUtils.compareFloats(strokeProperties.getOpacity(), 1f)) {
                 context.getSvgTextProperties().setStrokeOpacity(strokeProperties.getOpacity());
+            }
+            context.getSvgTextProperties().setLineCapStyle(strokeProperties.getLineCapStyle());
+            context.getSvgTextProperties().setLineJoinStyle(strokeProperties.getLineJoinStyle());
+            if (strokeProperties.getLineJoinStyle() == PdfCanvasConstants.LineJoinStyle.MITER) {
+                context.getSvgTextProperties().setMiterLimit(strokeProperties.getMiterLimit());
             }
         }
     }

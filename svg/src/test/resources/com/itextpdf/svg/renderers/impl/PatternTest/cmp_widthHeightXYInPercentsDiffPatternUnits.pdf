@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250124014542+03'00')/ModDate(D:20250124014542+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
+<</CreationDate(D:20260817145907+03'00')/ModDate(D:20260817145907+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -33,7 +33,7 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[0 -93.4 450 543.4]/Length 313/Resources<</Pattern<</P1 8 0 R/P2 9 0 R/P3 10 0 R/P4 11 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 -93.4 450 543.4]/Length 329/Resources<</Pattern<</P1 8 0 R/P2 9 0 R/P3 10 0 R/P4 11 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 -93.4 450 636.81 re
 W
 n
@@ -43,6 +43,7 @@ q
 /P1 scn
 0 0.50196 0 RG
 0.75 w
+4 M
 % rect
 7.5 7.5 60 60 re
 B
@@ -53,6 +54,7 @@ q
 
 /P2 SCN
 7.5 w
+4 M
 % rect
 90 15 45 45 re
 B
@@ -63,6 +65,7 @@ q
 /P3 scn
 0 0.50196 0 RG
 0.75 w
+4 M
 % rect
 7.5 90 60 60 re
 B
@@ -73,6 +76,7 @@ q
 
 /P4 SCN
 7.5 w
+4 M
 % rect
 90 97.5 45 45 re
 B
@@ -158,13 +162,13 @@ xref
 0000000015 00000 n 
 0000000479 00000 n 
 0000000687 00000 n 
-0000001162 00000 n 
-0000001442 00000 n 
-0000001720 00000 n 
-0000001993 00000 n 
+0000001178 00000 n 
+0000001458 00000 n 
+0000001736 00000 n 
+0000002009 00000 n 
 trailer
-<</ID [<03d5851545e786d540a8585c54c606086314e43000e147589a8188d8ee2d3d51e4a0d1af533df8bc9b78fd56d71625ab27b2d7df466764d2853bfac430784bbb><03d5851545e786d540a8585c54c606086314e43000e147589a8188d8ee2d3d51e4a0d1af533df8bc9b78fd56d71625ab27b2d7df466764d2853bfac430784bbb>]/Info 3 0 R/Root 1 0 R/Size 12>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<78ffd05d68e4fb938df352497e56367e39e3903afce28cf756d63d2857e9d98aa57af86badc0c02ef5bef9b04b04b5f54e194acb4ac8fd9e4faaa82093b692c9><78ffd05d68e4fb938df352497e56367e39e3903afce28cf756d63d2857e9d98aa57af86badc0c02ef5bef9b04b04b5f54e194acb4ac8fd9e4faaa82093b692c9>]/Info 3 0 R/Root 1 0 R/Size 12>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-2266
+2282
 %%EOF

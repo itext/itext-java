@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250124014620+03'00')/ModDate(D:20250124014620+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
+<</CreationDate(D:20260817150145+03'00')/ModDate(D:20260817150145+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -31,7 +31,7 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 1200 600]/Length 16892/Resources<</XObject<</Fm1 8 0 R/Fm2 9 0 R/Fm3 10 0 R/Fm4 11 0 R/Fm5 12 0 R/Fm6 13 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1200 600]/Length 17036/Resources<</XObject<</Fm1 8 0 R/Fm2 9 0 R/Fm3 10 0 R/Fm4 11 0 R/Fm5 12 0 R/Fm6 13 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1200 600 re
 W
 n
@@ -40,6 +40,7 @@ q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 S
@@ -48,6 +49,7 @@ q
 1 0 0 1 112.5 56.25 cm
 0 0.50196 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -346,6 +348,7 @@ Q
 q
 0 0 0 RG
 3.75 w
+4 M
 % path
 37.5 112.5 m
 112.5 112.5 l
@@ -364,6 +367,7 @@ Q
 q
 1 0 0 RG
 0.075 w
+4 M
 % ellipse
 114 56.25 m
 114 57.08 113.33 57.75 112.5 57.75 c
@@ -375,6 +379,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % path
 150 18.75 m
 150 18.75 l
@@ -383,6 +388,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % ellipse
 114.75 56.25 m
 114.75 57.49 113.74 58.5 112.5 58.5 c
@@ -398,6 +404,7 @@ q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 S
@@ -406,6 +413,7 @@ q
 1 0 0 1 112.5 56.25 cm
 0 0.50196 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -704,6 +712,7 @@ Q
 q
 0 0 0 RG
 3.75 w
+4 M
 % path
 37.5 112.5 m
 112.5 112.5 l
@@ -723,6 +732,7 @@ Q
 q
 1 0 0 RG
 0.075 w
+4 M
 % ellipse
 114 56.25 m
 114 57.08 113.33 57.75 112.5 57.75 c
@@ -734,6 +744,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % path
 112.5 56.25 m
 118.5 71.25 l
@@ -742,6 +753,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % ellipse
 120.75 71.25 m
 120.75 72.49 119.74 73.5 118.5 73.5 c
@@ -757,6 +769,7 @@ q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 S
@@ -765,6 +778,7 @@ q
 1 0 0 1 112.5 56.25 cm
 0 0.50196 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -1063,6 +1077,7 @@ Q
 q
 0 0 0 RG
 3.75 w
+4 M
 % path
 37.5 112.5 m
 112.5 112.5 l
@@ -1082,6 +1097,7 @@ Q
 q
 1 0 0 RG
 0.075 w
+4 M
 % ellipse
 114 56.25 m
 114 57.08 113.33 57.75 112.5 57.75 c
@@ -1093,6 +1109,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % path
 112.5 56.25 m
 118.5 41.25 l
@@ -1101,6 +1118,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % ellipse
 120.75 41.25 m
 120.75 42.49 119.74 43.5 118.5 43.5 c
@@ -1116,6 +1134,7 @@ q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 S
@@ -1124,6 +1143,7 @@ q
 1 0 0 1 112.5 56.25 cm
 0 0.50196 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -1422,6 +1442,7 @@ Q
 q
 0 0 0 RG
 3.75 w
+4 M
 % path
 37.5 112.5 m
 112.5 112.5 l
@@ -1441,6 +1462,7 @@ Q
 q
 1 0 0 RG
 0.075 w
+4 M
 % ellipse
 114 56.25 m
 114 57.08 113.33 57.75 112.5 57.75 c
@@ -1452,6 +1474,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % path
 112.5 56.25 m
 106.5 41.25 l
@@ -1460,6 +1483,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % ellipse
 108.75 41.25 m
 108.75 42.49 107.74 43.5 106.5 43.5 c
@@ -1475,6 +1499,7 @@ q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 S
@@ -1483,6 +1508,7 @@ q
 1 0 0 1 112.5 56.25 cm
 0 0.50196 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -1781,6 +1807,7 @@ Q
 q
 0 0 0 RG
 3.75 w
+4 M
 % path
 37.5 112.5 m
 112.5 112.5 l
@@ -1800,6 +1827,7 @@ Q
 q
 1 0 0 RG
 0.075 w
+4 M
 % ellipse
 114 56.25 m
 114 57.08 113.33 57.75 112.5 57.75 c
@@ -1811,6 +1839,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % path
 112.5 56.25 m
 106.5 71.25 l
@@ -1819,6 +1848,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % ellipse
 108.75 71.25 m
 108.75 72.49 107.74 73.5 106.5 73.5 c
@@ -1834,6 +1864,7 @@ q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 S
@@ -1842,6 +1873,7 @@ q
 1 0 0 1 112.5 56.25 cm
 0 0.50196 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -2140,6 +2172,7 @@ Q
 q
 0 0 0 RG
 3.75 w
+4 M
 % path
 37.5 112.5 m
 75 112.5 l
@@ -2159,6 +2192,7 @@ Q
 q
 1 0 0 RG
 0.075 w
+4 M
 % ellipse
 114 56.25 m
 114 57.08 113.33 57.75 112.5 57.75 c
@@ -2170,6 +2204,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % path
 112.5 56.25 m
 99.75 65.63 l
@@ -2178,6 +2213,7 @@ Q
 q
 1 0 0 RG
 0.375 w
+4 M
 % ellipse
 102 65.63 m
 102 66.87 100.99 67.88 99.75 67.88 c
@@ -2191,7 +2227,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 7.5 7.5]/Length 927/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 7.5 7.5]/Length 943/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 7.5 7.5 re
 W
 n
@@ -2200,6 +2236,7 @@ q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 3.75 0 m
 3.75 2.07 2.07 3.75 0 3.75 c
@@ -2211,6 +2248,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 7.5 0 m
 7.5 4.14 4.14 7.5 0 7.5 c
@@ -2222,6 +2260,7 @@ Q
 q
 1 0 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -2298,6 +2337,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % path
 0 0 m
 7.5 3.75 l
@@ -2310,7 +2350,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 7.5 7.5]/Length 927/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 7.5 7.5]/Length 943/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 7.5 7.5 re
 W
 n
@@ -2319,6 +2359,7 @@ q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 3.75 0 m
 3.75 2.07 2.07 3.75 0 3.75 c
@@ -2330,6 +2371,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 7.5 0 m
 7.5 4.14 4.14 7.5 0 7.5 c
@@ -2341,6 +2383,7 @@ Q
 q
 1 0 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -2417,6 +2460,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % path
 0 0 m
 7.5 3.75 l
@@ -2429,7 +2473,7 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[0 0 7.5 7.5]/Length 927/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 7.5 7.5]/Length 943/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 7.5 7.5 re
 W
 n
@@ -2438,6 +2482,7 @@ q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 3.75 0 m
 3.75 2.07 2.07 3.75 0 3.75 c
@@ -2449,6 +2494,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 7.5 0 m
 7.5 4.14 4.14 7.5 0 7.5 c
@@ -2460,6 +2506,7 @@ Q
 q
 1 0 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -2536,6 +2583,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % path
 0 0 m
 7.5 3.75 l
@@ -2548,7 +2596,7 @@ Q
 endstream
 endobj
 11 0 obj
-<</BBox[0 0 7.5 7.5]/Length 927/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 7.5 7.5]/Length 943/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 7.5 7.5 re
 W
 n
@@ -2557,6 +2605,7 @@ q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 3.75 0 m
 3.75 2.07 2.07 3.75 0 3.75 c
@@ -2568,6 +2617,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 7.5 0 m
 7.5 4.14 4.14 7.5 0 7.5 c
@@ -2579,6 +2629,7 @@ Q
 q
 1 0 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -2655,6 +2706,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % path
 0 0 m
 7.5 3.75 l
@@ -2667,7 +2719,7 @@ Q
 endstream
 endobj
 12 0 obj
-<</BBox[0 0 7.5 7.5]/Length 927/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 7.5 7.5]/Length 943/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 7.5 7.5 re
 W
 n
@@ -2676,6 +2728,7 @@ q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 3.75 0 m
 3.75 2.07 2.07 3.75 0 3.75 c
@@ -2687,6 +2740,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 7.5 0 m
 7.5 4.14 4.14 7.5 0 7.5 c
@@ -2698,6 +2752,7 @@ Q
 q
 1 0 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -2774,6 +2829,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % path
 0 0 m
 7.5 3.75 l
@@ -2786,7 +2842,7 @@ Q
 endstream
 endobj
 13 0 obj
-<</BBox[0 0 7.5 7.5]/Length 927/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 7.5 7.5]/Length 943/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 7.5 7.5 re
 W
 n
@@ -2795,6 +2851,7 @@ q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 3.75 0 m
 3.75 2.07 2.07 3.75 0 3.75 c
@@ -2806,6 +2863,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 7.5 0 m
 7.5 4.14 4.14 7.5 0 7.5 c
@@ -2817,6 +2875,7 @@ Q
 q
 1 0 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -2893,6 +2952,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % path
 0 0 m
 7.5 3.75 l
@@ -2914,15 +2974,15 @@ xref
 0000000015 00000 n 
 0000000479 00000 n 
 0000000648 00000 n 
-0000017725 00000 n 
-0000018758 00000 n 
-0000019791 00000 n 
-0000020825 00000 n 
-0000021859 00000 n 
-0000022893 00000 n 
+0000017869 00000 n 
+0000018918 00000 n 
+0000019967 00000 n 
+0000021017 00000 n 
+0000022067 00000 n 
+0000023117 00000 n 
 trailer
-<</ID [<238e4c7553125af9644002087ee5861951c229056707fd15497ba32c2233b244288503cf87cf58ec94e4de391c32f32c86eeddf49462f362cb05af1e446151d1><238e4c7553125af9644002087ee5861951c229056707fd15497ba32c2233b244288503cf87cf58ec94e4de391c32f32c86eeddf49462f362cb05af1e446151d1>]/Info 3 0 R/Root 1 0 R/Size 14>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<f7bc1a664bde3024216c514fe5cf25cdba3c404afa0ec8db1819d73b4103c2ef62a63cc16b87a1d2328b8ada487ee965ec58713b0a7741e3368b2dd07e14ef9f><f7bc1a664bde3024216c514fe5cf25cdba3c404afa0ec8db1819d73b4103c2ef62a63cc16b87a1d2328b8ada487ee965ec58713b0a7741e3368b2dd07e14ef9f>]/Info 3 0 R/Root 1 0 R/Size 14>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-23927
+24167
 %%EOF

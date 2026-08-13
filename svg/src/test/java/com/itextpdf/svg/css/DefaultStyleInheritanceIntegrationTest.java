@@ -94,7 +94,6 @@ public class DefaultStyleInheritanceIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-4857 support stroke-linecap attribute
     public void strokeLinecapInheritanceTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"strokeLinecapInheritance");
     }
