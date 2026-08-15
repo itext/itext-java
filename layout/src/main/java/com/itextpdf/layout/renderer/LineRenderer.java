@@ -131,7 +131,7 @@ public class LineRenderer extends AbstractRenderer {
 
         TargetCounterHandler.addPageByID(this);
 
-        float curWidth = 0;
+        float curMainAxisOccupiedSize = 0;
         if (RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))
                 && hasChildRendererInHtmlMode()) {
             float[] ascenderDescender = LineHeightHelper.getActualAscenderDescender(this);
@@ -190,10 +190,10 @@ public class LineRenderer extends AbstractRenderer {
             Rectangle bbox;
             if (isVerticalWriting()) {
                 bbox = new Rectangle(layoutBox.getX(), layoutBox.getY(),
-                        layoutBox.getWidth(), layoutBox.getHeight() - curWidth);
+                        layoutBox.getWidth(), layoutBox.getHeight() - curMainAxisOccupiedSize);
             } else {
-                bbox = new Rectangle(layoutBox.getX() + curWidth, layoutBox.getY(),
-                        layoutBox.getWidth() - curWidth, layoutBox.getHeight());
+                bbox = new Rectangle(layoutBox.getX() + curMainAxisOccupiedSize, layoutBox.getY(),
+                        layoutBox.getWidth() - curMainAxisOccupiedSize, layoutBox.getHeight());
             }
 
             if (childRenderer instanceof AbsolutelyPositionedRenderer) {
@@ -225,10 +225,10 @@ public class LineRenderer extends AbstractRenderer {
                     IRenderer tabRenderer = getChildRenderers().get(childPos - 1);
                     tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox),
                             wasParentsHeightClipped));
-                    curWidth += tabRenderer.getOccupiedArea().getBBox().getWidth();
+                    curMainAxisOccupiedSize += tabRenderer.getOccupiedArea().getBBox().getWidth();
                     widthHandler.updateMaxChildWidth(tabRenderer.getOccupiedArea().getBBox().getWidth());
                 }
-                hangingTabStop = calculateTab(childRenderer, curWidth, layoutBox.getWidth());
+                hangingTabStop = calculateTab(childRenderer, curMainAxisOccupiedSize, layoutBox.getWidth());
                 if (childPos == getChildRenderers().size() - 1) {
                     hangingTabStop = null;
                 }
@@ -532,7 +532,7 @@ public class LineRenderer extends AbstractRenderer {
                         shouldBreakLayouting = false;
                         firstChildToRelayout = childPos;
                     } else {
-                        curWidth -=
+                        curMainAxisOccupiedSize -=
                                 TextSequenceWordWrapping.getCurWidthRelayoutedTextSequenceDecrement(
                                         childPos, lastFittingChildRendererData.childIndex, specialScriptLayoutResults);
                         childPos = lastFittingChildRendererData.childIndex;
@@ -558,7 +558,7 @@ public class LineRenderer extends AbstractRenderer {
                         shouldBreakLayouting = false;
                         firstChildToRelayout = childPos;
                     } else {
-                        curWidth -=
+                        curMainAxisOccupiedSize -=
                                 TextSequenceWordWrapping.getCurWidthRelayoutedTextSequenceDecrement(
                                         childPos, lastFittingChildRendererData.childIndex, textRendererLayoutResults);
                         childAscentDescent =
@@ -601,7 +601,7 @@ public class LineRenderer extends AbstractRenderer {
                     List<IRenderer> affectedRenderers = new ArrayList<>();
                     affectedRenderers.addAll(getChildRenderers().subList(lastTabIndex + 1, childPos + 1));
                     float tabWidth = calculateTab(
-                            layoutBox, curWidth, hangingTabStop, affectedRenderers, tabRenderer);
+                            layoutBox, curMainAxisOccupiedSize, hangingTabStop, affectedRenderers, tabRenderer);
 
                     tabRenderer.layout(new LayoutContext(new LayoutArea(layoutContext.getArea().getPageNumber(), bbox),
                             wasParentsHeightClipped));
@@ -617,17 +617,17 @@ public class LineRenderer extends AbstractRenderer {
                     }
                     float tabAndNextElemWidth = tabWidth + childResult.getOccupiedArea().getBBox().getWidth();
                     if (hangingTabStop.getTabAlignment() == TabAlignment.RIGHT
-                            && curWidth + tabAndNextElemWidth < hangingTabStop.getTabPosition()) {
-                        curWidth = hangingTabStop.getTabPosition();
+                            && curMainAxisOccupiedSize + tabAndNextElemWidth < hangingTabStop.getTabPosition()) {
+                        curMainAxisOccupiedSize = hangingTabStop.getTabPosition();
                     } else {
-                        curWidth += tabAndNextElemWidth;
+                        curMainAxisOccupiedSize += tabAndNextElemWidth;
                     }
                     widthHandler.updateMinChildWidth(minChildWidth + currChildTextIndent);
                     widthHandler.updateMaxChildWidth(tabWidth + maxChildWidth + currChildTextIndent);
                     hangingTabStop = null;
                 } else if (null == hangingTabStop) {
                     if (childResult.getOccupiedArea() != null && childResult.getOccupiedArea().getBBox() != null) {
-                        curWidth += isVerticalWriting() ?
+                        curMainAxisOccupiedSize += isVerticalWriting() ?
                                 childResult.getOccupiedArea().getBBox().getHeight() :
                                 childResult.getOccupiedArea().getBBox().getWidth();
                     }
@@ -639,12 +639,12 @@ public class LineRenderer extends AbstractRenderer {
                         float maxLineWidth = Math.max(occupiedArea.getBBox().getWidth(),
                                 childResult.getOccupiedArea().getBBox().getWidth());
                         occupiedArea.setBBox(new Rectangle(layoutBox.getX(),
-                                layoutBox.getY() + layoutBox.getHeight() - curWidth,
-                                maxLineWidth, curWidth));
+                                layoutBox.getY() + layoutBox.getHeight() - curMainAxisOccupiedSize,
+                                maxLineWidth, curMainAxisOccupiedSize));
                     } else {
                         occupiedArea.setBBox(
                                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight,
-                                        curWidth, maxHeight));
+                                        curMainAxisOccupiedSize, maxHeight));
                     }
                 }
             }
