@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20260817150613+03'00')/ModDate(D:20260817150613+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
+<</CreationDate(D:20260817154926+03'00')/ModDate(D:20260817154926+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -31,7 +31,7 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 750 750]/Length 1081/Resources<</XObject<</Fm1 8 0 R/Fm2 9 0 R/Fm3 10 0 R/Fm4 11 0 R/Fm5 12 0 R/Fm6 13 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 750 750]/Length 1087/Resources<</XObject<</Fm1 8 0 R/Fm2 9 0 R/Fm3 10 0 R/Fm4 11 0 R/Fm5 12 0 R/Fm6 13 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 750 750 re
 W
 n
@@ -44,6 +44,7 @@ q
 75 150 l
 97.5 135 l
 15 90 l
+h
 S
 q
 0 0 0 rg
@@ -77,6 +78,7 @@ q
 75 225 l
 247.5 210 l
 165 165 l
+h
 S
 q
 0 0 0 rg
@@ -110,6 +112,7 @@ q
 375 262.5 l
 337.5 390 l
 315 315 l
+h
 S
 q
 0 0 0 rg
@@ -252,15 +255,15 @@ xref
 0000000015 00000 n 
 0000000479 00000 n 
 0000000647 00000 n 
-0000001911 00000 n 
-0000002093 00000 n 
-0000002266 00000 n 
-0000002449 00000 n 
-0000002623 00000 n 
-0000002806 00000 n 
+0000001917 00000 n 
+0000002099 00000 n 
+0000002272 00000 n 
+0000002455 00000 n 
+0000002629 00000 n 
+0000002812 00000 n 
 trailer
-<</ID [<7c61bb0538da51e2207643d6ba96ebf8c7be18d3f7caea8205a2938b63c9d00d20c44237e27f8740b5e83234b1219b1dc2c9f7be06f5b1ca69007aaf8277394b><7c61bb0538da51e2207643d6ba96ebf8c7be18d3f7caea8205a2938b63c9d00d20c44237e27f8740b5e83234b1219b1dc2c9f7be06f5b1ca69007aaf8277394b>]/Info 3 0 R/Root 1 0 R/Size 14>>
+<</ID [<6d8b1a34aea7a50304be2d87c5b94b6400da9db7e7999c40ae8615d67992048cc723ad7ec1f89d706d87c5e718db9ac2f78cb49faf3b8f110ed40c422dda12e9><6d8b1a34aea7a50304be2d87c5b94b6400da9db7e7999c40ae8615d67992048cc723ad7ec1f89d706d87c5e718db9ac2f78cb49faf3b8f110ed40c422dda12e9>]/Info 3 0 R/Root 1 0 R/Size 14>>
 %iText-Core-9.8.0-SNAPSHOT
 startxref
-2980
+2986
 %%EOF

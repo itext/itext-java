@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20260817145907+03'00')/ModDate(D:20260817145907+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
+<</CreationDate(D:20260817154938+03'00')/ModDate(D:20260817154938+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -85,7 +85,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 7.5 7.5]/Length 100/Matrix[0.8 0 0 0.8 7.5 7.5]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
+<</BBox[0 0 7.5 7.5]/Length 102/Matrix[0.8 0 0 0.8 7.5 7.5]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
 0 0 1 rg
 % polyline
 0 0 m
@@ -97,12 +97,13 @@ endobj
 7.5 0 l
 3.75 1.5 l
 0 0 l
+h
 f
 
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 7.5 7.5]/Length 100/Matrix[0.6 0 0 0.6 90 15]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
+<</BBox[0 0 7.5 7.5]/Length 102/Matrix[0.6 0 0 0.6 90 15]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
 0 0 1 rg
 % polyline
 0 0 m
@@ -114,12 +115,13 @@ endobj
 7.5 0 l
 3.75 1.5 l
 0 0 l
+h
 f
 
 endstream
 endobj
 10 0 obj
-<</BBox[0 0 7.5 7.5]/Length 100/Matrix[6 0 0 6 0 0]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
+<</BBox[0 0 7.5 7.5]/Length 102/Matrix[6 0 0 6 0 0]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
 0 0 0 rg
 % polyline
 0 0 m
@@ -131,12 +133,13 @@ endobj
 7.5 0 l
 3.75 1.5 l
 0 0 l
+h
 f
 
 endstream
 endobj
 11 0 obj
-<</BBox[0 0 7.5 7.5]/Length 100/Matrix[6 0 0 6 0 0]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
+<</BBox[0 0 7.5 7.5]/Length 102/Matrix[6 0 0 6 0 0]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
 0 0 0 rg
 % polyline
 0 0 m
@@ -148,6 +151,7 @@ endobj
 7.5 0 l
 3.75 1.5 l
 0 0 l
+h
 f
 
 endstream
@@ -163,12 +167,12 @@ xref
 0000000479 00000 n 
 0000000687 00000 n 
 0000001178 00000 n 
-0000001458 00000 n 
-0000001736 00000 n 
-0000002009 00000 n 
+0000001460 00000 n 
+0000001740 00000 n 
+0000002015 00000 n 
 trailer
-<</ID [<78ffd05d68e4fb938df352497e56367e39e3903afce28cf756d63d2857e9d98aa57af86badc0c02ef5bef9b04b04b5f54e194acb4ac8fd9e4faaa82093b692c9><78ffd05d68e4fb938df352497e56367e39e3903afce28cf756d63d2857e9d98aa57af86badc0c02ef5bef9b04b04b5f54e194acb4ac8fd9e4faaa82093b692c9>]/Info 3 0 R/Root 1 0 R/Size 12>>
+<</ID [<bb0f823ef3ec214118fff3756eeaf774b79020889711d1b13d2623716bf3e8ec94b4d47dc91568bfb399b336ab6775e5efca39d27664399932cdb0912ff3a77c><bb0f823ef3ec214118fff3756eeaf774b79020889711d1b13d2623716bf3e8ec94b4d47dc91568bfb399b336ab6775e5efca39d27664399932cdb0912ff3a77c>]/Info 3 0 R/Root 1 0 R/Size 12>>
 %iText-Core-9.8.0-SNAPSHOT
 startxref
-2282
+2290
 %%EOF

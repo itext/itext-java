@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20260817145844+03'00')/ModDate(D:20260817145844+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
+<</CreationDate(D:20260817154930+03'00')/ModDate(D:20260817154930+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -108,7 +108,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 0.075 0.075]/Length 100/Matrix[80 0 0 80 7.5 15]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 0.075/YStep 0.075>>stream
+<</BBox[0 0 0.075 0.075]/Length 102/Matrix[80 0 0 80 7.5 15]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 0.075/YStep 0.075>>stream
 0 0 0 rg
 % polyline
 0 0 m
@@ -120,12 +120,13 @@ endobj
 7.5 0 l
 3.75 1.5 l
 0 0 l
+h
 f
 
 endstream
 endobj
 10 0 obj
-<</BBox[0 0 0.075 0.075]/Length 100/Matrix[60 0 0 60 90 26.25]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 0.075/YStep 0.075>>stream
+<</BBox[0 0 0.075 0.075]/Length 102/Matrix[60 0 0 60 90 26.25]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 0.075/YStep 0.075>>stream
 0 0 0 rg
 % polyline
 0 0 m
@@ -137,12 +138,13 @@ endobj
 7.5 0 l
 3.75 1.5 l
 0 0 l
+h
 f
 
 endstream
 endobj
 11 0 obj
-<</BBox[0 0 7.5 7.5]/Length 100/Matrix[0.8 0 0 0.8 7.5 97.5]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
+<</BBox[0 0 7.5 7.5]/Length 102/Matrix[0.8 0 0 0.8 7.5 97.5]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
 0 0 0 rg
 % polyline
 0 0 m
@@ -154,12 +156,13 @@ endobj
 7.5 0 l
 3.75 1.5 l
 0 0 l
+h
 f
 
 endstream
 endobj
 12 0 obj
-<</BBox[0 0 7.5 7.5]/Length 100/Matrix[0.6 0 0 0.6 90 105]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
+<</BBox[0 0 7.5 7.5]/Length 102/Matrix[0.6 0 0 0.6 90 105]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 7.5/YStep 7.5>>stream
 0 0 0 rg
 % polyline
 0 0 m
@@ -171,6 +174,7 @@ endobj
 7.5 0 l
 3.75 1.5 l
 0 0 l
+h
 f
 
 endstream
@@ -187,12 +191,12 @@ xref
 0000000569 00000 n 
 0000000777 00000 n 
 0000001449 00000 n 
-0000001734 00000 n 
-0000002022 00000 n 
-0000002304 00000 n 
+0000001736 00000 n 
+0000002026 00000 n 
+0000002310 00000 n 
 trailer
-<</ID [<2f995a26b375fc44389ae2df7b45606525f34abd1960c2f419e622c495ee4faf96022c94bd2d6b441e877eeb7093240d385c8599f879126d6b0701338d65338c><2f995a26b375fc44389ae2df7b45606525f34abd1960c2f419e622c495ee4faf96022c94bd2d6b441e877eeb7093240d385c8599f879126d6b0701338d65338c>]/Info 3 0 R/Root 1 0 R/Size 13>>
+<</ID [<1720fcd8ef03d999cd8906c95a4e08e7df1d23b492c81f6c521ccf8d92ea2eafd29b05a343c0f3113e54bdd0ab064d79f47ddec996b7f0fdd05818de65d26a7f><1720fcd8ef03d999cd8906c95a4e08e7df1d23b492c81f6c521ccf8d92ea2eafd29b05a343c0f3113e54bdd0ab064d79f47ddec996b7f0fdd05818de65d26a7f>]/Info 3 0 R/Root 1 0 R/Size 13>>
 %iText-Core-9.8.0-SNAPSHOT
 startxref
-2584
+2592
 %%EOF
