@@ -33,27 +33,26 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ColumnChartsTest extends SvgIntegrationTest {
-
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/ColumnChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/ColumnChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/ColumnChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/ColumnChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void columnDualYChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "columnDualYChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "columnDualYChart");
     }
 
     @Test
     public void columnMaterialChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "columnMaterialChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "columnMaterialChart");
     }
 
     @Test
     public void columnTopXChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "columnTopXChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "columnTopXChart");
     }
 }

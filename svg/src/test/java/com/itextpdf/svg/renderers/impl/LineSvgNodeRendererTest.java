@@ -43,19 +43,18 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/LineSvgNodeRendererTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/LineSvgNodeRendererTest/";
-
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/LineSvgNodeRendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/LineSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void lineRendererTest() throws IOException, InterruptedException {
         String filename = "lineSvgRendererTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> lineProperties = new HashMap<>();
@@ -76,13 +75,13 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
         root.draw(context);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void lineWithEmpyAttributesTest() throws IOException, InterruptedException {
         String filename = "lineWithEmpyAttributesTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> lineProperties = new HashMap<>();
@@ -96,13 +95,13 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
         root.draw(context);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void invalidAttributeTest01() throws IOException, InterruptedException {
         String filename = "invalidAttributeTest01.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
         ISvgNodeRenderer root = new LineSvgNodeRenderer();
         Map<String, String> lineProperties = new HashMap<>();
@@ -116,9 +115,8 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
         context.pushCanvas(cv);
         root.draw(context);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_"));
     }
-
 
     @Test
     public void invalidAttributeTest02() throws IOException {
@@ -129,9 +127,8 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
         lineProperties.put("y2", "0 2 0");
         lineProperties.put("stroke", "orange");
 
-
         String filename = "invalidAttributes02.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         LineSvgNodeRenderer root = new LineSvgNodeRenderer();
@@ -149,7 +146,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
     @Test
     public void emptyPointsListTest() throws IOException, InterruptedException {
         String filename = "lineEmptyPointsListTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         ISvgNodeRenderer root = new LineSvgNodeRenderer();
@@ -164,7 +161,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
 
         int numPoints = ((LineSvgNodeRenderer) root).attributesAndStyles.size();
         Assertions.assertEquals(numPoints, 0);
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test

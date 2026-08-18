@@ -46,13 +46,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-
 @Tag("IntegrationTest")
 public class SvgTaggedConverterTest extends ExtendedITextTest {
 
-
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/converter/SvgTaggedConverterTest/";
-    public static final String DEST_FOLDER = TestUtil.getOutputPath() + "/svg/converter/SvgTaggedConverterTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/converter/SvgTaggedConverterTest/";
+    private static final String DEST_FOLDER = TestUtil.getOutputPath() + "/svg/converter/SvgTaggedConverterTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -77,7 +75,6 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(
                 destination, cmpFile, DEST_FOLDER, "diff_"));
     }
-
 
     @Test
     public void simpleUACompliantSvgTagged() throws Exception {
@@ -159,7 +156,6 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
 
         Assertions.assertNull(new VeraPdfValidator().validate(destination)); 
     }
-
 
     @Test
     public void simpleSvgTaggedWithConverterPropertiesTaggedAsArtifact() throws Exception {
@@ -245,7 +241,6 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         String source = SOURCE_FOLDER + "simple.svg";
         String destination = DEST_FOLDER + "drawOnPage01.pdf";
         String cmpFile = SOURCE_FOLDER + "cmp_drawOnPage01.pdf";
-
 
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);

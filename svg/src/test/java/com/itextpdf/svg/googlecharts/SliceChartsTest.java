@@ -34,21 +34,21 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class SliceChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/SliceChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/SliceChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/SliceChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/SliceChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void explodingSliceChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "explodingSliceChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "explodingSliceChart");
     }
 
     @Test
     public void removingSliceChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "removingSliceChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "removingSliceChart");
     }
 }

@@ -90,7 +90,6 @@ public class PdfRootSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
         Assertions.assertTrue(expected.equalsWithEpsilon(actual));
     }
 
-
     @Test
     public void calculateNestedViewportDifferentFromParentTest() {
         Rectangle expected = new Rectangle(0, 0, 500, 500);

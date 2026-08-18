@@ -67,12 +67,10 @@ public class MediaTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "mediaQueryHeight");
     }
 
-
     @Test
     public void mediaQueryMinHeightTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "mediaQueryMinHeight");
     }
-
 
     @Test
     public void mediaQueryMaxHeightTest() throws IOException, InterruptedException {

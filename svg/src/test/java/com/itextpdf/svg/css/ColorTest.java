@@ -34,8 +34,8 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ColorTest extends SvgIntegrationTest {
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/ColorTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/ColorTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/ColorTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/ColorTest/";
 
     @BeforeAll
     public static void beforeClass() {

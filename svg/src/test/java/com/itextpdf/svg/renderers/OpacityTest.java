@@ -33,8 +33,8 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class OpacityTest extends SvgIntegrationTest {
 
-  private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/OpacityTest/";
-  private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/OpacityTest/";
+  private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/OpacityTest/";
+  private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/OpacityTest/";
 
   @BeforeAll
   public static void beforeClass() {

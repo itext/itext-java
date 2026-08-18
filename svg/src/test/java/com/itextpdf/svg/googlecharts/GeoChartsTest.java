@@ -34,36 +34,36 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class GeoChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/GeoChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/GeoChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/GeoChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/GeoChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void geoChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "geoChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "geoChart");
     }
 
     @Test
     public void geoColoredChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "geoColoredChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "geoColoredChart");
     }
 
     @Test
     public void geoMarkerChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "geoMarkerChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "geoMarkerChart");
     }
 
     @Test
     public void geoPropontionalChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "geoPropontionalChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "geoPropontionalChart");
     }
 
     @Test
     public void geoTextChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "geoTextChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "geoTextChart");
     }
 }

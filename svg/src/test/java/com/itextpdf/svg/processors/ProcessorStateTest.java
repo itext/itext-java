@@ -112,13 +112,11 @@ public class ProcessorStateTest extends ExtendedITextTest{
         Assertions.assertTrue(result);
     }
 
-
     @Test
     public void processorStateTestPeekEmpty() {
         ProcessorState testProcessorState = new ProcessorState();
 
         Assertions.assertThrows(EmptyStackException.class, () -> testProcessorState.pop());
     }
-
 
 }

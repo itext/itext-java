@@ -42,7 +42,6 @@ public class ViewBoxSvgTagSvgNodeRendererIntegrationTest extends SvgIntegrationT
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
-
     //Uniform viewboxes
     @Test
     public void viewBox100x100() throws IOException, InterruptedException {

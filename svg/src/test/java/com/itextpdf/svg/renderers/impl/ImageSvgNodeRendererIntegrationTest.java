@@ -43,156 +43,156 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/ImageSvgNodeRendererTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/ImageSvgNodeRendererTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/ImageSvgNodeRendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/ImageSvgNodeRendererTest/";
 
     private ISvgConverterProperties properties;
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @BeforeEach
     public void before() {
         properties = new SvgConverterProperties()
-                .setBaseUri(sourceFolder);
+                .setBaseUri(SOURCE_FOLDER);
     }
 
     @Test
     public void singleImageTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImage", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "singleImage", properties);
     }
 
     @Test
     public void singleImageHrefTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageHref", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "singleImageHref", properties);
     }
 
     @Test
     public void imageWithRectangleTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithRectangle", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithRectangle", properties);
     }
 
     @Test
     public void imageWithMultipleShapesTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithMultipleShapes", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithMultipleShapes", properties);
     }
 
     @Test
     public void imageXYTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageXY", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageXY", properties);
     }
 
     @Test
     public void multipleImagesTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "multipleImages", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleImages", properties);
     }
 
     @Test
     public void nonSquareImageTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "nonSquareImage", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "nonSquareImage", properties);
     }
 
     @Test
     public void singleImageTranslateTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageTranslate", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "singleImageTranslate", properties);
     }
 
     @Test
     public void singleImageRotateTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageRotate", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "singleImageRotate", properties);
     }
 
     @Test
     public void singleImageScaleUpTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageScaleUp", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "singleImageScaleUp", properties);
     }
 
     @Test
     public void singleImageScaleDownTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageScaleDown", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "singleImageScaleDown", properties);
     }
 
     @Test
     public void singleImageMultipleTransformationsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "singleImageMultipleTransformations", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "singleImageMultipleTransformations", properties);
     }
 
     @Test
     public void twoImagesWithTransformationsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "twoImagesWithTransformations", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "twoImagesWithTransformations", properties);
     }
 
     @Test
     public void differentDimensionsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "differentDimensions", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "differentDimensions", properties);
     }
 
     @Test
     public void imageWithTransparencyTest() throws IOException, InterruptedException {
         //TODO: update cmp_ when DEVSIX-2258 fixed
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithTransparency", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithTransparency", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioNoneTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioNone", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioNone", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioInvalidValueTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioInvalidValue", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioInvalidValue", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioXMinYMinTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMinYMin", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioXMinYMin", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioXMinYMidTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMinYMid", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioXMinYMid", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioXMinYMaxTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMinYMax", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioXMinYMax", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioXMidYMinTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMidYMin", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioXMidYMin", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioXMidYMidTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMidYMid", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioXMidYMid", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioXMidYMaxTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMidYMax", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioXMidYMax", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioXMaxYMinTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMaxYMin", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioXMaxYMin", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioXMaxYMidTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMaxYMid", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioXMaxYMid", properties);
     }
 
     @Test
     public void imageWithPreserveAspectRatioXMaxYMaxTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "imageWithPreserveAspectRatioXMaxYMax", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithPreserveAspectRatioXMaxYMax", properties);
     }
 
     @Test
     public void imageRenderingTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "image-rendering", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "image-rendering", properties);
     }
 
     @Test
@@ -200,14 +200,14 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
             @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG)
     })
     public void imageWithDescriptionsTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "image-descriptions", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "image-descriptions", properties);
     }
 
     //TODO DEVSIX-4589: update after supporting
     //TODO DEVSIX-4901: update after supporting
     @Test
     public void imageBase64WithUrlTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "base64Image", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "base64Image", properties);
     }
 
     @Test
@@ -216,7 +216,7 @@ public class ImageSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
             @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_IMAGE_WITH_GIVEN_BASE_URI)
     })
     public void webPImageWithoutWebPModuleTest() throws IOException {
-        convertToSinglePage(new File(sourceFolder + "webPImageWithoutWebPModule.svg"),
-                new File(destinationFolder + "webPImageWithoutWebPModule.pdf"), properties);
+        convertToSinglePage(new File(SOURCE_FOLDER + "webPImageWithoutWebPModule.svg"),
+                new File(DESTINATION_FOLDER + "webPImageWithoutWebPModule.pdf"), properties);
     }
 }

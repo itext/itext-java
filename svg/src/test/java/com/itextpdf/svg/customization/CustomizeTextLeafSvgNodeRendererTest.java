@@ -50,8 +50,8 @@ import org.junit.jupiter.api.Test;
 
 public class CustomizeTextLeafSvgNodeRendererTest extends SvgIntegrationTest {
 
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/customization/CustomizeTextLeafSvgNodeRendererTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/customization/CustomizeTextLeafSvgNodeRendererTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/customization/CustomizeTextLeafSvgNodeRendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/customization/CustomizeTextLeafSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

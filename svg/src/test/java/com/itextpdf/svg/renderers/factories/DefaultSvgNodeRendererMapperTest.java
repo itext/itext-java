@@ -25,13 +25,13 @@ package com.itextpdf.svg.renderers.factories;
 import com.itextpdf.test.ExtendedITextTest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("UnitTest")
 public class DefaultSvgNodeRendererMapperTest extends ExtendedITextTest {
 
-    private DefaultSvgNodeRendererMapper mapper = new DefaultSvgNodeRendererMapper();
+    private final DefaultSvgNodeRendererMapper mapper = new DefaultSvgNodeRendererMapper();
 
     @Test
     public void mapperNotEmptyTest() {

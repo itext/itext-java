@@ -36,9 +36,8 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontSizeTest extends SvgIntegrationTest {
-
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/processors/impl/font/FontSizeTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/processors/impl/font/FontSizeTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/processors/impl/font/FontSizeTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/processors/impl/font/FontSizeTest/";
 
     @BeforeAll
     public static void beforeClass() {

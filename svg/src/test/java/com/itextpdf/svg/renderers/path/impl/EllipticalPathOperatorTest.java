@@ -177,7 +177,6 @@ public class EllipticalPathOperatorTest extends ExtendedITextTest {
         assertPointArrayArrayEquals(expected, actual);
     }
 
-
     @Test
     public void zeroRotationRandomPointTest() {
         Point[][] input = new Point[][]{{new Point(50, 30)}};

@@ -34,101 +34,101 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class CircleNodeRendererIntegrationTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/CircleSvgNodeRendererTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/CircleSvgNodeRendererTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/CircleSvgNodeRendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/CircleSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void basicCircleTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicCircle");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicCircle");
     }
 
     @Test
     public void relativeCircleTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "relativeCircle");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativeCircle");
     }
 
     @Test
     public void circleCxCyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleCxCyAbsent");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleCxCyAbsent");
     }
 
     @Test
     public void circleCxAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleCxAbsent");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleCxAbsent");
     }
 
     @Test
     public void circleCxNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleCxNegative");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleCxNegative");
     }
 
     @Test
     public void circleCyAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleCyAbsent");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleCyAbsent");
     }
 
     @Test
     public void circleCyNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleCyNegative");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleCyNegative");
     }
 
     @Test
     public void circleRAbsentTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleRAbsent");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleRAbsent");
     }
 
     @Test
     public void circleRNegativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleRNegative");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleRNegative");
     }
 
     @Test
     public void circleTranslatedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleTranslated");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleTranslated");
     }
 
     @Test
     public void circleRotatedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleRotated");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleRotated");
     }
 
     @Test
     public void circleScaledUpTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleScaledUp");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleScaledUp");
     }
 
     @Test
     public void circleScaledDownTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleScaledDown");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleScaledDown");
     }
 
     @Test
     public void circleScaledXYTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleScaledXY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleScaledXY");
     }
 
     @Test
     public void circleSkewXTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleSkewX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleSkewX");
     }
 
     @Test
     public void circleSkewYTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleSkewY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleSkewY");
     }
 
     @Test
     public void circleWithBigStrokeWidthTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circleWithBigStrokeWidth");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circleWithBigStrokeWidth");
     }
 
     @Test
     public void circleShapeRenderingTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "shape-rendering");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "shape-rendering");
     }
 }

@@ -65,7 +65,6 @@ public class DummySvgNodeRenderer implements ISvgNodeRenderer {
         return parent;
     }
 
-
     @Override
     public void draw(SvgDrawContext context) {
         System.out.println(name + ": Drawing in dummy node");

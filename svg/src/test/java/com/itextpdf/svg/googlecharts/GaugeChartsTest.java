@@ -34,26 +34,26 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class GaugeChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/GaugeChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/GaugeChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/GaugeChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/GaugeChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void gaugeCharts() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "gaugeChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "gaugeChart");
     }
 
     @Test
     public void gauge2Charts() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "gauge2Chart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "gauge2Chart");
     }
 
     @Test
     public void gauge3Charts() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "gauge3Chart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "gauge3Chart");
     }
 }

@@ -55,7 +55,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @org.junit.jupiter.api.Tag("UnitTest")
 public class SvgStyleResolverTest extends ExtendedITextTest{
-    private static final String baseUri = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
+    private static final String BASE_URI = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
 
     //Single element test
     //Inherits values from parent?
@@ -88,7 +88,6 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         expected.put("stroke", "#da0000");
         expected.put("font-size", "12pt");
 
-
         Assertions.assertEquals(expected, actual);
     }
 
@@ -103,7 +102,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         JsoupElementNode node = new JsoupElementNode(jsoupLink);
 
         SvgConverterProperties scp = new SvgConverterProperties();
-        scp.setBaseUri(baseUri);
+        scp.setBaseUri(BASE_URI);
 
         SvgProcessorContext processorContext = new SvgProcessorContext(scp);
         SvgStyleResolver sr = new SvgStyleResolver(node, processorContext);
@@ -135,7 +134,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         JsoupElementNode node = new JsoupElementNode(jsoupLink);
 
         SvgConverterProperties scp = new SvgConverterProperties();
-        scp.setBaseUri(baseUri);
+        scp.setBaseUri(BASE_URI);
 
         SvgProcessorContext processorContext = new SvgProcessorContext(scp);
         SvgStyleResolver sr = new SvgStyleResolver(node, processorContext);
@@ -159,13 +158,13 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         JsoupElementNode node = new JsoupElementNode(jsoupImage);
 
         SvgConverterProperties scp = new SvgConverterProperties();
-        scp.setBaseUri(baseUri);
+        scp.setBaseUri(BASE_URI);
 
         SvgProcessorContext processorContext = new SvgProcessorContext(scp);
         SvgStyleResolver sr = new SvgStyleResolver(node, processorContext);
         Map<String, String> attr = sr.resolveStyles(node, new SvgCssContext());
 
-        String fileName = baseUri + "itis.jpg";
+        String fileName = BASE_URI + "itis.jpg";
         final String expectedUrl = UrlUtil.toNormalizedURI(fileName).toString();
         String expectedUrlAnotherValidVersion;
 
@@ -191,7 +190,7 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         JsoupElementNode node = new JsoupElementNode(jsoupImage);
 
         SvgConverterProperties scp = new SvgConverterProperties();
-        scp.setBaseUri(baseUri);
+        scp.setBaseUri(BASE_URI);
 
         SvgProcessorContext processorContext = new SvgProcessorContext(scp);
         SvgStyleResolver sr = new SvgStyleResolver(node, processorContext);
@@ -323,7 +322,6 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         SvgStyleResolver resolver = new SvgStyleResolver(jSoupStyle, context);
         AbstractCssContext svgContext = new SvgCssContext();
 
-
         jSoupDiv.setStyles(resolver.resolveStyles(jSoupDiv, svgContext));
         Map<String, String> nestedStyles = resolver.resolveStyles(jSoupNestedParagraph, svgContext);
         Map<String, String> styles = resolver.resolveStyles(jSoupParagraph, svgContext);
@@ -420,7 +418,6 @@ public class SvgStyleResolverTest extends ExtendedITextTest{
         SvgProcessorContext context = new SvgProcessorContext(new SvgConverterProperties());
         SvgStyleResolver resolver = new SvgStyleResolver(jSoupStyle, context);
         AbstractCssContext svgContext = new SvgCssContext();
-
 
         jSoupUnorderedList.setStyles(resolver.resolveStyles(jSoupUnorderedList, svgContext));
         jSoupOrderedList.setStyles(resolver.resolveStyles(jSoupOrderedList, svgContext));

@@ -53,29 +53,28 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/PathSvgNodeRendererTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathSvgNodeRendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/PathSvgNodeRendererTest/";
     private ISvgConverterProperties properties;
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @BeforeEach
     public void before() {
         properties = new SvgConverterProperties()
-                .setBaseUri(sourceFolder);
+                .setBaseUri(SOURCE_FOLDER);
     }
     @Test
     public void pathNodeRendererMoveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
         pathShapes.put("d", "M 100,100, L300,100,L200,300,z");
-
 
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
         pathRenderer.setAttributesAndStyles(pathShapes);
@@ -86,7 +85,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         pathRenderer.draw(context);
         doc.close();
 
-        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        String result = new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
             Assertions.fail(result);
@@ -96,7 +95,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererMoveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest1.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
@@ -111,7 +110,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         pathRenderer.draw(context);
         doc.close();
 
-        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        String result = new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
             Assertions.fail(result);
@@ -121,12 +120,11 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererCurveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererCurveToTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
         pathShapes.put("d", "M100,200 C100,100 250,100 250,200 S400,300 400,200,z");
-
 
         ISvgNodeRenderer pathRenderer = new PathSvgNodeRenderer();
         pathRenderer.setAttributesAndStyles(pathShapes);
@@ -136,7 +134,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         context.pushCanvas(cv);
         pathRenderer.draw(context);
         doc.close();
-        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        String result = new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
             Assertions.fail(result);
@@ -146,7 +144,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererCurveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererCurveToTest1.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
@@ -161,7 +159,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         pathRenderer.draw(context);
         doc.close();
 
-        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        String result = new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
             Assertions.fail(result);
@@ -171,7 +169,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererQCurveToCurveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererQCurveToCurveToTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
@@ -185,7 +183,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         context.pushCanvas(cv);
         pathRenderer.draw(context);
         doc.close();
-        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        String result = new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
             Assertions.fail(result);
@@ -195,7 +193,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererQCurveToCurveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererQCurveToCurveToTest1.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
@@ -209,7 +207,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         context.pushCanvas(cv);
         pathRenderer.draw(context);
         doc.close();
-        String result = new CompareTool().compareByContent(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_");
+        String result = new CompareTool().compareByContent(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_");
 
         if (result != null && ! result.contains("No visual differences")) {
             Assertions.fail(result);
@@ -219,11 +217,11 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void smoothCurveTest1() throws IOException {
         String filename = "smoothCurveTest1.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest1.svg";
-        InputStream xmlStream = FileUtil.getInputStreamForFile(sourceFolder + svgFilename);
+        InputStream xmlStream = FileUtil.getInputStreamForFile(SOURCE_FOLDER + svgFilename);
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
@@ -240,11 +238,11 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void smoothCurveTest2() throws IOException {
         String filename = "smoothCurveTest2.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest2.svg";
-        InputStream xmlStream = FileUtil.getInputStreamForFile(sourceFolder + svgFilename);
+        InputStream xmlStream = FileUtil.getInputStreamForFile(SOURCE_FOLDER + svgFilename);
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
@@ -261,11 +259,11 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void smoothCurveTest3() throws IOException {
         String filename = "smoothCurveTest3.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest3.svg";
-        InputStream xmlStream = FileUtil.getInputStreamForFile(sourceFolder + svgFilename);
+        InputStream xmlStream = FileUtil.getInputStreamForFile(SOURCE_FOLDER + svgFilename);
         IElementNode rootTag = new JsoupXmlParser().parse(xmlStream, "ISO-8859-1");
 
         DefaultSvgProcessor processor = new DefaultSvgProcessor();
@@ -281,203 +279,202 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void pathNodeRendererCurveComplexTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "curves");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "curves");
     }
 
     @Test
     public void pathZOperatorMultipleZTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathZOperatorMultipleZTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathZOperatorMultipleZTest");
     }
 
     @Test
     public void pathZOperatorSingleZTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathZOperatorSingleZTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathZOperatorSingleZTest");
     }
 
     @Test
     public void pathZOperatorSingleZInstructionsAfterTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathZOperatorSingleZInstructionsAfterTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathZOperatorSingleZInstructionsAfterTest");
     }
 
     @Test
     public void invalidZOperatorTest() throws IOException, InterruptedException {
         Assertions.assertThrows(SvgProcessingException.class,
-                () -> convertAndCompare(sourceFolder, destinationFolder, "invalidZOperatorTest01")
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidZOperatorTest01")
         );
     }
 
     @Test
     public void invalidOperatorTest() throws IOException, InterruptedException {
         Assertions.assertThrows(SvgProcessingException.class,
-                () -> convertAndCompare(sourceFolder, destinationFolder, "invalidOperatorTest01")
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidOperatorTest01")
         );
     }
 
-
     @Test
     public void pathLOperatorMultipleCoordinates() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathLOperatorMultipleCoordinates");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathLOperatorMultipleCoordinates");
     }
 
     @Test
     public void pathVOperatorTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathVOperatorTest01");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathVOperatorTest01");
     }
 
     @Test
     public void pathZOperatorContinuePathingTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathZOperatorContinuePathingTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathZOperatorContinuePathingTest");
     }
 
     @Test
     public void pathVOperatorMultipleArgumentsTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathVOperatorMultipleArgumentsTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathVOperatorMultipleArgumentsTest");
     }
 
     @Test
     public void pathHOperatorSimpleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathHOperatorSimpleTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathHOperatorSimpleTest");
     }
 
     @Test
     public void pathHandVOperatorTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathHandVOperatorTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathHandVOperatorTest");
     }
 
     @Test
     public void curveToContinuePathingTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "curveToContinuePathingTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "curveToContinuePathingTest");
     }
 
     @Test
     public void relativeHorizontalLineToTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "relativeHorizontalLineTo");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativeHorizontalLineTo");
     }
 
     @Test
     public void relativeVerticalLineToTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "relativeVerticalLineTo");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "relativeVerticalLineTo");
     }
 
     @Test
     public void combinedRelativeVerticalLineToAndRelativeHorizontalLineToTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "combinedRelativeVerticalLineToAndRelativeHorizontalLineTo");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "combinedRelativeVerticalLineToAndRelativeHorizontalLineTo");
     }
 
     @Test
     public void multipleRelativeHorizontalLineToTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "multipleRelativeHorizontalLineTo");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleRelativeHorizontalLineTo");
     }
 
     @Test
     public void multipleRelativeVerticalLineToTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "multipleRelativeVerticalLineTo");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "multipleRelativeVerticalLineTo");
     }
 
     @Test
     public void moveToRelativeMultipleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "moveToRelativeMultiple");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "moveToRelativeMultiple");
     }
 
     @Test
     public void moveToAbsoluteMultipleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "moveToAbsoluteMultiple");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "moveToAbsoluteMultiple");
     }
 
     @Test
     public void iTextLogoTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "iTextLogo");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "iTextLogo");
     }
 
     @Test
     public void eofillUnsuportedPathTest() throws IOException, InterruptedException {
         Assertions.assertThrows(SvgProcessingException.class,
-                () -> convertAndCompare(sourceFolder, destinationFolder, "eofillUnsuportedPathTest")
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "eofillUnsuportedPathTest")
         );
     }
 
     @Test
     public void multiplePairsAfterMoveToRelativeTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "multiplePairsAfterMoveToRelative");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "multiplePairsAfterMoveToRelative");
     }
 
     @Test
     public void multiplePairsAfterMoveToAbsoluteTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "multiplePairsAfterMoveToAbsolute");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "multiplePairsAfterMoveToAbsolute");
     }
 
     @Test
     public void pathHOperatorAbsoluteAfterMultiplePairsTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathHOperatorAbsoluteAfterMultiplePairs");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathHOperatorAbsoluteAfterMultiplePairs");
     }
 
     @Test
     public void pathHOperatorRelativeAfterMultiplePairsTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathHOperatorRelativeAfterMultiplePairs");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathHOperatorRelativeAfterMultiplePairs");
     }
 
     @Test
     public void patternXlinkTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "patternHref");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHref");
     }
 
     @Test
     public void patternXlinkHrefPatternContentUnits1Test() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "patternHrefPatternContentUnits1");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefPatternContentUnits1");
     }
 
     @Test
     public void patternXlinkHrefPatternContentUnits2Test() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "patternHrefPatternContentUnits2");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefPatternContentUnits2");
     }
 
     @Test
     public void patternXlinkHrefPatternUnitsTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "patternHrefPatternUnits");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefPatternUnits");
     }
 
     @Test
     public void patternXlinkHrefPreserveAR1Test() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "patternHrefPreserveAR1", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefPreserveAR1", properties);
     }
 
     @Test
     public void patternXlinkHrefPreserveAR2Test() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "patternHrefPreserveAR2", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefPreserveAR2", properties);
     }
 
     @Test
     public void patternHrefTransitivePatternUnitsTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "patternHrefTransitivePatternUnits");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefTransitivePatternUnits");
     }
 
     @Test
     public void patternHrefTransitivePCUTopLayerTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "patternHrefTransitivePCUTopLayer");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefTransitivePCUTopLayer");
     }
 
     @Test
     public void patternHrefTransitivePCUBottomLayerTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "patternHrefTransitivePCUBottomLayer");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefTransitivePCUBottomLayer");
     }
 
     @Test
     public void patternHrefTransitivePCU2Test() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "patternHrefTransitivePCU2");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefTransitivePCU2");
     }
 
     @Test
     public void patternHrefTransitivePresAR1Test() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "patternHrefTransitivePresAR1", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefTransitivePresAR1", properties);
     }
 
     @Test
     public void patternHrefTransitivePresAR2Test() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "patternHrefTransitivePresAR2", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "patternHrefTransitivePresAR2", properties);
     }
 
     @Test
     public void closedPathIsCutTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "closedPathIsCutTest", properties);
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "closedPathIsCutTest", properties);
     }
 }

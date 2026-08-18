@@ -34,99 +34,99 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class DefaultStyleInheritanceIntegrationTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/css/DefaultInheritance/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/css/DefaultInheritance/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/DefaultInheritance/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/DefaultInheritance/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     //Css inheritance
     @Test
     public void simpleGroupInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"simpleGroupInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"simpleGroupInheritance");
     }
     //Inheritance in use tags
     @Test
     public void useFillInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"useFillInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"useFillInheritance");
     }
     //Inheritance and g-tags
     @Test
     public void groupInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"groupInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"groupInheritance");
     }
 
     @Test
     public void useInheritanceNotOverridingTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"useInheritanceNotOverriding");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"useInheritanceNotOverriding");
     }
 
     @Test
     public void usePropertiesInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"usePropertiesInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"usePropertiesInheritance");
     }
 
     @Test
     public void fillOpacityInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"fillOpacityInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"fillOpacityInheritance");
     }
 
     @Test
     public void fillRuleInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"fillRuleInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"fillRuleInheritance");
     }
 
     @Test
     public void strokeInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"strokeInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"strokeInheritance");
     }
 
     @Test
     public void strokeWidthInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"strokeWidthInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"strokeWidthInheritance");
     }
 
     @Test
     public void strokeOpacityInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"strokeOpacityInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"strokeOpacityInheritance");
     }
 
     @Test
     //TODO DEVSIX-4857 support stroke-linecap attribute
     public void strokeLinecapInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"strokeLinecapInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"strokeLinecapInheritance");
     }
 
     @Test
     public void strokeLinejoinInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"strokeLinejoinInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"strokeLinejoinInheritance");
     }
 
     @Test
     public void strokeDasharrayInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"strokeDasharrayInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"strokeDasharrayInheritance");
     }
 
     @Test
     public void strokeDashoffsetInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"strokeDashoffsetInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"strokeDashoffsetInheritance");
     }
 
     @Test
     public void opacityInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"opacityInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"opacityInheritance");
     }
 
     @Test
     //TODO DEVSIX-4114 support vertical text attribute
     public void textPropertiesInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"textPropertiesInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"textPropertiesInheritance");
     }
 
     @Test
     public void nestedInheritanceTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"nestedInheritance");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"nestedInheritance");
     }
 }

@@ -39,219 +39,218 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/LinearGradientSvgNodeRendererTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/LinearGradientSvgNodeRendererTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/LinearGradientSvgNodeRendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/LinearGradientSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createOrClearDestinationFolder(destinationFolder);
+        ITextTest.createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void circleTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "circle");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circle");
     }
 
     @Test
     public void ellipseTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipse");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipse");
     }
 
     @Test
     public void lineTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "line");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "line");
     }
     
     @Test
     public void pathLinesBasedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathLinesBased");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathLinesBased");
     }
 
     @Test
     public void pathLinesBasedTransformedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathLinesBasedTransformed");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathLinesBasedTransformed");
     }
     
     @Test
     public void pathLinesBasedWithMoveTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathLinesBasedWithMove");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathLinesBasedWithMove");
     }
     
     @Test
     public void pathLinesBasedWithTwoFiguresTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathLinesBasedWithTwoFigures");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathLinesBasedWithTwoFigures");
     }
 
     @Test
     public void cubicBezierTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "cubicBezier");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "cubicBezier");
     }
 
     @Test
     public void cubicBezier2Test() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "cubicBezier2");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "cubicBezier2");
     }
 
     @Test
     public void cubicBezier3Test() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "cubicBezier3");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "cubicBezier3");
     }
 
     @Test
     public void cubicBezier4Test() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "cubicBezier4");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "cubicBezier4");
     }
 
     @Test
     // See CurveTo#calculateTValues to see which discriminant is mentioned.
     public void cubicBezierZeroDiscriminantTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "cubicBezierZeroDiscriminant");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "cubicBezierZeroDiscriminant");
     }
 
     @Test
     // See CurveTo#calculateTValues to see which discriminant is mentioned.
     public void cubicBezierNegativeDiscriminantTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "cubicBezierNegativeDiscriminant");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "cubicBezierNegativeDiscriminant");
     }
 
     @Test
     public void cubicBezierInsideOtherCubicBezierTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "cubicBezierInsideOtherCubicBezier");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "cubicBezierInsideOtherCubicBezier");
     }
 
     @Test
     public void smoothCubicBezierWithAbsoluteCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierWithAbsoluteCoordinates");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "smoothCubicBezierWithAbsoluteCoordinates");
     }
 
     @Test
     public void smoothCubicBezierWithRelativeCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierWithRelativeCoordinates");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "smoothCubicBezierWithRelativeCoordinates");
     }
 
     @Test
     public void smoothCubicBezierRelativeAndAbsoluteCoordWithMoveTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierRelativeAndAbsoluteCoordWithMove");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "smoothCubicBezierRelativeAndAbsoluteCoordWithMove");
     }
 
     @Test
     public void smoothCubicBezierRelativeAndAbsoluteCoordNoZOperatorTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "smoothCubicBezierRelativeAndAbsoluteCoordNoZOperator");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "smoothCubicBezierRelativeAndAbsoluteCoordNoZOperator");
     }
 
     @Test
     public void quadraticBezierTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "quadraticBezier");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "quadraticBezier");
     }
 
     @Test
     public void quadraticBezier2Test() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "quadraticBezier2");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "quadraticBezier2");
     }
 
     @Test
     public void quadraticBezier3Test() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "quadraticBezier3");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "quadraticBezier3");
     }
 
     @Test
     public void quadraticBezierInsideOtherQuadraticBezierTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "quadraticBezierInsideOtherQuadraticBezier");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "quadraticBezierInsideOtherQuadraticBezier");
     }
 
     @Test
     public void smoothQuadraticBezierWithAbsoluteCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierWithAbsoluteCoordinates");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "smoothQuadraticBezierWithAbsoluteCoordinates");
     }
 
     @Test
     public void smoothQuadraticBezierWithRelativeCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierWithRelativeCoordinates");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "smoothQuadraticBezierWithRelativeCoordinates");
     }
 
     @Test
     public void smoothQuadraticBezierAbsoluteAndRelativeCoordWithMoveTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierAbsoluteAndRelativeCoordWithMove");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "smoothQuadraticBezierAbsoluteAndRelativeCoordWithMove");
     }
 
     @Test
     public void smoothQuadraticBezierRelativeAndAbsoluteCoordNoZOperatorTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "smoothQuadraticBezierRelativeAndAbsoluteCoordNoZOperator");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "smoothQuadraticBezierRelativeAndAbsoluteCoordNoZOperator");
     }
 
     @Test
     public void ellipticalArcsTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcs");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcs");
     }
 
     @Test
     public void ellipticalArcsNegativeRxRyTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsNegativeRxRy");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcsNegativeRxRy");
     }
 
     @Test
     public void ellipticalArcZeroRxRyTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcZeroRxRy");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcZeroRxRy");
     }
 
     @Test
     public void ellipticalArcsWithPhiTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhi", PageSize.A3.rotate());
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcsWithPhi", PageSize.A3.rotate());
     }
 
     @Test
     public void ellipticalArcsWithPhi0Test() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhi0");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcsWithPhi0");
     }
 
     @Test
     public void ellipticalArcsWithPhi90Test() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhi90");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcsWithPhi90");
     }
 
     @Test
     public void ellipticalArcsWithPhi180Test() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhi180");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcsWithPhi180");
     }
     @Test
     public void ellipticalArcsWithPhi270Test() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhi270");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcsWithPhi270");
     }
 
     @Test
     public void ellipticalArcsWithPhiRelativeTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhiRelative");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcsWithPhiRelative");
     }
 
     @Test
     public void ellipticalArcsWithPhiAbsoluteTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsWithPhiAbsolute");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcsWithPhiAbsolute");
     }
-
 
     @Test
     public void ellipticalArcsRelativeCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "ellipticalArcsRelativeCoordinates");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "ellipticalArcsRelativeCoordinates");
     }
 
     @Test
     public void arcInsideOtherEllipticalArcTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "arcInsideOtherEllipticalArc");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "arcInsideOtherEllipticalArc");
     }
 
     @Test
     public void polygonTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "polygon");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "polygon");
     }
 
     @Test
     public void polylineTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "polyline");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "polyline");
     }
 
     @Test
     public void rectTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rect");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rect");
     }
 
     @Test
@@ -259,252 +258,252 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
             @LogMessage(messageTemplate = SvgLogMessageConstant.GRADIENT_INVALID_SPREAD_METHOD_LOG, logLevel = LogLevelConstants.WARN)
     })
     public void rectWithInvalidSpreadMethodValueTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectWithInvalidSpreadMethodValue");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectWithInvalidSpreadMethodValue");
     }
 
     @Test
     public void rectsWithFallBackColorsTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectsWithFallBackColors");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectsWithFallBackColors");
     }
 
     @Test
     public void rectMultipleStopsWithSameOffsetPadTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectMultipleStopsWithSameOffsetPad");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectMultipleStopsWithSameOffsetPad");
     }
 
     @Test
     public void rectMultipleStopsWithSameOffsetReflectTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectMultipleStopsWithSameOffsetReflect");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectMultipleStopsWithSameOffsetReflect");
     }
 
     @Test
     public void rectMultipleStopsWithSameOffsetRepeatTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectMultipleStopsWithSameOffsetRepeat");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectMultipleStopsWithSameOffsetRepeat");
     }
 
     // TODO: DEVSIX-4136 update cmp_ after fix
     //  (opacity is not implemented. No stops defines no color, i.e. transparent color or black with 100% opacity)
     @Test
     public void rectNoStopsTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectNoStops");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectNoStops");
     }
 
     @Test
     public void rectSingle0StopTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectSingle0Stop");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectSingle0Stop");
     }
 
     @Test
     public void rectSingle1StopTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectSingle1Stop");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectSingle1Stop");
     }
 
     @Test
     public void rectStopWithoutColorTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectStopWithoutColor");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectStopWithoutColor");
     }
 
     @Test
     public void rectTransformedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectTransformed");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectTransformed");
     }
 
     @Test
     public void rectWithGradientTransformTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectWithGradientTransform");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectWithGradientTransform");
     }
 
     @Test
     public void rectWithMultipleTransformsTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectWithMultipleTransforms");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectWithMultipleTransforms");
     }
 
     @Test
     public void textTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "text");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "text");
     }
 
     @Test
     public void tspanTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "tspan");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "tspan");
     }
     
     @Test
     public void textNestedTSpansTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textNestedTSpansTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textNestedTSpansTest");
     }
 
     @Test
     public void textRotatedTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textRotatedTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textRotatedTest");
     }
 
     @Test
     public void textDxTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textDxTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textDxTest");
     }
 
     @Test
     public void chineseTextDxTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "chineseTextDxTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "chineseTextDxTest");
     }
 
     @Test
     public void chineseTextDxVerticalTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "chineseTextDxVerticalTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "chineseTextDxVerticalTest");
     }
 
     @Test
     public void textAnchorTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textAnchorTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textAnchorTest");
     }
 
     @Test
     public void textDyTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textDyTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textDyTest");
     }
 
     @Test
     public void textXYOffset() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textXYOffset");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textXYOffset");
     }
 
     @Test
     public void textXOffset() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textXOffset");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textXOffset");
     }
 
     @Test
     public void textXYDxDyOffset() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textXYDxDyOffset");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textXYDxDyOffset");
     }
 
     @Test
     public void textGradientEmUnits() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnits");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textGradientEmUnits");
     }
 
     @Test
     public void textGradientEmUnitsRelated() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnitsRelated");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textGradientEmUnitsRelated");
     }
 
     @Test
     public void textGradientEmUnitsRelatedNotDefs() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnitsRelatedNotDefs");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textGradientEmUnitsRelatedNotDefs");
     }
 
     @Test
     public void textGradientEmUnitsRelatedDefault() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textGradientEmUnitsRelatedDefault");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textGradientEmUnitsRelatedDefault");
     }
 
     @Test
     public void textGradientExUnits() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textGradientExUnits");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textGradientExUnits");
     }
 
     @Test
     public void textGradientRemUnits() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textGradientRemUnits");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textGradientRemUnits");
     }
 
     @Test
     public void textGradientRemUnitsNestedSvg() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "textGradientRemUnitsNestedSvg");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textGradientRemUnitsNestedSvg");
     }
 
     @Test
     public void rectMultipleStopsWithSameOffsetAndZeroCoordLengthPadTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectMultipleStopsWithSameOffsetAndZeroCoordLengthPad");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectMultipleStopsWithSameOffsetAndZeroCoordLengthPad");
     }
 
     @Test
     public void rectMultipleStopsWithSameOffsetAndZeroCoordLengthReflectTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectMultipleStopsWithSameOffsetAndZeroCoordLengthReflect");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectMultipleStopsWithSameOffsetAndZeroCoordLengthReflect");
     }
 
     @Test
     public void rectMultipleStopsWithSameOffsetAndZeroCoordLengthRepeatTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectMultipleStopsWithDiffOffsetAndZeroCoordLengthRepeat");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectMultipleStopsWithDiffOffsetAndZeroCoordLengthRepeat");
     }
 
     @Test
     public void rectMultipleStopsWithDiffOffsetAndZeroCoordLengthPadTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectMultipleStopsWithDiffOffsetAndZeroCoordLengthPad");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectMultipleStopsWithDiffOffsetAndZeroCoordLengthPad");
     }
 
     @Test
     public void rectMultipleStopsWithDiffOffsetAndZeroCoordLengthReflectTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectMultipleStopsWithDiffOffsetAndZeroCoordLengthReflect");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectMultipleStopsWithDiffOffsetAndZeroCoordLengthReflect");
     }
 
     @Test
     public void rectMultipleStopsWithDiffOffsetAndZeroCoordLengthRepeatTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectMultipleStopsWithSameOffsetAndZeroCoordLengthRepeat");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectMultipleStopsWithSameOffsetAndZeroCoordLengthRepeat");
     }
 
     @Test
     public void rectInvalidStopsSequenceTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectInvalidStopsSequence");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectInvalidStopsSequence");
     }
 
     @Test
     public void rectInvalidCoordinatesMetricsTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectInvalidCoordinatesMetrics");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectInvalidCoordinatesMetrics");
     }
 
     @Test
     public void rectInvalidStopsSequenceWithoutBoundingStopsTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectInvalidStopsSequenceWithoutBoundingStops");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectInvalidStopsSequenceWithoutBoundingStops");
     }
 
     @Test
     public void userSpaceOnUseWithAbsoluteCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "userSpaceOnUseWithAbsoluteCoordinates");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "userSpaceOnUseWithAbsoluteCoordinates");
     }
 
     @Test
     public void userSpaceOnUseDiffAbsoluteUnitsInGradientTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "userSpaceOnUseDiffAbsoluteUnitsInGradient");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "userSpaceOnUseDiffAbsoluteUnitsInGradient");
     }
 
     @Test
     // TODO: DEVSIX-3596 update cmp_ after fix ("ch" unit is not implemented yet)
     public void userSpaceOnUseWithChUnitTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "userSpaceOnUseWithChUnit");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "userSpaceOnUseWithChUnit");
     }
 
     @Test
     public void userSpaceOnUseWithUnitsRelativeToFontTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "userSpaceOnUseWithUnitsRelativeToFont");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "userSpaceOnUseWithUnitsRelativeToFont");
     }
 
     @Test
     // TODO: DEVSIX-3596 update cmp_ after fix ("vh" "vw" "vmin" "vmax" units are not implemented yet)
     public void userSpaceOnUseWithUnitsRelativeToViewportTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "userSpaceOnUseWithUnitsRelativeToViewport");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "userSpaceOnUseWithUnitsRelativeToViewport");
     }
 
     @Test
     // TODO: DEVSIX-3596 update cmp_ after fix ("ch" "vmin"+"vmax"+"vw"+"vh" not implemented yet)
     public void userSpaceOnUseDiffRelativeUnitsInGradientTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "userSpaceOnUseDiffRelativeUnitsInGradient");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "userSpaceOnUseDiffRelativeUnitsInGradient");
     }
 
     @Test
     public void objectBoundingBoxWithAbsoluteCoordinatesTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "objectBoundingBoxWithAbsoluteCoordinates");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxWithAbsoluteCoordinates");
     }
 
     @Test
     public void objectBoundingBoxDifferentAbsoluteUnitsInGradientTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "objectBoundingBoxDifferentAbsoluteUnitsInGradient");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxDifferentAbsoluteUnitsInGradient");
     }
 
     @Test
     public void objectBoundingBoxWithUnitsRelativeToFontTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "objectBoundingBoxWithUnitsRelativeToFont");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxWithUnitsRelativeToFont");
     }
 
     @Test
@@ -513,7 +512,7 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     //  we are not recognize these values as valid relative type,
     //  we get the the resulted coordinate uses defaults
     public void objectBoundingBoxWithChUnitTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "objectBoundingBoxWithChUnit");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxWithChUnit");
     }
 
     @Test
@@ -522,7 +521,7 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     //  we are not recognize these values as valid relative type,
     //  we get the the resulted coordinate uses defaults
     public void objectBoundingBoxWithUnitsRelativeToViewportTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "objectBoundingBoxWithUnitsRelativeToViewport");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxWithUnitsRelativeToViewport");
     }
 
     @Test
@@ -531,146 +530,146 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     //  we are not recognize these values as valid relative type,
     //  we get the the resulted coordinate uses defaults
     public void objectBoundingBoxDifferentRelativeUnitsInGradientTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "objectBoundingBoxDifferentRelativeUnitsInGradient");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "objectBoundingBoxDifferentRelativeUnitsInGradient");
     }
 
     @Test
     public void translateTransformInGradientWithObjectBoundingBoxUnitsTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "translateTransformInGradientWithObjectBoundingBoxUnits");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "translateTransformInGradientWithObjectBoundingBoxUnits");
     }
 
     @Test
     public void matrixTransformInGradientWithObjectBoundingBoxUnitsTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "matrixTransformInGradientWithObjectBoundingBoxUnits");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "matrixTransformInGradientWithObjectBoundingBoxUnits");
     }
 
     @Test
     public void severalTransformsInGradientWithObjectBoundingBoxUnitsTest() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "severalTransformsInGradientWithObjectBoundingBoxUnits");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "severalTransformsInGradientWithObjectBoundingBoxUnits");
     }
 
     @Test
     public void hrefBasicReferenceTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "hrefBasicReference");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hrefBasicReference");
     }
 
     @Test
     public void transitiveHrefBasicReferenceTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "transitiveHrefBasicReference");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "transitiveHrefBasicReference");
     }
 
     @Test
     public void linearGradXlinkTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHref");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHref");
     }
 
     @Test
     public void linearGradXlink3StopsTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHref3Stops");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHref3Stops");
     }
 
     @Test
     public void linearGradXlinkGradientTransformTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefGradientTransform");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefGradientTransform");
     }
 
     @Test
     public void linearGradXlinkNegativeOffsetTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefNegativeOffset");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefNegativeOffset");
     }
 
     @Test
     public void linearGradXlinkNegativeOpacityTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefNegativeOpacity");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefNegativeOpacity");
     }
 
     @Test
     public void linearGradXlinkOpacityTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefOpacity");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefOpacity");
     }
 
     @Test
     public void linearGradXlinkOpacity2Test() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefOpacity2");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefOpacity2");
     }
 
     @Test
     public void linearGradXlinkSpreadMethodTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefSpreadMethod1");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefSpreadMethod1");
     }
 
     @Test
     public void linearGradXlinkSpreadMethod2Test() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefSpreadMethod2");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefSpreadMethod2");
     }
 
     @Test
     public void linearGradXlinkSpreadMethod3Test() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefSpreadMethod3");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefSpreadMethod3");
     }
 
     @Test
     public void linearGradXlinkHrefXYvalsTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefXYvals1");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefXYvals1");
     }
 
     @Test
     public void linearGradXlinkHrefXYvals2Test() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefXYvals2");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefXYvals2");
     }
 
     @Test
     public void linearGradXlinkHrefXYvals3Test() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefXYvals3");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefXYvals3");
     }
 
     @Test
     public void linearGradXlinkHreOffsetSwapTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHreOffsetSwap");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHreOffsetSwap");
     }
 
     @Test
     public void linearGradTransitiveHrefOpacityTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradTransitiveHrefOpacity");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradTransitiveHrefOpacity");
     }
 
     @Test
     public void linearGradTransitiveHrefNegativeOpacityTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradTransitiveHrefNegativeOpacity");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradTransitiveHrefNegativeOpacity");
     }
 
     @Test
     public void linearGradTransitiveHrefNegativeOffsetTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradTransitiveHrefNegativeOffset");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradTransitiveHrefNegativeOffset");
     }
 
     @Test
     public void linearGradTransitiveHref3stopsTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradTransitiveHref3stops");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradTransitiveHref3stops");
     }
 
     @Test
     public void linearGradHrefTransitiveSpreadMethodTopLayerTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefTransitiveSpreadMethodTopLayer");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefTransitiveSpreadMethodTopLayer");
     }
 
     @Test
     public void linearGradHrefTransitiveSpreadMethodBottomLayerTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefTransitiveSpreadMethodBottomLayer");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefTransitiveSpreadMethodBottomLayer");
     }
 
     @Test
     public void linearGradHrefTransitiveSpreadMethod3Test() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefTransitiveSpreadMethod3");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefTransitiveSpreadMethod3");
     }
 
     @Test
     public void linearGradHrefTransitiveSpreadMethod2Test() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "linearGradHrefTransitiveSpreadMethod2");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradHrefTransitiveSpreadMethod2");
     }
 
     @Test
     public void lowerCaseGradientUnitsTest() throws java.io.IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "lowerCaseGradientUnits");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "lowerCaseGradientUnits");
     }
 }

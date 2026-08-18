@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @org.junit.jupiter.api.Tag("UnitTest")
-
 public class SvgFontProcessorTest extends ExtendedITextTest {
     @Test
     public void addFontFaceFontsTest() {

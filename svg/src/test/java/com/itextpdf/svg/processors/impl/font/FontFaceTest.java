@@ -22,7 +22,6 @@
  */
 package com.itextpdf.svg.processors.impl.font;
 
-
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.WriterProperties;
@@ -48,72 +47,70 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FontFaceTest extends SvgIntegrationTest {
-
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/processors/impl/font/FontFaceTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/processors/impl/font/FontFaceTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/processors/impl/font/FontFaceTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/processors/impl/font/FontFaceTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     // Unicode range is processed correctly: in case Droid Serif font doesn't include current glyph, Times font is used.
     public void unicodeRangeTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "unicodeRangeTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "unicodeRangeTest");
     }
 
     @Test
     public void robotoSerifSingleQuotesTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifSingleQuotesTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "robotoSerifSingleQuotesTest");
     }
 
     @Test
     public void robotoSerifWebFontTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifWebFontTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "robotoSerifWebFontTest");
     }
 
     @Test
     public void robotoSerifLocalFontTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifLocalFontTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "robotoSerifLocalFontTest");
     }
 
     @Test
     public void robotoSerifLocalLocalFontTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifLocalLocalFontTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "robotoSerifLocalLocalFontTest");
     }
 
     @Test
     public void robotoSerifLocalWithMediaFontTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifLocalWithMediaFontTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "robotoSerifLocalWithMediaFontTest");
     }
 
     @Test
     public void robotoSerifLocalWithMediaRuleFontTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "robotoSerifLocalWithMediaRuleFontTest");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "robotoSerifLocalWithMediaRuleFontTest");
     }
 
     @Test
     public void fontSelectorTest01() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "fontSelectorTest01");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "fontSelectorTest01");
     }
 
     @Test
     public void fontSelectorTest03() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "fontSelectorTest03");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "fontSelectorTest03");
     }
 
     @Test
     public void fontSelectorMissingFontWithSize() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "fontSelectorMissingWithFontSize");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "fontSelectorMissingWithFontSize");
     }
 
     @Test
     public void fontFaceGrammarTest() throws IOException, InterruptedException {
         convertAndCompare
-                (sourceFolder, destinationFolder, "fontFaceGrammarTest");
+                (SOURCE_FOLDER, DESTINATION_FOLDER, "fontFaceGrammarTest");
     }
-
 
     @Test
     public void fontFaceWoffTest01() throws IOException, InterruptedException {
@@ -243,16 +240,16 @@ public class FontFaceTest extends SvgIntegrationTest {
     public void resolveFontsWithoutWriterProperties() throws IOException, InterruptedException {
         String fileName = "fontSelectorTest";
         ISvgConverterProperties properties = new SvgConverterProperties().setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
-        convertToSinglePage(new File(sourceFolder + fileName + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties);
-        compare(fileName, sourceFolder, destinationFolder);
+        convertToSinglePage(new File(SOURCE_FOLDER + fileName + ".svg"), new File(DESTINATION_FOLDER + fileName + ".pdf"), properties);
+        compare(fileName, SOURCE_FOLDER, DESTINATION_FOLDER);
     }
 
     @Test
     public void resolveFontsWithoutConverterPropertiesAndWriterProperties() throws IOException, InterruptedException {
         String fileName = "resolveFonts_WithoutConverterPropertiesAndWriterProperties";
         String svgFile = "fontSelectorTest";
-        convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"));
-        compare(fileName, sourceFolder, destinationFolder);
+        convertToSinglePage(new File(SOURCE_FOLDER + svgFile + ".svg"), new File(DESTINATION_FOLDER + fileName + ".pdf"));
+        compare(fileName, SOURCE_FOLDER, DESTINATION_FOLDER);
     }
 
     @Test
@@ -260,10 +257,10 @@ public class FontFaceTest extends SvgIntegrationTest {
         String fileName = "resolveFonts_WithAllProperties";
         String svgFile = "fontSelectorTest";
         WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
-        String baseUri = FileUtil.getParentDirectoryUri(new File(sourceFolder + svgFile + ".svg"));
+        String baseUri = FileUtil.getParentDirectoryUri(new File(SOURCE_FOLDER + svgFile + ".svg"));
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(baseUri).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
-        convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties, writerprops);
-        compare(fileName, sourceFolder, destinationFolder);
+        convertToSinglePage(new File(SOURCE_FOLDER + svgFile + ".svg"), new File(DESTINATION_FOLDER + fileName + ".pdf"), properties, writerprops);
+        compare(fileName, SOURCE_FOLDER, DESTINATION_FOLDER);
     }
 
     @Test
@@ -271,8 +268,8 @@ public class FontFaceTest extends SvgIntegrationTest {
         String fileName = "resolveFonts_WithWriterProperties";
         String svgFile = "fontSelectorTest";
         WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
-        convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"), writerprops);
-        compare(fileName, sourceFolder, destinationFolder);
+        convertToSinglePage(new File(SOURCE_FOLDER + svgFile + ".svg"), new File(DESTINATION_FOLDER + fileName + ".pdf"), writerprops);
+        compare(fileName, SOURCE_FOLDER, DESTINATION_FOLDER);
     }
 
     @Test
@@ -280,11 +277,11 @@ public class FontFaceTest extends SvgIntegrationTest {
         String fileName = "resolveFonts_WithConverterPropsAndWriterProps";
         String svgFile = "fontSelectorTest";
         WriterProperties writerprops = new WriterProperties().setCompressionLevel(0);
-        String baseUri = FileUtil.getParentDirectoryUri(new File(sourceFolder + svgFile + ".svg"));
+        String baseUri = FileUtil.getParentDirectoryUri(new File(SOURCE_FOLDER + svgFile + ".svg"));
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(baseUri).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
-        convertToSinglePage(FileUtil.getInputStreamForFile(sourceFolder + svgFile + ".svg"),
-                FileUtil.getFileOutputStream(destinationFolder + fileName + ".pdf"), properties, writerprops);
-        compare(fileName, sourceFolder, destinationFolder);
+        convertToSinglePage(FileUtil.getInputStreamForFile(SOURCE_FOLDER + svgFile + ".svg"),
+                FileUtil.getFileOutputStream(DESTINATION_FOLDER + fileName + ".pdf"), properties, writerprops);
+        compare(fileName, SOURCE_FOLDER, DESTINATION_FOLDER);
     }
 
     @Test
@@ -292,8 +289,8 @@ public class FontFaceTest extends SvgIntegrationTest {
         String fileName = "resolveFonts_WithConverterPropertiesAndEmptyUri";
         String svgFile = "fontSelectorTest";
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri("").setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
-        convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties);
-        compare(fileName, sourceFolder, destinationFolder);
+        convertToSinglePage(new File(SOURCE_FOLDER + svgFile + ".svg"), new File(DESTINATION_FOLDER + fileName + ".pdf"), properties);
+        compare(fileName, SOURCE_FOLDER, DESTINATION_FOLDER);
     }
 
     @Test
@@ -301,19 +298,19 @@ public class FontFaceTest extends SvgIntegrationTest {
         String fileName = "resolveFonts_WithConverterPropertiesAndNullUri";
         String svgFile = "fontSelectorTest";
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(null).setFontProvider(new BasicFontProvider()).setMediaDeviceDescription(new MediaDeviceDescription(MediaType.ALL));
-        convertToSinglePage(new File(sourceFolder + svgFile + ".svg"), new File(destinationFolder + fileName + ".pdf"), properties);
-        compare(fileName, sourceFolder, destinationFolder);
+        convertToSinglePage(new File(SOURCE_FOLDER + svgFile + ".svg"), new File(DESTINATION_FOLDER + fileName + ".pdf"), properties);
+        compare(fileName, SOURCE_FOLDER, DESTINATION_FOLDER);
     }
 
     @Test
     public void resolveFontsDefaultUri() throws IOException, InterruptedException {
         String fileName = "fontSelectorTest02";
-        convertToSinglePage(new File(sourceFolder + fileName + ".svg"), new File(destinationFolder + fileName + ".pdf"));
-        compare(fileName, sourceFolder, destinationFolder);
+        convertToSinglePage(new File(SOURCE_FOLDER + fileName + ".svg"), new File(DESTINATION_FOLDER + fileName + ".pdf"));
+        compare(fileName, SOURCE_FOLDER, DESTINATION_FOLDER);
     }
 
     private void runTest(String fileName) throws IOException, InterruptedException {
-        convert(sourceFolder + fileName + ".svg", destinationFolder + fileName + ".pdf");
-        compare(fileName, sourceFolder, destinationFolder);
+        convert(SOURCE_FOLDER + fileName + ".svg", DESTINATION_FOLDER + fileName + ".pdf");
+        compare(fileName, SOURCE_FOLDER, DESTINATION_FOLDER);
     }
 }

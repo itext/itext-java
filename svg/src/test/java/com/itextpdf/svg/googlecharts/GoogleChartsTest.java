@@ -38,87 +38,87 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class GoogleChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/GoogleChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/GoogleChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/GoogleChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/GoogleChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void barChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "barChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "barChart");
     }
 
     @Test
     public void annotationChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "annotationChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "annotationChart");
     }
 
     @Test
     public void areaChart() throws IOException, InterruptedException, java.io.IOException {
         PageSize pageSize = PageSize.A4;
-        TestUtils.convertSVGtoPDF(destinationFolder + "areaChart.pdf",
-                sourceFolder + "areaChart.svg", 1, pageSize);
+        TestUtils.convertSVGtoPDF(DESTINATION_FOLDER + "areaChart.pdf",
+                SOURCE_FOLDER + "areaChart.svg", 1, pageSize);
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "areaChart.pdf",
-                sourceFolder + "cmp_areaChart.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "areaChart.pdf",
+                SOURCE_FOLDER + "cmp_areaChart.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void bubbleChart() throws IOException, InterruptedException, java.io.IOException {
         PageSize pageSize = PageSize.A4;
-        TestUtils.convertSVGtoPDF(destinationFolder + "bubbleChart.pdf",
-                sourceFolder + "bubbleChart.svg", 1, pageSize);
+        TestUtils.convertSVGtoPDF(DESTINATION_FOLDER + "bubbleChart.pdf",
+                SOURCE_FOLDER + "bubbleChart.svg", 1, pageSize);
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "bubbleChart.pdf",
-                sourceFolder + "cmp_bubbleChart.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "bubbleChart.pdf",
+                SOURCE_FOLDER + "cmp_bubbleChart.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     //TODO DEVSIX-4857 support stroke-linecap attribute
     public void calendarChart() throws IOException, java.io.IOException, InterruptedException {
         PageSize pageSize = PageSize.A4;
-        TestUtils.convertSVGtoPDF(destinationFolder + "calendarChart.pdf",
-                sourceFolder + "calendarChart.svg", 1, pageSize);
+        TestUtils.convertSVGtoPDF(DESTINATION_FOLDER + "calendarChart.pdf",
+                SOURCE_FOLDER + "calendarChart.svg", 1, pageSize);
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "calendarChart.pdf",
-                sourceFolder + "cmp_calendarChart.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "calendarChart.pdf",
+                SOURCE_FOLDER + "cmp_calendarChart.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void candlestickChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "candlestickChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "candlestickChart");
     }
 
     @Test
     public void comboChart() throws IOException, InterruptedException, java.io.IOException {
         PageSize pageSize = PageSize.A4;
-        TestUtils.convertSVGtoPDF(destinationFolder + "comboChart.pdf",
-                sourceFolder + "comboChart.svg", 1, pageSize);
+        TestUtils.convertSVGtoPDF(DESTINATION_FOLDER + "comboChart.pdf",
+                SOURCE_FOLDER + "comboChart.svg", 1, pageSize);
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "comboChart.pdf",
-                sourceFolder + "cmp_comboChart.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "comboChart.pdf",
+                SOURCE_FOLDER + "cmp_comboChart.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void diffChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "diffChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "diffChart");
     }
 
     @Test
     public void donutChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "donutChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "donutChart");
     }
 
     @Test
     public void waterfallChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "waterfallChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "waterfallChart");
     }
 
     @Test
     public void histogramChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "histogramChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "histogramChart");
     }
 }

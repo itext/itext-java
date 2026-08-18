@@ -33,14 +33,13 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class FilterTest extends SvgIntegrationTest {
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/FilterTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/FilterTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/FilterTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/FilterTest/";
 
     @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
-
 
     @Test
     public void basicFilterTest() throws IOException, InterruptedException {
