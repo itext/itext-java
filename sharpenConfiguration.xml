@@ -392,6 +392,10 @@
                 <file path="com/itextpdf/commons/bouncycastle/crypto/fips/AbstractFipsUnapprovedOperationError.java"/>
                 <file path="com/itextpdf/bouncycastlefips/crypto/fips/FipsUnapprovedOperationErrorBCFips.java"/>
             </fileset>
+            <!-- TODO DEVSIX-10172 Remove this when Bouncy Castle is updated on dotnet-->
+            <fileset reason="Exception message is different due to Bouncy Castle lower version on dotnet">
+                <file path="com/itextpdf/bouncycastle/BouncyCastleTestConstantsFactory.java"/>
+            </fileset>
             <!-- kernel -->
             <file path="com/itextpdf/kernel/pdf/CountOutputStream.java"/>
             <file path="com/itextpdf/kernel/crypto/securityhandler/EncryptionUtils.java"/>

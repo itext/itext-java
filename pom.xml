@@ -85,8 +85,8 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.84</bouncycastle.version>
-    <bouncycastle.provider.version>1.84</bouncycastle.provider.version>
+    <bouncycastle.version>1.85</bouncycastle.version>
+    <bouncycastle.provider.version>1.85.2</bouncycastle.provider.version>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <jacoco.version>0.8.4</jacoco.version>

@@ -32,6 +32,6 @@ class BouncyCastleTestConstantsFactory implements IBouncyCastleTestConstantsFact
     
     @Override
     public String getCertificateInfoTestConst() {
-        return "corrupted stream - out of bounds length found: 8 >= 6";
+        return "corrupted stream - out of bounds length found: 8 > 6";
     }
 }
