@@ -103,6 +103,7 @@ public class ParagraphRenderer extends BlockRenderer {
         int pageNumber = layoutContext.getArea().getPageNumber();
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
+        boolean isVerticalWriting = isVerticalWriting();
         LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
 
@@ -293,7 +294,7 @@ public class ParagraphRenderer extends BlockRenderer {
             boolean isFit = processedRenderer != null;
             float deltaY = 0;
             if (isFit && this.<RenderingMode>getProperty(Property.RENDERING_MODE) != RenderingMode.HTML_MODE &&
-                    !isVerticalWriting()) {
+                    !isVerticalWriting) {
                 if (lineHasContent) {
                     float indentFromLastLine = previousDescent - lastLineBottomLeadingIndent -
                             (leading != null ? processedRenderer.getTopLeadingIndent(leading) : 0) -
@@ -427,7 +428,9 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
             } else {
                 if (leading != null) {
-                    processedRenderer.applyLeading(deltaY);
+                    if (!isVerticalWriting) {
+                        processedRenderer.applyLeading(deltaY);
+                    }
                     if (lineHasContent) {
                         lastYLine = processedRenderer.getYLine();
                     }
@@ -438,7 +441,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
                 firstLineInBox = false;
 
-                if (isVerticalWriting()) {
+                if (isVerticalWriting) {
                     // TODO DEVSIX-10137 Distance between lines is currently equal to two line widths.
                     float lineWidth = processedRenderer.getOccupiedArea().getBBox().getWidth();
                     layoutBox.setX(processedRenderer.getOccupiedArea().getBBox().getX() + (lineWidth * 2));

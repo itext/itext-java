@@ -96,6 +96,7 @@ public class LineRenderer extends AbstractRenderer {
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
         OverflowPropertyValue oldXOverflow = null;
+        boolean isVerticalWriting = isVerticalWriting();
         boolean wasXOverflowChanged = false;
         boolean floatsPlacedBeforeLine = false;
 
@@ -188,7 +189,7 @@ public class LineRenderer extends AbstractRenderer {
 
             LayoutResult childResult = null;
             Rectangle bbox;
-            if (isVerticalWriting()) {
+            if (isVerticalWriting) {
                 bbox = new Rectangle(layoutBox.getX(), layoutBox.getY(),
                         layoutBox.getWidth(), layoutBox.getHeight() - curMainAxisOccupiedSize);
             } else {
@@ -627,7 +628,7 @@ public class LineRenderer extends AbstractRenderer {
                     hangingTabStop = null;
                 } else if (null == hangingTabStop) {
                     if (childResult.getOccupiedArea() != null && childResult.getOccupiedArea().getBBox() != null) {
-                        curMainAxisOccupiedSize += isVerticalWriting() ?
+                        curMainAxisOccupiedSize += isVerticalWriting ?
                                 childResult.getOccupiedArea().getBBox().getHeight() :
                                 childResult.getOccupiedArea().getBBox().getWidth();
                     }
@@ -635,7 +636,7 @@ public class LineRenderer extends AbstractRenderer {
                     widthHandler.updateMaxChildWidth(maxChildWidth + currChildTextIndent);
                 }
                 if (!forceOverflowForTextRendererPartialResult) {
-                    if (isVerticalWriting()) {
+                    if (isVerticalWriting) {
                         float maxLineWidth = Math.max(occupiedArea.getBBox().getWidth(),
                                 childResult.getOccupiedArea().getBBox().getWidth());
                         occupiedArea.setBBox(new Rectangle(layoutBox.getX(),
@@ -1005,13 +1006,11 @@ public class LineRenderer extends AbstractRenderer {
     }
 
     protected void applyLeading(float deltaY) {
-        if (!isVerticalWriting()) {
-            occupiedArea.getBBox().moveUp(deltaY);
-            occupiedArea.getBBox().decreaseHeight(deltaY);
-            for (final IRenderer child : getChildRenderers()) {
-                if (!FloatingHelper.isRendererFloating(child)) {
-                    child.move(0, deltaY);
-                }
+        occupiedArea.getBBox().moveUp(deltaY);
+        occupiedArea.getBBox().decreaseHeight(deltaY);
+        for (final IRenderer child : getChildRenderers()) {
+            if (!FloatingHelper.isRendererFloating(child)) {
+                child.move(0, deltaY);
             }
         }
     }
