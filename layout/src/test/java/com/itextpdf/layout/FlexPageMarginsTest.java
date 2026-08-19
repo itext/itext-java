@@ -965,6 +965,197 @@ public class FlexPageMarginsTest extends ExtendedITextTest {
                 .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
     }
 
+    @Test
+    public void noMarginsOnProcessedPageTest()
+            throws IOException, InterruptedException {
+        String fileName = "noMarginsOnProcessedPage";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+
+            Div firstPageFlex = createColumnFlexContainer();
+            for (int i = 0; i < 3; i++) {
+                Div row = createRowFlexContainer();
+                for (int j = 0; j < 3; j++) {
+                    row.add(new Div()
+                            .add(new Paragraph("R" + i + "C" + j + "\n" + TestResourceUtil.getByronStanza()))
+                            .setWidth(UnitValue.createPercentValue(30))
+                            .setBackgroundColor(j % 2 == 0
+                                    ? new DeviceRgb(65, 151, 29)
+                                    : new DeviceRgb(209, 247, 29))
+                            .setMargin(5));
+                }
+                firstPageFlex.add(row);
+            }
+
+            document.add(firstPageFlex);
+
+            document.setPageMargins(pageNum -> pageNum % 2 == 0,
+                    new PageMarginBoxes(PageMarginsTestUtil.getPageMargins2()));
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    public void marginsDrawOnLaterFlexPageTest() throws IOException, InterruptedException {
+        String fileName = "marginsDrawOnLaterFlexPage";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            Div firstPageFlex = createRowFlexContainer();
+            firstPageFlex.add(coloredDiv("no margins", new DeviceRgb(65, 151, 29)));
+            firstPageFlex.add(coloredDiv("should be on this page", new DeviceRgb(209, 247, 29)));
+            document.add(firstPageFlex);
+
+            document.setPageMargins(pageNum -> pageNum < 5,
+                    new PageMarginBoxes(PageMarginsTestUtil.getPageMargins2()));
+
+            document.add(new AreaBreak());
+
+            Div secondPageFlex = createRowFlexContainer();
+            secondPageFlex.add(coloredDiv("all margins", new DeviceRgb(78, 151, 205)));
+            secondPageFlex.add(coloredDiv("should be presented", new DeviceRgb(255, 165, 0)));
+            document.add(secondPageFlex);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    public void latePredicateMarginsNotAppliedTest() throws IOException, InterruptedException {
+        String fileName = "latePredicateMarginsNotApplied";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            Div firstPageFlex = createRowFlexContainer();
+            firstPageFlex.add(coloredDiv("content added", new DeviceRgb(65, 151, 29)));
+            firstPageFlex.add(coloredDiv("before margins", new DeviceRgb(209, 247, 29)));
+            document.add(firstPageFlex);
+
+            document.setPageMargins(pageNum -> pageNum < 5,
+                    new PageMarginBoxes(PageMarginsTestUtil.getPageMargins2()));
+
+            Div samePageFlex = createRowFlexContainer();
+            samePageFlex.add(coloredDiv("so no margins", new DeviceRgb(78, 151, 205)));
+            samePageFlex.add(coloredDiv("should be applied", new DeviceRgb(255, 165, 0)));
+            document.add(samePageFlex);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    public void latePageMarginsAppliedOnContentTest() throws IOException, InterruptedException {
+        String fileName = "latePageMarginsAppliedOnContent";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc)) {
+            Div firstPageFlex = createRowFlexContainer();
+            firstPageFlex.add(coloredDiv("content added", new DeviceRgb(65, 151, 29)));
+            firstPageFlex.add(coloredDiv("before margins", new DeviceRgb(209, 247, 29)));
+            document.add(firstPageFlex);
+
+            document.setPageMargins(1, new PageMarginBoxes(PageMarginsTestUtil.getPageMargins2()));
+
+            Div samePageFlex = createRowFlexContainer();
+            samePageFlex.add(coloredDiv("margins expected", new DeviceRgb(78, 151, 205)));
+            samePageFlex.add(coloredDiv("on top of content", new DeviceRgb(255, 165, 0)));
+            document.add(samePageFlex);
+
+            // It is expected that if explicit page-number margins are applied to page 1 after content is already placed,
+            // result will have overlaps of content and margin.
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    public void sectionBreaksMarginsNotOverriddenTest() throws IOException, InterruptedException {
+        String fileName = "sectionBreaksMarginsNotOverridden";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc, PageSize.A4, false)) {
+            Div page1Flex = createRowFlexContainer();
+            page1Flex.add(coloredDiv("PAGE 1", new DeviceRgb(65, 151, 29)));
+            page1Flex.add(coloredDiv("NO MARGINS", new DeviceRgb(209, 247, 29)));
+            document.add(page1Flex);
+
+            document.add(new SectionBreak(new PageMarginBoxes(PageMarginsTestUtil.getMarginBoxesWithContent(
+                    new Div().add(new Paragraph("OVERRIDDEN_MARGIN")).setBackgroundColor(ColorConstants.PINK)
+                            .setTextAlignment(TextAlignment.CENTER).setHeight(32),
+                    null, null, null))));
+
+            document.add(new SectionBreak(new PageMarginBoxes(PageMarginsTestUtil.getMarginBoxesWithContent(
+                    new Div().add(new Paragraph("SECTION_MARGIN_2")).setBackgroundColor(ColorConstants.YELLOW)
+                            .setTextAlignment(TextAlignment.CENTER).setHeight(32),
+                    null, null, null))));
+            Div page3Flex = createRowFlexContainer();
+            page3Flex.add(coloredDiv("PAGE 2", new DeviceRgb(200, 100, 100)));
+            page3Flex.add(coloredDiv("SECTION 1", new DeviceRgb(100, 200, 100)));
+            document.add(page3Flex);
+
+            document.setPageMargins(pageNum -> pageNum % 2 != 0,
+                    new PageMarginBoxes(PageMarginsTestUtil.getMarginBoxesWithContent(
+                            new Div().add(new Paragraph("LATE_MARGIN")).setBackgroundColor(ColorConstants.CYAN)
+                                    .setTextAlignment(TextAlignment.CENTER).setHeight(32),
+                            null, null, null)));
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
+    @Test
+    public void partialResultMarginsNotOverriddenTest() throws IOException, InterruptedException {
+        String fileName = "partialResultMarginsNotOverridden";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDoc, PageSize.A4, false)) {
+            Div page1Flex = createRowFlexContainer();
+            page1Flex.add(coloredDiv("PAGE 1", new DeviceRgb(65, 151, 29)));
+            page1Flex.add(coloredDiv("NO MARGINS", new DeviceRgb(209, 247, 29)).setHeight(1500));
+            document.add(page1Flex);
+
+            document.setPageMargins(pageNum -> pageNum < 5,
+                    new PageMarginBoxes(PageMarginsTestUtil.getMarginBoxesWithContent(
+                            new Div().add(new Paragraph("LATE_MARGIN")).setBackgroundColor(ColorConstants.CYAN)
+                                    .setTextAlignment(TextAlignment.CENTER).setHeight(32),
+                            null, null, null)));
+
+            Div page2Flex = createRowFlexContainer();
+            page2Flex.add(coloredDiv("PAGE 2", new DeviceRgb(78, 151, 205)));
+            page2Flex.add(coloredDiv("SECTION 1", new DeviceRgb(255, 165, 0)));
+            document.add(page2Flex);
+
+            document.add(new AreaBreak());
+
+            Div page3Flex = createRowFlexContainer();
+            page3Flex.add(coloredDiv("PAGE 3", new DeviceRgb(200, 100, 100)));
+            page3Flex.add(coloredDiv("SECTION 2", new DeviceRgb(100, 200, 100)));
+            document.add(page3Flex);
+        }
+
+        Assertions.assertNull(new CompareTool()
+                .compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_" + fileName));
+    }
+
     private static Div createRowFlexContainer() {
         Div flex = new Div();
         flex.setNextRenderer(new FlexContainerRenderer(flex));

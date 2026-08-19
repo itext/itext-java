@@ -48,7 +48,9 @@ import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DocumentRenderer extends RootRenderer {
     final FootnotesCounterHandler footnotesCounterHandler = new FootnotesCounterHandler();
@@ -57,6 +59,7 @@ public class DocumentRenderer extends RootRenderer {
     protected List<Integer> wrappedContentPage = new ArrayList<>();
     protected TargetCounterHandler targetCounterHandler = new TargetCounterHandler();
 
+    private Set<Integer> contentProcessedPages = new HashSet<>();
     private PageMarginBoxesDrawingHandler marginBoxesHandler;
     private boolean dynamicPageMarginsUsed = false;
     private PageSize currentPageSize = null;
@@ -156,6 +159,11 @@ public class DocumentRenderer extends RootRenderer {
         SectionBreak sectionBreak = overflowResult != null && overflowResult.getSectionBreak() != null ?
                 overflowResult.getSectionBreak() : null;
 
+        if (overflowResult != null && overflowResult.getOccupiedArea() != null) {
+            // Persist margins for pages that already received content before moving layout to another page.
+            savePageMarginsForProcessedPage(overflowResult.getOccupiedArea().getPageNumber());
+        }
+
         int currentPageNumber = currentArea == null ? 0 : currentArea.getPageNumber();
         if (areaBreak != null && areaBreak.getType() == AreaBreakType.LAST_PAGE) {
             while (currentPageNumber < document.getPdfDocument().getNumberOfPages()) {
@@ -250,9 +258,20 @@ public class DocumentRenderer extends RootRenderer {
             if (pdfDocument.isTagged()) {
                 pdfDocument.getTagStructureContext().getAutoTaggingPointer().setPageForTagging(correspondingPage);
             }
+
             resultRenderer.draw(new DrawContext(pdfDocument,
                     new PdfCanvas(correspondingPage, wrapOldContent), pdfDocument.isTagged()));
         }
+    }
+
+    @Override
+    protected void shrinkCurrentAreaAndProcessRenderer(IRenderer renderer, List<IRenderer> resultRenderers,
+            LayoutResult result) {
+        if (result != null && result.getOccupiedArea() != null) {
+            // Freeze margins when page content is laid out
+            savePageMarginsForProcessedPage(result.getOccupiedArea().getPageNumber());
+        }
+        super.shrinkCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
     }
 
     /**
@@ -286,6 +305,13 @@ public class DocumentRenderer extends RootRenderer {
             lastPageSize = addNewPage(customPageSize);
         }
         return lastPageSize;
+    }
+
+    private void savePageMarginsForProcessedPage(int pageNumber) {
+        if (!contentProcessedPages.contains(pageNumber)) {
+            contentProcessedPages.add(pageNumber);
+            document.setPageMargins(pageNumber, document.getPageMargins(pageNumber));
+        }
     }
 
     private Rectangle getCurrentPageEffectiveArea(PageSize pageSize) {

@@ -31,14 +31,17 @@ import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.actions.events.ITextCoreProductEvent;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfPage;
+import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEvent;
 import com.itextpdf.kernel.pdf.event.AbstractPdfDocumentEventHandler;
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.element.AreaBreak;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
@@ -52,6 +55,7 @@ import com.itextpdf.layout.testutil.TestConfigurationEvent;
 import com.itextpdf.layout.testutil.TestProductEvent;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.ByteArrayInputStream;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -206,6 +210,90 @@ public class DocumentTest extends ExtendedITextTest {
             if (!pdfDocument.isClosed()) {
                 document.close();
             }
+        }
+    }
+
+    @Test
+    public void processedPagesKeepMarginsAfterPredicateTest() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String marker = "LATE_MARGIN_MARKER";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(baos)))) {
+            for (int i = 0; i < 80; i++) {
+                document.add(new Paragraph("Paragraph " + i + " ").setMarginBottom(12));
+            }
+
+            document.flush();
+            Assertions.assertTrue(document.getPdfDocument().getNumberOfPages() >= 2);
+
+            PageMarginBoxes pageMargins = new PageMarginBoxes(Collections.singletonList(
+                    new PageMarginContent(MarginBoxName.TOP,
+                            new Div().add(new Paragraph(marker)).setHeight(40))));
+            document.setPageMargins(pageNum -> pageNum % 2 == 0, pageMargins);
+        }
+
+        try (PdfDocument result = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())))) {
+            String secondPageText = PdfTextExtractor.getTextFromPage(result.getPage(2));
+            Assertions.assertFalse(secondPageText.contains(marker));
+        }
+    }
+
+    @Test
+    public void marginsAreDrawnOnPagesAfterPredicateTest() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String marker = "FUTURE_PAGE_MARGIN_MARKER";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(baos)))) {
+            document.add(new Paragraph("Page 1 content"));
+            document.flush();
+
+            PageMarginBoxes pageMargins = new PageMarginBoxes(Collections.singletonList(
+                    new PageMarginContent(MarginBoxName.TOP,
+                            new Div().add(new Paragraph(marker)).setHeight(30))));
+            document.setPageMargins(pageNum -> pageNum < 5, pageMargins);
+
+            document.add(new AreaBreak());
+            document.add(new Paragraph("Page 2 content"));
+        }
+
+        try (PdfDocument result = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())))) {
+            String firstPageText = PdfTextExtractor.getTextFromPage(result.getPage(1));
+            String secondPageText = PdfTextExtractor.getTextFromPage(result.getPage(2));
+
+            Assertions.assertFalse(firstPageText.contains(marker));
+            Assertions.assertTrue(secondPageText.contains(marker));
+        }
+    }
+
+    @Test
+    public void noMarginsOnOldPagesButDrawnOnNewPagesTest() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String marker = "EVEN_LATER_PAGE_MARGIN_MARKER";
+
+        try (Document document = new Document(new PdfDocument(new PdfWriter(baos)))) {
+            document.add(new Paragraph("Page 1 content"));
+            document.add(new AreaBreak());
+            document.add(new Paragraph("Page 2 content"));
+            document.flush();
+            Assertions.assertTrue(document.getPdfDocument().getNumberOfPages() >= 2);
+
+            PageMarginBoxes pageMargins = new PageMarginBoxes(Collections.singletonList(
+                    new PageMarginContent(MarginBoxName.TOP,
+                            new Div().add(new Paragraph(marker)).setHeight(30))));
+            document.setPageMargins(pageNum -> pageNum % 2 == 0, pageMargins);
+
+            document.add(new AreaBreak());
+            document.add(new Paragraph("Page 3 content"));
+            document.add(new AreaBreak());
+            document.add(new Paragraph("Page 4 content"));
+        }
+
+        try (PdfDocument result = new PdfDocument(new PdfReader(new ByteArrayInputStream(baos.toByteArray())))) {
+            String page2Text = PdfTextExtractor.getTextFromPage(result.getPage(2));
+            String page4Text = PdfTextExtractor.getTextFromPage(result.getPage(4));
+
+            Assertions.assertFalse(page2Text.contains(marker));
+            Assertions.assertTrue(page4Text.contains(marker));
         }
     }
 
