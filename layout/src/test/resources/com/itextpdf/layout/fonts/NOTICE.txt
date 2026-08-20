@@ -6,8 +6,13 @@ NotoColorEmoji.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.goo
 NotoEmoji-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Emoji" (26.01.2026)
 NotoSansCJKjp-Bold.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit f36eda03dfa5582a6d49abbfb5c83d0209584158 (01.07.2015) from repository: "Based on "https://github.com/googlefonts/noto-cjk"
 NotoSansCJKjp-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 9b0f1436e455d902de067a2501422e5dc71ad16b (30.06.2024) from repository "Based on "https://github.com/notofonts/noto-cjk/tree"
+NotoSansCJKkr-Regular.otf.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository "Based on "https://github.com/notofonts/noto-cjk/tree"
 NotoSansCJKsc-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit f36eda03dfa5582a6d49abbfb5c83d0209584158 (01.07.2015) from repository: "Based on "https://github.com/googlefonts/noto-cjk"
+NotoSerifCJKsc-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 9b0f1436e455d902de067a2501422e5dc71ad16b (30.07.2024) from repository: "Based on "https://github.com/googlefonts/noto-cjk"
+NotoSansCJKsc-Bold.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "Based on "https://github.com/googlefonts/noto-cjk"
+NotoSansCJKtc-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 165c01b46ea533872e002e0785ff17e44f6d97d8 (30.04.2021) from repository: "Based on "https://github.com/googlefonts/noto-cjk"
 NotoSansJP-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Sans+JP" (26.01.2026)
+NotoSansMongolian-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Sans+Mongolian" (20.08.2026)
 NotoSans-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "Based on "https://github.com/googlefonts/noto-fonts"
 NotoSansThai-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Sans+Thai (27.01.2026)
 NotoSansGujarati-Regular.ttf | OFL-1.1 | LICENSE-OFL-1.1.txt | Based on commit 5a89b487c648c34c2b6d1b9ebb73bb3fab1df4b2 (20.09.2017) from "https://github.com/googlefonts/noto-fonts"Puritan-regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Puritan" (26.01.2026)
