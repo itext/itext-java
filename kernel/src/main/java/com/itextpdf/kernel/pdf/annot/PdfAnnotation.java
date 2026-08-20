@@ -23,8 +23,8 @@
 package com.itextpdf.kernel.pdf.annot;
 
 import com.itextpdf.commons.logs.LazyLogger;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceCmyk;
 import com.itextpdf.kernel.colors.DeviceGray;
@@ -358,7 +358,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Gets a {@link PdfDictionary} that represents a page of the document on which annotation is placed,
      * i.e. which has this annotation in it's /Annots array.
      *
-     * @return {@link PdfDictionary} that is a page pdf object or null if annotation is not added to the page yet.
+     * @return {@link PdfDictionary} that is a page PDF object or null if annotation is not added to the page yet.
      */
     public PdfDictionary getPageObject() {
         return getPdfObject().getAsDictionary(PdfName.P);
@@ -400,7 +400,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Method that modifies annotation page property, which defines to which page annotation belongs.
      * Keep in mind that this doesn't actually add an annotation to the page,
      * it should be done via {@link PdfPage#addAnnotation(PdfAnnotation)}.
-     * Also you don't need to set this property manually, this is done automatically on addition to the page.
+     * Also, you don't need to set this property manually, this is done automatically on addition to the page.
      *
      * @param page the {@link PdfPage} to which annotation will be added.
      * @return this {@link PdfAnnotation} instance.
@@ -499,7 +499,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      *
      * <li>{@link PdfAnnotation#NO_ZOOM} - If set, do not scale the annotation’s appearance to match the magnification of
      * the page. The location of the annotation on the page (defined by the upper-left corner of its annotation
-     * rectangle) shall remain fixed, regardless of the page magnification.}
+     * rectangle) shall remain fixed, regardless of the page magnification.
      *
      * <li>{@link PdfAnnotation#NO_ROTATE} - If set, do not rotate the annotation’s appearance to match the rotation
      * of the page. The upper-left corner of the annotation rectangle shall remain in a fixed location on the page,
@@ -585,7 +585,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      *
      * @param appearanceType a {@link PdfName} specifying appearance type. Possible types are {@link PdfName#N Normal},
      *                       {@link PdfName#R Rollover} and {@link PdfName#D Down}.
-     * @return null if their is no such appearance type or an appearance object which might be either
+     * @return null if there is no such appearance type or an appearance object which might be either
      * an appearance stream or an appearance subdictionary.
      */
     public PdfDictionary getAppearanceObject(PdfName appearanceType) {
@@ -778,7 +778,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Sets the characteristics of the annotation’s border.
      *
      * @param border an {@link PdfAnnotationBorder} specifying the characteristics of the annotation’s border.
-     *               See {@link PdfAnnotation#getBorder()} for more detailes.
+     *               See {@link PdfAnnotation#getBorder()} for more details.
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setBorder(PdfAnnotationBorder border) {
@@ -789,7 +789,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
      * Sets the characteristics of the annotation’s border.
      *
      * @param border an {@link PdfArray} specifying the characteristics of the annotation’s border.
-     *               See {@link PdfAnnotation#getBorder()} for more detailes.
+     *               See {@link PdfAnnotation#getBorder()} for more details.
      * @return this {@link PdfAnnotation} instance.
      */
     public PdfAnnotation setBorder(PdfArray border) {
@@ -866,7 +866,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Sets he integer key of the annotation’s entry in the structural parent tree
+     * Sets the integer key of the annotation’s entry in the structural parent tree
      * (see ISO-320001 14.7.4.4, "Finding Structure Elements from Content Items").
      * Note: Normally, there is no need to take care of this manually, struct parent index is set automatically
      * if annotation is added to the tagged document's page.
@@ -966,12 +966,12 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * PDF 2.0. When regenerating the annotation's appearance stream, this is the
-     * opacity value that shall be used for all nonstroking
+     * opacity value that shall be used for all non stroking
      * operations on all visible elements of the annotation in its closed state (including its
      * background and border) but not the popup window that appears when the annotation is
      * opened.
      *
-     * @return opacity value for nonstroking operations. Returns 1.0 (default value) if entry is not present
+     * @return opacity value for non stroking operations. Returns 1.0 (default value) if entry is not present
      */
     public float getNonStrokingOpacity() {
         PdfNumber nonStrokingOpacity = getPdfObject().getAsNumber(PdfName.ca);
@@ -980,12 +980,12 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
 
     /**
      * PDF 2.0. When regenerating the annotation's appearance stream, this is the
-     * opacity value that shall be used for all nonstroking
+     * opacity value that shall be used for all non stroking
      * operations on all visible elements of the annotation in its closed state (including its
      * background and border) but not the popup window that appears when the annotation is
      * opened.
      *
-     * @param nonStrokingOpacity opacity for nonstroking operations
+     * @param nonStrokingOpacity opacity for non stroking operations
      * @return this {@link PdfAnnotation} instance
      */
     public PdfAnnotation setNonStrokingOpacity(float nonStrokingOpacity) {
@@ -1019,7 +1019,7 @@ public abstract class PdfAnnotation extends PdfObjectWrapper<PdfDictionary> {
     }
 
     /**
-     * Inserts the value into into the underlying {@link PdfDictionary} of this {@link PdfAnnotation} and associates it
+     * Inserts the value into the underlying {@link PdfDictionary} of this {@link PdfAnnotation} and associates it
      * with the specified key. If the key is already present in this {@link PdfAnnotation}, this method will override
      * the old value with the specified one.
      *
