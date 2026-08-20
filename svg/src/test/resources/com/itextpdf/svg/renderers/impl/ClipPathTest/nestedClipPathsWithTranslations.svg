@@ -1,0 +1,23 @@
+<svg width='400' height='800' xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+      <clipPath id="test1" transform="translate(20 0)">
+          <rect x="0" y="50" width="200" height="200" stroke="red" fill="black"/>
+      </clipPath>
+      <clipPath id="test2" transform="translate(20 0)">
+        <rect x="0" y="450" width="200" height="200" stroke="red" fill="black"/>
+      </clipPath>
+    </defs>
+  <g clip-path="url(#test1)">
+    <g clip-path="url(#test1)">
+        <circle cx="200" cy="200" r="200" fill="blue" />
+    </g>
+  </g>
+  <text x="20" y="350">
+    <tspan>Blue elements must be the same</tspan>
+  </text>
+  <g>
+    <g clip-path="url(#test2)">
+      <circle cx="200" cy="600" r="200" fill="blue" />
+    </g>
+  </g>
+</svg>

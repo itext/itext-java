@@ -269,4 +269,9 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     public void notUsedClipPathOutsideDefsTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "notUsedClipPathOutsideDefs");
     }
+
+    @Test
+    public void nestedClipPathsWithTranslationsTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedClipPathsWithTranslations");
+    }
 }

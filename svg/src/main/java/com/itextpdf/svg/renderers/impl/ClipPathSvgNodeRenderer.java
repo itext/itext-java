@@ -23,6 +23,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.commons.logs.LazyLogger;
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -105,9 +106,17 @@ public class ClipPathSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
                 LOGGER.warn(() -> SvgLogMessageConstant.NONINVERTIBLE_TRANSFORMATION_MATRIX_USED_IN_CLIP_PATH);
             }
         }
+        // In case of nested clip paths, SvgDrawContext.clippingElementTransform could aggregate nested translations,
+        // which is incorrect because a clip path's translation doesn't translate the coordinate system for its children.
+        // Therefore, save clippingElementTransform and restore it after drawing the clipped renderer.
+        AffineTransform originalClippingElementTransform = new AffineTransform(context.getClippingElementTransform());
+        context.resetClippingElementTransform();
         clippedRenderer.preDraw(context);
         clippedRenderer.doDraw(context);
         clippedRenderer.postDraw(context);
+        context.resetClippingElementTransform();
+        context.getClippingElementTransform().concatenate(originalClippingElementTransform);
+
         // Returning canvas matrix to its original state isn't required
         // because after drawClippedRenderer graphic state will be restored
     }
