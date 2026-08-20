@@ -25,7 +25,6 @@ package com.itextpdf.svg.renderers;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
@@ -47,6 +46,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -61,13 +61,18 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void svgWithSvgTest() throws IOException, InterruptedException {
         String svgFileName = SOURCE_FOLDER + "svgWithSvg.svg";
         String cmpFileName = SOURCE_FOLDER + "cmp_svgWithSvg.pdf";
         String outFileName = DESTINATION_FOLDER + "svgWithSvg.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName, new WriterProperties().setCompressionLevel(0))))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, null);
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
@@ -87,7 +92,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_svgImage.pdf";
         String outFileName = DESTINATION_FOLDER + "svgImage.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName, new WriterProperties().setCompressionLevel(0))))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, new SvgConverterProperties().setBaseUri(svgFileName));
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
@@ -107,7 +112,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_svgImageWithBackground.pdf";
         String outFileName = DESTINATION_FOLDER + "svgImageWithBackground.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName, new WriterProperties().setCompressionLevel(0))))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg, new SvgConverterProperties().setBaseUri(svgFileName));
             ISvgNodeRenderer topSvgRenderer = result.getRootRenderer();
@@ -126,7 +131,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_noWidthHeightSvg.pdf";
         String outFileName = DESTINATION_FOLDER + "noWidthHeightSvg.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -146,7 +151,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -172,7 +177,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -199,7 +204,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -222,7 +227,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -250,7 +255,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -277,7 +282,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -304,7 +309,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -331,7 +336,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -356,7 +361,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -381,7 +386,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "2_img" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "2_img" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -406,7 +411,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -430,7 +435,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_img" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_img" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -454,7 +459,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_obj" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_obj" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -478,7 +483,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_obj2" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_obj2" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -503,7 +508,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_obj" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_obj" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,
@@ -527,7 +532,7 @@ public class SvgImageRendererTest extends SvgIntegrationTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + svgName + "_obj2" + ".pdf";
         String outFileName = DESTINATION_FOLDER + svgName + "_obj2" + ".pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName,
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName,
                 new WriterProperties().setCompressionLevel(0))))) {
             INode parsedSvg = SvgConverter.parse(FileUtil.getInputStreamForFile(svgFileName));
             ISvgProcessorResult result = new DefaultSvgProcessor().process(parsedSvg,

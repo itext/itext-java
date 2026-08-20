@@ -45,6 +45,7 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,11 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     /**
      * Form fields addition to the tagged document.
      */
@@ -72,7 +78,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "taggedPdfWithForms01.pdf";
         String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.setTagged();
 
@@ -93,7 +99,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "taggedPdfWithForms02.pdf";
         String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDoc.setTagged();
         pdfDoc.initializeOutlines();
 
@@ -117,7 +123,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "taggedPdfWithForms03.pdf";
         String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms03.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms01.pdf"), new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms01.pdf"), CompareTool.createTestPdfWriter(outFileName));
 
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, false);
         acroForm.flattenFields();
@@ -135,7 +141,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "taggedPdfWithForms04.pdf";
         String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms04.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms01.pdf"), new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "cmp_taggedPdfWithForms01.pdf"), CompareTool.createTestPdfWriter(outFileName));
 
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDoc, false);
         acroForm.removeField("TestCheck");
@@ -154,7 +160,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "taggedPdfWithForms05.pdf";
         String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms05.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDoc.setTagged();
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
@@ -176,7 +182,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "taggedPdfWithForms06.pdf";
         String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms06.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDoc.setTagged();
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
@@ -199,7 +205,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "taggedPdfWithForms07.pdf";
         String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms07.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocWithFields.pdf");
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
@@ -227,7 +233,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_mergeFieldTaggingTest08.pdf";
         String srcFileName = sourceFolder + "mergeFieldTaggingTest08.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcFileName), CompareTool.createTestPdfWriter(outFileName))) {
             pdfDoc.setTagged();
 
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
@@ -262,7 +268,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "taggedPdfWithForms10.pdf";
         String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms10.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDoc.setTagged();
         pdfDoc.initializeOutlines();
 
@@ -284,7 +290,7 @@ public class FormFieldsTaggingTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "taggedPdfWithForms11.pdf";
         String cmpFileName = sourceFolder + "cmp_taggedPdfWithForms11.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfReader reader = new PdfReader(sourceFolder + "taggedDocWithFields.pdf");
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
         pdfDoc.setTagged();

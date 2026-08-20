@@ -23,7 +23,6 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
@@ -36,6 +35,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -51,10 +51,15 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void lineRendererTest() throws IOException, InterruptedException {
         String filename = "lineSvgRendererTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> lineProperties = new HashMap<>();
@@ -81,7 +86,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
     @Test
     public void lineWithEmpyAttributesTest() throws IOException, InterruptedException {
         String filename = "lineWithEmpyAttributesTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> lineProperties = new HashMap<>();
@@ -101,7 +106,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
     @Test
     public void invalidAttributeTest01() throws IOException, InterruptedException {
         String filename = "invalidAttributeTest01.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
         ISvgNodeRenderer root = new LineSvgNodeRenderer();
         Map<String, String> lineProperties = new HashMap<>();
@@ -128,7 +133,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
         lineProperties.put("stroke", "orange");
 
         String filename = "invalidAttributes02.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         LineSvgNodeRenderer root = new LineSvgNodeRenderer();
@@ -146,7 +151,7 @@ public class LineSvgNodeRendererTest extends SvgIntegrationTest{
     @Test
     public void emptyPointsListTest() throws IOException, InterruptedException {
         String filename = "lineEmptyPointsListTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         ISvgNodeRenderer root = new LineSvgNodeRenderer();

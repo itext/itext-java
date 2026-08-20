@@ -25,7 +25,6 @@ package com.itextpdf.svg.customization;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -45,6 +44,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -58,10 +58,15 @@ public class CustomizeTextLeafSvgNodeRendererTest extends SvgIntegrationTest {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void testCustomizeTextLeafSvgNodeRenderer() throws IOException, InterruptedException {
         String pdfFilename = "customizeTextLeafSvgNodeRenderer.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + pdfFilename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + pdfFilename));
         doc.addNewPage();
 
         SvgConverterProperties properties = new SvgConverterProperties();

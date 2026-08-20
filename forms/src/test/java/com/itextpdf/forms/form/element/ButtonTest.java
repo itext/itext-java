@@ -41,7 +41,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -59,6 +58,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -75,12 +75,17 @@ public class ButtonTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void basicButtonTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicButton.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicButton.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Button formButton = new Button("form button");
             formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formButton.add(new Paragraph("form button"));
@@ -106,7 +111,7 @@ public class ButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "basicButtonWithFontDiffersOnParagraph.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicButtonWithFontDiffersOnParagraph.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Button formButton = new Button("form button");
 
             formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
@@ -138,7 +143,7 @@ public class ButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "basicButtonWithFont.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicButtonWithFon.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Button formButton = new Button("form button");
 
             formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
@@ -168,7 +173,7 @@ public class ButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "customizedButton.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_customizedButton.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Button formButton = new Button("form button");
             formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formButton.setValue("form button");
@@ -196,7 +201,7 @@ public class ButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "buttonVerticalAlignment.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_buttonVerticalAlignment.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Button formButton = new Button("form button");
             formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formButton.setValue("capture on bottom");
@@ -214,7 +219,7 @@ public class ButtonTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_addButtonInTwoWays.pdf";
         String imagePath = SOURCE_FOLDER + "Desert.jpg";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             // Create push button using html element
             Button formButton = new Button("button");
             formButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
@@ -248,7 +253,7 @@ public class ButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "borderBoxes.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_borderBoxes.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             // BORDER_BOX
             Button interactiveButton = new Button("interactiveButton")
                     .setBorder(new SolidBorder(ColorConstants.PINK, 10));
@@ -294,7 +299,7 @@ public class ButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "borderTypes.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_borderTypes.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             // DASHED
             Button button = new Button("button")
                     .setBorder(new DashedBorder(ColorConstants.PINK, 10))
@@ -363,7 +368,7 @@ public class ButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "buttonAlternativeDescription.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_buttonAlternativeDescription.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             try (Document document = new Document(pdfDocument)) {
                 pdfDocument.setTagged();
                 Button formButton = new Button("form button");

@@ -42,6 +42,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.pdfa.VeraPdfValidator;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -57,6 +58,11 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DEST_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DEST_FOLDER);
+    }
+
     @Test
     public void simpleSvgTagged() throws Exception {
         String source = SOURCE_FOLDER + "simple.svg";
@@ -65,7 +71,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
 
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destination, writerProperties));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destination, writerProperties));
 
         pdfDocument.addNewPage();
 
@@ -85,7 +91,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
 
         PdfUADocument pdfDocument = new PdfUADocument(
-                new PdfWriter(destination, writerProperties),
+                CompareTool.createTestPdfWriter(destination, writerProperties),
                 new PdfUAConfig(PdfUAConformance.PDF_UA_2, "ua title", "en-US"));
 
         pdfDocument.addNewPage();
@@ -103,7 +109,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfUADocument pdfDocument = new PdfUADocument(
-                new PdfWriter(destination, writerProperties),
+                CompareTool.createTestPdfWriter(destination, writerProperties),
                 new PdfUAConfig(PdfUAConformance.PDF_UA_2, "ua title", "en-US"));
 
         pdfDocument.addNewPage();
@@ -123,7 +129,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfUADocument pdfDocument = new PdfUADocument(
-                new PdfWriter(destination, writerProperties),
+                CompareTool.createTestPdfWriter(destination, writerProperties),
                 new PdfUAConfig(PdfUAConformance.PDF_UA_2, "ua title", "en-US"));
 
         pdfDocument.addNewPage();
@@ -206,7 +212,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfUADocument pdfDocument = new PdfUADocument(
-                new PdfWriter(destination, writerProperties),
+                CompareTool.createTestPdfWriter(destination, writerProperties),
                 new PdfUAConfig(PdfUAConformance.PDF_UA_2, "ua title", "en-US"));
 
         SvgConverterProperties props = new SvgConverterProperties();
@@ -226,7 +232,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfUADocument pdfDocument = new PdfUADocument(
-                new PdfWriter(destination, writerProperties),
+                CompareTool.createTestPdfWriter(destination, writerProperties),
                 new PdfUAConfig(PdfUAConformance.PDF_UA_2, "ua title", "en-US"));
 
         SvgConverterProperties props = new SvgConverterProperties();
@@ -244,7 +250,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
 
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destination, writerProperties));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destination, writerProperties));
         PdfPage page = pdfDocument.addNewPage();
         SvgConverter.drawOnPage(FileUtil.getInputStreamForFile(source), page);
         pdfDocument.close();
@@ -260,7 +266,7 @@ public class SvgTaggedConverterTest extends ExtendedITextTest {
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfUADocument pdfDocument = new PdfUADocument(
-                new PdfWriter(destination, writerProperties),
+                CompareTool.createTestPdfWriter(destination, writerProperties),
                 new PdfUAConfig(PdfUAConformance.PDF_UA_2, "ua title", "en-US"));
 
         PdfPage page = pdfDocument.addNewPage();

@@ -27,7 +27,6 @@ import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
@@ -45,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -61,11 +61,16 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void emptyComboBoxFieldTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "emptyComboBoxField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_emptyComboBoxField.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ComboBoxField flattenComboBoxField = new ComboBoxField("flatten empty combo box field");
             flattenComboBoxField.setInteractive(false);
             flattenComboBoxField.setBackgroundColor(ColorConstants.RED);
@@ -95,7 +100,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "basicComboBoxField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicComboBoxField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ComboBoxField formComboBoxField = new ComboBoxField("form combo box field");
             formComboBoxField.setInteractive(true);
             formComboBoxField.addOption(new SelectFieldItem("option 1"));
@@ -136,7 +141,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         borderList.add(new SolidBorder(ColorConstants.RED, .7f));
         borderList.add(new SolidBorder(ColorConstants.GREEN, 1));
         borderList.add(new SolidBorder(ColorConstants.BLUE, 2));
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             for (int i = 0; i < borderList.size(); i++) {
 
                 ComboBoxField formComboBoxField = new ComboBoxField("form combo box field" + i);
@@ -174,7 +179,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         borderList.add(ColorConstants.RED);
         borderList.add(ColorConstants.GREEN);
         borderList.add(ColorConstants.BLUE);
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             for (int i = 0; i < borderList.size(); i++) {
 
                 ComboBoxField formComboBoxField = new ComboBoxField("form combo box field" + i);
@@ -209,7 +214,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "comboBoxFieldWithoutSelection.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_comboBoxFieldWithoutSelection.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
 
             ComboBoxField flattenComboBoxFieldWithFont = new ComboBoxField("flatten combo box field with font");
             flattenComboBoxFieldWithFont.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
@@ -236,7 +241,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "comboBoxFieldWithHeight.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_comboBoxFieldWithHeight.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
 
             ComboBoxField flattenComboBoxField = new ComboBoxField("flatten combo box field with height");
             flattenComboBoxField.setBackgroundColor(ColorConstants.RED);
@@ -255,7 +260,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "comboBoxFieldWithMinHeight.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_comboBoxFieldWithMinHeight.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ComboBoxField flattenComboBoxField = new ComboBoxField("flatten combo box field with min height");
             flattenComboBoxField.setBackgroundColor(ColorConstants.RED);
             flattenComboBoxField.addOption(new SelectFieldItem("option 1"));
@@ -272,7 +277,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
     public void comboBoxFieldWithMaxHeightTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "comboBoxFieldWithMaxHeight.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_comboBoxFieldWithMaxHeight.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ComboBoxField flattenComboBoxField = new ComboBoxField("flatten combo box field with max height");
             flattenComboBoxField.setBackgroundColor(ColorConstants.RED);
             flattenComboBoxField.addOption(new SelectFieldItem("option 1"));
@@ -290,7 +295,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "comboBoxFieldCannotFit.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_comboBoxFieldCannotFit.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Div div = new Div();
             div.setWidth(UnitValue.createPointValue(400));
             div.setHeight(UnitValue.createPointValue(755));
@@ -313,7 +318,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
     public void comboBoxFieldWithLangTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "comboBoxFieldWithLang.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_comboBoxFieldWithLang.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ComboBoxField flattenComboBoxField = new ComboBoxField("flatten combo box with lang");
             flattenComboBoxField.setBackgroundColor(ColorConstants.RED);
             flattenComboBoxField.addOption(new SelectFieldItem("option 1"));
@@ -334,7 +339,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_comboBoxFontSizeTest.pdf";
         Float[] fontSizes = {4F, 8F, 12F, 16F, 20F, 24F};
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             for (Float fontSize : fontSizes) {
                 ComboBoxField formComboBoxFieldSelected = new ComboBoxField(
                         "form combo box field selected" + Math.round((float) fontSize));
@@ -364,7 +369,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "nonSelectedInHtml2PdfSelectsFirst.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_nonSelectedInHtml2PdfSelectsFirst.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ComboBoxField formComboBoxFieldSelected = new ComboBoxField("form combo box field selected");
             formComboBoxFieldSelected.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
             formComboBoxFieldSelected.setInteractive(true);
@@ -384,7 +389,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         Color[] colors = {ColorConstants.GREEN, ColorConstants.RED, ColorConstants.BLUE, ColorConstants.YELLOW,
                 ColorConstants.ORANGE, ColorConstants.PINK};
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             for (int i = 0; i < colors.length; i++) {
                 Color color = colors[i];
                 ComboBoxField formComboBoxFieldSelected = new ComboBoxField("form combo box field selected" + i);
@@ -549,7 +554,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "basicComboBoxFieldTagged.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicComboBoxFieldTagged.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             ComboBoxField formComboBoxField = new ComboBoxField("form combo box field");
             formComboBoxField.setInteractive(true);
@@ -587,7 +592,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "comboBoxAlternativeDescription.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_comboBoxAlternativeDescription.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             ComboBoxField formComboBoxField = new ComboBoxField("form combo box field");
             formComboBoxField.setInteractive(true);

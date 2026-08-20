@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,11 @@ public class FieldsRotationTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     public static Iterable<Object[]> rotationRelatedProperties() {
@@ -86,7 +92,7 @@ public class FieldsRotationTest extends ExtendedITextTest {
 
     private void fillForm(int[] pageRotation, int[] fieldRotation, boolean ignorePageRotation, String outPdf)
             throws IOException {
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             PdfAcroForm form = PdfFormCreator.getAcroForm(document.getPdfDocument(), true);
 
             for (int i = 1; i < 5; ++i) {

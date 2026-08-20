@@ -55,6 +55,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -71,12 +72,17 @@ public class RadioTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void basicRadioTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicRadio.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicRadio.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Radio formRadio1 = createRadioButton("form radio button 1", "form radio group", null, null, true, false);
             document.add(formRadio1);
 
@@ -100,7 +106,7 @@ public class RadioTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "basicRadioTagged.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicRadioTagged.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             Radio formRadio1 = createRadioButton("form radio button 1", "form radio group", null, null, true, false);
             document.add(formRadio1);
@@ -146,7 +152,7 @@ public class RadioTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "mergeWithExistingField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_mergeWithExistingField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(outPdf)))) {
             Radio formRadio1 = createRadioButton("radio1", "form radio group",
                     new SolidBorder(ColorConstants.BLUE, 1), null, false, false);
             document.add(formRadio1);
@@ -164,7 +170,7 @@ public class RadioTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "borderBackground.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_borderBackground.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Radio formRadio1 = createRadioButton("formRadio1", "form radio group",
                     new SolidBorder(ColorConstants.BLUE, 1), ColorConstants.GREEN, true, false);
             document.add(formRadio1);
@@ -219,7 +225,7 @@ public class RadioTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "borderBoxes.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_borderBoxes.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             // BORDER_BOX
             Radio formRadio1 = createRadioButton("formRadio1", "form radio group",
                     new SolidBorder(ColorConstants.BLUE, 3), ColorConstants.GREEN, true, false);
@@ -253,7 +259,7 @@ public class RadioTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "dottedBorder.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_dottedBorder.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Radio formRadio1 = createRadioButton("formRadio1", "form radio group",
                     new DottedBorder(ColorConstants.BLUE, 3), ColorConstants.GREEN, true, false);
             formRadio1.setSize(20);
@@ -285,7 +291,7 @@ public class RadioTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "formFieldRadioBorderCircle.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_formFieldRadioBorderCircle.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Radio flattenRadio1 = createRadioButton("flattenRadio1", "flatten radio group",
                     new SolidBorder(ColorConstants.LIGHT_GRAY, 1), ColorConstants.GREEN, false, true);
             flattenRadio1.setProperty(FormProperty.FORM_FIELD_RADIO_BORDER_CIRCLE, Boolean.TRUE);
@@ -307,7 +313,7 @@ public class RadioTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "bigRadioButton.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_bigRadioButton.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Radio flattenRadio1 = createRadioButton("flattenRadio1", "form radio group",
                     new SolidBorder(ColorConstants.BLUE, 1), ColorConstants.GREEN, true, true);
             flattenRadio1.setSize(825f);
@@ -322,7 +328,7 @@ public class RadioTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "radioWithMargins.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_radioWithMargins.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Div div = new Div().setBackgroundColor(ColorConstants.PINK);
             Radio radio = createRadioButton("radio", "form radio group",
                     new SolidBorder(ColorConstants.DARK_GRAY, 20), ColorConstants.WHITE, true, false);
@@ -343,7 +349,7 @@ public class RadioTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "radioWithPaddings.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_radioWithPaddings.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Div div = new Div().setBackgroundColor(ColorConstants.PINK);
             Radio radio = createRadioButton("radio", "form radio group",
                     new SolidBorder(ColorConstants.DARK_GRAY, 20), ColorConstants.WHITE, true, false);
@@ -371,7 +377,7 @@ public class RadioTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "multiPageCheckboxField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_multiPageCheckBoxField.pdf";
 
-        try (PdfDocument document = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
             for (int i = 0; i < 10; i++) {
                 document.addNewPage();

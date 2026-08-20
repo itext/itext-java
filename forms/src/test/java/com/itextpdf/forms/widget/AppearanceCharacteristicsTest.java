@@ -41,6 +41,7 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -56,11 +57,16 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void formFieldBordersTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "formFieldBorders.pdf";
         String cmpPdf = sourceFolder + "cmp_formFieldBorders.pdf";
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
 
             PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
@@ -108,7 +114,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
     public void beveledBorderWithBackgroundTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "beveledBorderWithBackground.pdf";
         String cmpPdf = sourceFolder + "cmp_beveledBorderWithBackground.pdf";
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
 
             PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
             PdfFormField formField = new TextFormFieldBuilder(doc, "formField")
@@ -126,7 +132,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
     public void dashedBorderWithBackgroundTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "dashedBorderWithBackground.pdf";
         String cmpPdf = sourceFolder + "cmp_dashedBorderWithBackground.pdf";
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
 
             PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
             PdfFormField formField = new TextFormFieldBuilder(doc, "formField")
@@ -145,7 +151,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "textStartsAfterFieldBorderTest.pdf";
         String cmpPdf = sourceFolder + "cmp_textStartsAfterFieldBorderTest.pdf";
 
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
             PdfFormField insetFormField = new TextFormFieldBuilder(doc, "insetFormField")
@@ -185,7 +191,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "fillFormWithRotatedFieldAndPageTest.pdf";
         String cmpPdf = sourceFolder + "cmp_fillFormWithRotatedFieldAndPageTest.pdf";
         try (PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "pdfWithRotatedField.pdf"),
-                new PdfWriter(outPdf))) {
+                CompareTool.createTestPdfWriter(outPdf))) {
 
             PdfAcroForm form1 = PdfFormCreator.getAcroForm(doc, false);
             form1.getField("First field").setValue("We filled this field").getFirstFormAnnotation()
@@ -203,7 +209,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "borderStyleInCreatedFormFields.pdf";
         String cmpPdf = sourceFolder + "cmp_borderStyleInCreatedFormFields.pdf";
 
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
 
             PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
 
@@ -237,7 +243,7 @@ public class AppearanceCharacteristicsTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "updatingBorderStyleInFormFields.pdf";
         String cmpPdf = sourceFolder + "cmp_updatingBorderStyleInFormFields.pdf";
 
-        try (PdfDocument doc = new PdfDocument(new PdfReader(inputPdf), new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(new PdfReader(inputPdf), CompareTool.createTestPdfWriter(outPdf))) {
 
             PdfAcroForm form = PdfFormCreator.getAcroForm(doc, false);
 

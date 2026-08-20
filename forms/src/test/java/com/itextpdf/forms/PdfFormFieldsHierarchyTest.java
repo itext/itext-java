@@ -34,6 +34,7 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -49,13 +50,18 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void fillingFormWithKidsTest() throws IOException, InterruptedException {
         String srcPdf = sourceFolder + "formWithKids.pdf";
         String cmpPdf = sourceFolder + "cmp_fillingFormWithKidsTest.pdf";
         String outPdf = destinationFolder + "fillingFormWithKidsTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(outPdf));
 
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, false);
 
@@ -80,7 +86,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         String inPdf = destinationFolder + "autosizeInheritedDAFormFields.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "autosizeInheritedDAFormFields.pdf"),
-                new PdfWriter(inPdf));
+                CompareTool.createTestPdfWriter(inPdf));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
@@ -102,7 +108,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc = new PdfDocument(
                 new PdfReader(sourceFolder + "autosizeInheritedDAFormFieldsWithKids.pdf"),
-                new PdfWriter(inPdf));
+                CompareTool.createTestPdfWriter(inPdf));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
@@ -121,7 +127,7 @@ public class PdfFormFieldsHierarchyTest extends ExtendedITextTest {
         String fileName = destinationFolder + name + ".pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + name + ".pdf"),
-                new PdfWriter(fileName));
+                CompareTool.createTestPdfWriter(fileName));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         form.setGenerateAppearance(false);

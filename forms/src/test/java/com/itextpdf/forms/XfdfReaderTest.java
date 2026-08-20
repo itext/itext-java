@@ -38,6 +38,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -56,12 +57,17 @@ public class XfdfReaderTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
             IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfNoFields() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfNoFields.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfNoFields.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfNoFields.pdf"));
         String xfdfFilename = sourceFolder + "xfdfNoFields.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -75,7 +81,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE))
     public void xfdfNoFieldsNoFAttributes() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfNoFieldsNoFAttributes.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfNoFieldsNoFAttributes.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfNoFieldsNoFAttributes.pdf"));
         String xfdfFilename = sourceFolder + "xfdfNoFieldsNoFAttributes.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -89,7 +95,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfNoFieldsNoIdsAttributes() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfNoFieldsNoIdsAttributes.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfNoFieldsNoIdsAttributes.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfNoFieldsNoIdsAttributes.pdf"));
         String xfdfFilename = sourceFolder + "xfdfNoFieldsNoIdsAttributes.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -103,7 +109,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfWithFieldsWithValue() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfWithFieldsWithValue.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfWithFieldsWithValue.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfWithFieldsWithValue.pdf"));
         String xfdfFilename = sourceFolder + "xfdfWithFieldsWithValue.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -121,7 +127,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfValueRichText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfValueRichText.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfValueRichText.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfValueRichText.pdf"));
         String xfdfFilename = sourceFolder + "xfdfValueRichText.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -138,7 +144,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     })
     public void xfdfHierarchyFieldsTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "hierarchy_fields.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "hierarchy_fields.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "hierarchy_fields.pdf"));
         String xfdfFilename = sourceFolder + "hierarchy_fields.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -155,7 +161,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     })
     public void xfdfWithFieldsWithValueParentAndChild() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfWithFieldsWithValueParentAndChild.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfWithFieldsWithValueParentAndChild.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfWithFieldsWithValueParentAndChild.pdf"));
         String xfdfFilename = sourceFolder + "xfdfWithFieldsWithValueParentAndChild.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -168,7 +174,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @Test
     public void xfdfAnnotationHighlightedText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationHighlightedText.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationHighlightedText.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationHighlightedText.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationHighlightedText.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -182,7 +188,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationUnderlineText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationUnderlineText.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationUnderlineText.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationUnderlineText.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationUnderlineText.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -196,7 +202,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationUnderlineTextRectWithTwoCoords() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationUnderlineTextRectWithTwoCoords.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationUnderlineTextRectWithTwoCoords.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationUnderlineTextRectWithTwoCoords.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationUnderlineTextRectWithTwoCoords.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -210,7 +216,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationUnderlinePopupAllFlags() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationUnderlinePopupAllFlags.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationUnderlinePopupAllFlags.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationUnderlinePopupAllFlags.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationUnderlinePopupAllFlags.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -224,7 +230,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationText.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationText.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationText.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationText.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -238,7 +244,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationStrikeout() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationStrikeout.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationStrikeout.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationStrikeout.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationStrikeout.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -252,7 +258,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationSquigglyText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationSquigglyText.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationSquigglyText.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationSquigglyText.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationSquigglyText.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -270,7 +276,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     })
     public void xfdfAnnotationLine() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationLine.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationLine.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationLine.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationLine.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -284,7 +290,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationCircle() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationCircle.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationCircle.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationCircle.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationCircle.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -298,7 +304,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationSquare() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationSquare.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationSquare.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationSquare.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationSquare.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -312,7 +318,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationCaret() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationCaret.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationCaret.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationCaret.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationCaret.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -326,7 +332,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationPolygon() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationPolygon.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationPolygon.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationPolygon.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationPolygon.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -340,7 +346,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationPolyline() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationPolyline.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationPolyline.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationPolyline.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationPolyline.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -354,7 +360,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationStamp() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationStamp.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationStamp.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationStamp.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationStamp.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -369,7 +375,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationInk() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationInk.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationInk.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationInk.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationInk.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -383,7 +389,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationFreeText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationFreeText.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationFreeText.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationFreeText.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationFreeText.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -398,7 +404,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationFileAttachment() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationFileAttachment.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationFileAttachment.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationFileAttachment.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationFileAttachment.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -413,7 +419,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationSound() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationSound.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationSound.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationSound.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationSound.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -427,7 +433,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationLink() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationLink.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationLink.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationLink.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationLink.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -442,7 +448,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationRedact() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationRedact.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationRedact.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationRedact.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationRedact.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -457,7 +463,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationProjection() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationProjection.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationProjection.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationProjection.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationProjection.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -471,7 +477,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationLinkAllParams() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationLinkAllParams.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationLinkAllParams.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationLinkAllParams.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationLinkAllParams.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -488,7 +494,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationReplaceText() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationReplaceText.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationReplaceText.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationReplaceText.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationReplaceText.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -506,7 +512,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     })
     public void xfdfAnnotationArrow() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationArrow.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationArrow.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationArrow.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationArrow.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -521,7 +527,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-7600 Support callout annotations
     public void xfdfAnnotationCallout() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationCallout.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationCallout.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationCallout.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationCallout.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -538,7 +544,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationCloud() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationCloud.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationCloud.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationCloud.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationCloud.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -555,7 +561,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationCloudNested() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationCloudNested.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationCloudNested.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationCloudNested.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationCloudNested.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -570,7 +576,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationTextBoxAllParams() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationTextBoxAllParams.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationTextBoxAllParams.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationTextBoxAllParams.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationTextBoxAllParams.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -585,7 +591,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfJavaScriptForms() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfJavaScriptForms.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfJavaScriptForms.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfJavaScriptForms.pdf"));
         String xfdfFilename = sourceFolder + "xfdfJavaScriptForms.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -599,7 +605,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfFormsFieldParams() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfFormsFieldParams.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfFormsFieldParams.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfFormsFieldParams.pdf"));
         String xfdfFilename = sourceFolder + "xfdfFormsFieldParams.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -614,7 +620,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationAttrColor() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationAttrColor.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationAttrColor.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationAttrColor.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationAttrColor.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -628,7 +634,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT))
     public void xfdfAnnotationAttrFlagsOpacity() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationAttrFlagsOpacity.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationAttrFlagsOpacity.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationAttrFlagsOpacity.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationAttrFlagsOpacity.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -645,7 +651,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfAnnotationAttrTitle() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfAnnotationAttrTitle.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationAttrTitle.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationAttrTitle.pdf"));
         String xfdfFilename = sourceFolder + "xfdfAnnotationAttrTitle.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -660,7 +666,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfReferenceFor3DMeasurement() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfReferenceFor3DMeasurement.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfReferenceFor3DMeasurement.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfReferenceFor3DMeasurement.pdf"));
         String xfdfFilename = sourceFolder + "xfdfReferenceFor3DMeasurement.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -675,7 +681,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfReferenceFor3DAngular() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfReferenceFor3DAngular.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfReferenceFor3DAngular.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfReferenceFor3DAngular.pdf"));
         String xfdfFilename = sourceFolder + "xfdfReferenceFor3DAngular.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -690,7 +696,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfReferenceFor3DRadial() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfReferenceFor3DRadial.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfReferenceFor3DRadial.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfReferenceFor3DRadial.pdf"));
         String xfdfFilename = sourceFolder + "xfdfReferenceFor3DRadial.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -705,7 +711,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215
     public void xfdfSubelementContents() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfSubelementContents.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfSubelementContents.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfSubelementContents.pdf"));
         String xfdfFilename = sourceFolder + "xfdfSubelementContents.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -720,7 +726,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support annots
     public void xfdfSubelementOverlayAppearance() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfSubelementOverlayAppearance.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfSubelementOverlayAppearance.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfSubelementOverlayAppearance.pdf"));
         String xfdfFilename = sourceFolder + "xfdfSubelementOverlayAppearance.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -735,7 +741,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215
     public void xfdfButton() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfButton.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfButton.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfButton.pdf"));
         String xfdfFilename = sourceFolder + "xfdfButton.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -750,7 +756,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215
     public void xfdfCheckBox() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfCheckBox.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfCheckBox.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfCheckBox.pdf"));
         String xfdfFilename = sourceFolder + "xfdfCheckBox.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -765,7 +771,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215
     public void xfdfList() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfList.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfList.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfList.pdf"));
         String xfdfFilename = sourceFolder + "xfdfList.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -780,7 +786,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     //TODO DEVSIX-3215 Support richtext
     public void xfdfDropDown() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(FileUtil.getInputStreamForFile(sourceFolder + "xfdfDropDown.pdf")),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfDropDown.pdf")));
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfDropDown.pdf"));
         String xfdfFilename = sourceFolder + "xfdfDropDown.xfdf";
         XfdfObjectFactory factory = new XfdfObjectFactory();
         XfdfObject xfdfObject = factory.createXfdfObject(FileUtil.getInputStreamForFile(xfdfFilename));
@@ -795,7 +801,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     public void xfdfBorderStyleAttributesTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         try (PdfDocument document = new PdfDocument(
                 new PdfReader(sourceFolder + "xfdfAnnotationsTemplate.pdf"),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfBorderStyleAttributes.pdf")))) {
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfBorderStyleAttributes.pdf"))) {
 
             String xfdfFilename = sourceFolder + "xfdfBorderStyleAttributes.xfdf";
             XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -812,7 +818,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
     public void xfdfAnnotationAttributesTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         try (PdfDocument document = new PdfDocument(
                 new PdfReader(sourceFolder + "xfdfAnnotationsTemplate.pdf"),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfAnnotationAttributes.pdf")))) {
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfAnnotationAttributes.pdf"))) {
 
             String xfdfFilename = sourceFolder + "xfdfAnnotationAttributes.xfdf";
             XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -830,7 +836,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
             SAXException, InterruptedException {
         try (PdfDocument document = new PdfDocument(
                 new PdfReader(sourceFolder + "xfdfAnnotationsTemplate.pdf"),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfOnlyRequiredAnnotationAttributes.pdf")))) {
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfOnlyRequiredAnnotationAttributes.pdf"))) {
 
             String xfdfFilename = sourceFolder + "xfdfOnlyRequiredAnnotationAttributes.xfdf";
             XfdfObjectFactory factory = new XfdfObjectFactory();
@@ -848,7 +854,7 @@ public class XfdfReaderTest extends ExtendedITextTest {
             SAXException, InterruptedException {
         try (PdfDocument document = new PdfDocument(
                 new PdfReader(sourceFolder + "xfdfAnnotationHighlightedText.pdf"),
-                new PdfWriter(FileUtil.getFileOutputStream(destinationFolder + "xfdfInReplyTo.pdf")))) {
+                CompareTool.createTestPdfWriter(destinationFolder + "xfdfInReplyTo.pdf"))) {
 
             String xfdfFilename = sourceFolder + "xfdfInReplyTo.xfdf";
             XfdfObjectFactory factory = new XfdfObjectFactory();

@@ -38,6 +38,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -58,11 +59,16 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_DIR);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_DIR);
+    }
+
     @Test
     public void addFieldTest() throws IOException, InterruptedException {
         String outputFile = "addFieldTest.pdf";
         PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
-                new PdfWriter(DESTINATION_DIR + outputFile),
+                CompareTool.createTestPdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
         PdfFormField field = new CheckBoxFormFieldBuilder(outputDoc, "checkboxname")
                 .setWidgetRectangle(new Rectangle(10, 10, 24, 24)).createCheckBox()
@@ -76,7 +82,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     public void removeFieldTest() throws IOException, InterruptedException {
         String outputFile = "removeFieldTest.pdf";
         PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
-                new PdfWriter(DESTINATION_DIR + outputFile),
+                CompareTool.createTestPdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
         PdfFormCreator.getAcroForm(outputDoc, true).removeField("textfield2");
         outputDoc.close();
@@ -87,7 +93,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     public void removeKidTest() throws IOException, InterruptedException {
         // Creating input document
         String inputFile = "in_removeKidTest.pdf";
-        PdfDocument inDoc = new PdfDocument(new PdfWriter(DESTINATION_DIR + inputFile));
+        PdfDocument inDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_DIR + inputFile));
         inDoc.addNewPage();
         PdfFormField root = new NonTerminalFormFieldBuilder(inDoc, "root").createNonTerminalFormField();
         PdfFormField child = new NonTerminalFormFieldBuilder(inDoc, "child").createNonTerminalFormField();
@@ -97,8 +103,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
 
         // Creating stamping document
         String outputFile = "removeKidTest.pdf";
-        PdfReader reader = new PdfReader(DESTINATION_DIR + inputFile);
-        PdfWriter writer = new PdfWriter(DESTINATION_DIR + outputFile);
+        PdfReader reader = CompareTool.createOutputReader(DESTINATION_DIR + inputFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_DIR + outputFile);
         PdfDocument outputDoc = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
 
         PdfFormCreator.getAcroForm(outputDoc, true).removeField("root.child");
@@ -111,7 +117,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     public void replaceFieldTest() throws IOException, InterruptedException {
         String outputFile = "replaceFieldTest.pdf";
         PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_TWO_FORM_FIELDS),
-                new PdfWriter(DESTINATION_DIR + outputFile),
+                CompareTool.createTestPdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
         PdfFormField newField = new TextFormFieldBuilder(outputDoc, "newfield").setWidgetRectangle(
                         new Rectangle(20, 160, 100, 20))
@@ -126,7 +132,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         String outputFile = "addFieldToIndirectFieldsArrayTest.pdf";
 
         PdfDocument document = new PdfDocument(new PdfReader(INPUT_FILE_WITH_INDIRECT_FIELDS_ARRAY),
-                new PdfWriter(DESTINATION_DIR + outputFile), new StampingProperties().useAppendMode());
+                CompareTool.createTestPdfWriter(DESTINATION_DIR + outputFile), new StampingProperties().useAppendMode());
 
         PdfFormField field = new CheckBoxFormFieldBuilder(document, "checkboxname")
                 .setWidgetRectangle(new Rectangle(10, 10, 24, 24)).createCheckBox()
@@ -144,7 +150,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
     public void removeFieldFromIndirectFieldsArrayTest() throws IOException, InterruptedException {
         String outputFile = "removeFieldFromIndirectFieldsArrayTest.pdf";
         PdfDocument outputDoc = new PdfDocument(new PdfReader(INPUT_FILE_WITH_INDIRECT_FIELDS_ARRAY),
-                new PdfWriter(DESTINATION_DIR + outputFile),
+                CompareTool.createTestPdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
         PdfFormCreator.getAcroForm(outputDoc, true).removeField("textfield2");
         outputDoc.close();
@@ -158,7 +164,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         String outputFile = "removeKidFromIndirectKidsArrayTest.pdf";
 
         // Creating input document
-        PdfDocument inDoc = new PdfDocument(new PdfWriter(DESTINATION_DIR + inputFile));
+        PdfDocument inDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_DIR + inputFile));
         inDoc.addNewPage();
         PdfFormField root = new NonTerminalFormFieldBuilder(inDoc, "root").createNonTerminalFormField();
         PdfFormField child = new NonTerminalFormFieldBuilder(inDoc, "child").createNonTerminalFormField();
@@ -169,8 +175,8 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         inDoc.close();
 
         // Creating stamping document
-        PdfReader reader = new PdfReader(DESTINATION_DIR + inputFile);
-        PdfWriter writer = new PdfWriter(DESTINATION_DIR + outputFile);
+        PdfReader reader = CompareTool.createOutputReader(DESTINATION_DIR + inputFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_DIR + outputFile);
         PdfDocument outputDoc = new PdfDocument(reader, writer, new StampingProperties().useAppendMode());
 
         PdfFormCreator.getAcroForm(outputDoc, true).removeField("root.child");
@@ -184,7 +190,7 @@ public class PdfAcroFormInAppendModeTest extends ExtendedITextTest {
         String inputFile = SOURCE_DIR + "inputFileWithDirectAcroForm.pdf";
         String outputFile = "addFieldToDirectAcroFormTest.pdf";
         PdfDocument outputDoc = new PdfDocument(new PdfReader(inputFile),
-                new PdfWriter(DESTINATION_DIR + outputFile),
+                CompareTool.createTestPdfWriter(DESTINATION_DIR + outputFile),
                 new StampingProperties().useAppendMode());
         PdfFormField field = new CheckBoxFormFieldBuilder(outputDoc, "checkboxname")
                 .setWidgetRectangle(new Rectangle(10, 10, 24, 24)).createCheckBox()

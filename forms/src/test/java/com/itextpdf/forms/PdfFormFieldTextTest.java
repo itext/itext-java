@@ -44,6 +44,7 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -60,13 +61,18 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void fillFormWithAutosizeTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "fillFormWithAutosizeTest.pdf";
         String inPdf = sourceFolder + "fillFormWithAutosizeSource.pdf";
         String cmpPdf = sourceFolder + "cmp_fillFormWithAutosizeTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(inPdf), new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(inPdf), CompareTool.createTestPdfWriter(outPdf));
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
         Map<String, PdfFormField> fields = form.getAllFormFields();
         fields.get("First field").setValue("name name name ");
@@ -79,7 +85,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
     @Test
     public void defaultAppearanceExtractionForNotMergedFieldsTest() throws IOException, InterruptedException {
         PdfDocument doc = new PdfDocument(new PdfReader(sourceFolder + "sourceDAExtractionTest.pdf"),
-                new PdfWriter(destinationFolder + "defaultAppearanceExtractionTest.pdf"));
+                CompareTool.createTestPdfWriter(destinationFolder + "defaultAppearanceExtractionTest.pdf"));
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, false);
         form.getField("First field").setValue("Your name");
         form.getField("Text1").setValue("Your surname");
@@ -97,7 +103,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
     public void fontsResourcesHelvFontTest() throws IOException {
         String filename = "fontsResourcesHelvFontTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "drWithHelv.pdf"),
-                new PdfWriter(destinationFolder + filename));
+                CompareTool.createTestPdfWriter(destinationFolder + filename));
         PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         font.setSubset(false);
@@ -106,7 +112,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        PdfDocument document = new PdfDocument(new PdfReader(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(CompareTool.createOutputReader(destinationFolder + filename));
 
         PdfDictionary actualDocumentFonts = PdfFormCreator.getAcroForm(document, false).getPdfObject()
                 .getAsDictionary(PdfName.DR).getAsDictionary(PdfName.Font);
@@ -133,7 +139,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
     public void fontsResourcesHelvCourierNotoFontTest() throws IOException {
         String filename = "fontsResourcesHelvCourierNotoFontTest.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "drWithHelvAndCourier.pdf"),
-                new PdfWriter(destinationFolder + filename));
+                CompareTool.createTestPdfWriter(destinationFolder + filename));
         PdfFont font = PdfFontFactory.createFont(FONT_FOLDER + "NotoSans-Regular.ttf",
                 PdfEncodings.IDENTITY_H);
         font.setSubset(false);
@@ -144,7 +150,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
 
         pdfDoc.close();
 
-        PdfDocument document = new PdfDocument(new PdfReader(destinationFolder + filename));
+        PdfDocument document = new PdfDocument(CompareTool.createOutputReader(destinationFolder + filename));
 
         // Note that we know the structure of the expected pdf file
         PdfString expectedAcroformDAFont = new PdfString("/F1 0 Tf 0 g ");
@@ -178,7 +184,7 @@ public class PdfFormFieldTextTest extends ExtendedITextTest {
         String destFilename = destinationFolder + "lineEndingsTest.pdf";
         String cmpFilename = sourceFolder + "cmp_lineEndingsTest.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destFilename))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename))) {
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
             PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "single")

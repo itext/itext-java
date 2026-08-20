@@ -26,15 +26,14 @@ import com.itextpdf.forms.fields.PdfFormCreator;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.StampingProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
-import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -49,6 +48,11 @@ public class FormFieldAppendTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void formFillingAppend_form_empty_Test() throws IOException, InterruptedException {
         String srcFilename = sourceFolder + "Form_Empty.pdf";
@@ -57,7 +61,7 @@ public class FormFieldAppendTest extends ExtendedITextTest {
         StampingProperties props = new StampingProperties();
         props.useAppendMode();
 
-        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(temp), props);
+        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), CompareTool.createTestPdfWriter(temp), props);
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         for (PdfFormField field : form.getAllFormFields().values()) {
@@ -68,8 +72,7 @@ public class FormFieldAppendTest extends ExtendedITextTest {
 
         flatten(temp, filename);
 
-        File toDelete = new File(temp);
-        toDelete.delete();
+        CompareTool.cleanup(temp);
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFillingAppend_form_empty.pdf", destinationFolder, "diff_");
@@ -86,7 +89,7 @@ public class FormFieldAppendTest extends ExtendedITextTest {
         StampingProperties props = new StampingProperties();
         props.useAppendMode();
 
-        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), new PdfWriter(temp), props);
+        PdfDocument doc = new PdfDocument(new PdfReader(srcFilename), CompareTool.createTestPdfWriter(temp), props);
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         for (PdfFormField field : form.getAllFormFields().values()) {
@@ -97,7 +100,7 @@ public class FormFieldAppendTest extends ExtendedITextTest {
 
         flatten(temp, filename);
 
-        new File(temp).delete();
+        CompareTool.cleanup(temp);
 
         CompareTool compareTool = new CompareTool();
         String errorMessage = compareTool.compareByContent(filename, sourceFolder + "cmp_formFillingAppend_form_filled.pdf", destinationFolder, "diff_");
@@ -107,7 +110,7 @@ public class FormFieldAppendTest extends ExtendedITextTest {
     }
 
     private void flatten(String src, String dest) throws IOException {
-        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfDocument doc = new PdfDocument(CompareTool.createOutputReader(src), CompareTool.createTestPdfWriter(dest));
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         form.flattenFields();
         doc.close();

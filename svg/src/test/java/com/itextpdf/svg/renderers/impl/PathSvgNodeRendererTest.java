@@ -24,7 +24,6 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.styledxmlparser.node.IElementNode;
@@ -45,6 +44,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -62,6 +62,11 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @BeforeEach
     public void before() {
         properties = new SvgConverterProperties()
@@ -70,7 +75,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererMoveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
@@ -95,7 +100,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererMoveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererMoveToTest1.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
@@ -120,7 +125,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererCurveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererCurveToTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
@@ -144,7 +149,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererCurveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererCurveToTest1.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
@@ -169,7 +174,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererQCurveToCurveToTest() throws IOException, InterruptedException {
         String filename = "pathNodeRendererQCurveToCurveToTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
@@ -193,7 +198,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void pathNodeRendererQCurveToCurveToTest1() throws IOException, InterruptedException {
         String filename = "pathNodeRendererQCurveToCurveToTest1.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         Map<String, String> pathShapes = new HashMap<String, String>();
@@ -217,7 +222,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void smoothCurveTest1() throws IOException {
         String filename = "smoothCurveTest1.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest1.svg";
@@ -238,7 +243,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void smoothCurveTest2() throws IOException {
         String filename = "smoothCurveTest2.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest2.svg";
@@ -259,7 +264,7 @@ public class PathSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void smoothCurveTest3() throws IOException {
         String filename = "smoothCurveTest3.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         String svgFilename = "smoothCurveTest3.svg";

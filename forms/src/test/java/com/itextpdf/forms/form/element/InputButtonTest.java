@@ -32,7 +32,6 @@ import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -48,6 +47,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -64,12 +64,17 @@ public class InputButtonTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void basicInputButtonTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicInputButton.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicInputButton.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Button formInputButton = new Button("form input button");
             formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setSingleLineValue("form input button");
@@ -91,7 +96,7 @@ public class InputButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "customizedInputButton.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_customizedInputButton.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Button formInputButton = new Button("form input button");
             formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setSingleLineValue("form input button");
@@ -119,7 +124,7 @@ public class InputButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "addInputButtonInTwoWays.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_addInputButtonInTwoWays.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             // Create push button using html element
             Button formInputButton = new Button("button");
             formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
@@ -149,7 +154,7 @@ public class InputButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "inputButtonIsSplit.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_inputButtonIsSplit.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Button formInputButton = new Button("button");
             formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.WIDTH, UnitValue.createPointValue(280));
@@ -170,7 +175,7 @@ public class InputButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "inputButtonIsForcedSplit.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_inputButtonIsForcedSplit.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Button formInputButton = new Button("button");
             formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.WIDTH, UnitValue.createPointValue(280));
@@ -187,7 +192,7 @@ public class InputButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "inputButtonWithPaddings.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_inputButtonWithPaddings.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Button formInputButton = new Button("button");
             formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputButton.setProperty(Property.PADDING_BOTTOM, UnitValue.createPointValue(15));
@@ -205,7 +210,7 @@ public class InputButtonTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "inputButtonWithMarginsPaddings.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_inputButtonWithMarginsPaddings.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Div div = new Div().setBackgroundColor(ColorConstants.PINK);
             Button formInputButton = new Button("button");
             formInputButton.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);

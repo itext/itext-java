@@ -26,7 +26,6 @@ import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.DashedBorder;
@@ -43,6 +42,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -59,12 +59,17 @@ public class TextAreaTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void basicTextAreaTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicTextArea.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicTextArea.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea formTextArea = new TextArea("form text area");
             formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "form\ntext\narea");
@@ -86,7 +91,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "percentFontTextArea.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_percentFontTextArea.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea formTextArea = new TextArea("form text area");
             formTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "form\ntext\narea");
@@ -108,7 +113,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "heightTextArea.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_heightTextArea.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea flattenTextArea = new TextArea("flatten text area with height");
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
@@ -125,7 +130,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "minHeightTextArea.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_minHeightTextArea.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea flattenTextArea = new TextArea("flatten text area with height");
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
@@ -142,7 +147,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "hugeMarginPaddingBorder.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_hugeMarginPaddingBorder.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea formTextArea = new TextArea("interactive text area with paddings");
             formTextArea.setInteractive(true);
             formTextArea.setValue("interactive\ntext area\nwith paddings");
@@ -180,7 +185,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "textAreaDoesNotFit.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_textAreaDoesNotFit.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Div div = new Div();
             div.setWidth(UnitValue.createPointValue(400));
             div.setHeight(UnitValue.createPointValue(730));
@@ -204,7 +209,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "textAreaWith0FontSizeDoesNotFit.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_textAreaWith0FontSizeDoesNotFit.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             document.add(new Div().setBackgroundColor(ColorConstants.RED).setHeight(695));
 
             TextArea textArea = new TextArea("text area");
@@ -236,7 +241,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "textAreaWith0FontSizeFits.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_textAreaWith0FontSizeFits.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea textArea = new TextArea("text area");
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
@@ -264,7 +269,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "textAreaWith0FontSizeWithoutHeight.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_textAreaWith0FontSizeWithoutHeight.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea textArea = new TextArea("text area");
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE, "Font\n size \nof this\nText Area will not "
@@ -290,7 +295,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "textAreaWithBorderLessThan1.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_textAreaWithBorderLessThan1.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea textArea = new TextArea("text area");
             textArea.setInteractive(true);
             textArea.setProperty(FormProperty.FORM_FIELD_VALUE,
@@ -307,7 +312,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "textAreaWithJustification.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_textAreaWithJustification.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea textArea = new TextArea("text area");
             textArea.setValue("text area with justification\nWords shall be in the center\nAre they?");
             textArea.setInteractive(true);
@@ -329,7 +334,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "textAreaWithCustomBorder.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_textAreaWithCustomBorder.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea textArea = new TextArea("text area");
             textArea.setValue("text area with custom border\nBorder shall be orange, 10 points wide and dashed");
             textArea.setInteractive(true);
@@ -352,7 +357,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "maxHeightTextArea.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_maxHeightTextArea.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea flattenTextArea = new TextArea("flatten text area with height");
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenTextArea.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten\ntext area\nwith height");
@@ -369,7 +374,7 @@ public class TextAreaTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "textAreaWithCustomLeading.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_textAreaWithCustomLeading.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             TextArea textArea = new TextArea("text1").setBorder(new SolidBorder(ColorConstants.PINK, 1));
             textArea.setValue("text area with 1 used as the basis for the leading calculation");
             textArea.setInteractive(true);

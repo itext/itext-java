@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -73,6 +74,11 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         Security.addProvider(BouncyCastleFactoryCreator.getFactory().getProvider());
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     // Custom entry in Info dictionary is used because standard entried are gone into metadata in PDF 2.0
     static final String customInfoEntryKey = "Custom";
     static final String customInfoEntryValue = "String";
@@ -96,7 +102,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         String filename = "encryptAes256Pdf2PermissionsTest01.pdf";
         int permissions = EncryptionConstants.ALLOW_FILL_IN | EncryptionConstants.ALLOW_SCREENREADERS | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
         PdfDocument pdfDoc = new PdfDocument(
-                new PdfWriter(destinationFolder + filename,
+                CompareTool.createTestPdfWriter(destinationFolder + filename,
                         new WriterProperties()
                                 .setPdfVersion(PdfVersion.PDF_2_0)
                                 .setStandardEncryption(USER, OWNER, permissions, EncryptionConstants.ENCRYPTION_AES_256)));
@@ -140,7 +146,7 @@ public class PdfEncryptionTest extends ExtendedITextTest {
         // Here we do not allow to fill the form in.
         int permissions = EncryptionConstants.ALLOW_SCREENREADERS | EncryptionConstants.ALLOW_DEGRADED_PRINTING;
         PdfDocument pdfDoc = new PdfDocument(
-                new PdfWriter(destinationFolder + filename,
+                CompareTool.createTestPdfWriter(destinationFolder + filename,
                         new WriterProperties()
                                 .setPdfVersion(PdfVersion.PDF_2_0)
                                 .setStandardEncryption(USER, OWNER, permissions, EncryptionConstants.ENCRYPTION_AES_256)));

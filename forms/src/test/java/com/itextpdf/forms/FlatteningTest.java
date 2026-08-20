@@ -46,6 +46,7 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -65,13 +66,18 @@ public class FlatteningTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void flatteningFormFieldNoSubtypeInAPTest() throws IOException, InterruptedException {
         String src = sourceFolder + "formFieldNoSubtypeInAPTest.pdf";
         String dest = destinationFolder + "flatteningFormFieldNoSubtypeInAPTest.pdf";
         String cmp = sourceFolder + "cmp_flatteningFormFieldNoSubtypeInAPTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfDocument doc = new PdfDocument(new PdfReader(src), CompareTool.createTestPdfWriter(dest));
 
         PdfFormCreator.getAcroForm(doc, false).flattenFields();
         doc.close();
@@ -84,7 +90,7 @@ public class FlatteningTest extends ExtendedITextTest {
         String src = sourceFolder + "flatteningPdfWithButtons.pdf";
         String dest = destinationFolder + "flatteningPdfWithButtonsOutput.pdf";
         String cmp = sourceFolder + "cmp_flatteningPdfWithButtons.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest))) {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), CompareTool.createTestPdfWriter(dest))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 
             PdfFont font = PdfFontFactory.createFont();
@@ -110,7 +116,7 @@ public class FlatteningTest extends ExtendedITextTest {
         String src = sourceFolder + "flatteningPdfWithFields.pdf";
         String dest = destinationFolder + "flatteningPdfWithFields.pdf";
         String cmp = sourceFolder + "cmp_flatteningPdfWithFields.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), new PdfWriter(dest))) {
+        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(src), CompareTool.createTestPdfWriter(dest))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             PdfFont font = PdfFontFactory.createFont();
 
@@ -142,7 +148,7 @@ public class FlatteningTest extends ExtendedITextTest {
         String src = sourceFolder + filename + ".pdf";
         String dest = destinationFolder + filename + "_flattened.pdf";
         String cmp = sourceFolder + "cmp_" + filename + "_flattened.pdf";
-        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfDocument doc = new PdfDocument(new PdfReader(src), CompareTool.createTestPdfWriter(dest));
 
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, false);
         acroForm.setGenerateAppearance(false);
@@ -158,7 +164,7 @@ public class FlatteningTest extends ExtendedITextTest {
         String filename = "hiddenField";
         String src = sourceFolder + filename + ".pdf";
         String dest = destinationFolder + filename + "_flattened.pdf";
-        final PdfDocument document = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        final PdfDocument document = new PdfDocument(new PdfReader(src), CompareTool.createTestPdfWriter(dest));
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
         acroForm.getField("hiddenField").getPdfObject().put(PdfName.F, new PdfNumber(2));
         acroForm.flattenFields();

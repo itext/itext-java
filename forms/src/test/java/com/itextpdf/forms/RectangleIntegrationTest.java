@@ -34,6 +34,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -51,13 +52,18 @@ public class RectangleIntegrationTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void createPdfWithSignatureFields() throws IOException, InterruptedException {
 
         String outPdf = DESTINATION_FOLDER + "RectangleTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_RectangleTest.pdf";
 
-        PdfWriter writer = new PdfWriter(DESTINATION_FOLDER + "RectangleTest.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "RectangleTest.pdf");
         PdfDocument pdfDoc = new PdfDocument(writer);
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
 

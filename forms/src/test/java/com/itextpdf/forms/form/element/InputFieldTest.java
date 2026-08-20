@@ -33,7 +33,6 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.Border;
@@ -49,6 +48,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -65,12 +65,17 @@ public class InputFieldTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void basicInputFieldTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicInputField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicInputField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             InputField formInputField = new InputField("form input field");
             formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "form input field");
@@ -90,7 +95,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "noValueInputField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_noValueInputField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("no value input field");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, null);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, null);
@@ -106,7 +111,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "inputFieldDoesNotFit.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_inputFieldDoesNotFit.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Div div = new Div();
             div.setWidth(UnitValue.createPointValue(400));
             div.setHeight(UnitValue.createPointValue(752));
@@ -128,7 +133,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "inputFieldWithLang.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_inputFieldWithLang.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             InputField flattenInputField = new InputField("input field with lang");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
@@ -147,7 +152,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "inputFieldWithNullLang.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_inputFieldWithNullLang.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             InputField flattenInputField = new InputField("input field with null lang");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
@@ -166,7 +171,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "inputFieldWithPassword.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_inputFieldWithPassword.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             InputField formInputField = new InputField("form input field with password");
             formInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.FALSE);
             formInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "form input field with password");
@@ -190,7 +195,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "heightInputField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_heightInputField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("flatten input field with height");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
@@ -207,7 +212,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "minHeightInputField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_minHeightInputField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("flatten input field with height");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
@@ -224,7 +229,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "maxHeightInputField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_maxHeightInputField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("flatten input field with height");
             flattenInputField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenInputField.setProperty(FormProperty.FORM_FIELD_VALUE, "flatten input field with height");
@@ -241,7 +246,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "inputFieldWithJustification.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_inputFieldWithJustification.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("input field");
             flattenInputField.setValue("input field");
             flattenInputField.setInteractive(true);
@@ -257,7 +262,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "inputFieldWithBorder.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_inputFieldWithBorder.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             InputField flattenInputField = new InputField("input field");
             flattenInputField.setValue("input field");
             flattenInputField.setInteractive(true);
@@ -272,7 +277,7 @@ public class InputFieldTest extends ExtendedITextTest {
     public void rotationTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "rotationTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_rotationTest.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             String value = "Long long text";
             Border border = new SolidBorder(ColorConstants.BLUE, 1);
 
@@ -325,7 +330,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "borderBoxes.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_borderBoxes.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             // BORDER_BOX
             InputField interactiveInputField = new InputField("interactiveInputField")
                     .setBorder(new SolidBorder(ColorConstants.PINK, 10));
@@ -371,7 +376,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "setFontInputField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_setFontInputField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             InputField inputField = new InputField("inputField");
             inputField.setInteractive(true);
             inputField.setFont(PdfFontFactory.createFont(StandardFonts.COURIER));
@@ -387,7 +392,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "multiPageInputField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_multiPageInputField.pdf";
 
-        try (PdfDocument document = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
             for (int i = 0; i < 10; i++) {
                 document.addNewPage();
@@ -411,7 +416,7 @@ public class InputFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "multiPageInputFieldFormFlush.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_multiPageInputFieldFormFlush.pdf";
 
-        try (PdfDocument document = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
             for (int i = 0; i < 10; i++) {
                 document.addNewPage();

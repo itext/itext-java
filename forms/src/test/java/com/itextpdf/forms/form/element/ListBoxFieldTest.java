@@ -55,6 +55,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -70,13 +71,18 @@ public class ListBoxFieldTest extends ExtendedITextTest {
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
     
     @Test
     public void emptyListBoxFieldTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "emptyListBoxField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_emptyListBoxField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ListBoxField flattenListBoxField = new ListBoxField("flatten empty list box field", 0, false);
             flattenListBoxField.setProperty(FormProperty.FORM_FIELD_FLATTEN, Boolean.TRUE);
             flattenListBoxField.setBackgroundColor(ColorConstants.RED);
@@ -91,7 +97,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "basicListBoxField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicListBoxField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ListBoxField formListBoxField = new ListBoxField("form list box field", 2, false);
             formListBoxField.setInteractive(true);
             formListBoxField.addOption("option 1", false);
@@ -128,7 +134,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "listBoxFieldWithFontSize.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithFontSize.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ListBoxField formListBoxFieldWithFont = new ListBoxField("flatten list box field with font", 0, false);
             formListBoxFieldWithFont.setInteractive(true);
             formListBoxFieldWithFont.setBackgroundColor(ColorConstants.RED);
@@ -170,7 +176,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "listBoxFieldWithMargins.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithMargins.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Paragraph option1 = new Paragraph("option 1");
             option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
             option1.setMargin(4);
@@ -204,7 +210,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "listBoxFieldWithHeight.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithHeight.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ListBoxField listBoxField = new ListBoxField("list box field with height", 0, false);
             listBoxField.setInteractive(false);
             listBoxField.setBackgroundColor(ColorConstants.RED);
@@ -226,7 +232,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "listBoxFieldWithMinHeight.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithMinHeight.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ListBoxField listBoxField = new ListBoxField("list box field with height", 0, false);
             listBoxField.setInteractive(false);
             listBoxField.setBackgroundColor(ColorConstants.RED);
@@ -249,7 +255,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "listBoxFieldWithMaxHeight.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithMaxHeight.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ListBoxField listBoxField = new ListBoxField("list box field with height", 0, false);
             listBoxField.setInteractive(false);
             listBoxField.setBackgroundColor(ColorConstants.RED);
@@ -271,7 +277,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "listBoxFieldCannotFit.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldCannotFit.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Div div = new Div();
             div.setWidth(UnitValue.createPointValue(400));
             div.setHeight(UnitValue.createPointValue(740));
@@ -294,7 +300,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "listBoxFieldCannotFitByWidth.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldCannotFitByWidth.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Paragraph option1 = new Paragraph("option 1");
             option1.setProperty(FormProperty.FORM_FIELD_SELECTED, Boolean.TRUE);
             option1.setProperty(FormProperty.FORM_FIELD_LABEL, "option 1");
@@ -324,7 +330,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "listBoxFieldWithLang.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxFieldWithLang.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             ListBoxField listBoxField = new ListBoxField("list box field with lang", 0, false);
             listBoxField.setInteractive(false);
@@ -347,7 +353,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "colorsBorders.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_colorsBorders.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ListBoxField listBoxField = new ListBoxField("coloured list box field with borders", 0, false);
             listBoxField.setInteractive(false);
             listBoxField.setBackgroundColor(ColorConstants.RED);
@@ -370,7 +376,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "longList.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_longList.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ListBoxField listBoxField = new ListBoxField("long list box field", 4, true);
             listBoxField.setInteractive(false);
             listBoxField.addOption("option 1");
@@ -400,7 +406,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "justification.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_justification.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ListBoxField listBoxField = new ListBoxField("left box field", 0, false);
             listBoxField.setInteractive(false);
             listBoxField.setWidth(200);
@@ -446,7 +452,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "exportValue.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_exportValue.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             ListBoxField listBoxField = new ListBoxField("export value field", 0, true);
             listBoxField.setInteractive(false);
             listBoxField.setWidth(200);
@@ -468,7 +474,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "invalidOptions.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_invalidOptions.pdf";
 
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             ListBoxField listBoxField = new ListBoxField("invalid", 0, true);
             listBoxField.setInteractive(true);
             listBoxField.setWidth(200);
@@ -506,7 +512,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
     public void listBoxIsBiggerThanPage() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "listBoxIsBiggerThenPage.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxIsBiggerThenPage.pdf";
-        Document document = new Document(new PdfDocument(new PdfWriter(outPdf))) ;
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) ;
         ListBoxField list = (ListBoxField) new ListBoxField("name", 200, false).setInteractive(true);
         list.setBackgroundColor(ColorConstants.RED);
         list.addOption("value1");
@@ -523,7 +529,7 @@ public class ListBoxFieldTest extends ExtendedITextTest {
     public void listBoxIsBiggerThanPageNonI() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "listBoxIsBiggerThenPageNonI.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_listBoxIsBiggerThenPageNonI.pdf";
-        Document document = new Document(new PdfDocument(new PdfWriter(outPdf))) ;
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) ;
         ListBoxField list = (ListBoxField) new ListBoxField("name", 200, false);
         list.setBackgroundColor(ColorConstants.RED);
         list.addOption("value1");
