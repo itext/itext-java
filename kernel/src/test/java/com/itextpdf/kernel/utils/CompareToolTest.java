@@ -212,7 +212,7 @@ public class CompareToolTest extends ExtendedITextTest {
     }
 
     @Test
-    public void gsEnvironmentVariableSpecifiedIncorrectlyTest() throws IOException, InterruptedException {
+    public void gsEnvironmentVariableSpecifiedIncorrectlyTest() {
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
 
@@ -481,5 +481,16 @@ public class CompareToolTest extends ExtendedITextTest {
         Assertions.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0));
         Assertions.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0.8));
         Assertions.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, null,  ignoredAreas, 0.4));
+    }
+
+    @Test
+    public void compareToolWithStreamToleranceTest()
+            throws InterruptedException, IOException {
+        String outPdf = sourceFolder + "tolerance1.pdf";
+        String cmpPdf = sourceFolder + "tolerance2.pdf";
+        Assertions.assertNull(new CompareTool().setContentStreamFloatTolerance(0.02f)
+                .compareByContent(outPdf, cmpPdf, destinationFolder));
+
+        Assertions.assertNotNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 }

@@ -85,6 +85,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -127,6 +129,8 @@ public class CompareTool {
     private static final boolean MEMORY_FIRST_WRITER_DISABLED;
 
     private static final String NEW_LINES = "[\\r\\n]";
+    private static final Pattern NUMBER_PATTERN =
+            Pattern.compile("(?<!\\d)[-+]?\\d{1,8}(?:\\.\\d{1,5})?(?!\\d)");
 
     private static final LazyLogger LOGGER = new LazyLogger(CompareTool.class);
 
@@ -148,6 +152,7 @@ public class CompareTool {
 
     private boolean encryptionCompareEnabled = false;
     private boolean kdfSaltCompareEnabled = true;
+    private Float floatToleranceInStreams = null;
 
     private boolean useCachedPagesForComparison = true;
     private IMetaInfo metaInfo;
@@ -384,6 +389,22 @@ public class CompareTool {
      */
     public CompareTool setGenerateCompareByContentXmlReport(boolean generateCompareByContentXmlReport) {
         this.generateCompareByContentXmlReport = generateCompareByContentXmlReport;
+        return this;
+    }
+
+    /**
+     * Sets the numeric tolerance used when comparing float values in PDF content streams.
+     *
+     * @param tolerance the tolerance value; must be greater than zero
+     *
+     * @return this CompareTool instance
+     */
+    public CompareTool setContentStreamFloatTolerance(float tolerance) {
+        if (tolerance <= 0) {
+            throw new IllegalArgumentException("Tolerance must be positive.");
+        }
+
+        floatToleranceInStreams = tolerance;
         return this;
     }
 
@@ -2130,7 +2151,7 @@ public class CompareTool {
             decompressedStreams.put(cmpStream, cmpStreamBytes);
         }
 
-        if (Arrays.equals(outStreamBytes, cmpStreamBytes)) {
+        if (equalsWithFloatTolerance(outStreamBytes, cmpStreamBytes, floatToleranceInStreams)) {
             return compareDictionariesExtended(outStream, cmpStream, currentPath, compareResult);
         } else {
             StringBuilder errorMessage = new StringBuilder();
@@ -2150,6 +2171,70 @@ public class CompareTool {
             }
             return false;
         }
+    }
+
+    /**
+     * Compares two byte arrays as text, treating them as equal when all differences
+     * are floating point numbers whose absolute difference does not exceed {@code tolerance}.
+     *
+     * @param a         first byte array
+     * @param b         second byte array
+     * @param tolerance maximum allowed absolute difference between any pair of numbers
+     *                  for the two arrays to still be considered equal
+     *
+     * @return {@code true} if the arrays are equal under the float-tolerance rule
+     */
+    static boolean equalsWithFloatTolerance(byte[] a, byte[] b, Float tolerance) {
+        if (Arrays.equals(a, b)) {
+            return true;
+        }
+
+        // Do not reprocess by default
+        if (tolerance == null) {
+            return false;
+        }
+
+        String sa = new String(a, StandardCharsets.ISO_8859_1);
+        String sb = new String(b, StandardCharsets.ISO_8859_1);
+
+        Matcher ma = NUMBER_PATTERN.matcher(sa);
+        Matcher mb = NUMBER_PATTERN.matcher(sb);
+
+        int lastEndA = 0;
+        int lastEndB = 0;
+
+        while (ma.find()) {
+            if (!mb.find()) {
+                // a has more numbers than b
+                return false;
+            }
+
+            // Non-numeric data between previous number and this one must match exactly
+            if (!sa.substring(lastEndA, ma.start()).equals(sb.substring(lastEndB, mb.start()))) {
+                return false;
+            }
+
+            try {
+                double numA = Double.parseDouble(ma.group());
+                double numB = Double.parseDouble(mb.group());
+                if (Math.abs(numA - numB) > tolerance) {
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                return false;
+            }
+
+            lastEndA = ma.end();
+            lastEndB = mb.end();
+        }
+
+        // b has more numbers than a
+        if (mb.find()) {
+            return false;
+        }
+
+        // Remaining data must match exactly
+        return sa.substring(lastEndA).equals(sb.substring(lastEndB));
     }
 
     /**

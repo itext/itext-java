@@ -30,6 +30,8 @@ import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.objectpathitems.ObjectPath;
 import com.itextpdf.test.ExtendedITextTest;
+
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -127,5 +129,55 @@ public class CompareToolUnitTest extends ExtendedITextTest {
                 new ObjectPath(ref1, ref1), result));
         Assertions.assertTrue(result.getDifferences().containsValue(
                 "Expected a page. Found not a page."));
+    }
+
+    @Test
+    public void equalsWithFloatToleranceTest() {
+        Assertions.assertTrue(CompareTool.equalsWithFloatTolerance(new byte[0], new byte[0], 0.1f));
+
+        byte[] a = "asd 143.6 asd".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertTrue(CompareTool.equalsWithFloatTolerance(a, a, 0.02f));
+
+        a = "asd 143.6 asd".getBytes(StandardCharsets.ISO_8859_1);
+        byte[] b = "asd 143.59 asd".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertTrue(CompareTool.equalsWithFloatTolerance(a, b, 0.02f));
+
+        a = "val -10.0 end".getBytes(StandardCharsets.ISO_8859_1);
+        b = "val -10.1 end".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertTrue(CompareTool.equalsWithFloatTolerance(a, b, 0.11f));
+
+        a = "1.0 Tf 100 200.0 Td".getBytes(StandardCharsets.ISO_8859_1);
+        b = "1.0 Tf 100.05 199.95 Td".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertTrue(CompareTool.equalsWithFloatTolerance(a, b, 0.1f));
+
+        a = "1.0 Tf 100 200.0 Td".getBytes(StandardCharsets.ISO_8859_1);
+        b = "1.0 Tf 100.05 200.11 Td".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertFalse(CompareTool.equalsWithFloatTolerance(a, b, 0.1f));
+
+        a = "1.0 2.0 3.0".getBytes(StandardCharsets.ISO_8859_1);
+        b = "1.0 2.0".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertFalse(CompareTool.equalsWithFloatTolerance(a, b, 1.0f));
+
+        a = "pos -5 end".getBytes(StandardCharsets.ISO_8859_1);
+        b = "pos -5.02 end differ".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertFalse(CompareTool.equalsWithFloatTolerance(a, b, 0.1f));
+
+        a = "pos -5.000001 end".getBytes(StandardCharsets.ISO_8859_1);
+        b = "pos -5.000002 end".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertFalse(CompareTool.equalsWithFloatTolerance(a, b, 0.1f));
+
+        a = "asd 1.5 asd".getBytes(StandardCharsets.ISO_8859_1);
+        b = "asd 1.50001 asd".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertFalse(CompareTool.equalsWithFloatTolerance(a, b, 0f));
+
+        a = "BT ET q Q".getBytes(StandardCharsets.ISO_8859_1);
+        b = "BT ET Q q".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertFalse(CompareTool.equalsWithFloatTolerance(a, b, 0.5f));
+
+        // A 9-digit integer exceeds the 8-digit cap and must be compared as raw text,
+        // so even a "small" difference causes the arrays to be considered different.
+        a = "id 123456789 end".getBytes(StandardCharsets.ISO_8859_1);
+        b = "id 123456788 end".getBytes(StandardCharsets.ISO_8859_1);
+        Assertions.assertFalse(CompareTool.equalsWithFloatTolerance(a, b, 10f));
     }
 }
