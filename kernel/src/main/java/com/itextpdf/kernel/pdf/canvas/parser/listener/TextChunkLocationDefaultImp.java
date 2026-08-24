@@ -88,18 +88,22 @@ class TextChunkLocationDefaultImp implements ITextChunkLocation {
     }
 
 
+    @Override
     public int orientationMagnitude() {
         return orientationMagnitude;
     }
 
+    @Override
     public int distPerpendicular() {
         return distPerpendicular;
     }
 
+    @Override
     public float distParallelStart() {
         return distParallelStart;
     }
 
+    @Override
     public float distParallelEnd() {
         return distParallelEnd;
     }
@@ -107,6 +111,7 @@ class TextChunkLocationDefaultImp implements ITextChunkLocation {
     /**
      * @return the start location of the text
      */
+    @Override
     public Vector getStartLocation() {
         return startLocation;
     }
@@ -114,6 +119,7 @@ class TextChunkLocationDefaultImp implements ITextChunkLocation {
     /**
      * @return the end location of the text
      */
+    @Override
     public Vector getEndLocation() {
         return endLocation;
     }
@@ -121,6 +127,7 @@ class TextChunkLocationDefaultImp implements ITextChunkLocation {
     /**
      * @return the width of a single space character as rendered by this chunk
      */
+    @Override
     public float getCharSpaceWidth() {
         return charSpaceWidth;
     }
@@ -129,6 +136,7 @@ class TextChunkLocationDefaultImp implements ITextChunkLocation {
      * @param as the location to compare to
      * @return true is this location is on the the same line as the other
      */
+    @Override
     public boolean sameLine(ITextChunkLocation as) {
         if (orientationMagnitude() != as.orientationMagnitude()) {
             return false;
@@ -151,10 +159,12 @@ class TextChunkLocationDefaultImp implements ITextChunkLocation {
      * @param other
      * @return the number of spaces between the end of 'other' and the beginning of this chunk
      */
+    @Override
     public float distanceFromEndOf(ITextChunkLocation other) {
         return distParallelStart() - other.distParallelEnd();
     }
 
+    @Override
     public boolean isAtWordBoundary(ITextChunkLocation previous) {
         // In case a text chunk is of zero length, this probably means this is a mark character,
         // and we do not actually want to insert a space in such case

@@ -59,6 +59,7 @@ public class VerificationOK {
      * Return a single String explaining which certificate was verified, how and why.
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (certificate != null) {

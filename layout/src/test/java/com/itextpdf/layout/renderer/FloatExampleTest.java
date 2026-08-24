@@ -263,6 +263,7 @@ public class FloatExampleTest extends ExtendedITextTest {
             this.horizontalAlignment = horizontalAlignment;
         }
 
+        @Override
         public String toString() {
             return "float=" + floatPropertyValue + ", clear=" + clearPropertyValue + ", horiz_align=" + horizontalAlignment;
         }

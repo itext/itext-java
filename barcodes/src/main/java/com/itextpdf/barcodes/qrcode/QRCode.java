@@ -174,6 +174,7 @@ final class QRCode {
      * Prints all parameters
      * @return string containing all parameters
      */
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder(200);
         result.append("<<\n");

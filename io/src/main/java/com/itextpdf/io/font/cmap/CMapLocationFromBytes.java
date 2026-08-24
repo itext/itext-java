@@ -49,6 +49,7 @@ public class CMapLocationFromBytes implements ICMapLocation {
      *
      * @return a new tokenizer over the retained bytes
      */
+    @Override
     public PdfTokenizer getLocation(String location) {
         return new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(data)));
     }

@@ -92,6 +92,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 	/**
 	 * @see XMPSchemaRegistry#registerNamespace(String, String)
 	 */
+	@Override
 	public synchronized String registerNamespace(String namespaceURI, String suggestedPrefix)
 			throws XMPException
 	{
@@ -143,6 +144,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 	/**
 	 * @see XMPSchemaRegistry#deleteNamespace(String)
 	 */
+	@Override
 	public synchronized void deleteNamespace(String namespaceURI)
 	{
 		String prefixToDelete = getNamespacePrefix(namespaceURI);
@@ -157,6 +159,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 	/**
 	 * @see XMPSchemaRegistry#getNamespacePrefix(String)
 	 */
+	@Override
 	public synchronized String getNamespacePrefix(String namespaceURI)
 	{
 		return (String) namespaceToPrefixMap.get(namespaceURI);
@@ -166,6 +169,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 	/**
 	 * @see XMPSchemaRegistry#getNamespaceURI(String)
 	 */
+	@Override
 	public synchronized String getNamespaceURI(String namespacePrefix)
 	{
 		if (namespacePrefix != null  &&  !namespacePrefix.endsWith(":"))
@@ -179,6 +183,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 	/**
 	 * @see XMPSchemaRegistry#getNamespaces()
 	 */
+	@Override
 	public synchronized Map getNamespaces()
 	{
 		return Collections.unmodifiableMap(new TreeMap(namespaceToPrefixMap));
@@ -188,6 +193,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 	/**
 	 * @see XMPSchemaRegistry#getPrefixes()
 	 */
+	@Override
 	public synchronized Map getPrefixes()
 	{
 		return Collections.unmodifiableMap(new TreeMap(prefixToNamespaceMap));
@@ -281,6 +287,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 	/**
 	 * @see XMPSchemaRegistry#resolveAlias(String, String)
 	 */
+	@Override
 	public synchronized XMPAliasInfo resolveAlias(String aliasNS, String aliasProp)
 	{
 		String aliasPrefix = getNamespacePrefix(aliasNS);
@@ -296,6 +303,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 	/**
 	 * @see XMPSchemaRegistry#findAlias(String)
 	 */
+	@Override
 	public synchronized XMPAliasInfo findAlias(String qname)
 	{
 		return (XMPAliasInfo) aliasMap.get(qname);
@@ -305,6 +313,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 	/**
 	 * @see XMPSchemaRegistry#findAliases(String)
 	 */
+	@Override
 	public synchronized XMPAliasInfo[] findAliases(String aliasNS)
 	{
 		String prefix = getNamespacePrefix(aliasNS);
@@ -411,6 +420,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 			/**
 			 * @see XMPAliasInfo#getNamespace()
 			 */
+			@Override
 			public String getNamespace()
 			{
 				return actualNS;
@@ -419,6 +429,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 			/**
 			 * @see XMPAliasInfo#getPrefix()
 			 */
+			@Override
 			public String getPrefix()
 			{
 				return actualPrefix;
@@ -427,6 +438,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 			/**
 			 * @see XMPAliasInfo#getPropName()
 			 */
+			@Override
 			public String getPropName()
 			{
 				return actualProp;
@@ -435,11 +447,13 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 			/**
 			 * @see XMPAliasInfo#getAliasForm()
 			 */
+			@Override
 			public AliasOptions getAliasForm()
 			{
 				return aliasOpts;
 			}
 			
+			@Override
 			public String toString()
 			{
 				return actualPrefix + actualProp + " NS(" + actualNS + "), FORM ("
@@ -454,6 +468,7 @@ public final class XMPSchemaRegistryImpl implements XMPConst, XMPSchemaRegistry
 	/**
 	 * @see XMPSchemaRegistry#getAliases()
 	 */
+	@Override
 	public synchronized Map getAliases()
 	{
 		return Collections.unmodifiableMap(new TreeMap<>(aliasMap));

@@ -71,6 +71,7 @@ public class SignaturePermissions {
          */
         public PdfArray getFields() { return fields; }
         /** toString method */
+        @Override
         public String toString() {
             return action.toString() + (fields == null ? "" : fields.toString());
         }

@@ -147,6 +147,7 @@ public class DocumentRenderer extends RootRenderer {
         }
     }
 
+    @Override
     protected LayoutArea updateCurrentArea(LayoutResult overflowResult) {
         flushWaitingDrawingElements(false);
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
@@ -228,6 +229,7 @@ public class DocumentRenderer extends RootRenderer {
         return (currentArea = new RootLayoutArea(currentPageNumber, updatedAreaRect));
     }
 
+    @Override
     protected void flushSingleRenderer(IRenderer resultRenderer) {
         linkRenderToDocument(resultRenderer, document.getPdfDocument());
 

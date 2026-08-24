@@ -277,6 +277,7 @@ abstract class TokeniserState {
         }
 
         // in data state, gather characters until a character reference or tag is found
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             switch (r.current()) {
                 case '&':
@@ -308,6 +309,7 @@ abstract class TokeniserState {
         }
 
         // from & in data
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             readCharRef(t, Data);
         }
@@ -321,6 +323,7 @@ abstract class TokeniserState {
         }
 
         /// handles data in title, textarea etc
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             switch (r.current()) {
                 case '&':
@@ -352,6 +355,7 @@ abstract class TokeniserState {
             return "CharacterReferenceInRcdata";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             readCharRef(t, Rcdata);
         }
@@ -364,6 +368,7 @@ abstract class TokeniserState {
             return "Rawtext";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             readRawData(t, r, this, RawtextLessthanSign);
         }
@@ -376,6 +381,7 @@ abstract class TokeniserState {
             return "ScriptData";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             readRawData(t, r, this, ScriptDataLessthanSign);
         }
@@ -388,6 +394,7 @@ abstract class TokeniserState {
             return "PLAINTEXT";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             switch (r.current()) {
                 case nullChar:
@@ -414,6 +421,7 @@ abstract class TokeniserState {
         }
 
         // from < in data
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             switch (r.current()) {
                 case '!':
@@ -447,6 +455,7 @@ abstract class TokeniserState {
             return "EndTagOpen";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.isEmpty()) {
                 t.eofError(this);
@@ -474,6 +483,7 @@ abstract class TokeniserState {
         }
 
         // from < or </ in data, will have start or end tag pending
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             // previous TagOpen state did NOT consume, will have a letter char in current
             //String tagName = StringNormalizer.toLowerCase(r.consumeToAnySorted(tagCharsSorted));
@@ -521,6 +531,7 @@ abstract class TokeniserState {
         }
 
         // from < in rcdata
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matches('/')) {
                 t.createTempBuffer();
@@ -545,6 +556,7 @@ abstract class TokeniserState {
             return "RCDATAEndTagOpen";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 t.createTagPending(false);
@@ -565,6 +577,7 @@ abstract class TokeniserState {
             return "RCDATAEndTagName";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 String name = r.consumeLetterSequence();
@@ -619,6 +632,7 @@ abstract class TokeniserState {
             return "RawtextLessthanSign";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matches('/')) {
                 t.createTempBuffer();
@@ -637,6 +651,7 @@ abstract class TokeniserState {
             return "RawtextEndTagOpen";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             readEndTag(t, r, RawtextEndTagName, Rawtext);
         }
@@ -649,6 +664,7 @@ abstract class TokeniserState {
             return "RawtextEndTagName";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             handleDataEndTag(t, r, Rawtext);
         }
@@ -661,6 +677,7 @@ abstract class TokeniserState {
             return "ScriptDataLessthanSign";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             switch (r.consume()) {
                 case '/':
@@ -691,6 +708,7 @@ abstract class TokeniserState {
             return "ScriptDataEndTagOpen";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             readEndTag(t, r, ScriptDataEndTagName, ScriptData);
         }
@@ -703,6 +721,7 @@ abstract class TokeniserState {
             return "ScriptDataEndTagName";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             handleDataEndTag(t, r, ScriptData);
         }
@@ -715,6 +734,7 @@ abstract class TokeniserState {
             return "ScriptDataEscapeStart";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matches('-')) {
                 t.emit('-');
@@ -732,6 +752,7 @@ abstract class TokeniserState {
             return "ScriptDataEscapeStartDash";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matches('-')) {
                 t.emit('-');
@@ -749,6 +770,7 @@ abstract class TokeniserState {
             return "ScriptDataEscaped";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.isEmpty()) {
                 t.eofError(this);
@@ -783,6 +805,7 @@ abstract class TokeniserState {
             return "ScriptDataEscapedDash";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.isEmpty()) {
                 t.eofError(this);
@@ -818,6 +841,7 @@ abstract class TokeniserState {
             return "ScriptDataEscapedDashDash";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.isEmpty()) {
                 t.eofError(this);
@@ -856,6 +880,7 @@ abstract class TokeniserState {
             return "ScriptDataEscapedLessthanSign";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 t.createTempBuffer();
@@ -880,6 +905,7 @@ abstract class TokeniserState {
             return "ScriptDataEscapedEndTagOpen";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 t.createTagPending(false);
@@ -900,6 +926,7 @@ abstract class TokeniserState {
             return "ScriptDataEscapedEndTagName";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             handleDataEndTag(t, r, ScriptDataEscaped);
         }
@@ -912,6 +939,7 @@ abstract class TokeniserState {
             return "ScriptDataDoubleEscapeStart";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             handleDataDoubleEscapeTag(t, r, ScriptDataDoubleEscaped, ScriptDataEscaped);
         }
@@ -924,6 +952,7 @@ abstract class TokeniserState {
             return "ScriptDataDoubleEscaped";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.current();
             switch (c) {
@@ -958,6 +987,7 @@ abstract class TokeniserState {
             return "ScriptDataDoubleEscapedDash";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -992,6 +1022,7 @@ abstract class TokeniserState {
             return "ScriptDataDoubleEscapedDashDash";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1029,6 +1060,7 @@ abstract class TokeniserState {
             return "ScriptDataDoubleEscapedLessthanSign";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matches('/')) {
                 t.emit('/');
@@ -1047,6 +1079,7 @@ abstract class TokeniserState {
             return "ScriptDataDoubleEscapeEnd";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             handleDataDoubleEscapeTag(t,r, ScriptDataEscaped, ScriptDataDoubleEscaped);
         }
@@ -1060,6 +1093,7 @@ abstract class TokeniserState {
         }
 
         // from tagname <xxx
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1114,6 +1148,7 @@ abstract class TokeniserState {
         }
 
         // from before attribute name
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             String name = r.consumeToAnySorted(attributeNameCharsSorted);
             t.tagPending.appendAttributeName(name);
@@ -1164,6 +1199,7 @@ abstract class TokeniserState {
             return "AfterAttributeName";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1216,6 +1252,7 @@ abstract class TokeniserState {
             return "BeforeAttributeValue";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1272,6 +1309,7 @@ abstract class TokeniserState {
             return "AttributeValue_doubleQuoted";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             String value = r.consumeAttributeQuoted(false);
             if (value.length() > 0) {
@@ -1313,6 +1351,7 @@ abstract class TokeniserState {
             return "AttributeValue_singleQuoted";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             String value = r.consumeAttributeQuoted(true);
             if (value.length() > 0)
@@ -1353,6 +1392,7 @@ abstract class TokeniserState {
             return "AttributeValue_unquoted";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             String value = r.consumeToAnySorted(attributeValueUnquoted);
             if (value.length() > 0)
@@ -1408,6 +1448,7 @@ abstract class TokeniserState {
             return "AfterAttributeValue_quoted";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1445,6 +1486,7 @@ abstract class TokeniserState {
             return "SelfClosingStartTag";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1472,6 +1514,7 @@ abstract class TokeniserState {
             return "BogusComment";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             // rewind to capture character that lead us here
             r.unconsume();
@@ -1491,6 +1534,7 @@ abstract class TokeniserState {
             return "MarkupDeclarationOpen";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchConsume("--")) {
                 t.createCommentPending();
@@ -1517,6 +1561,7 @@ abstract class TokeniserState {
             return "CommentStart";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1552,6 +1597,7 @@ abstract class TokeniserState {
             return "CommentStartDash";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1587,6 +1633,7 @@ abstract class TokeniserState {
             return "Comment";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.current();
             switch (c) {
@@ -1616,6 +1663,7 @@ abstract class TokeniserState {
             return "CommentEndDash";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1646,6 +1694,7 @@ abstract class TokeniserState {
             return "CommentEnd";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1686,6 +1735,7 @@ abstract class TokeniserState {
             return "CommentEndBang";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1721,6 +1771,7 @@ abstract class TokeniserState {
             return "Doctype";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1755,6 +1806,7 @@ abstract class TokeniserState {
             return "BeforeDoctypeName";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 t.createDoctypePending();
@@ -1797,6 +1849,7 @@ abstract class TokeniserState {
             return "DoctypeName";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.matchesLetter()) {
                 String name = r.consumeLetterSequence();
@@ -1839,6 +1892,7 @@ abstract class TokeniserState {
             return "AfterDoctypeName";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             if (r.isEmpty()) {
                 t.eofError(this);
@@ -1874,6 +1928,7 @@ abstract class TokeniserState {
             return "AfterDoctypePublicKeyword";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1921,6 +1976,7 @@ abstract class TokeniserState {
             return "BeforeDoctypePublicIdentifier";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -1965,6 +2021,7 @@ abstract class TokeniserState {
             return "DoctypePublicIdentifier_doubleQuoted";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2000,6 +2057,7 @@ abstract class TokeniserState {
             return "DoctypePublicIdentifier_singleQuoted";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2035,6 +2093,7 @@ abstract class TokeniserState {
             return "AfterDoctypePublicIdentifier";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2080,6 +2139,7 @@ abstract class TokeniserState {
             return "BetweenDoctypePublicAndSystemIdentifiers";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2124,6 +2184,7 @@ abstract class TokeniserState {
             return "AfterDoctypeSystemKeyword";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2171,6 +2232,7 @@ abstract class TokeniserState {
             return "BeforeDoctypeSystemIdentifier";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2215,6 +2277,7 @@ abstract class TokeniserState {
             return "DoctypeSystemIdentifier_doubleQuoted";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2250,6 +2313,7 @@ abstract class TokeniserState {
             return "DoctypeSystemIdentifier_singleQuoted";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2285,6 +2349,7 @@ abstract class TokeniserState {
             return "AfterDoctypeSystemIdentifier";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2319,6 +2384,7 @@ abstract class TokeniserState {
             return "BogusDoctype";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             char c = r.consume();
             switch (c) {
@@ -2344,6 +2410,7 @@ abstract class TokeniserState {
             return "CdataSection";
         }
 
+        @Override
         void read(Tokeniser t, CharacterReader r) {
             String data = r.consumeTo("]]>");
             t.dataBuffer.append(data);

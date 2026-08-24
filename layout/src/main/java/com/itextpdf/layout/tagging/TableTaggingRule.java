@@ -37,6 +37,7 @@ import java.util.TreeMap;
 
 class TableTaggingRule implements ITaggingRule {
 
+    @Override
     public boolean onTagFinish(LayoutTaggingHelper taggingHelper, TaggingHintKey tableHintKey) {
         List<TaggingHintKey> kidKeys = taggingHelper.getAccessibleKidsHint(tableHintKey);
 

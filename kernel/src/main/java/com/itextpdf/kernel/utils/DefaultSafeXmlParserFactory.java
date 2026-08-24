@@ -221,6 +221,7 @@ public class DefaultSafeXmlParserFactory implements IXmlParserFactory {
             // empty constructor
         }
 
+        @Override
         public InputSource resolveEntity(String publicId, String systemId) {
             throw new PdfException(KernelExceptionMessageConstant.EXTERNAL_ENTITY_ELEMENT_FOUND_IN_XML);
         }

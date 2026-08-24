@@ -54,14 +54,17 @@ class RoleMappingResolverPdf2 implements IRoleMappingResolver {
         }
     }
 
+    @Override
     public String getRole() {
         return currRole.getValue();
     }
 
+    @Override
     public PdfNamespace getNamespace() {
         return currNamespace;
     }
 
+    @Override
     public boolean currentRoleIsStandard() {
         String roleStrVal = currRole.getValue();
         boolean stdRole17 = StandardNamespaces.PDF_1_7.equals(currNamespace.getNamespaceName())
@@ -71,10 +74,12 @@ class RoleMappingResolverPdf2 implements IRoleMappingResolver {
         return stdRole17 || stdRole20;
     }
 
+    @Override
     public boolean currentRoleShallBeMappedToStandard() {
         return !currentRoleIsStandard() && !StandardNamespaces.isKnownDomainSpecificNamespace(currNamespace);
     }
 
+    @Override
     public boolean resolveNextMapping() {
         PdfObject mapping = null;
         PdfDictionary currNsRoleMap = currNamespace.getNamespaceRoleMap();

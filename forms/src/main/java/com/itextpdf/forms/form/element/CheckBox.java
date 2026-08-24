@@ -103,6 +103,7 @@ public class CheckBox extends FormField<CheckBox> {
      *
      * @return this checkbox instance
      */
+    @Override
     public CheckBox setSize(float size) {
         if (size <= 0) {
             LOGGER.warn(() -> MessageFormatUtil.format(

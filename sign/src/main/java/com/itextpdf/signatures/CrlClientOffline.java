@@ -70,6 +70,7 @@ public class CrlClientOffline implements ICrlClient {
      *
      * @see ICrlClient#getEncoded(java.security.cert.X509Certificate, java.lang.String)
      */
+    @Override
     public Collection<byte[]> getEncoded(X509Certificate checkCert, String url) {
         return crls;
     }

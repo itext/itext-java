@@ -613,6 +613,7 @@ public class PdfA4Checker extends PdfA3Checker {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int getMaxNameLength() {
         return Integer.MAX_VALUE;
     }

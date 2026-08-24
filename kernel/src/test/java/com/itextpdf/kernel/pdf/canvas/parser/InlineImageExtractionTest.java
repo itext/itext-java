@@ -337,6 +337,7 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
             return inlineImages;
         }
 
+        @Override
         public void eventOccurred(IEventData data, EventType type) {
             if (type == EventType.RENDER_IMAGE) {
                 ImageRenderInfo imageEventData = (ImageRenderInfo) data;
@@ -346,6 +347,7 @@ public class InlineImageExtractionTest extends ExtendedITextTest {
             }
         }
 
+        @Override
         public Set<EventType> getSupportedEvents() {
             return new LinkedHashSet<>(Collections.singletonList(EventType.RENDER_IMAGE));
         }

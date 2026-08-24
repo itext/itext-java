@@ -63,6 +63,7 @@ public class BarcodeEANSUPP extends Barcode1D {
      *
      * @return the size the barcode occupies.
      */
+    @Override
     public Rectangle getBarcodeSize() {
         Rectangle rect = ean.getBarcodeSize();
         rect.setWidth(rect.getWidth() + supp.getBarcodeSize().getWidth() + n);

@@ -61,6 +61,7 @@ public class Line implements IShape {
         this((float) p1.getX(), (float) p1.getY(), (float) p2.getX(), (float) p2.getY());
     }
 
+    @Override
     public List<Point> getBasePoints() {
         List<Point> basePoints = new ArrayList<>(2);
         basePoints.add(p1);

@@ -98,6 +98,7 @@ public class GposLookupType2 extends OpenTableLookup {
             readFormat(subtableLocation);
         }
 
+        @Override
         public boolean transformOne(GlyphLine line) {
             if (line.getIdx() >= line.getEnd() || line.getIdx() < line.getStart())
                 return false;
@@ -164,6 +165,7 @@ public class GposLookupType2 extends OpenTableLookup {
             readFormat(subtableLocation);
         }
 
+        @Override
         public boolean transformOne(GlyphLine line) {
             if (line.getIdx() >= line.getEnd() || line.getIdx() < line.getStart())
                 return false;

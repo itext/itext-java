@@ -269,6 +269,7 @@ public class PatternParser extends DefaultHandler {
      * {@inheritDoc}
      * @throws SAXException if parsing of hyphenation classes resource xml has failed.
      */
+    @Override
     public void startElement(String uri, String local, String raw,
                              Attributes attrs) throws SAXException {
         if (local.equals("hyphen-char")) {
@@ -304,6 +305,7 @@ public class PatternParser extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void endElement(String uri, String local, String raw) {
 
         if (token.length() > 0) {
@@ -346,6 +348,7 @@ public class PatternParser extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void characters(char[] ch, int start, int length) {
         StringBuilder chars = new StringBuilder(length);
         chars.append(ch, start, length);
@@ -382,6 +385,7 @@ public class PatternParser extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void warning(SAXParseException ex) {
         errMsg = "[Warning] " + getLocationString(ex) + ": "
                  + ex.getMessage();
@@ -390,6 +394,7 @@ public class PatternParser extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void error(SAXParseException ex) {
         errMsg = "[Error] " + getLocationString(ex) + ": " + ex.getMessage();
     }
@@ -397,6 +402,7 @@ public class PatternParser extends DefaultHandler {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void fatalError(SAXParseException ex) throws SAXException {
         errMsg = "[Fatal Error] " + getLocationString(ex) + ": "
                  + ex.getMessage();

@@ -368,6 +368,7 @@ public class PdfStream extends PdfDictionary {
     /**
      * Release content of PdfStream.
      */
+    @Override
     protected void releaseContent() {
         super.releaseContent();
         try {

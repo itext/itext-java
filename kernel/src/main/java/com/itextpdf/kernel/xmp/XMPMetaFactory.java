@@ -289,30 +289,37 @@ public final class XMPMetaFactory {
             this.message = message;
         }
 
+        @Override
         public int getMajor() {
             return major;
         }
 
+        @Override
         public int getMinor() {
             return minor;
         }
 
+        @Override
         public int getMicro() {
             return micro;
         }
 
+        @Override
         public boolean isDebug() {
             return debug;
         }
 
+        @Override
         public int getBuild() {
             return engBuild;
         }
 
+        @Override
         public String getMessage() {
             return message;
         }
 
+        @Override
         public String toString() {
             return message;
         }

@@ -159,6 +159,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#getYear()
 	 */
+	@Override
 	public int getYear()
 	{
 		return year;
@@ -168,6 +169,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#setYear(int)
 	 */
+	@Override
 	public void setYear(int year)
 	{
 		this.year = Math.min(Math.abs(year), 9999);
@@ -178,6 +180,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#getMonth()
 	 */
+	@Override
 	public int getMonth()
 	{
 		return month;
@@ -187,6 +190,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#setMonth(int)
 	 */
+	@Override
 	public void setMonth(int month)
 	{
 		if (month < 1)
@@ -209,6 +213,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#getDay()
 	 */
+	@Override
 	public int getDay()
 	{
 		return day;
@@ -218,6 +223,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#setDay(int)
 	 */
+	@Override
 	public void setDay(int day)
 	{
 		if (day < 1)
@@ -240,6 +246,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#getHour()
 	 */
+	@Override
 	public int getHour()
 	{
 		return hour;
@@ -249,6 +256,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#setHour(int)
 	 */
+	@Override
 	public void setHour(int hour)
 	{
 		this.hour = Math.min(Math.abs(hour), 23);
@@ -259,6 +267,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#getMinute()
 	 */
+	@Override
 	public int getMinute()
 	{
 		return minute;
@@ -268,6 +277,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#setMinute(int)
 	 */
+	@Override
 	public void setMinute(int minute)
 	{
 		this.minute = Math.min(Math.abs(minute), 59);
@@ -278,6 +288,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#getSecond()
 	 */
+	@Override
 	public int getSecond()
 	{
 		return second;
@@ -287,6 +298,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#setSecond(int)
 	 */
+	@Override
 	public void setSecond(int second)
 	{
 		this.second = Math.min(Math.abs(second), 59);
@@ -297,6 +309,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#getNanoSecond()
 	 */
+	@Override
 	public int getNanoSecond()
 	{
 		return nanoSeconds;
@@ -306,6 +319,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#setNanoSecond(int)
 	 */
+	@Override
 	public void setNanoSecond(int nanoSecond)
 	{
 		this.nanoSeconds = nanoSecond;
@@ -316,6 +330,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(Object dt)
 	{
 		long d = getCalendar().getTimeInMillis()
@@ -336,6 +351,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#getTimeZone()
 	 */
+	@Override
 	public TimeZone getTimeZone()
 	{
 		return timeZone;
@@ -345,6 +361,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#setTimeZone(java.util.TimeZone)
 	 */
+	@Override
 	public void setTimeZone(TimeZone timeZone)
 	{
 		this.timeZone = timeZone;
@@ -356,6 +373,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#hasDate()
 	 */
+	@Override
 	public boolean hasDate()
 	{
 		return this.hasDate;
@@ -365,6 +383,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#hasTime()
 	 */
+	@Override
 	public boolean hasTime()
 	{
 		return this.hasTime;
@@ -374,6 +393,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#hasTimeZone()
 	 */
+	@Override
 	public boolean hasTimeZone()
 	{
 		return this.hasTimeZone;
@@ -383,6 +403,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#getCalendar()
 	 */
+	@Override
 	public Calendar getCalendar()
 	{
 		GregorianCalendar calendar = (GregorianCalendar) Calendar.getInstance(Locale.US);
@@ -406,6 +427,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @see XMPDateTime#getISO8601String()
 	 */
+	@Override
 	public String getISO8601String()
 	{
 		return ISO8601Converter.render(this);
@@ -415,6 +437,7 @@ public class XMPDateTimeImpl implements XMPDateTime
 	/**
 	 * @return Returns the ISO string representation.
 	 */
+	@Override
 	public String toString()
 	{
 		return getISO8601String();

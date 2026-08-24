@@ -488,6 +488,7 @@ public class MulticolRenderer extends AbstractRenderer {
         protected int maxRelayoutCount = 4;
         private Float height = null;
 
+        @Override
         public Float getAdditionalHeightOfEachColumn(MulticolRenderer renderer, MulticolLayoutResult result) {
             if (height != null) {
                 return height;

@@ -117,6 +117,7 @@ public abstract class ClipperBase implements IClipper {
         edges = new ArrayList<List<Edge>>();
     }
 
+    @Override
     public boolean addPath( Path pg, PolyType polyType, boolean Closed ) {
 
         if (!Closed && polyType == PolyType.CLIP) {
@@ -315,6 +316,7 @@ public abstract class ClipperBase implements IClipper {
 
     }
 
+    @Override
     public boolean addPaths( Paths ppg, PolyType polyType, boolean closed ) {
         boolean result = false;
         for (int i = 0; i < ppg.size(); ++i) {
@@ -325,6 +327,7 @@ public abstract class ClipperBase implements IClipper {
         return result;
     }
 
+    @Override
     public void clear() {
         disposeLocalMinimaList();
         edges.clear();

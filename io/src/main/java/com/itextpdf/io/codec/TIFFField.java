@@ -543,6 +543,7 @@ public class TIFFField implements Comparable<TIFFField> {
      *
      * @throws IllegalArgumentException if the parameter is <code>null</code>.
      */
+    @Override
     public int compareTo(TIFFField o) {
         if(o == null) {
             throw new IllegalArgumentException();

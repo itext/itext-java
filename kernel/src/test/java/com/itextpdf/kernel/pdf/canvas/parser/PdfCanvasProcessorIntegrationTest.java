@@ -316,6 +316,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         private List<IEventData> content = new ArrayList<>();
         private static final String pathDataExpected = "Path data expected.";
 
+        @Override
         public void eventOccurred(IEventData data, EventType type) {
             if (type.equals(EventType.RENDER_PATH)) {
                 PathRenderInfo pathRenderInfo = (PathRenderInfo) data;
@@ -343,6 +344,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             return (PathRenderInfo) eventData;
         }
 
+        @Override
         public Set<EventType> getSupportedEvents() {
             return null;
         }
@@ -366,6 +368,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
         RecordFirstImageEventListener() {
         }
 
+        @Override
         public void eventOccurred(IEventData data, EventType type) {
             switch (type) {
                 case RENDER_IMAGE:
@@ -376,6 +379,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             }
         }
 
+        @Override
         public Set<EventType> getSupportedEvents() {
             return null;
         }
@@ -393,6 +397,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             this.sb = outStream;
         }
 
+        @Override
         public void eventOccurred(IEventData data, EventType type) {
             switch (type) {
                 case BEGIN_TEXT:
@@ -445,6 +450,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             }
         }
 
+        @Override
         public Set<EventType> getSupportedEvents() {
             return null;
         }
@@ -457,6 +463,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             this.map = map;
         }
 
+        @Override
         public void eventOccurred(IEventData data, EventType type) {
             if (data instanceof TextRenderInfo) {
                 TextRenderInfo renderInfo = (TextRenderInfo) data;
@@ -466,6 +473,7 @@ public class PdfCanvasProcessorIntegrationTest extends ExtendedITextTest {
             }
         }
 
+        @Override
         public Set<EventType> getSupportedEvents() {
             return null;
         }

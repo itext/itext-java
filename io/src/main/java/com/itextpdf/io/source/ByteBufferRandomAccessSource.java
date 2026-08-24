@@ -78,6 +78,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
      *
      * @param position the position to read the byte from - must be less than Integer.MAX_VALUE
      */
+    @Override
     public int get(long position) {
         if (position > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Position must be less than Integer.MAX_VALUE");
@@ -101,6 +102,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
      *
      * @param position the position to read the byte from - must be less than Integer.MAX_VALUE
      */
+    @Override
     public int get(long position, byte[] bytes, int off, int len) {
         if (position > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Position must be less than Integer.MAX_VALUE");
@@ -122,6 +124,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long length() {
         return byteBuffer.limit();
     }
@@ -130,6 +133,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
      * @see java.io.RandomAccessFile#close()
      * Cleans the mapped bytebuffers and closes the channel if unmapping functionality is enabled
      */
+    @Override
     public void close() throws java.io.IOException {
         if (allowUnmapping) {
             clean(byteBuffer);

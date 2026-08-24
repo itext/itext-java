@@ -55,6 +55,7 @@ public class PubSecHandlerUsingAes256 extends PubSecHandlerUsingAes128 {
         return "SHA-256";
     }
 
+    @Override
     protected void initKey(byte[] globalKey, int keyLength) {
         nextObjectKey = globalKey;
         nextObjectKeySize = 32;

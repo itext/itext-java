@@ -21,6 +21,7 @@ public class Comment extends LeafNode {
         value = data;
     }
 
+    @Override
     public String nodeName() {
         return "#comment";
     }
@@ -38,6 +39,7 @@ public class Comment extends LeafNode {
         return this;
     }
 
+	@Override
 	void outerHtmlHead(Appendable accum, int depth, Document.OutputSettings out) throws IOException {
         if (out.prettyPrint() && ((siblingIndex() == 0 && parentNode instanceof Element && ((Element) parentNode).tag().formatAsBlock()) || (out.outline() )))
             indent(accum, depth, out);
@@ -47,6 +49,7 @@ public class Comment extends LeafNode {
                 .append("-->");
     }
 
+	@Override
 	void outerHtmlTail(Appendable accum, int depth, Document.OutputSettings out) {}
 
     @Override

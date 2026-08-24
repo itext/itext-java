@@ -72,6 +72,7 @@ public class SubjectPublicKeyInfoBCFips extends ASN1EncodableBCFips implements I
     /**
      * {@inheritDoc}
      */
+    @Override
     public IASN1BitString getPublicKeyData() {
         return new ASN1BitStringBCFips(getSubjectPublicKeyInfo().getPublicKeyData());
     }

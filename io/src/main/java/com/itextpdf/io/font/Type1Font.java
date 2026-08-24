@@ -311,6 +311,7 @@ public class Type1Font extends FontProgram {
         return fontStreamLengths;
     }
 
+    @Override
     public boolean isBuiltWith(String fontProgram) {
         return Objects.equals(fontParser.getAfmPath(), fontProgram);
     }

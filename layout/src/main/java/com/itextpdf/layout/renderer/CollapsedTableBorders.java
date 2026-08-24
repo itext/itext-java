@@ -161,6 +161,7 @@ class CollapsedTableBorders extends TableBorders {
     }
 
 
+    @Override
     public List<Border> getHorizontalBorder(int index) {
         if (index == startRow) {
             List<Border> firstBorderOnCurrentPage = TableBorderUtil.createAndFillBorderList(topBorderCollapseWith, tableBoundingBorders[0], numberOfColumns);
@@ -371,6 +372,7 @@ class CollapsedTableBorders extends TableBorders {
     // endregion
 
     // region draw
+    @Override
     protected TableBorders drawHorizontalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor) {
         int i = borderDescriptor.getBorderIndex();
         float startX = borderDescriptor.getMainCoordinateStart();
@@ -429,6 +431,7 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
+    @Override
     protected TableBorders drawVerticalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor) {
         int i = borderDescriptor.getBorderIndex();
         float startY = borderDescriptor.getMainCoordinateStart();
@@ -536,6 +539,7 @@ class CollapsedTableBorders extends TableBorders {
 
     // region occupation
 
+    @Override
     protected TableBorders applyLeftAndRightTableBorder(Rectangle layoutBox, boolean reverse) {
         if (null != layoutBox) {
             layoutBox.applyMargins(0, rightBorderMaxWidth / 2, 0, leftBorderMaxWidth / 2, reverse);
@@ -544,6 +548,7 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
+    @Override
     protected TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse) {
         if (!isEmpty) {
             return applyTopTableBorder(occupiedBox, layoutBox, reverse);
@@ -555,6 +560,7 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
+    @Override
     protected TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse) {
         if (!isEmpty) {
             return applyBottomTableBorder(occupiedBox, layoutBox, reverse);
@@ -566,6 +572,7 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
+    @Override
     protected TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse) {
         float topIndent = (reverse ? -1 : 1) * getMaxTopWidth();
         layoutBox.decreaseHeight(topIndent / 2);
@@ -573,6 +580,7 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
+    @Override
     protected TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse) {
         float bottomTableBorderWidth = (reverse ? -1 : 1) * getMaxBottomWidth();
         layoutBox.decreaseHeight(bottomTableBorderWidth / 2);
@@ -581,17 +589,20 @@ class CollapsedTableBorders extends TableBorders {
     }
 
 
+    @Override
     protected TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse) {
         box.applyMargins(topIndent / 2, rightIndent / 2, bottomIndent / 2, leftIndent / 2, false);
         return this;
     }
 
+    @Override
     protected float getCellVerticalAddition(float[] indents) {
         return indents[0] / 2 + indents[2] / 2;
     }
     // endregion
 
     // region update, footer/header
+    @Override
     protected TableBorders updateBordersOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer) {
         if (!isFooterOrHeader) {
             // collapse all cell borders
@@ -627,18 +638,21 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
+    @Override
     protected TableBorders skipFooter(Border[] borders) {
         setTableBoundingBorders(borders);
         setBottomBorderCollapseWith(null, null);
         return this;
     }
 
+    @Override
     protected TableBorders skipHeader(Border[] borders) {
         setTableBoundingBorders(borders);
         setTopBorderCollapseWith(null);
         return this;
     }
 
+    @Override
     protected TableBorders collapseTableWithFooter(TableBorders footerBordersHandler, boolean hasContent) {
         ((CollapsedTableBorders) footerBordersHandler).setTopBorderCollapseWith(
                 hasContent ? getLastHorizontalBorder() : getTopBorderCollapseWith());
@@ -647,6 +661,7 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
+    @Override
     protected TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean updateBordersHandler) {
         ((CollapsedTableBorders) headerBordersHandler).setBottomBorderCollapseWith(getHorizontalBorder(startRow),
                 getVerticalBordersCrossingTopHorizontalBorder());
@@ -657,6 +672,7 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
+    @Override
     protected TableBorders fixHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox) {
         float topBorderMaxWidth = getMaxTopWidth();
         layoutBox.increaseHeight(topBorderMaxWidth);

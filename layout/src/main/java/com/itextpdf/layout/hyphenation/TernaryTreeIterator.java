@@ -116,6 +116,7 @@ class TernaryTreeIterator implements Enumeration {
     /**
      * @return next element
      */
+    @Override
     public Object nextElement() {
         String res = curkey;
         cur = up();
@@ -136,6 +137,7 @@ class TernaryTreeIterator implements Enumeration {
     /**
      * @return true if more elements
      */
+    @Override
     public boolean hasMoreElements() {
         return (cur != -1);
     }

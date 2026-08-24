@@ -233,6 +233,7 @@ public class FloatImageTest extends ExtendedITextTest {
             this.width = width;
         }
 
+        @Override
         public String toString() {
             String hAlignString;
             if (horizontalAlignment == null) {

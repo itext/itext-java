@@ -133,6 +133,7 @@ public class DefaultResourceRetriever implements IResourceRetriever{
      * @param url the source URL
      * @return the limited input stream or null if the URL was filtered
      */
+    @Override
     public InputStream getInputStreamByUrl(URL url) throws IOException {
         if (!urlFilter(url)) {
             LOGGER.warn(() -> MessageFormatUtil.format(
@@ -151,6 +152,7 @@ public class DefaultResourceRetriever implements IResourceRetriever{
      * @return the byte array or null if the retrieving failed or the
      * URL was filtered or the resourceSizeByteLimit was violated
      */
+    @Override
     public byte[] getByteArrayByUrl(URL url) throws IOException {
         try (InputStream stream = getInputStreamByUrl(url)){
             if (stream == null) {

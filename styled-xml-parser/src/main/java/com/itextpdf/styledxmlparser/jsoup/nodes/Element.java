@@ -92,6 +92,7 @@ public class Element extends Node {
         return childNodes != EmptyNodes;
     }
 
+    @Override
     protected List<Node> ensureChildNodes() {
         if (childNodes == EmptyNodes) {
             childNodes = new NodeList(this, 4);
@@ -220,6 +221,7 @@ public class Element extends Node {
      * 
      * @return this element
      */
+    @Override
     public Node attr(String attributeKey, String attributeValue) {
         super.attr(attributeKey, attributeValue);
         return this;
@@ -1556,6 +1558,7 @@ public class Element extends Node {
         return this;
     }
 
+    @Override
     void outerHtmlHead(final Appendable accum, int depth, final Document.OutputSettings out) throws IOException {
         if (out.prettyPrint() && isFormatAsBlock(out) && !isInlineable(out)) {
             if (accum instanceof StringBuilder) {
@@ -1579,6 +1582,7 @@ public class Element extends Node {
             accum.append('>');
     }
 
+    @Override
     void outerHtmlTail(Appendable accum, int depth, Document.OutputSettings out) throws IOException {
         if (!(childNodes.isEmpty() && tag.isSelfClosing())) {
             if (out.prettyPrint() && (!childNodes.isEmpty() && (
@@ -1684,6 +1688,7 @@ public class Element extends Node {
             this.owner = owner;
         }
 
+        @Override
         public void onContentsChanged() {
             owner.nodelistChanged();
         }
@@ -1710,6 +1715,7 @@ public class Element extends Node {
             this.accum = accum;
         }
 
+        @Override
         public void head(Node node, int depth) {
             if (node instanceof TextNode) {
                 TextNode textNode = (TextNode) node;
@@ -1723,6 +1729,7 @@ public class Element extends Node {
             }
         }
 
+        @Override
         public void tail(Node node, int depth) {
             // make sure there is a space between block tags and immediately
             // following text nodes <div>One</div>Two should be "One Two".
@@ -1743,6 +1750,7 @@ public class Element extends Node {
             this.accum = accum;
         }
 
+        @Override
         public void head(Node node, int depth) {
             if (node instanceof TextNode) {
                 TextNode textNode = (TextNode) node;
@@ -1750,6 +1758,7 @@ public class Element extends Node {
             }
         }
 
+        @Override
         public void tail(Node node, int depth) {
         }
     }

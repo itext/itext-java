@@ -134,6 +134,7 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
      * The source that contains the byte at position is retrieved, the correct offset into that source computed, then the value
      * from that offset in the underlying source is returned.
      */
+    @Override
     public int get(long position) throws java.io.IOException {
         SourceEntry entry = getSourceEntryForOffset(position);
 
@@ -147,6 +148,7 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         SourceEntry entry = getSourceEntryForOffset(position);
 
@@ -184,6 +186,7 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long length() {
         return size;
     }
@@ -193,6 +196,7 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
      * <br/>
      * Closes all of the underlying sources.
      */
+    @Override
     public void close() throws java.io.IOException {
         java.io.IOException firstThrownIOExc = null;
         for (SourceEntry entry : sources) {

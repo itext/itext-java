@@ -73,6 +73,7 @@ public class Hyphenation {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         StringBuffer str = new StringBuffer();
         int start = 0;

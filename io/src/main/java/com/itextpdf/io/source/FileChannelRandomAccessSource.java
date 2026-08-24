@@ -63,6 +63,7 @@ public class FileChannelRandomAccessSource implements IRandomAccessSource {
      * {@inheritDoc}
      * Cleans the mapped byte buffers and closes the channel
      */
+    @Override
     public void close() throws java.io.IOException {
         try {
             source.close();
@@ -78,6 +79,7 @@ public class FileChannelRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position) throws java.io.IOException {
         return source.get(position);
     }
@@ -85,6 +87,7 @@ public class FileChannelRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         return source.get(position, bytes, off, len);
     }
@@ -92,6 +95,7 @@ public class FileChannelRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long length() {
         return source.length();
     }

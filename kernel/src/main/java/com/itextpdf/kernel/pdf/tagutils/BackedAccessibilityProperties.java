@@ -106,6 +106,7 @@ class BackedAccessibilityProperties extends AccessibilityProperties {
         return addAttributes(-1, attributes);
     }
 
+    @Override
     public AccessibilityProperties addAttributes(int index, PdfStructureAttributes attributes) {
         if (attributes == null) {
             return this;
@@ -167,12 +168,14 @@ class BackedAccessibilityProperties extends AccessibilityProperties {
         return getBackingElem().getPhoneticAlphabet().getValue();
     }
 
+    @Override
     public AccessibilityProperties setNamespace(PdfNamespace namespace) {
         getBackingElem().setNamespace(namespace);
         pointerToBackingElem.getContext().ensureNamespaceRegistered(namespace);
         return this;
     }
 
+    @Override
     public PdfNamespace getNamespace() {
         return getBackingElem().getNamespace();
     }

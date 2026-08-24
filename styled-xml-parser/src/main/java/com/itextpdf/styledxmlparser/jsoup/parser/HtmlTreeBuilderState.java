@@ -148,6 +148,7 @@ abstract class HtmlTreeBuilderState {
             return "Initial";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (isWhitespace(t)) {
                 return true; // ignore whitespace until we get the first content
@@ -177,6 +178,7 @@ abstract class HtmlTreeBuilderState {
             return "BeforeHtml";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.isDoctype()) {
                 tb.error(this);
@@ -213,6 +215,7 @@ abstract class HtmlTreeBuilderState {
             return "BeforeHead";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (isWhitespace(t)) {
                 tb.insert(t.asCharacter()); // out of spec - include whitespace
@@ -248,6 +251,7 @@ abstract class HtmlTreeBuilderState {
             return "InHead";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (isWhitespace(t)) {
                 tb.insert(t.asCharacter()); // out of spec - include whitespace
@@ -327,6 +331,7 @@ abstract class HtmlTreeBuilderState {
             return "InHeadNoscript";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.isDoctype()) {
                 tb.error(this);
@@ -366,6 +371,7 @@ abstract class HtmlTreeBuilderState {
             return "AfterHead";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (isWhitespace(t)) {
                 tb.insert(t.asCharacter());
@@ -424,6 +430,7 @@ abstract class HtmlTreeBuilderState {
             return "InBody";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             switch (t.type) {
                 case Character: {
@@ -1052,6 +1059,7 @@ abstract class HtmlTreeBuilderState {
         }
 
         // in script, style etc. normally treated as data tags
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.isCharacter()) {
                 tb.insert(t.asCharacter());
@@ -1077,6 +1085,7 @@ abstract class HtmlTreeBuilderState {
             return "InTable";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.isCharacter()) {
                 tb.newPendingTableCharacters();
@@ -1183,6 +1192,7 @@ abstract class HtmlTreeBuilderState {
             return "InTableText";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.type == Token.TokenType.Character) {
                 Token.Character c = t.asCharacter();
@@ -1224,6 +1234,7 @@ abstract class HtmlTreeBuilderState {
             return "InCaption";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.isEndTag() && t.asEndTag().normalName().equals("caption")) {
                 Token.EndTag endTag = t.asEndTag();
@@ -1264,6 +1275,7 @@ abstract class HtmlTreeBuilderState {
             return "InColumnGroup";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (isWhitespace(t)) {
                 tb.insert(t.asCharacter());
@@ -1327,6 +1339,7 @@ abstract class HtmlTreeBuilderState {
             return "InTableBody";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             String name;
             switch (t.type) {
@@ -1397,6 +1410,7 @@ abstract class HtmlTreeBuilderState {
             return "InRow";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.isStartTag()) {
                 Token.StartTag startTag = t.asStartTag();
@@ -1468,6 +1482,7 @@ abstract class HtmlTreeBuilderState {
             return "InCell";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.isEndTag()) {
                 Token.EndTag endTag = t.asEndTag();
@@ -1531,6 +1546,7 @@ abstract class HtmlTreeBuilderState {
             return "InSelect";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             String name;
             switch (t.type) {
@@ -1633,6 +1649,7 @@ abstract class HtmlTreeBuilderState {
             return "InSelectInTable";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.isStartTag() && StringUtil.inSorted(t.asStartTag().normalName(), Constants.InSelecTableEnd)) {
                 tb.error(this);
@@ -1658,6 +1675,7 @@ abstract class HtmlTreeBuilderState {
             return "AfterBody";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (isWhitespace(t)) {
                 tb.insert(t.asCharacter()); // out of spec - include whitespace. spec would move into body
@@ -1693,6 +1711,7 @@ abstract class HtmlTreeBuilderState {
             return "InFrameset";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (isWhitespace(t)) {
                 tb.insert(t.asCharacter());
@@ -1748,6 +1767,7 @@ abstract class HtmlTreeBuilderState {
             return "AfterFrameset";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (isWhitespace(t)) {
                 tb.insert(t.asCharacter());
@@ -1779,6 +1799,7 @@ abstract class HtmlTreeBuilderState {
             return "AfterAfterBody";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.isComment()) {
                 tb.insert(t.asComment());
@@ -1808,6 +1829,7 @@ abstract class HtmlTreeBuilderState {
             return "AfterAfterFrameset";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             if (t.isComment()) {
                 tb.insert(t.asComment());
@@ -1832,6 +1854,7 @@ abstract class HtmlTreeBuilderState {
             return "ForeignContent";
         }
 
+        @Override
         boolean process(Token t, HtmlTreeBuilder tb) {
             return true;
         }

@@ -48,6 +48,7 @@ public abstract class AbstractContextBasedEventHandler implements IEventHandler 
      *
      * @param event to handle
      */
+    @Override
     public final void onEvent(IEvent event) {
         if (!(event instanceof AbstractContextBasedITextEvent)) {
             return;

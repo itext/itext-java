@@ -573,6 +573,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
      * character being the normalization char.
      * @param chargroup a character class (group)
      */
+    @Override
     public void addClass(String chargroup) {
         if (chargroup.length() > 0) {
             char equivChar = chargroup.charAt(0);
@@ -593,6 +594,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
      * @param hyphenatedword a vector of alternating strings and
      * {@link Hyphen hyphen} objects.
      */
+    @Override
     public void addException(String word, List hyphenatedword) {
         stoplist.put(word, hyphenatedword);
     }
@@ -607,6 +609,7 @@ public class HyphenationTree extends TernaryTree implements IPatternConsumer {
      * within the pattern. It should contain only digit characters.
      * (i.e. '0' to '9').
      */
+    @Override
     public void addPattern(String pattern, String ivalue) {
         int k = ivalues.find(ivalue);
         if (k <= 0) {

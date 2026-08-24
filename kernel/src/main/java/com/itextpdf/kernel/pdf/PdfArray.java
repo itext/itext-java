@@ -217,6 +217,7 @@ public class PdfArray extends PdfObject implements Iterable<PdfObject> {
      *
      * @return an Iterator.
      */
+    @Override
     public Iterator<PdfObject> iterator() {
         return new PdfArrayDirectIterator(list);
     }

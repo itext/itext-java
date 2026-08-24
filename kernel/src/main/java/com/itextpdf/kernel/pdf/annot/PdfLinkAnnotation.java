@@ -75,6 +75,7 @@ public class PdfLinkAnnotation extends PdfAnnotation {
         super(rect);
     }
 
+    @Override
     public PdfName getSubtype() {
         return PdfName.Link;
     }

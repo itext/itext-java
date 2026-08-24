@@ -75,6 +75,7 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
     /* (non-Javadoc)
      * @see com.itextpdf.styledxmlparser.html.node.IElementNode#getAttributes()
      */
+    @Override
     public IAttributes getAttributes() {
         return attributes;
     }

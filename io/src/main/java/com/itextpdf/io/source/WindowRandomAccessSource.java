@@ -68,6 +68,7 @@ public class WindowRandomAccessSource implements IRandomAccessSource {
      * {@inheritDoc}
      * Note that the position will be adjusted to read from the corrected location in the underlying source
      */
+    @Override
     public int get(long position) throws java.io.IOException {
         if (position >= length) return -1;
         return source.get(offset + position);
@@ -77,6 +78,7 @@ public class WindowRandomAccessSource implements IRandomAccessSource {
      * {@inheritDoc}
      * Note that the position will be adjusted to read from the corrected location in the underlying source
      */
+    @Override
     public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         if (position >= length)
             return -1;
@@ -89,6 +91,7 @@ public class WindowRandomAccessSource implements IRandomAccessSource {
      * {@inheritDoc}
      * Note that the length will be adjusted to read from the corrected location in the underlying source
      */
+    @Override
     public long length() {
         return length;
     }
@@ -96,6 +99,7 @@ public class WindowRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close() throws java.io.IOException {
         source.close();
     }

@@ -114,6 +114,7 @@ final class Mode {
     /**
      * @return the name of the mode.
      */
+    @Override
     public String toString() {
         return name;
     }

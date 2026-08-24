@@ -246,6 +246,7 @@ public abstract class Point<T extends Number & Comparable<T>> {
 
     private static class NumberComparator<T extends Number & Comparable<T>> implements Comparator<T> {
 
+        @Override
         public int compare(T a, T b) throws ClassCastException {
             return a.compareTo(b);
         }

@@ -239,6 +239,7 @@ final class GF256Poly {
     /**
      * @return String representation of the Galois Field polynomial.
      */
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder(8 * getDegree());
         for (int degree = getDegree(); degree >= 0; degree--) {

@@ -176,6 +176,7 @@ public class PdfTokenizer implements Closeable {
      *
      * @throws java.io.IOException if the underlying source cannot be closed
      */
+    @Override
     public void close() throws java.io.IOException {
         if (closeStream)
             file.close();

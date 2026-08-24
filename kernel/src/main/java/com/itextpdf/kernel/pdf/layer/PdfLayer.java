@@ -464,6 +464,7 @@ public class PdfLayer extends PdfObjectWrapper<PdfDictionary> implements IPdfOCG
      *
      * @return the indirect reference to the object representing the layer
      */
+    @Override
     public PdfIndirectReference getIndirectReference() {
         return getPdfObject().getIndirectReference();
     }

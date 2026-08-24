@@ -83,6 +83,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private LayoutArea initialCurrentArea;
     private boolean floatOverflowedCompletely = false;
 
+    @Override
     public void addChild(IRenderer renderer) {
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
         if (taggingHelper != null) {

@@ -50,6 +50,7 @@ public enum MarkerVertexType {
         this.name = s;
     }
 
+    @Override
     public String toString() {
         return this.name;
     }

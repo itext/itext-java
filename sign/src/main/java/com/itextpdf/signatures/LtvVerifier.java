@@ -279,6 +279,7 @@ public class LtvVerifier extends RootStoreVerifier {
      * @see com.itextpdf.signatures.RootStoreVerifier#verify(java.security.cert.X509Certificate,
      *         java.security.cert.X509Certificate, java.util.Date)
      */
+    @Override
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert, Date signDate)
             throws GeneralSecurityException {
         // we'll verify against the rootstore (if present)

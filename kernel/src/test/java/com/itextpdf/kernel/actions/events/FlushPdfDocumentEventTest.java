@@ -174,6 +174,7 @@ public class FlushPdfDocumentEventTest extends ExtendedITextTest {
             super(reader);
         }
 
+        @Override
         public SequenceId getDocumentIdWrapper() {
             return null;
         }

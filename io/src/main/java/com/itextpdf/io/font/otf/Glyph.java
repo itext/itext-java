@@ -384,6 +384,7 @@ public class Glyph {
         return xAdvance != 0 || yAdvance != 0;
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -400,6 +401,7 @@ public class Glyph {
      *
      * @return {@code true} if this equals obj cast to Glyph, false otherwise
      */
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -446,6 +448,7 @@ public class Glyph {
      *
      * @return the requested result
      */
+    @Override
     public String toString() {
         return MessageFormatUtil.format("[id={0}, chars={1}, uni={2}, width={3}]",
                 toHex(code), chars != null ? Arrays.toString(chars) : "null", toHex(unicode), width);

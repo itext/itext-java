@@ -72,6 +72,7 @@ public class BezierCurve implements IShape {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<Point> getBasePoints() {
         return controlPoints;
     }

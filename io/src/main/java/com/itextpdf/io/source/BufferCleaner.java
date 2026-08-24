@@ -52,6 +52,7 @@ class BufferCleaner {
             throw new IllegalArgumentException("buffer is not an instance of " + unmappableBufferClass.getName());
         }
         final Throwable error = AccessController.doPrivileged(new PrivilegedAction<Throwable>() {
+            @Override
             public Throwable run() {
                 try {
                     method.invoke(theUnsafe, buffer);

@@ -58,6 +58,7 @@ public class PdfTextArray extends PdfArray {
      * @param a the {@code PdfArray} to be added
      * @see java.util.List#addAll(java.util.Collection)
      */
+    @Override
     public void addAll(PdfArray a) {
         if (a != null) {
             addAll(a.list);

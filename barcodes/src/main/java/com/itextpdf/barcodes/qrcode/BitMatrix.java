@@ -171,6 +171,7 @@ final class BitMatrix {
         return width;
     }
 
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder(height * (width + 1));
         for (int y = 0; y < height; y++) {

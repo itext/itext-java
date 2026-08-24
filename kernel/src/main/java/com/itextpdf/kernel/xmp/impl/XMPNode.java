@@ -410,16 +410,19 @@ class XMPNode implements Comparable
 			
 			return new Iterator()
 			{
+				@Override
 				public boolean hasNext()
 				{
 					return it.hasNext();
 				}
 
+				@Override
 				public Object next()
 				{
 					return it.next();
 				}
 
+				@Override
 				public void remove()
 				{
 					throw new UnsupportedOperationException(
@@ -440,6 +443,7 @@ class XMPNode implements Comparable
 	 * 
 	 * @see Object#clone()
 	 */
+	@Override
 	public Object clone()
 	{
 		PropertyOptions newOptions;
@@ -507,6 +511,7 @@ class XMPNode implements Comparable
 	/**
 	 * @see Comparable#compareTo(Object) 
 	 */
+	@Override
 	public int compareTo(Object xmpNode)
 	{
 		if (getOptions().isSchemaNode())

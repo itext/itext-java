@@ -121,6 +121,7 @@ public class Jbig2SegmentReader {
             this.segmentNumber = segment_number;
         }
 
+        @Override
         public int compareTo(Jbig2Segment s) {
             return this.segmentNumber - s.segmentNumber;
         }

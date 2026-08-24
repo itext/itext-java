@@ -201,6 +201,7 @@ public class PdfReader implements Closeable {
      *
      * @throws IOException on error.
      */
+    @Override
     public void close() throws IOException {
         tokens.close();
     }

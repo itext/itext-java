@@ -87,6 +87,7 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
      *                     an {@code IOException} is thrown if the output
      *                     stream is closed.
      */
+    @Override
     public void write(byte[] b, int off, int len) throws IOException {
         byte[] b2 = cipher.update(b, off, len);
         if (b2 == null || b2.length == 0)
@@ -94,6 +95,7 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
         out.write(b2, 0, b2.length);
     }
 
+    @Override
     public void finish() {
         if (!finished) {
             finished = true;

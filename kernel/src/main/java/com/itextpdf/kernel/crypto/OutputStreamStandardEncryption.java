@@ -73,6 +73,7 @@ public class OutputStreamStandardEncryption extends OutputStreamEncryption {
      *                     an {@code IOException} is thrown if the output
      *                     stream is closed.
      */
+    @Override
     public void write(byte[] b, int off, int len) throws IOException {
         byte[] b2 = new byte[Math.min(len, 4192)];
         while (len > 0) {
@@ -84,5 +85,6 @@ public class OutputStreamStandardEncryption extends OutputStreamEncryption {
         }
     }
 
+    @Override
     public void finish() { }
 }
