@@ -22,22 +22,48 @@
  */
 package com.itextpdf.io.source;
 
+/**
+ * A byte-array output stream whose backing array can be assigned directly.
+ */
 public class ByteArrayOutputStream extends java.io.ByteArrayOutputStream {
 
+    /**
+     * Creates an empty stream with the default initial capacity.
+     */
     public ByteArrayOutputStream() {
         super();
     }
 
+    /**
+     * Creates an empty stream with the specified initial capacity.
+     *
+     * @param size the initial backing-array size
+     */
     public ByteArrayOutputStream(int size) {
         super(size);
     }
 
+    /**
+     * Replaces this stream's backing array and logical byte count.
+     *
+     * @param bytes the replacement backing array, retained without copying
+     * @param count the number of bytes in {@code bytes} considered written
+     *
+     * @return this stream
+     */
     public ByteArrayOutputStream assignBytes(byte[] bytes, int count) {
         buf = bytes;
         this.count = count;
         return this;
     }
 
+    /**
+     * Replaces this stream's backing array and marks all of it as written.
+     *
+     * @param bytes the replacement backing array, retained without copying
+     *
+     * @return this stream
+     */
     public ByteArrayOutputStream assignBytes(byte[] bytes) {
         buf = bytes;
         this.count = bytes.length;

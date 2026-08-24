@@ -38,6 +38,17 @@ import java.util.Set;
  */
 public class GsubLookupType6 extends GsubLookupType5 {
 
+    /**
+     * Creates a new GSUB Lookup Type 6.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param subTableLocations the sub table locations
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected GsubLookupType6(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
     }
@@ -126,6 +137,13 @@ public class GsubLookupType6 extends GsubLookupType5 {
         subTables.add(t);
     }
 
+    /**
+     * Reads the sub table format3 from OpenType data.
+     *
+     * @param subTableLocation the sub table location
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     @Override
     protected void readSubTableFormat3(int subTableLocation) throws java.io.IOException {
         int backtrackGlyphCount = openReader.rf.readUnsignedShort();

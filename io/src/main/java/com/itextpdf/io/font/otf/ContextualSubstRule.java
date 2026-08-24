@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font.otf;
 
+/**
+ * Represents the contextual substitution rule of an OpenType font.
+ */
 public abstract class ContextualSubstRule extends ContextualRule {
 
     /**

@@ -24,14 +24,28 @@ package com.itextpdf.io.source;
 
 import java.io.IOException;
 
+/**
+ * A synchronized wrapper around an {@link IRandomAccessSource}.
+ *
+ * <p>
+ * Each operation is serialized on one lock, including {@link #close()}.
+ */
 public class ThreadSafeRandomAccessSource implements IRandomAccessSource {
     private final IRandomAccessSource source;
     private final Object lockObj = new Object();
     
+    /**
+     * Creates a synchronized wrapper for a source.
+     *
+     * @param source the source to access under this wrapper's lock
+     */
     public ThreadSafeRandomAccessSource(IRandomAccessSource source) {
         this.source = source;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int get(long position) throws IOException {
         synchronized (lockObj) {
@@ -39,6 +53,9 @@ public class ThreadSafeRandomAccessSource implements IRandomAccessSource {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int get(long position, byte[] bytes, int off, int len) throws IOException {
         synchronized (lockObj) {
@@ -46,6 +63,9 @@ public class ThreadSafeRandomAccessSource implements IRandomAccessSource {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long length() {
         synchronized (lockObj) {
@@ -53,6 +73,9 @@ public class ThreadSafeRandomAccessSource implements IRandomAccessSource {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws IOException {
         synchronized (lockObj) {

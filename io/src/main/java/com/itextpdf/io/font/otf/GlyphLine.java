@@ -28,13 +28,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Represents a mutable glyph sequence used during OpenType layout.
+ */
 public class GlyphLine {
     private int start;
     private int end;
     private int idx;
+    /** Stores glyphs. */
     protected List<Glyph> glyphs;
+    /** Stores actual text. */
     protected List<ActualText> actualText;
 
+    /**
+     * Creates a new empty line of Glyphs.
+     */
     public GlyphLine() {
         this.glyphs = new ArrayList<>();
     }
@@ -54,8 +62,8 @@ public class GlyphLine {
      * Create a new line of Glyphs from a slice of a List of Glyphs.
      *
      * @param glyphs list of Glyphs to slice
-     * @param start  starting index of the slice
-     * @param end    terminating index of the slice
+     * @param start starting index of the slice
+     * @param end terminating index of the slice
      */
     public GlyphLine(List<Glyph> glyphs, int start, int end) {
         this.glyphs = glyphs;
@@ -66,10 +74,10 @@ public class GlyphLine {
     /**
      * Create a new line of Glyphs from a slice of a List of Glyphs, and add the actual text.
      *
-     * @param glyphs     list of Glyphs to slice
+     * @param glyphs list of Glyphs to slice
      * @param actualText corresponding list containing the actual text the glyphs represent
-     * @param start      starting index of the slice
-     * @param end        terminating index of the slice
+     * @param start starting index of the slice
+     * @param end terminating index of the slice
      */
     protected GlyphLine(List<Glyph> glyphs, List<ActualText> actualText, int start, int end) {
         this(glyphs, start, end);
@@ -94,7 +102,7 @@ public class GlyphLine {
      *
      * @param other line of Glyphs to copy
      * @param start starting index of the slice
-     * @param end   terminating index of the slice
+     * @param end terminating index of the slice
      */
     public GlyphLine(GlyphLine other, int start, int end) {
         this.glyphs = other.glyphs.subList(start, end);
@@ -164,7 +172,8 @@ public class GlyphLine {
      * Get the unicode string representation of the GlyphLine slice.
      *
      * @param start starting index of the slice
-     * @param end   terminating index of the slice
+     * @param end terminating index of the slice
+     *
      * @return String containing the unicode representation of the slice.
      */
     public String toUnicodeString(int start, int end) {
@@ -183,6 +192,11 @@ public class GlyphLine {
         return str.toString();
     }
 
+    /**
+     * Returns a string representation of this glyph.
+     *
+     * @return the requested result
+     */
     @Override
     public String toString() {
         return toUnicodeString(start, end);
@@ -191,8 +205,9 @@ public class GlyphLine {
     /**
      * Copy a slice of this Glyphline.
      *
-     * @param left  leftmost index of the slice
+     * @param left leftmost index of the slice
      * @param right rightmost index of the slice
+     *
      * @return new GlyphLine containing the copied slice
      */
     public GlyphLine copy(int left, int right) {
@@ -226,6 +241,11 @@ public class GlyphLine {
         }
     }
 
+    /**
+     * Updates the glyphs.
+     *
+     * @param replacementGlyphs the replacement glyphs
+     */
     public void setGlyphs(List<Glyph> replacementGlyphs) {
         glyphs = new ArrayList<>(replacementGlyphs);
         start = 0;
@@ -280,11 +300,27 @@ public class GlyphLine {
         end = other.getEnd();
     }
 
+    /**
+     * Returns the number of glyphs in this line.
+     *
+     * @return the number of glyphs
+     */
     public int size() {
         return glyphs.size();
     }
 
-    public void substituteManyToOne(OpenTypeFontTableReader tableReader, int lookupFlag, int rightPartLen, int substitutionGlyphIndex) {
+    /**
+     * Applies the many-to-one glyph substitution.
+     *
+     * @param tableReader the table reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param rightPartLen the right part length
+     * @param substitutionGlyphIndex the substitution glyph index
+     */
+    public void substituteManyToOne(OpenTypeFontTableReader tableReader, int lookupFlag, int rightPartLen,
+                                    int substitutionGlyphIndex) {
         OpenTableLookup.GlyphIndexer gidx = new OpenTableLookup.GlyphIndexer();
         gidx.setLine(this);
         gidx.setIdx(idx);
@@ -316,6 +352,12 @@ public class GlyphLine {
         end -= rightPartLen;
     }
 
+    /**
+     * Applies the one-to-one glyph substitution.
+     *
+     * @param tableReader the table reader
+     * @param substitutionGlyphIndex the substitution glyph index
+     */
     public void substituteOneToOne(OpenTypeFontTableReader tableReader, int substitutionGlyphIndex) {
         Glyph oldGlyph = glyphs.get(idx);
         Glyph newGlyph = new Glyph(tableReader.getGlyph(substitutionGlyphIndex));
@@ -329,6 +371,12 @@ public class GlyphLine {
         glyphs.set(idx, newGlyph);
     }
 
+    /**
+     * Applies the one-to-many glyph substitution.
+     *
+     * @param tableReader the table reader
+     * @param substGlyphIds the substitution glyph ids
+     */
     public void substituteOneToMany(OpenTypeFontTableReader tableReader, int[] substGlyphIds) {
         //sequence length shall be at least 1
         int substCode = substGlyphIds[0];
@@ -380,6 +428,13 @@ public class GlyphLine {
         }
     }
 
+    /**
+     * Updates the actual text.
+     *
+     * @param left the start index
+     * @param right the end index
+     * @param text the text
+     */
     public void setActualText(int left, int right, String text) {
         if (this.actualText == null) {
             this.actualText = new ArrayList<>(glyphs.size());
@@ -430,14 +485,14 @@ public class GlyphLine {
     @Override
     public int hashCode() {
         int result = 0;
-        result = 31*result + start;
-        result = 31*result + end;
+        result = 31 * result + start;
+        result = 31 * result + end;
         for (int i = start; i < end; i++) {
-            result = 31*result + glyphs.get(i).hashCode();
+            result = 31 * result + glyphs.get(i).hashCode();
         }
         if (null != actualText) {
             for (int i = start; i < end; i++) {
-                result = 31*result;
+                result = 31 * result;
                 if (null != actualText.get(i)) {
                     result += actualText.get(i).hashCode();
                 }
@@ -462,10 +517,23 @@ public class GlyphLine {
         }
     }
 
+    /**
+     * Represents the glyph line filter.
+     */
     public interface IGlyphLineFilter {
+        /**
+         * Determines whether a glyph is retained in a filtered line.
+         *
+         * @param glyph the glyph to inspect
+         *
+         * @return {@code true} if the glyph is accepted
+         */
         boolean accept(Glyph glyph);
     }
 
+    /**
+     * Represents the glyph line part.
+     */
     public static class GlyphLinePart {
         private int start;
         private int end;
@@ -582,9 +650,17 @@ public class GlyphLine {
         }
     }
 
+    /**
+     * Represents the actual text.
+     */
     protected static class ActualText {
         private final String value;
 
+        /**
+         * Creates a new actual text.
+         *
+         * @param value the value
+         */
         public ActualText(String value) {
             this.value = value;
         }
@@ -612,7 +688,7 @@ public class GlyphLine {
 
         @Override
         public int hashCode() {
-            return 31*value.hashCode();
+            return 31 * value.hashCode();
         }
     }
 }

@@ -23,30 +23,50 @@
 package com.itextpdf.io.image;
 
 import com.itextpdf.commons.logs.LazyLogger;
+import com.itextpdf.io.codec.Jbig2SegmentReader;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.codec.Jbig2SegmentReader;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.IRandomAccessSource;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
 import java.net.URL;
 
+/**
+ * Image data for a selected page of a JBIG2 image.
+ */
 public class Jbig2ImageData extends ImageData {
 
     private int page;
 
+    /**
+     * Creates JBIG2 image data to be loaded from a URL.
+     *
+     * @param url  source URL, not {@code null}
+     * @param page one-based JBIG2 page number
+     */
     protected Jbig2ImageData(URL url, int page) {
         super(url, ImageType.JBIG2);
         this.page = page;
     }
 
+    /**
+     * Creates JBIG2 image data from encoded bytes.
+     *
+     * @param bytes encoded JBIG2 bytes; the array is retained
+     * @param page  one-based JBIG2 page number
+     */
     protected Jbig2ImageData(byte[] bytes, int page) {
         super(bytes, ImageType.JBIG2);
         this.page = page;
     }
 
+    /**
+     * Gets the selected page number.
+     *
+     * @return one-based JBIG2 page number
+     */
     public int getPage() {
         return page;
     }
@@ -76,6 +96,11 @@ public class Jbig2ImageData extends ImageData {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code false}, because JBIG2 images require a JBIG2Decode filter
+     */
     @Override
     public boolean canImageBeInline() {
         LazyLogger logger = new LazyLogger(ImageData.class);

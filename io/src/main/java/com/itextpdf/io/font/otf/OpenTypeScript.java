@@ -25,27 +25,52 @@ package com.itextpdf.io.font.otf;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Reads OpenType script and language-system records.
+ */
 public class OpenTypeScript {
 
     public static final String DEFAULT_SCRIPT = "DFLT";
-    
-    private OpenTypeFontTableReader openTypeReader;
-    private List<ScriptRecord> records;
-    
-    public OpenTypeScript(OpenTypeFontTableReader openTypeReader, int locationScriptTable) throws java.io.IOException {
+
+    private final OpenTypeFontTableReader openTypeReader;
+    private final List<ScriptRecord> records;
+
+    /**
+     * Creates a new OpenType script.
+     *
+     * @param openTypeReader the open type reader
+     * @param locationScriptTable the location script table
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
+    public OpenTypeScript(OpenTypeFontTableReader openTypeReader, int locationScriptTable)
+            throws java.io.IOException {
         this.openTypeReader = openTypeReader;
         records = new ArrayList<>();
         openTypeReader.rf.seek(locationScriptTable);
         TagAndLocation[] tagsLocs = openTypeReader.readTagAndLocations(locationScriptTable);
         for (TagAndLocation tagLoc : tagsLocs) {
             readScriptRecord(tagLoc);
-        }        
+        }
     }
-    
+
+    /**
+     * Returns the script records represented by {@link ScriptRecord} list.
+     *
+     * @return the requested result
+     */
     public List<ScriptRecord> getScriptRecords() {
         return records;
     }
-    
+
+    /**
+     * Returns the language record represented by {@link LanguageRecord}.
+     *
+     * @param scripts the scripts
+     * @param language the language
+     *
+     * @return the requested result
+     */
     public LanguageRecord getLanguageRecord(String[] scripts, String language) {
         ScriptRecord scriptFound = null;
         ScriptRecord scriptDefault = null;
@@ -87,7 +112,7 @@ public class OpenTypeScript {
         }
         return lang;
     }
-    
+
     private void readScriptRecord(TagAndLocation tagLoc) throws java.io.IOException {
         openTypeReader.rf.seek(tagLoc.getLocation());
         int locationDefaultLanguage = openTypeReader.rf.readUnsignedShort();
@@ -111,7 +136,7 @@ public class OpenTypeScript {
         }
         records.add(srec);
     }
-    
+
     private LanguageRecord readLanguageRecord(TagAndLocation tagLoc) throws java.io.IOException {
         LanguageRecord rec = new LanguageRecord();
         //skip lookup order

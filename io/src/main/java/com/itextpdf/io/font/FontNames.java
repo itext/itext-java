@@ -23,15 +23,21 @@
 package com.itextpdf.io.font;
 
 import com.itextpdf.io.font.constants.FontMacStyleFlags;
-import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.constants.FontStretches;
+import com.itextpdf.io.font.constants.FontWeights;
 
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Stores naming and style information read from a font program.
+ */
 public class FontNames {
 
 
+    /**
+     * Name records grouped by OpenType name ID.
+     */
     protected Map<Integer, List<String[]>> allNames;
 
     // name, ID = 4
@@ -68,39 +74,74 @@ public class FontNames {
         return names != null && names.size() > 0 ? listToArray(names) : null;
     }
 
+    /**
+     * Gets the full font names.
+     *
+     * @return name records for OpenType name ID 4, or {@code null} when unavailable
+     */
     public String[][] getFullName() {
         return fullName;
     }
 
+    /**
+     * Gets the PostScript font name.
+     *
+     * @return PostScript name, or {@code null} when unavailable
+     */
     public String getFontName() {
         return fontName;
     }
 
+    /**
+     * Gets the CID font name.
+     *
+     * @return OpenType name ID 20 value, or {@code null} when unavailable
+     */
     public String getCidFontName() {
         return cidFontName;
     }
 
+    /**
+     * Gets the font family names.
+     *
+     * @return name records for OpenType name ID 16 or 1, or {@code null} when unavailable
+     */
     public String[][] getFamilyName() {
         return familyName;
     }
 
     /**
-     * Get extra family name if exists.
+     * Get extra family names.
      *
-     * @return extra family name if exists in the font, {@code null} otherwise.
+     * @return name records for OpenType name ID 1, or {@code null} when unavailable
      */
     public String[][] getFamilyName2() {
         return familyName2;
     }
 
+    /**
+     * Gets the font style name.
+     *
+     * @return style string
+     */
     public String getStyle() {
         return style;
     }
 
+    /**
+     * Gets the first available subfamily name.
+     *
+     * @return name ID 2 or 17 value, or an empty string when unavailable
+     */
     public String getSubfamily() {
         return subfamily != null ? subfamily[0][3] : "";
     }
 
+    /**
+     * Gets the normalized font weight.
+     *
+     * @return weight in the range represented by {@link FontWeights}
+     */
     public int getFontWeight() {
         return weight;
     }
@@ -131,58 +172,128 @@ public class FontNames {
         this.fontStretch = fontStretch;
     }
 
+    /**
+     * Checks whether the font's embedding permissions allow embedding.
+     *
+     * @return {@code true} when embedding is permitted
+     */
     public boolean allowEmbedding() {
         return allowEmbedding;
     }
 
+    /**
+     * Checks the bold bit in the Macintosh style flags.
+     *
+     * @return {@code true} when bold is declared
+     */
     public boolean isBold() {
         return (macStyle & FontMacStyleFlags.BOLD) != 0;
     }
 
+    /**
+     * Checks the italic bit in the Macintosh style flags.
+     *
+     * @return {@code true} when italic is declared
+     */
     public boolean isItalic() {
         return (macStyle & FontMacStyleFlags.ITALIC) != 0;
     }
 
+    /**
+     * Checks the underline bit in the Macintosh style flags.
+     *
+     * @return {@code true} when underline is declared
+     */
     public boolean isUnderline() {
         return (macStyle & FontMacStyleFlags.UNDERLINE) != 0;
     }
 
+    /**
+     * Checks the outline bit in the Macintosh style flags.
+     *
+     * @return {@code true} when outline is declared
+     */
     public boolean isOutline() {
         return (macStyle & FontMacStyleFlags.OUTLINE) != 0;
     }
 
+    /**
+     * Checks the shadow bit in the Macintosh style flags.
+     *
+     * @return {@code true} when shadow is declared
+     */
     public boolean isShadow() {
         return (macStyle & FontMacStyleFlags.SHADOW) != 0;
     }
 
+    /**
+     * Checks the condensed bit in the Macintosh style flags.
+     *
+     * @return {@code true} when condensed is declared
+     */
     public boolean isCondensed() {
         return (macStyle & FontMacStyleFlags.CONDENSED) != 0;
     }
 
+    /**
+     * Checks the extended bit in the Macintosh style flags.
+     *
+     * @return {@code true} when extended is declared
+     */
     public boolean isExtended() {
         return (macStyle & FontMacStyleFlags.EXTENDED) != 0;
     }
 
+    /**
+     * Sets the names grouped by OpenType name ID.
+     *
+     * @param allNames names grouped by OpenType name ID
+     */
     protected void setAllNames(Map<Integer, List<String[]>> allNames) {
         this.allNames = allNames;
     }
 
+    /**
+     * Sets the full-name records.
+     *
+     * @param fullName records in platform, encoding, language, name order
+     */
     protected void setFullName(String[][] fullName) {
         this.fullName = fullName;
     }
 
+    /**
+     * Sets a single full name.
+     *
+     * @param fullName font full name
+     */
     protected void setFullName(String fullName) {
         this.fullName = new String[][]{new String[]{"", "", "", fullName}};
     }
 
+    /**
+     * Sets the PostScript font name.
+     *
+     * @param psFontName PostScript name
+     */
     protected void setFontName(String psFontName) {
         this.fontName = psFontName;
     }
 
+    /**
+     * Sets the CID font name.
+     *
+     * @param cidFontName OpenType name ID 20 value
+     */
     protected void setCidFontName(String cidFontName) {
         this.cidFontName = cidFontName;
     }
 
+    /**
+     * Sets the font family-name records.
+     *
+     * @param familyName records in platform, encoding, language, name order
+     */
     protected void setFamilyName(String[][] familyName) {
         this.familyName = familyName;
     }
@@ -196,18 +307,38 @@ public class FontNames {
         this.familyName2 = familyName2;
     }
 
+    /**
+     * Sets a single font family name.
+     *
+     * @param familyName preferred family name
+     */
     protected void setFamilyName(String familyName) {
         this.familyName = new String[][]{new String[]{"", "", "", familyName}};
     }
 
+    /**
+     * Sets the font style string.
+     *
+     * @param style style name
+     */
     protected void setStyle(String style) {
         this.style = style;
     }
 
+    /**
+     * Sets a single subfamily name.
+     *
+     * @param subfamily style subfamily name
+     */
     protected void setSubfamily(String subfamily) {
         this.subfamily = new String[][]{new String[]{"", "", "", subfamily}};
     }
 
+    /**
+     * Sets the subfamily name records.
+     *
+     * @param subfamily records in platform, encoding, language, name order
+     */
     protected void setSubfamily(String[][] subfamily) {
         this.subfamily = subfamily;
     }
@@ -222,10 +353,20 @@ public class FontNames {
         this.macStyle = macStyle;
     }
 
+    /**
+     * Gets the raw {@code head.macStyle} bit field.
+     *
+     * @return Macintosh style flags
+     */
     protected int getMacStyle() {
         return macStyle;
     }
 
+    /**
+     * Sets the embedding permission.
+     *
+     * @param allowEmbedding {@code true} when embedding is permitted
+     */
     protected void setAllowEmbedding(boolean allowEmbedding) {
         this.allowEmbedding = allowEmbedding;
     }

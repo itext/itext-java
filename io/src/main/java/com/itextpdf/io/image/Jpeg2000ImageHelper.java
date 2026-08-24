@@ -60,6 +60,11 @@ final class Jpeg2000ImageHelper {
 
     private static final int JPX_JPXB = 0x6a707862;
 
+    /**
+     * Parses JPEG 2000 image data.
+     *
+     * @param image JPEG 2000 image data to process
+     */
     public static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.JPEG2000)
             throw new IllegalArgumentException("JPEG2000 image expected");

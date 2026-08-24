@@ -31,32 +31,62 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Reads the common structures of an OpenType layout table.
+ */
 public abstract class OpenTypeFontTableReader {
 
     protected final RandomAccessFileOrArray rf;
-	protected final int tableLocation;
+    /** Stores table location. */
+    protected final int tableLocation;
 
+    /** Stores lookup list. */
     protected List<OpenTableLookup> lookupList;
+    /** Stores scripts type. */
     protected OpenTypeScript scriptsType;
+    /** Stores features type. */
     protected OpenTypeFeature featuresType;
     private final Map<Integer, Glyph> indexGlyphMap;
     private final OpenTypeGdefTableReader gdef;
 
     private final int unitsPerEm;
 
-	protected OpenTypeFontTableReader(RandomAccessFileOrArray rf, int tableLocation, OpenTypeGdefTableReader gdef,
-                                   Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) {
-		this.rf = rf;
-		this.tableLocation = tableLocation;
+    /**
+     * Creates a new reader.
+     *
+     * @param rf the source
+     * @param tableLocation the table location
+     * @param gdef the GDEF reader
+     * @param indexGlyphMap the index glyph map
+     * @param unitsPerEm the units per em
+     */
+    protected OpenTypeFontTableReader(RandomAccessFileOrArray rf, int tableLocation, OpenTypeGdefTableReader gdef,
+                                      Map<Integer, Glyph> indexGlyphMap, int unitsPerEm) {
+        this.rf = rf;
+        this.tableLocation = tableLocation;
         this.indexGlyphMap = indexGlyphMap;
         this.gdef = gdef;
         this.unitsPerEm = unitsPerEm;
-	}
+    }
 
+    /**
+     * Returns the glyph by index.
+     *
+     * @param index the index
+     *
+     * @return the requested result
+     */
     public Glyph getGlyph(int index) {
         return indexGlyphMap.get(index);
     }
 
+    /**
+     * Returns the lookup table.
+     *
+     * @param idx the idx
+     *
+     * @return the requested result
+     */
     public OpenTableLookup getLookupTable(int idx) {
         if (idx < 0 || idx >= lookupList.size()) {
             return null;
@@ -64,14 +94,32 @@ public abstract class OpenTypeFontTableReader {
         return lookupList.get(idx);
     }
 
+    /**
+     * Returns the script records.
+     *
+     * @return the requested result
+     */
     public List<ScriptRecord> getScriptRecords() {
         return scriptsType.getScriptRecords();
     }
 
+    /**
+     * Returns the feature records.
+     *
+     * @return the requested result
+     */
     public List<FeatureRecord> getFeatureRecords() {
         return featuresType.getRecords();
     }
 
+    /**
+     * Returns the features represented by {@link FeatureRecord} list.
+     *
+     * @param scripts the scripts
+     * @param language the language
+     *
+     * @return the requested result
+     */
     public List<FeatureRecord> getFeatures(String[] scripts, String language) {
         LanguageRecord rec = scriptsType.getLanguageRecord(scripts, language);
         if (rec == null) {
@@ -84,6 +132,14 @@ public abstract class OpenTypeFontTableReader {
         return ret;
     }
 
+    /**
+     * Returns the specific features represented by {@link FeatureRecord} list.
+     *
+     * @param features {@link FeatureRecord} list
+     * @param specific specific tags of the feature record
+     *
+     * @return the requested result
+     */
     public List<FeatureRecord> getSpecificFeatures(List<FeatureRecord> features, String[] specific) {
         if (specific == null) {
             return features;
@@ -102,6 +158,14 @@ public abstract class OpenTypeFontTableReader {
         return recs;
     }
 
+    /**
+     * Returns the required feature represented by {@link FeatureRecord}.
+     *
+     * @param scripts the scripts
+     * @param language the language
+     *
+     * @return the requested result
+     */
     public FeatureRecord getRequiredFeature(String[] scripts, String language) {
         LanguageRecord rec = scriptsType.getLanguageRecord(scripts, language);
         if (rec == null)
@@ -109,6 +173,13 @@ public abstract class OpenTypeFontTableReader {
         return featuresType.getRecord(rec.getFeatureRequired());
     }
 
+    /**
+     * Returns the lookups.
+     *
+     * @param features the features
+     *
+     * @return the requested result
+     */
     public List<OpenTableLookup> getLookups(FeatureRecord[] features) {
         IntHashtable hash = new IntHashtable();
         for (FeatureRecord rec : features) {
@@ -123,6 +194,13 @@ public abstract class OpenTypeFontTableReader {
         return ret;
     }
 
+    /**
+     * Returns the lookups.
+     *
+     * @param feature the feature
+     *
+     * @return the requested result
+     */
     public List<OpenTableLookup> getLookups(FeatureRecord feature) {
         List<OpenTableLookup> ret = new ArrayList<>(feature.getLookups().length);
         for (int idx : feature.getLookups()) {
@@ -131,22 +209,59 @@ public abstract class OpenTypeFontTableReader {
         return ret;
     }
 
-    public boolean isSkip(int glyph, int flag) {
-        return gdef.isSkip(glyph, flag);
+    /**
+     * Checks if lookup must ignore the specified glyph when processing glyph sequences.
+     *
+     * @param glyph glyph to check
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     *
+     * @return {@code true} if the specified glyph should be skipped, {@code false} otherwise
+     */
+    public boolean isSkip(int glyph, int lookupFlag) {
+        return gdef.isSkip(glyph, lookupFlag);
     }
 
+    /**
+     * Returns the glyph class.
+     *
+     * @param glyphCode the glyph code
+     *
+     * @return the requested result
+     */
     public int getGlyphClass(int glyphCode) {
         return gdef.getGlyphClassTable().getOtfClass(glyphCode);
     }
 
+    /**
+     * Returns the units per em.
+     *
+     * @return the requested result
+     */
     public int getUnitsPerEm() {
         return unitsPerEm;
     }
 
+    /**
+     * Returns the language record.
+     *
+     * @param otfScriptTag the otf script tag
+     *
+     * @return the requested result
+     */
     public LanguageRecord getLanguageRecord(String otfScriptTag) {
         return getLanguageRecord(otfScriptTag, null);
     }
 
+    /**
+     * Returns the language record.
+     *
+     * @param otfScriptTag the otf script tag
+     * @param langTag the lang tag
+     *
+     * @return the requested result
+     */
     public LanguageRecord getLanguageRecord(String otfScriptTag, String langTag) {
         if (otfScriptTag == null) {
             return null;
@@ -167,38 +282,121 @@ public abstract class OpenTypeFontTableReader {
         return null;
     }
 
-	protected abstract OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)
-			throws java.io.IOException;
+    /**
+     * Reads the lookup table from OpenType data.
+     *
+     * @param lookupType the lookup type
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param subTableLocations the sub table locations
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
+    protected abstract OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)
+            throws java.io.IOException;
 
+    /**
+     * Reads the class definition from OpenType data.
+     *
+     * @param classLocation the class location
+     *
+     * @return the requested result
+     */
     protected final OtfClass readClassDefinition(int classLocation) {
         return OtfClass.create(rf, classLocation);
     }
 
+    /**
+     * Reads the ushort array from OpenType data.
+     *
+     * @param size the size
+     * @param location the location
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected final int[] readUShortArray(int size, int location) throws java.io.IOException {
         return OtfReadCommon.readUShortArray(rf, size, location);
     }
 
+    /**
+     * Reads the ushort array from OpenType data.
+     *
+     * @param size the size
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected final int[] readUShortArray(int size) throws java.io.IOException {
         return OtfReadCommon.readUShortArray(rf, size);
     }
 
+    /**
+     * Reads the coverages from OpenType data.
+     *
+     * @param locations the locations
+     * @param coverage the coverage to retain the result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected void readCoverages(int[] locations, List<Set<Integer>> coverage) throws java.io.IOException {
         OtfReadCommon.readCoverages(rf, locations, coverage);
     }
 
-	protected final List<Integer> readCoverageFormat(int coverageLocation)
-			throws java.io.IOException {
+    /**
+     * Reads the coverage format from OpenType data.
+     *
+     * @param coverageLocation the coverage location
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
+    protected final List<Integer> readCoverageFormat(int coverageLocation)
+            throws java.io.IOException {
         return OtfReadCommon.readCoverageFormat(rf, coverageLocation);
-	}
+    }
 
+    /**
+     * Reads the substitution lookup records from OpenType data.
+     *
+     * @param substCount the substitution lookups count to read
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected SubstLookupRecord[] readSubstLookupRecords(int substCount) throws java.io.IOException {
         return OtfReadCommon.readSubstLookupRecords(rf, substCount);
     }
 
+    /**
+     * Reads the positioning lookup records from OpenType data.
+     *
+     * @param substCount the positioning lookups count to read
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected PosLookupRecord[] readPosLookupRecords(int substCount) throws java.io.IOException {
         return OtfReadCommon.readPosLookupRecords(rf, substCount);
     }
 
+    /**
+     * Reads the tag and locations from OpenType data.
+     *
+     * @param baseLocation the base location
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected TagAndLocation[] readTagAndLocations(int baseLocation) throws java.io.IOException {
         int count = rf.readUnsignedShort();
         TagAndLocation[] tagslLocs = new TagAndLocation[count];
@@ -212,10 +410,11 @@ public abstract class OpenTypeFontTableReader {
     }
 
     /**
-     * This is the starting point of the class. A sub-class must call this
+     * This is the starting point of the class. A subclass must call this
      * method to start getting call backs to the {@link #readLookupTable(int, int, int[])}
      * method.
-     * @throws FontReadingException
+     *
+     * @throws FontReadingException if reading font file fails
      */
     final void startReadingTable() throws FontReadingException {
         try {

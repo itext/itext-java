@@ -24,6 +24,9 @@ package com.itextpdf.io.util;
 
 import com.itextpdf.commons.utils.SystemUtil;
 
+/**
+ * Provides utilities for checking command line tools.
+ */
 public final class CliCommandUtil {
 
     private CliCommandUtil() {

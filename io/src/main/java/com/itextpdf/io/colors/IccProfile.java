@@ -37,8 +37,15 @@ import java.util.Map;
  * Class used to represent the International Color Consortium profile
  */
 public class IccProfile {
+    /**
+     * The raw ICC profile bytes.
+     */
     protected byte[] data;
+    /**
+     * The number of color components described by this profile.
+     */
     protected int numComponents;
+
     private static Map<String, Integer> cstags = new HashMap<>();
 
     /**

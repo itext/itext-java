@@ -31,12 +31,23 @@ import com.itextpdf.io.source.RandomAccessSourceFactory;
 
 import java.net.URL;
 
+/**
+ * Image data and loading options for one page of a TIFF image.
+ */
 public class TiffImageData extends RawImageData {
 
     private boolean recoverFromImageError;
     private int page;
     private boolean direct;
 
+    /**
+     * Creates TIFF image data to be loaded from a URL.
+     *
+     * @param url                   source URL, not {@code null}
+     * @param recoverFromImageError whether decoding should recover from malformed image data
+     * @param page                  one-based TIFF page number
+     * @param direct                whether to preserve directly embeddable TIFF data
+     */
     protected TiffImageData(URL url, boolean recoverFromImageError, int page, boolean direct) {
         super(url, ImageType.TIFF);
         this.recoverFromImageError = recoverFromImageError;
@@ -44,6 +55,14 @@ public class TiffImageData extends RawImageData {
         this.direct = direct;
     }
 
+    /**
+     * Creates TIFF image data from encoded bytes.
+     *
+     * @param bytes                 encoded TIFF bytes; the array is retained
+     * @param recoverFromImageError whether decoding should recover from malformed image data
+     * @param page                  one-based TIFF page number
+     * @param direct                whether to preserve directly embeddable TIFF data
+     */
     protected TiffImageData(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
         super(bytes, ImageType.TIFF);
         this.recoverFromImageError = recoverFromImageError;
@@ -81,18 +100,38 @@ public class TiffImageData extends RawImageData {
         return getNumberOfPages(new RandomAccessFileOrArray(ras));
     }
 
+    /**
+     * Checks whether decoding may recover from image errors.
+     *
+     * @return {@code true} when recovery is enabled
+     */
     public boolean isRecoverFromImageError() {
         return recoverFromImageError;
     }
 
+    /**
+     * Gets the selected TIFF page number.
+     *
+     * @return one-based page number
+     */
     public int getPage() {
         return page;
     }
 
+    /**
+     * Checks whether direct TIFF embedding was requested.
+     *
+     * @return {@code true} when direct embedding was requested
+     */
     public boolean isDirect() {
         return direct;
     }
 
+    /**
+     * Sets the detected original image type.
+     *
+     * @param originalType original image type
+     */
     public void setOriginalType(ImageType originalType) {
         this.originalType = originalType;
     }

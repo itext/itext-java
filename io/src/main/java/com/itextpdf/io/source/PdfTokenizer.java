@@ -32,11 +32,20 @@ import java.io.Closeable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+/**
+ * Tokenizes PDF syntax from a random-access byte source.
+ *
+ * <p>
+ * Instances maintain a mutable stream position and token state and are not thread-safe.
+ */
 public class PdfTokenizer implements Closeable {
 
     private static final LazyLogger LOGGER = new LazyLogger(PdfTokenizer.class);
 
 
+    /**
+     * Token types recognized by this tokenizer.
+     */
     public enum TokenType {
         Number,
         String,
@@ -65,10 +74,25 @@ public class PdfTokenizer implements Closeable {
     public static final byte[] True = ByteUtils.getIsoBytes("true");
     public static final byte[] False = ByteUtils.getIsoBytes("false");
 
+    /**
+     * The type of the most recently parsed token.
+     */
     protected TokenType type;
+    /**
+     * The object number parsed for the current indirect reference.
+     */
     protected int reference;
+    /**
+     * The generation number parsed for the current indirect reference.
+     */
     protected int generation;
+    /**
+     * Whether the current string token uses hexadecimal notation.
+     */
     protected boolean hexString;
+    /**
+     * The mutable bytes of the most recently parsed token.
+     */
     protected ByteBuffer outBuf;
 
     private final RandomAccessFileOrArray file;
@@ -118,27 +142,61 @@ public class PdfTokenizer implements Closeable {
         this.outBuf = new ByteBuffer();
     }
 
+    /**
+     * Sets the position from which the next byte is read.
+     *
+     * @param pos the absolute byte offset in the underlying source
+     */
     public void seek(long pos) {
         file.seek(pos);
     }
 
+    /**
+     * Reads enough bytes to fill a destination array.
+     *
+     * @param bytes the destination array
+     *
+     * @throws java.io.IOException if EOF is reached or the source cannot be read
+     */
     public void readFully(byte[] bytes) throws java.io.IOException {
         file.readFully(bytes);
     }
 
+    /**
+     * Gets the current source position.
+     *
+     * @return the absolute offset of the next byte to read
+     */
     public long getPosition() {
         return file.getPosition();
     }
 
+    /**
+     * Closes the underlying source when closing is enabled.
+     *
+     * @throws java.io.IOException if the underlying source cannot be closed
+     */
     public void close() throws java.io.IOException {
         if (closeStream)
             file.close();
     }
 
+    /**
+     * Gets the length of the underlying source.
+     *
+     * @return the number of readable bytes
+     */
     public long length() {
         return file.length();
     }
 
+    /**
+     * Reads one byte and advances the source position.
+     *
+     * @return the unsigned byte value, or {@code -1} at EOF
+     *
+     * @throws java.io.IOException if the source cannot be read
+     */
     public int read() throws java.io.IOException {
         return file.read();
     }
@@ -147,7 +205,8 @@ public class PdfTokenizer implements Closeable {
      * Gets the next byte of pdf source without moving source position.
      *
      * @return the byte, or -1 if EOF is reached
-     * @throws java.io.IOException in case of any reading error.
+     *
+     * @throws java.io.IOException in case of any reading error
      */
     public int peek() throws java.io.IOException {
         return file.peek();
@@ -157,13 +216,24 @@ public class PdfTokenizer implements Closeable {
      * Gets the next {@code buffer.length} bytes of pdf source without moving source position.
      *
      * @param buffer buffer to store read bytes
-     * @return the number of read bytes. If it is less than {@code buffer.length} it means EOF has been reached.
-     * @throws java.io.IOException in case of any reading error.
+     *
+     * @return the number of read bytes. If it is less than {@code buffer.length} it means EOF has been reached
+     *
+     * @throws java.io.IOException in case of any reading error
      */
     public int peek(byte[] buffer) throws java.io.IOException {
         return file.peek(buffer);
     }
 
+    /**
+     * Reads up to a requested number of bytes as character values.
+     *
+     * @param size the maximum number of bytes to read
+     *
+     * @return a string containing the bytes read before EOF
+     *
+     * @throws java.io.IOException if the source cannot be read
+     */
     public String readString(int size) throws java.io.IOException {
         StringBuilder buf = new StringBuilder();
         int ch;
@@ -176,22 +246,49 @@ public class PdfTokenizer implements Closeable {
         return buf.toString();
     }
 
+    /**
+     * Gets the type of the most recently parsed token.
+     *
+     * @return the current token type
+     */
     public TokenType getTokenType() {
         return type;
     }
 
+    /**
+     * Copies the bytes of the most recently parsed token.
+     *
+     * @return a new array containing the current token bytes
+     */
     public byte[] getByteContent() {
         return outBuf.toByteArray();
     }
 
+    /**
+     * Converts the current token bytes to a string using the platform default charset.
+     *
+     * @return the current token value as a string
+     */
     public String getStringValue() {
         return new String(outBuf.getInternalBuffer(), 0, outBuf.size());
     }
 
+    /**
+     * Decodes the current PDF string token.
+     *
+     * @return a new array containing decoded literal or hexadecimal string bytes
+     */
     public byte[] getDecodedStringContent() {
         return decodeStringContent(outBuf.getInternalBuffer(), 0, outBuf.size() - 1, isHexString());
     }
 
+    /**
+     * Tests whether the current token bytes equal a candidate byte sequence.
+     *
+     * @param cmp the bytes to compare; {@code null} never matches
+     *
+     * @return {@code true} if {@code cmp} equals the current token bytes
+     */
     public boolean tokenValueEqualsTo(byte[] cmp) {
         if (cmp == null)
             return false;
@@ -206,19 +303,41 @@ public class PdfTokenizer implements Closeable {
         return true;
     }
 
+    /**
+     * Gets the object number parsed from the current indirect reference.
+     *
+     * @return the parsed object number
+     */
     public int getObjNr() {
         return reference;
     }
 
+    /**
+     * Gets the generation number parsed from the current indirect reference.
+     *
+     * @return the parsed generation number
+     */
     public int getGenNr() {
         return generation;
     }
 
+    /**
+     * Pushes a read byte back so it becomes the next byte read.
+     *
+     * @param ch the byte value to push back; {@code -1} is ignored
+     */
     public void backOnePosition(int ch) {
         if (ch != -1)
             file.pushBack((byte) ch);
     }
 
+    /**
+     * Finds a PDF or FDF header in the first kilobyte of the source.
+     *
+     * @return the zero-based byte offset of the header
+     *
+     * @throws java.io.IOException if no supported header is found or the source cannot be read
+     */
     public int getHeaderOffset() throws java.io.IOException {
         String str = readString(1024);
         int idx = str.indexOf("%PDF-");
@@ -231,6 +350,13 @@ public class PdfTokenizer implements Closeable {
         return idx;
     }
 
+    /**
+     * Validates a PDF header at offset zero and returns its version text.
+     *
+     * @return the header text without its percent sign
+     *
+     * @throws java.io.IOException if the header is absent or the source cannot be read
+     */
     public String checkPdfHeader() throws java.io.IOException {
         file.seek(0);
         String str = readString(1024);
@@ -240,6 +366,11 @@ public class PdfTokenizer implements Closeable {
         return str.substring(idx + 1, idx + 8);
     }
 
+    /**
+     * Validates that an FDF header begins at offset zero.
+     *
+     * @throws java.io.IOException if the header is absent or the source cannot be read
+     */
     public void checkFdfHeader() throws java.io.IOException {
         file.seek(0);
         String str = readString(1024);
@@ -248,6 +379,13 @@ public class PdfTokenizer implements Closeable {
             throw new IOException(IoExceptionMessageConstant.FDF_STARTXREF_NOT_FOUND, this);
     }
 
+    /**
+     * Locates the final {@code startxref} marker near the end of the source.
+     *
+     * @return the absolute byte offset of the marker
+     *
+     * @throws java.io.IOException if the marker is absent or the source cannot be read
+     */
     public long getStartxref() throws java.io.IOException {
         int arrLength = 1024;
         long fileLength = file.length();
@@ -300,6 +438,14 @@ public class PdfTokenizer implements Closeable {
         throw new IOException(IoExceptionMessageConstant.PDF_EOF_NOT_FOUND, this);
     }
 
+    /**
+     * Reads the next non-comment token and recognizes indirect references and object declarations.
+     *
+     * <p>
+     * The source position and current token state are advanced to the recognized token.
+     *
+     * @throws java.io.IOException if the source cannot be read or malformed syntax is encountered
+     */
     public void nextValidToken() throws java.io.IOException {
         int level = 0;
         byte[] n1 = null;
@@ -377,6 +523,13 @@ public class PdfTokenizer implements Closeable {
         // case can occur inside an Object Stream.
     }
 
+    /**
+     * Parses the next PDF token into this tokenizer's mutable token state.
+     *
+     * @return {@code true} when a token was read, or {@code false} at EOF
+     *
+     * @throws java.io.IOException if the source cannot be read or token syntax is malformed
+     */
     public boolean nextToken() throws java.io.IOException {
         int ch;
         outBuf.reset();
@@ -545,26 +698,56 @@ public class PdfTokenizer implements Closeable {
         return true;
     }
 
+    /**
+     * Parses the current token value as a {@code long}.
+     *
+     * @return the parsed numeric value
+     */
     public long getLongValue() {
         return Long.parseLong(getStringValue());
     }
 
+    /**
+     * Parses the current token value as an {@code int}.
+     *
+     * @return the parsed numeric value
+     */
     public int getIntValue() {
         return Integer.parseInt(getStringValue());
     }
 
+    /**
+     * Tests whether the current string token uses hexadecimal notation.
+     *
+     * @return {@code true} for a hexadecimal string token
+     */
     public boolean isHexString() {
         return this.hexString;
     }
 
+    /**
+     * Tests whether {@link #close()} closes the underlying source.
+     *
+     * @return {@code true} if this tokenizer owns closing the source
+     */
     public boolean isCloseStream() {
         return closeStream;
     }
 
+    /**
+     * Configures whether {@link #close()} closes the underlying source.
+     *
+     * @param closeStream {@code true} to close the source, {@code false} to leave it open
+     */
     public void setCloseStream(boolean closeStream) {
         this.closeStream = closeStream;
     }
 
+    /**
+     * Creates an independent view of the underlying source.
+     *
+     * @return a view with its own position; closing it does not close this tokenizer's source
+     */
     public RandomAccessFileOrArray getSafeFile() {
         return file.createView();
     }
@@ -720,10 +903,24 @@ public class PdfTokenizer implements Closeable {
         return ((isWhitespace && ch == 0) || ch == 9 || ch == 10 || ch == 12 || ch == 13 || ch == 32);
     }
 
+    /**
+     * Tests whether a character is a PDF delimiter.
+     *
+     * @param ch the character value to test
+     *
+     * @return {@code true} when {@code ch} is a PDF delimiter
+     */
     protected static boolean isDelimiter(int ch) {
         return (ch == '(' || ch == ')' || ch == '<' || ch == '>' || ch == '[' || ch == ']' || ch == '/' || ch == '%');
     }
 
+    /**
+     * Tests whether a character is a PDF delimiter or whitespace character.
+     *
+     * @param ch the character value to test
+     *
+     * @return {@code true} when {@code ch} is a delimiter or configured whitespace value
+     */
     protected static boolean isDelimiterWhitespace(int ch) {
         return delims[ch + 1];
     }

@@ -36,14 +36,27 @@ import java.util.Set;
  * Chaining Contextual Substitution Subtable: Class-based Chaining Context Glyph Substitution
  */
 public class SubTableLookup6Format2 extends ChainingContextualTable<ContextualSubstRule> {
-    private Set<Integer> substCoverageGlyphIds;
+    private final Set<Integer> substCoverageGlyphIds;
+    private final OtfClass backtrackClassDefinition;
+    private final OtfClass inputClassDefinition;
+    private final OtfClass lookaheadClassDefinition;
     private List<List<ContextualSubstRule>> subClassSets;
-    private OtfClass backtrackClassDefinition;
-    private OtfClass inputClassDefinition;
-    private OtfClass lookaheadClassDefinition;
 
-    public SubTableLookup6Format2(OpenTypeFontTableReader openReader, int lookupFlag, Set<Integer> substCoverageGlyphIds,
-                                  OtfClass backtrackClassDefinition, OtfClass inputClassDefinition, OtfClass lookaheadClassDefinition) {
+    /**
+     * Creates a new Chaining Contextual Substitution Subtable.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param substCoverageGlyphIds the substitution coverage glyph ids
+     * @param backtrackClassDefinition the backtrack class definition
+     * @param inputClassDefinition the input class definition
+     * @param lookaheadClassDefinition the lookahead class definition
+     */
+    public SubTableLookup6Format2(OpenTypeFontTableReader openReader, int lookupFlag,
+                                  Set<Integer> substCoverageGlyphIds, OtfClass backtrackClassDefinition,
+                                  OtfClass inputClassDefinition, OtfClass lookaheadClassDefinition) {
         super(openReader, lookupFlag);
         this.substCoverageGlyphIds = substCoverageGlyphIds;
         this.backtrackClassDefinition = backtrackClassDefinition;
@@ -51,6 +64,11 @@ public class SubTableLookup6Format2 extends ChainingContextualTable<ContextualSu
         this.lookaheadClassDefinition = lookaheadClassDefinition;
     }
 
+    /**
+     * Updates the substitution class sets.
+     *
+     * @param subClassSets the substitution class sets
+     */
     public void setSubClassSets(List<List<ContextualSubstRule>> subClassSets) {
         this.subClassSets = subClassSets;
     }
@@ -64,17 +82,29 @@ public class SubTableLookup6Format2 extends ChainingContextualTable<ContextualSu
         return Collections.<ContextualSubstRule>emptyList();
     }
 
+    /**
+     * Represents the substitution rule format2 of an OpenType font.
+     */
     public static class SubstRuleFormat2 extends ContextualSubstRule {
         // inputClassIds array omits the first class in the sequence,
         // the first class is defined by corresponding index of subClassSet array
-        private int[] backtrackClassIds;
-        private int[] inputClassIds;
-        private int[] lookAheadClassIds;
+        private final int[] backtrackClassIds;
+        private final int[] inputClassIds;
+        private final int[] lookAheadClassIds;
 
-        private SubstLookupRecord[] substLookupRecords;
+        private final SubstLookupRecord[] substLookupRecords;
 
-        private SubTableLookup6Format2 subTable;
+        private final SubTableLookup6Format2 subTable;
 
+        /**
+         * Creates a new substitution rule format2.
+         *
+         * @param subTable the substitution table
+         * @param backtrackClassIds the backtrack class ids
+         * @param inputClassIds the input class ids
+         * @param lookAheadClassIds the look ahead class ids
+         * @param substLookupRecords the substitution lookup records
+         */
         public SubstRuleFormat2(SubTableLookup6Format2 subTable, int[] backtrackClassIds, int[] inputClassIds,
                                 int[] lookAheadClassIds, SubstLookupRecord[] substLookupRecords) {
             this.subTable = subTable;
@@ -88,10 +118,12 @@ public class SubTableLookup6Format2 extends ChainingContextualTable<ContextualSu
         public int getContextLength() {
             return inputClassIds.length + 1;
         }
+
         @Override
         public int getLookaheadContextLength() {
             return lookAheadClassIds.length;
         }
+
         @Override
         public int getBacktrackContextLength() {
             return backtrackClassIds.length;
@@ -106,10 +138,12 @@ public class SubTableLookup6Format2 extends ChainingContextualTable<ContextualSu
         public boolean isGlyphMatchesInput(int glyphId, int atIdx) {
             return subTable.inputClassDefinition.getOtfClass(glyphId) == inputClassIds[atIdx - 1];
         }
+
         @Override
         public boolean isGlyphMatchesLookahead(int glyphId, int atIdx) {
             return subTable.lookaheadClassDefinition.getOtfClass(glyphId) == lookAheadClassIds[atIdx];
         }
+
         @Override
         public boolean isGlyphMatchesBacktrack(int glyphId, int atIdx) {
             return subTable.backtrackClassDefinition.getOtfClass(glyphId) == backtrackClassIds[atIdx];

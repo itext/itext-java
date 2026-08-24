@@ -22,9 +22,9 @@
  */
 package com.itextpdf.io.font.otf;
 
+import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +32,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Represents the OpenType font reading utility.
+ */
 public class OtfReadCommon {
+    /**
+     * Reads the ushort array from OpenType data.
+     *
+     * @param rf the raw source
+     * @param size the size
+     * @param location the location
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static int[] readUShortArray(RandomAccessFileOrArray rf, int size, int location) throws java.io.IOException {
         int[] ret = new int[size];
         for (int k = 0; k < size; ++k) {
@@ -42,10 +56,29 @@ public class OtfReadCommon {
         return ret;
     }
 
+    /**
+     * Reads the ushort array from OpenType data
+     *
+     * @param rf the raw source
+     * @param size the size
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static int[] readUShortArray(RandomAccessFileOrArray rf, int size) throws java.io.IOException {
         return readUShortArray(rf, size, 0);
     }
 
+    /**
+     * Reads the coverages from OpenType data.
+     *
+     * @param rf the raw source
+     * @param locations the locations
+     * @param coverage the coverage
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static void readCoverages(RandomAccessFileOrArray rf, int[] locations, List<Set<Integer>> coverage)
             throws java.io.IOException {
         for (int location : locations) {
@@ -53,6 +86,16 @@ public class OtfReadCommon {
         }
     }
 
+    /**
+     * Reads the coverage format from OpenType data.
+     *
+     * @param rf the raw source
+     * @param coverageLocation the coverage location
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static List<Integer> readCoverageFormat(RandomAccessFileOrArray rf, int coverageLocation)
             throws java.io.IOException {
         rf.seek(coverageLocation);
@@ -90,6 +133,16 @@ public class OtfReadCommon {
         }
     }
 
+    /**
+     * Reads the GPOS value record from OpenType data.
+     *
+     * @param tableReader the table reader
+     * @param mask the mask
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static GposValueRecord readGposValueRecord(OpenTypeFontTableReader tableReader, int mask)
             throws java.io.IOException {
         GposValueRecord vr = new GposValueRecord();
@@ -124,6 +177,16 @@ public class OtfReadCommon {
         return vr;
     }
 
+    /**
+     * Reads the GPOS anchor from OpenType data.
+     *
+     * @param tableReader the table reader
+     * @param location the location
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static GposAnchor readGposAnchor(OpenTypeFontTableReader tableReader, int location)
             throws java.io.IOException {
         if (location == 0) {
@@ -146,6 +209,16 @@ public class OtfReadCommon {
         return t;
     }
 
+    /**
+     * Reads the mark array from OpenType data.
+     *
+     * @param tableReader the table reader
+     * @param location the location
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static List<OtfMarkRecord> readMarkArray(OpenTypeFontTableReader tableReader, int location)
             throws java.io.IOException {
         tableReader.rf.seek(location);
@@ -167,6 +240,16 @@ public class OtfReadCommon {
         return marks;
     }
 
+    /**
+     * Reads the substitution lookup records from OpenType data.
+     *
+     * @param rf the raw source
+     * @param substCount the subst count
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static SubstLookupRecord[] readSubstLookupRecords(RandomAccessFileOrArray rf, int substCount)
             throws java.io.IOException {
         SubstLookupRecord[] substLookUpRecords = new SubstLookupRecord[substCount];
@@ -179,6 +262,16 @@ public class OtfReadCommon {
         return substLookUpRecords;
     }
 
+    /**
+     * Reads the positioning lookup records from OpenType data.
+     *
+     * @param rf the raw source
+     * @param recordCount the record count
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static PosLookupRecord[] readPosLookupRecords(RandomAccessFileOrArray rf, int recordCount)
             throws java.io.IOException {
         PosLookupRecord[] posLookUpRecords = new PosLookupRecord[recordCount];
@@ -191,8 +284,20 @@ public class OtfReadCommon {
         return posLookUpRecords;
     }
 
+    /**
+     * Reads the anchor array from OpenType data.
+     *
+     * @param tableReader the table reader
+     * @param locations the locations
+     * @param left the left
+     * @param right the right
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static GposAnchor[] readAnchorArray(OpenTypeFontTableReader tableReader, int[] locations, int left,
-            int right) throws java.io.IOException {
+                                               int right) throws java.io.IOException {
         GposAnchor[] anchors = new GposAnchor[right - left];
         for (int i = left; i < right; i++) {
             anchors[i - left] = readGposAnchor(tableReader, locations[i]);
@@ -200,6 +305,17 @@ public class OtfReadCommon {
         return anchors;
     }
 
+    /**
+     * Reads the base array from OpenType data.
+     *
+     * @param tableReader the table reader
+     * @param classCount the class count
+     * @param location the location
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static List<GposAnchor[]> readBaseArray(OpenTypeFontTableReader tableReader, int classCount, int location)
             throws java.io.IOException {
         List<GposAnchor[]> baseArray = new ArrayList<>();
@@ -214,8 +330,19 @@ public class OtfReadCommon {
         return baseArray;
     }
 
+    /**
+     * Reads the ligature array from OpenType data.
+     *
+     * @param tableReader the table reader
+     * @param classCount the class count
+     * @param location the location
+     *
+     * @return the requested result
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public static List<List<GposAnchor[]>> readLigatureArray(OpenTypeFontTableReader tableReader, int classCount,
-            int location) throws java.io.IOException {
+                                                             int location) throws java.io.IOException {
         List<List<GposAnchor[]>> ligatureArray = new ArrayList<>();
         tableReader.rf.seek(location);
         int ligatureCount = tableReader.rf.readUnsignedShort();

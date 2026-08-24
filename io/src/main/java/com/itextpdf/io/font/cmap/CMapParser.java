@@ -29,6 +29,9 @@ import com.itextpdf.io.source.PdfTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Populates CMap objects from PDF CMap programs.
+ */
 public class CMapParser {
 
     private static final LazyLogger LOGGER = new LazyLogger(CMapParser.class);
@@ -48,6 +51,15 @@ public class CMapParser {
 
     private static final int MAX_LEVEL = 10;
 
+    /**
+     * Parses a named CMap and its referenced CMaps into a destination map.
+     *
+     * @param cmapName the CMap name to load
+     * @param cmap     the destination map to populate
+     * @param location the source used to locate named CMaps
+     *
+     * @throws java.io.IOException if a CMap source cannot be opened
+     */
     public static void parseCid(String cmapName, AbstractCMap cmap, ICMapLocation location) throws java.io.IOException {
         parseCid(cmapName, cmap, location, 0);
     }

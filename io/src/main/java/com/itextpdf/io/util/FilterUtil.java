@@ -51,6 +51,7 @@ public final class FilterUtil {
      * @param input     the input data
      * @param strict <CODE>true</CODE> to read a correct stream. <CODE>false</CODE>
      *               to try to read a corrupted stream
+     *
      * @return the decoded data
      */
     public static byte[] flateDecode(byte[] input, boolean strict) {
@@ -83,6 +84,7 @@ public final class FilterUtil {
      * Decodes a stream that has the FlateDecode filter.
      *
      * @param input the input data
+     *
      * @return the decoded data
      */
     public static byte[] flateDecode(byte[] input) {
@@ -95,6 +97,7 @@ public final class FilterUtil {
     /**
      * This method provides support for general purpose decompression using the
      * popular ZLIB compression library.
+     *
      * @param deflated the input data bytes
      * @param inflated the buffer for the uncompressed data
      */
@@ -108,6 +111,13 @@ public final class FilterUtil {
         }
     }
 
+    /**
+     * Wraps an input stream in an inflater stream.
+     *
+     * @param input the compressed input stream
+     *
+     * @return a stream that decompresses data read from {@code input}
+     */
     public static InputStream getInflaterInputStream(InputStream input) {
         return new InflaterInputStream(input, new Inflater());
     }

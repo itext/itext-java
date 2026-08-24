@@ -24,6 +24,9 @@ package com.itextpdf.io.image;
 
 import java.net.URL;
 
+/**
+ * Raw image data originating from a BMP image.
+ */
 public class BmpImageData extends RawImageData {
 
     private final boolean noHeader;

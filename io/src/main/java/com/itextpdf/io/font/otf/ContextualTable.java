@@ -24,11 +24,32 @@ package com.itextpdf.io.font.otf;
 
 import java.util.List;
 
+/**
+ * Represents the contextual table of an OpenType font.
+ *
+ * @param <T> the contextual rule type stored by this table
+ */
 public abstract class ContextualTable<T extends ContextualRule> {
 
+    /**
+     * Stores open reader.
+     */
     protected OpenTypeFontTableReader openReader;
+    /**
+     * Specifies processing options, e.g. whether to skip base glyphs,
+     * marks or ligatures during glyph substitution or positioning. See
+     * <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     */
     protected int lookupFlag;
 
+    /**
+     * Creates a new contextual table.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     */
     protected ContextualTable(OpenTypeFontTableReader openReader, int lookupFlag) {
         this.openReader = openReader;
         this.lookupFlag = lookupFlag;
@@ -67,8 +88,9 @@ public abstract class ContextualTable<T extends ContextualRule> {
      * Gets a set of rules, which start with given glyph id.
      *
      * @param startId id of the first glyph in the sequence
+     *
      * @return a list of {@link ContextualSubstRule} instances. The list will be empty if there are no rules
-     *     that start with a given glyph id
+     * that start with a given glyph id
      */
     protected abstract List<T> getSetOfRulesForStartGlyph(int startId);
 

@@ -31,10 +31,27 @@ class WoffConverter {
 
     private static final long woffSignature = 0x774F4646L;
 
+    /**
+     * Checks whether bytes begin with the WOFF signature.
+     *
+     * @param woffBytes the candidate font bytes
+     *
+     * @return {@code true} when the WOFF signature is present
+     */
     public static boolean isWoffFont(byte[] woffBytes) {
         return bytesToUInt(woffBytes, 0) == woffSignature;
     }
 
+    /**
+     * Converts a WOFF font to an uncompressed OpenType font.
+     *
+     * @param woffBytes the complete WOFF source
+     *
+     * @return newly allocated OpenType bytes
+     *
+     * @throws java.io.IOException      if a compressed table cannot be read
+     * @throws IllegalArgumentException if the WOFF structure is invalid
+     */
     public static byte[] convert(byte[] woffBytes) throws java.io.IOException {
         int srcPos = 0;
         int destPos = 0;

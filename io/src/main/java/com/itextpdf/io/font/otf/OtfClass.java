@@ -23,10 +23,10 @@
 package com.itextpdf.io.font.otf;
 
 import com.itextpdf.commons.logs.LazyLogger;
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.util.IntHashtable;
-import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.io.source.RandomAccessFileOrArray;
+import com.itextpdf.io.util.IntHashtable;
 
 import java.io.IOException;
 
@@ -38,8 +38,8 @@ public class OtfClass {
     public static final int GLYPH_LIGATURE = 2;
     public static final int GLYPH_MARK = 3;
 
-    //key is glyph, value is class inside all 2
-    private IntHashtable mapClass = new IntHashtable();
+    // Key is glyph, value is class inside all 2
+    private final IntHashtable mapClass = new IntHashtable();
 
     private OtfClass(RandomAccessFileOrArray rf, int classLocation) throws java.io.IOException {
         rf.seek(classLocation);
@@ -67,6 +67,14 @@ public class OtfClass {
         }
     }
 
+    /**
+     * Creates new {@link OtfClass} instance.
+     *
+     * @param rf {@link RandomAccessFileOrArray}
+     * @param classLocation class location
+     *
+     * @return new {@link OtfClass} instance
+     */
     public static OtfClass create(RandomAccessFileOrArray rf, int classLocation) {
         OtfClass otfClass;
         try {
@@ -79,18 +87,48 @@ public class OtfClass {
         return otfClass;
     }
 
+    /**
+     * Returns the otf class for the passed glyph.
+     *
+     * @param glyph the glyph
+     *
+     * @return the requested result
+     */
     public int getOtfClass(int glyph) {
         return mapClass.get(glyph);
     }
 
+    /**
+     * Determines whether passed glyph is Mark or not.
+     *
+     * @param glyph the glyph to check
+     *
+     * @return {@code true} if the passed glyph is Mark; otherwise {@code false}
+     */
     public boolean isMarkOtfClass(int glyph) {
         return hasClass(glyph) && getOtfClass(glyph) == GLYPH_MARK;
     }
 
+    /**
+     * Determines whether passed glyph has class.
+     *
+     * @param glyph the glyph
+     *
+     * @return {@code true} if has; otherwise {@code false}.
+     */
     public boolean hasClass(int glyph) {
         return mapClass.containsKey(glyph);
     }
 
+    /**
+     * Returns the otf class for the passed glyph.
+     *
+     * @param glyph the glyph
+     * @param strict boolean value identifying whether the check if passed glyph has class should be done first
+     * (-1 is returned if glyph doesn't have class and strict is true)
+     *
+     * @return the requested result
+     */
     public int getOtfClass(int glyph, boolean strict) {
         if (strict) {
             if (mapClass.containsKey(glyph)) {

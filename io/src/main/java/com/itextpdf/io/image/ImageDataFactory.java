@@ -22,9 +22,9 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 
@@ -35,6 +35,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Creates {@link ImageData} instances from encoded image sources.
+ */
 public final class ImageDataFactory {
     private static AbstractWebPLoader webpLoader = null;
     private static final String WEBP_PACKAGE = "com.itextpdf.webpimagesupport.";
@@ -362,6 +365,14 @@ public final class ImageDataFactory {
         return image.getFrames();
     }
 
+    /**
+     * Creates image data for a page in a JBIG2 image from a URL.
+     *
+     * @param url  URL of the JBIG2 image
+     * @param page page number
+     *
+     * @return processed image data for the requested page
+     */
     public static ImageData createJbig2(URL url, int page) {
         if (page < 1)
             throw new IllegalArgumentException("The page number must be greater than 0");
@@ -371,6 +382,14 @@ public final class ImageDataFactory {
         return image;
     }
 
+    /**
+     * Creates image data for a page in a JBIG2 image from encoded bytes.
+     *
+     * @param bytes encoded JBIG2 bytes
+     * @param page  one-based page number
+     *
+     * @return processed image data for the requested page
+     */
     public static ImageData createJbig2(byte[] bytes, int page) {
         if (page < 1)
             throw new IllegalArgumentException("The page number must be greater than 0");
@@ -466,6 +485,16 @@ public final class ImageDataFactory {
         return image;
     }
 
+    /**
+     * Creates image data for a TIFF page from a URL.
+     *
+     * @param url                   URL of the TIFF image
+     * @param recoverFromImageError whether to recover from malformed image data
+     * @param page                  page number
+     * @param direct                whether to preserve directly embeddable TIFF data
+     *
+     * @return processed image data for the requested page
+     */
     public static ImageData createTiff(URL url, boolean recoverFromImageError, int page, boolean direct) {
         validateImageType(url, ImageType.TIFF);
         ImageData image = new TiffImageData(url, recoverFromImageError, page, direct);
@@ -473,6 +502,16 @@ public final class ImageDataFactory {
         return image;
     }
 
+    /**
+     * Creates image data for a TIFF page from encoded bytes.
+     *
+     * @param bytes                 encoded TIFF bytes
+     * @param recoverFromImageError whether to recover from malformed image data
+     * @param page                  one-based page number
+     * @param direct                whether to preserve directly embeddable TIFF data
+     *
+     * @return processed image data for the requested page
+     */
     public static ImageData createTiff(byte[] bytes, boolean recoverFromImageError, int page, boolean direct) {
         validateImageType(bytes, ImageType.TIFF);
         ImageData image = new TiffImageData(bytes, recoverFromImageError, page, direct);
@@ -480,6 +519,13 @@ public final class ImageDataFactory {
         return image;
     }
 
+    /**
+     * Creates unprocessed raw image data.
+     *
+     * @param bytes raw image bytes; the array is retained
+     *
+     * @return raw image data with no dimensions or color information set
+     */
     public static ImageData createRawImage(byte[] bytes) {
         return new RawImageData(bytes, ImageType.RAW);
     }

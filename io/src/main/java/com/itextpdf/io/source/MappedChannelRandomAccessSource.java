@@ -86,6 +86,7 @@ class MappedChannelRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position) throws java.io.IOException {
         if (source == null)
             throw new java.io.IOException("RandomAccessSource not opened");
@@ -95,6 +96,7 @@ class MappedChannelRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         if (source == null)
             throw new java.io.IOException("RandomAccessSource not opened");
@@ -104,6 +106,7 @@ class MappedChannelRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long length() {
         return length;
     }
@@ -111,6 +114,7 @@ class MappedChannelRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close() throws java.io.IOException {
         if (source == null)
             return;
@@ -118,6 +122,9 @@ class MappedChannelRandomAccessSource implements IRandomAccessSource {
         source = null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return getClass().getName() + " (" + offset + ", " + length + ")";

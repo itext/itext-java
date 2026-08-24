@@ -32,6 +32,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Provides PDF encoding names and conversion utilities between text and encoded byte sequences.
+ */
 public class PdfEncodings {
 
     //-Encodings--------------------------------------------------------------------------------------------------------

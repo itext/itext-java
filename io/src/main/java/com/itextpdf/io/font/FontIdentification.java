@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font;
 
+/**
+ * Holds identification strings extracted from a font program.
+ */
 public class FontIdentification {
 
 
@@ -34,38 +37,83 @@ public class FontIdentification {
     // OS/2.panose
     private String panose;
 
+    /**
+     * Returns the TrueType version string.
+     *
+     * @return the version string, or {@code null} when unavailable
+     */
     public String getTtfVersion() {
         return ttfVersion;
     }
 
+    /**
+     * Returns the TrueType unique identifier.
+     *
+     * @return the unique identifier, or {@code null} when unavailable
+     */
     public String getTtfUniqueId() {
         return ttfUniqueId;
     }
 
+    /**
+     * Returns the Type 1 unique ID.
+     *
+     * @return the identifier, or {@code null} when unavailable
+     */
     public Integer getType1Xuid() {
         return type1Xuid;
     }
 
+    /**
+     * Returns the PANOSE classification.
+     *
+     * @return the classification string, or {@code null} when unavailable
+     */
     public String getPanose() {
         return panose;
     }
 
+    /**
+     * Sets the TrueType version.
+     *
+     * @param ttfVersion the version string
+     */
     protected void setTtfVersion(String ttfVersion) {
         this.ttfVersion = ttfVersion;
     }
 
+    /**
+     * Sets the TrueType unique identifier.
+     *
+     * @param ttfUniqueId the identifier
+     */
     protected void setTtfUniqueId(String ttfUniqueId) {
         this.ttfUniqueId = ttfUniqueId;
     }
 
+    /**
+     * Sets the Type 1 unique ID.
+     *
+     * @param type1Xuid the unique ID
+     */
     protected void setType1Xuid(Integer type1Xuid) {
         this.type1Xuid = type1Xuid;
     }
 
+    /**
+     * Sets the PANOSE classification from raw bytes.
+     *
+     * @param panose the PANOSE bytes
+     */
     protected void setPanose(byte[] panose) {
         this.panose = new String(panose);
     }
 
+    /**
+     * Sets the PANOSE classification string.
+     *
+     * @param panose the classification string
+     */
     protected void setPanose(String panose) {
         this.panose = panose;
     }

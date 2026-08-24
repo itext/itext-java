@@ -192,6 +192,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void readFully(byte b[]) throws java.io.IOException {
         readFully(b, 0, b.length);
     }
@@ -199,6 +200,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void readFully(byte[] b, int off, int len) throws java.io.IOException {
         int n = 0;
         do {
@@ -248,6 +250,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int skipBytes(int n) {
         return (int) skip(n);
     }
@@ -295,6 +298,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean readBoolean() throws java.io.IOException {
         int ch = this.read();
         if (ch < 0)
@@ -305,6 +309,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public byte readByte() throws java.io.IOException {
         int ch = this.read();
         if (ch < 0)
@@ -315,6 +320,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int readUnsignedByte() throws java.io.IOException {
         int ch = this.read();
         if (ch < 0)
@@ -325,6 +331,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public short readShort() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
@@ -365,6 +372,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int readUnsignedShort() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
@@ -404,6 +412,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public char readChar() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
@@ -442,6 +451,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int readInt() throws java.io.IOException {
         int ch1 = this.read();
         int ch2 = this.read();
@@ -509,6 +519,14 @@ public class RandomAccessFileOrArray implements DataInput {
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
     }
 
+    /**
+     * Reads an unsigned 32-bit value in little-endian order.
+     *
+     * @return the next four bytes interpreted as an unsigned integer in a {@code long}
+     *
+     * @throws EOFException        if fewer than four bytes remain
+     * @throws java.io.IOException if the source cannot be read
+     */
     public final long readUnsignedIntLE() throws java.io.IOException {
         long ch1 = this.read();
         long ch2 = this.read();
@@ -522,10 +540,19 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long readLong() throws java.io.IOException {
         return ((long) (readInt()) << 32) + (readInt() & 0xFFFFFFFFL);
     }
 
+    /**
+     * Reads a signed 64-bit value in little-endian order.
+     *
+     * @return the next eight bytes interpreted as a {@code long}
+     *
+     * @throws EOFException        if fewer than eight bytes remain
+     * @throws java.io.IOException if the source cannot be read
+     */
     public final long readLongLE() throws java.io.IOException {
         int i1 = readIntLE();
         int i2 = readIntLE();
@@ -535,10 +562,19 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public float readFloat() throws java.io.IOException {
         return Float.intBitsToFloat(readInt());
     }
 
+    /**
+     * Reads an IEEE 754 single-precision value in little-endian order.
+     *
+     * @return the next four bytes interpreted as a {@code float}
+     *
+     * @throws EOFException        if fewer than four bytes remain
+     * @throws java.io.IOException if the source cannot be read
+     */
     public final float readFloatLE() throws java.io.IOException {
         return Float.intBitsToFloat(readIntLE());
     }
@@ -546,10 +582,19 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public double readDouble() throws java.io.IOException {
         return Double.longBitsToDouble(readLong());
     }
 
+    /**
+     * Reads an IEEE 754 double-precision value in little-endian order.
+     *
+     * @return the next eight bytes interpreted as a {@code double}
+     *
+     * @throws EOFException        if fewer than eight bytes remain
+     * @throws java.io.IOException if the source cannot be read
+     */
     public final double readDoubleLE() throws java.io.IOException {
         return Double.longBitsToDouble(readLongLE());
     }
@@ -557,6 +602,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String readLine() throws java.io.IOException {
         StringBuilder input = new StringBuilder();
         int c = -1;
@@ -590,6 +636,7 @@ public class RandomAccessFileOrArray implements DataInput {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String readUTF() throws java.io.IOException {
         return DataInputStream.readUTF(this);
     }

@@ -48,13 +48,22 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
 
+/**
+ * Font program backed by an OpenType/TrueType font or a TrueType Collection member.
+ */
 public class TrueTypeFont extends FontProgram {
 
 
     private OpenTypeParser fontParser;
 
+    /**
+     * Per-glyph bounding boxes indexed by glyph ID, in normalized glyph units.
+     */
     protected int[][] bBoxes;
 
+    /**
+     * Indicates that the selected CMap uses vertical writing metrics.
+     */
     protected boolean isVertical;
 
     private GlyphSubstitutionTableReader gsubTable;
@@ -78,18 +87,43 @@ public class TrueTypeFont extends FontProgram {
         initializeFontProperties();
     }
 
+    /**
+     * Creates an uninitialized font.
+     */
     protected TrueTypeFont() {
         fontNames = new FontNames();
     }
 
+    /**
+     * Loads a standalone OpenType or TrueType font from a path.
+     *
+     * @param path path to the font file
+     *
+     * @throws java.io.IOException if the file cannot be read or parsed
+     */
     public TrueTypeFont(String path) throws java.io.IOException {
         this(new OpenTypeParser(path));
     }
 
+    /**
+     * Loads a standalone OpenType or TrueType font from its binary contents.
+     *
+     * @param ttf font bytes
+     *
+     * @throws java.io.IOException if the bytes cannot be parsed
+     */
     public TrueTypeFont(byte[] ttf) throws java.io.IOException {
         this(new OpenTypeParser(ttf));
     }
 
+    /**
+     * Loads a font from binary contents.
+     *
+     * @param ttf           font bytes
+     * @param isLenientMode {@code true} to enable lenient parser behavior, see {@link OpenTypeParser#OpenTypeParser(byte[], boolean)}
+     *
+     * @throws java.io.IOException if the bytes cannot be parsed
+     */
     public TrueTypeFont(byte[] ttf, boolean isLenientMode) throws java.io.IOException {
         this(new OpenTypeParser(ttf, isLenientMode));
     }
@@ -123,10 +157,20 @@ public class TrueTypeFont extends FontProgram {
         return kerning.get((first.getCode() << 16) + second.getCode());
     }
 
+    /**
+     * Checks whether this OpenType font stores a CFF table.
+     *
+     * @return {@code true} for CFF-flavored OpenType fonts
+     */
     public boolean isCff() {
         return fontParser.isCff();
     }
 
+    /**
+     * Gets the preferred character-to-glyph CMap selected from the font.
+     *
+     * @return mapping from character code to CMap data
+     */
     public Map<Integer, int[]> getActiveCmap() {
         OpenTypeParser.CmapTable cmaps = fontParser.getCmapTable();
         if (cmaps.cmap310 != null) {
@@ -142,6 +186,13 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
+    /**
+     * Gets the bytes of the font.
+     *
+     * @return CFF bytes for CFF fonts or complete font bytes otherwise
+     *
+     * @throws com.itextpdf.io.exceptions.IOException if the source font cannot be read
+     */
     public byte[] getFontStreamBytes() {
         if (fontStreamBytes != null)
             return fontStreamBytes;
@@ -184,14 +235,29 @@ public class TrueTypeFont extends FontProgram {
         return fontParser.directoryOffset;
     }
 
+    /**
+     * Gets the GSUB table reader.
+     *
+     * @return substitution table reader
+     */
     public GlyphSubstitutionTableReader getGsubTable() {
         return gsubTable;
     }
 
+    /**
+     * Gets the GPOS table reader.
+     *
+     * @return positioning table reader
+     */
     public GlyphPositioningTableReader getGposTable() {
         return gposTable;
     }
 
+    /**
+     * Gets the GDEF table reader.
+     *
+     * @return glyph definition table reader
+     */
     public OpenTypeGdefTableReader getGdefTable() {
         return gdefTable;
     }
@@ -363,6 +429,11 @@ public class TrueTypeFont extends FontProgram {
         return finalUsedScriptTag;
     }
 
+    /**
+     * Reads the GDEF table.
+     *
+     * @throws java.io.IOException if the table cannot be read
+     */
     protected void readGdefTable() throws java.io.IOException {
         int[] gdef = fontParser.tables.get("GDEF");
         if (gdef != null) {
@@ -373,6 +444,11 @@ public class TrueTypeFont extends FontProgram {
         gdefTable.readTable();
     }
 
+    /**
+     * Creates the GSUB table reader when the font supplies a GSUB table.
+     *
+     * @throws java.io.IOException if the table cannot be read
+     */
     protected void readGsubTable() throws java.io.IOException {
         int[] gsub = fontParser.tables.get("GSUB");
         if (gsub != null) {
@@ -380,6 +456,11 @@ public class TrueTypeFont extends FontProgram {
         }
     }
 
+    /**
+     * Creates the GPOS table reader.
+     *
+     * @throws java.io.IOException if the table cannot be read
+     */
     protected void readGposTable() throws java.io.IOException {
         int[] gpos = fontParser.tables.get("GPOS");
         if (gpos != null) {
@@ -531,6 +612,11 @@ public class TrueTypeFont extends FontProgram {
         return Objects.equals(fontParser.fileName, fontProgram);
     }
 
+    /**
+     * Closes the underlying font parser and releases its source data.
+     *
+     * @throws java.io.IOException if closing the source fails
+     */
     public void close() throws java.io.IOException {
         if (fontParser != null) {
             fontParser.close();

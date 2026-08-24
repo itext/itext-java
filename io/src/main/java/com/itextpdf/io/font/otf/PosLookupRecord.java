@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font.otf;
 
+/**
+ * Represents the positioning lookup record of an OpenType font.
+ */
 public class PosLookupRecord {
     int sequenceIndex;
     int lookupListIndex;

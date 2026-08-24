@@ -24,10 +24,10 @@ package com.itextpdf.io.font;
 
 import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.exceptions.IOException;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 import java.util.HashMap;
@@ -35,6 +35,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+/**
+ * Font program parsed from Adobe Type 1 AFM/PFM metrics and optional PFB outline data.
+ */
 public class Type1Font extends FontProgram {
 
     private static final LazyLogger LOGGER = new LazyLogger(Type1Font.class);
@@ -58,6 +61,15 @@ public class Type1Font extends FontProgram {
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
 
+    /**
+     * Creates a font program for one of the PDF standard Type 1 fonts.
+     *
+     * @param name standard font name
+     *
+     * @return initialized standard-font program
+     *
+     * @throws java.io.IOException if font cannot be read or parsed
+     */
     protected static Type1Font createStandardFont(String name) throws java.io.IOException {
         if (StandardFonts.isStandardFont(name)) {
             return new Type1Font(name, null, null, null);
@@ -66,10 +78,23 @@ public class Type1Font extends FontProgram {
         }
     }
 
+    /**
+     * Creates an empty Type 1 font program.
+     */
     protected Type1Font() {
         fontNames = new FontNames();
     }
 
+    /**
+     * Creates a Type 1 font program from AFM/PFM metrics and optional PFB data without remapping codes.
+     *
+     * @param metricsPath metrics file path, built-in font name, or {@code null} when {@code afm} is supplied
+     * @param binaryPath  PFB path, or {@code null} when {@code pfb} is supplied
+     * @param afm         AFM/PFM bytes, or {@code null} when {@code metricsPath} is supplied
+     * @param pfb         PFB bytes, or {@code null} when {@code binaryPath} is supplied
+     *
+     * @throws java.io.IOException if supplied font data cannot be read or parsed
+     */
     protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb)
             throws java.io.IOException {
         this(metricsPath, binaryPath, afm, pfb, null);
@@ -111,6 +136,11 @@ public class Type1Font extends FontProgram {
         }
     }
 
+    /**
+     * Creates a lightweight Type 1 font program for a named base font without parsing metrics.
+     *
+     * @param baseFont PostScript base-font name
+     */
     protected Type1Font(String baseFont) {
         this();
         getFontNames().setFontName(baseFont);
@@ -139,6 +169,11 @@ public class Type1Font extends FontProgram {
         }
     }
 
+    /**
+     * Checks whether this program represents a built-in standard font.
+     *
+     * @return {@code true} when no external font program is required
+     */
     public boolean isBuiltInFont() {
         return fontParser != null && fontParser.isBuiltInFont();
     }
@@ -162,6 +197,11 @@ public class Type1Font extends FontProgram {
         return flags;
     }
 
+    /**
+     * Gets the AFM {@code CharacterSet} declaration.
+     *
+     * @return character set description, or {@code null} when absent
+     */
     public String getCharacterSet() {
         return characterSet;
     }
@@ -275,6 +315,11 @@ public class Type1Font extends FontProgram {
         return Objects.equals(fontParser.getAfmPath(), fontProgram);
     }
 
+    /**
+     * Parses AFM/PFM metrics, character metrics, and kerning pairs into this font program.
+     *
+     * @throws java.io.IOException if mandatory sections are missing or the metrics source cannot be read
+     */
     protected void process() throws java.io.IOException {
         RandomAccessFileOrArray raf = fontParser.getMetricsFile();
         String line;

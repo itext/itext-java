@@ -29,8 +29,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Image data and parsed metadata for a JPEG 2000 image.
+ */
 public class Jpeg2000ImageData extends ImageData {
 
+    /**
+     * Holds metadata parsed from a JPEG 2000 codestream or JP2 container.
+     */
     public static class Parameters {
         private int numOfComps;
         private List<ColorSpecBox> colorSpecBoxes = null;
@@ -129,27 +135,58 @@ public class Jpeg2000ImageData extends ImageData {
         }
     }
 
+    /**
+     * Represents a JPEG 2000 color specification box.
+     *
+     * <p>
+     * The first four list values are the method, precedence, approximation, and enumerated color space.
+     */
     public static class ColorSpecBox extends ArrayList<Integer> {
         
 		
 		private byte[] colorProfile;
 
+        /**
+         * Gets the color-specification method.
+         *
+         * @return method value stored at index {@code 0}
+         */
         public int getMeth() {
             return (int) get(0);
         }
 
+        /**
+         * Gets the color-specification precedence.
+         *
+         * @return precedence value stored at index {@code 1}
+         */
         public int getPrec() {
             return (int) get(1);
         }
 
+        /**
+         * Gets the color-specification approximation.
+         *
+         * @return approximation value stored at index {@code 2}
+         */
         public int getApprox() {
             return (int) get(2);
         }
 
+        /**
+         * Gets the enumerated color space.
+         *
+         * @return color-space value stored at index {@code 3}
+         */
         public int getEnumCs() {
             return (int) get(3);
         }
 
+        /**
+         * Gets the embedded color profile.
+         *
+         * @return retained profile bytes, or {@code null}
+         */
         public byte[] getColorProfile() {
             return colorProfile;
         }
@@ -159,16 +196,32 @@ public class Jpeg2000ImageData extends ImageData {
         }
     }
 
+    /** Parsed JPEG 2000 parameters, or {@code null} before processing. */
     protected Parameters parameters;
 
+    /**
+     * Creates JPEG 2000 image data to be loaded from a URL.
+     *
+     * @param url source URL, not {@code null}
+     */
     protected Jpeg2000ImageData(URL url) {
         super(url, ImageType.JPEG2000);
     }
 
+    /**
+     * Creates JPEG 2000 image data from encoded bytes.
+     *
+     * @param bytes encoded JPEG 2000 bytes; the array is retained
+     */
     protected Jpeg2000ImageData(byte[] bytes) {
         super(bytes, ImageType.JPEG2000);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code false}, because JPEG 2000 images require a JPXDecode filter
+     */
     @Override
     public boolean canImageBeInline() {
         LazyLogger logger = new LazyLogger(ImageData.class);
@@ -176,6 +229,11 @@ public class Jpeg2000ImageData extends ImageData {
         return false;
     }
 
+    /**
+     * Gets metadata parsed from the JPEG 2000 image.
+     *
+     * @return parsed parameters, or {@code null} before processing
+     */
     public Jpeg2000ImageData.Parameters getParameters() {
         return parameters;
     }

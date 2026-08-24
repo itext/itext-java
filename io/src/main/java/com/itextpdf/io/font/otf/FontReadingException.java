@@ -22,13 +22,27 @@
  */
 package com.itextpdf.io.font.otf;
 
+/**
+ * Represents the OpenType font reading exception.
+ */
 public class FontReadingException extends java.io.IOException {
 
 
+    /**
+     * Creates a new OpenType font reading exception.
+     *
+     * @param message the message
+     */
     public FontReadingException(String message) {
         super(message);
     }
     
+    /**
+     * Creates a new OpenType font reading exception.
+     *
+     * @param message the message
+     * @param e       the cause exception
+     */
     public FontReadingException(String message, Exception e) {
         super(message, e);
     }

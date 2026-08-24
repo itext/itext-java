@@ -33,6 +33,13 @@ public final class PdfNameUtil {
         // Do nothing
     }
 
+    /**
+     * Decodes PDF name escape sequences in a byte array.
+     *
+     * @param content the encoded PDF name bytes
+     *
+     * @return the decoded name
+     */
     public static String decodeName(byte[] content) {
         StringBuilder buf = new StringBuilder();
         try {

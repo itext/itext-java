@@ -61,6 +61,11 @@ public class CMapToUnicode extends AbstractCMap {
         byteMappings = Collections.<Integer, char[]>emptyMap();
     }
 
+    /**
+     * Creates a two-byte identity ToUnicode CMap.
+     *
+     * @return a new map that maps character codes from {@code 0} through {@code 65536} to themselves
+     */
     public static CMapToUnicode getIdentity() {
         CMapToUnicode uni = new CMapToUnicode();
         for (int i = 0; i < 65537; i++) {
@@ -128,18 +133,42 @@ public class CMapToUnicode extends AbstractCMap {
         return result;
     }
 
+    /**
+     * Looks up a one- or two-byte character code.
+     *
+     * @param code the complete character-code byte sequence
+     *
+     * @return the retained Unicode character array, or {@code null} when no mapping exists
+     */
     public char[] lookup(byte[] code) {
         return lookup(code, 0, code.length);
     }
 
+    /**
+     * Looks up an integer character code.
+     *
+     * @param code the one- or two-byte character code represented as an integer
+     *
+     * @return the retained Unicode character array, or {@code null} when no mapping exists
+     */
     public char[] lookup(int code) {
         return byteMappings.get(code);
     }
 
+    /**
+     * Returns the mapped character codes.
+     *
+     * @return a live view of this map's character-code keys
+     */
     public Set<Integer> getCodes() {
         return byteMappings.keySet();
     }
 
+    /**
+     * Creates a mapping for single-character Unicode entries.
+     *
+     * @return a new map from character code to Unicode scalar value
+     */
     public IntHashtable createDirectMapping() {
         IntHashtable result = new IntHashtable();
         for (Map.Entry<Integer, char[]> entry : byteMappings.entrySet()) {
@@ -150,6 +179,11 @@ public class CMapToUnicode extends AbstractCMap {
         return result;
     }
 
+    /**
+     * Creates a reverse mapping for single-character Unicode entries.
+     *
+     * @return a new map from Unicode scalar value to character code
+     */
     public Map<Integer, Integer> createReverseMapping() {
         Map<Integer, Integer> result = new HashMap<>();
         for (Map.Entry<Integer, char[]> entry : byteMappings.entrySet()) {

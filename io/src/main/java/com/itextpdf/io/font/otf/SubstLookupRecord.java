@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font.otf;
 
+/**
+ * Represents the substitution lookup record of an OpenType font.
+ */
 public class SubstLookupRecord {
     int sequenceIndex;
     int lookupListIndex;

@@ -25,6 +25,9 @@ package com.itextpdf.io.font.otf;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 
 
+/**
+ * Reads glyph classification data from an OpenType GDEF table.
+ */
 public class OpenTypeGdefTableReader {
     static final int FLAG_IGNORE_BASE = 2;
     static final int FLAG_IGNORE_LIGATURE = 4;
@@ -34,12 +37,23 @@ public class OpenTypeGdefTableReader {
     private final RandomAccessFileOrArray rf;
     private OtfClass glyphClass;
     private OtfClass markAttachmentClass;
-    
+
+    /**
+     * Creates a new GDEF reader.
+     *
+     * @param rf the raw source
+     * @param tableLocation the table location
+     */
     public OpenTypeGdefTableReader(RandomAccessFileOrArray rf, int tableLocation) {
         this.rf = rf;
         this.tableLocation = tableLocation;
     }
-    
+
+    /**
+     * Reads the GDEF table from OpenType data.
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public void readTable() throws java.io.IOException {
         if (tableLocation > 0) {
             rf.seek(tableLocation);
@@ -59,7 +73,17 @@ public class OpenTypeGdefTableReader {
             }
         }
     }
-    
+
+    /**
+     * Checks if lookup must ignore the specified glyph when processing glyph sequences.
+     *
+     * @param glyph glyph to check
+     * @param flag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *             ligatures during glyph substitution or positioning. See
+     *             <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     *
+     * @return {@code true} if the specified glyph should be skipped, {@code false} otherwise
+     */
     public boolean isSkip(int glyph, int flag) {
         if (glyphClass != null && (flag & (FLAG_IGNORE_BASE | FLAG_IGNORE_LIGATURE | FLAG_IGNORE_MARK)) != 0) {
             int cla = glyphClass.getOtfClass(glyph);
@@ -87,6 +111,11 @@ public class OpenTypeGdefTableReader {
         return false;
     }
 
+    /**
+     * Returns the glyph class table.
+     *
+     * @return the requested result
+     */
     public OtfClass getGlyphClassTable() {
         return glyphClass;
     }

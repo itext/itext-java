@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.image;
 
+/**
+ * Supported source image formats.
+ */
 public enum ImageType {
     JPEG,
     PNG,

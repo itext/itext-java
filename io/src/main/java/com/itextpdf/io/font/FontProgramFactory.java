@@ -542,6 +542,9 @@ public final class FontProgramFactory {
         return key;
     }
 
+    /**
+     * Removes all fonts registered through the global font register provider.
+     */
     public static void clearRegisteredFonts() { fontRegisterProvider.clearRegisteredFonts(); }
 
     /**

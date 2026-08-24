@@ -33,6 +33,14 @@ public final class EnumUtil {
     private EnumUtil() {
     }
 
+    /**
+     * Returns an enum value, rejecting {@code null}.
+     *
+     * @param enumInstance the enum value to validate
+     * @param <T>          the enum type
+     *
+     * @return {@code enumInstance}
+     */
     public static <T extends Enum<T>> T throwIfNull(T enumInstance) {
         if (enumInstance == null) {
             throw new RuntimeException("Expected not null enum instance");
@@ -40,6 +48,14 @@ public final class EnumUtil {
         return enumInstance;
     }
 
+    /**
+     * Returns all declared values of an enum type.
+     *
+     * @param enumInstance the enum type
+     * @param <T>          the enum type
+     *
+     * @return a list containing the enum's declared values
+     */
     public static <T extends Enum<T>> List<T> getAllValuesOfEnum(Class<T> enumInstance) {
         if (enumInstance == null) {
             throw new RuntimeException("Expected not null enum instance");

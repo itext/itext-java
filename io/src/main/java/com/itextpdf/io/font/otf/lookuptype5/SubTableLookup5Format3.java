@@ -37,6 +37,15 @@ import java.util.Set;
 public class SubTableLookup5Format3 extends ContextualTable<ContextualSubstRule> {
     ContextualSubstRule substitutionRule;
 
+    /**
+     * Creates a new Contextual Substitution Subtable.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param rule the rule
+     */
     public SubTableLookup5Format3(OpenTypeFontTableReader openReader, int lookupFlag, SubstRuleFormat3 rule) {
         super(openReader, lookupFlag);
         this.substitutionRule = rule;
@@ -51,10 +60,19 @@ public class SubTableLookup5Format3 extends ContextualTable<ContextualSubstRule>
         return Collections.<ContextualSubstRule>emptyList();
     }
 
+    /**
+     * Represents the substitution rule format3 of an OpenType font.
+     */
     public static class SubstRuleFormat3 extends ContextualSubstRule {
         List<Set<Integer>> coverages;
         SubstLookupRecord[] substLookupRecords;
 
+        /**
+         * Creates a new substitution rule format3.
+         *
+         * @param coverages the coverages
+         * @param substLookupRecords the substitution lookup records
+         */
         public SubstRuleFormat3(List<Set<Integer>> coverages, SubstLookupRecord[] substLookupRecords) {
             this.coverages = coverages;
             this.substLookupRecords = substLookupRecords;

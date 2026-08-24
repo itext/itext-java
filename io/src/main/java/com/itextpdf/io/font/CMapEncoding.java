@@ -207,6 +207,15 @@ public class CMapEncoding {
         return result;
     }
 
+    /**
+     * Encodes a CID into the supplied byte array.
+     *
+     * @param cid    character identifier to encode
+     * @param array  destination array
+     * @param offset destination offset
+     *
+     * @return new destination offset
+     */
     public int fillCmapBytes(int cid, byte[] array, int offset) {
         if (isDirect) {
             array[offset++] = (byte)((cid & 0xff00) >> 8);
@@ -220,6 +229,12 @@ public class CMapEncoding {
         return offset;
     }
 
+    /**
+     * Appends the encoded form of a CID to a byte buffer.
+     *
+     * @param cid    character identifier to encode
+     * @param buffer destination buffer
+     */
     public void fillCmapBytes(int cid, ByteBuffer buffer) {
         if (isDirect) {
             buffer.append((byte)((cid & 0xff00) >> 8));
@@ -230,6 +245,13 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Gets the number of bytes required to encode a CID.
+     *
+     * @param cid character identifier to encode
+     *
+     * @return number of bytes required to encode a CID
+     */
     public int getCmapBytesLength(int cid) {
         if (isDirect) {
             return 2;
@@ -238,6 +260,13 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Converts a CMap code to its CID.
+     *
+     * @param cmapCode CMap code
+     *
+     * @return mapped CID
+     */
     public int getCidCode(int cmapCode) {
         if (isDirect) {
             return cmapCode;
@@ -246,6 +275,11 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Gets the CMap code space ranges.
+     *
+     * @return list of low/high byte array pairs used by this encoding
+     */
     public List<byte[]> getCodeSpaceRanges() {
         return codeSpaceRanges;
     }

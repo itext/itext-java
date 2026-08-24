@@ -32,11 +32,25 @@ public class NumberUtil {
     private NumberUtil() {
     }
 
+    /**
+     * Converts a {@link Number} to a {@link Float}.
+     *
+     * @param obj the number to convert, or {@code null}
+     *
+     * @return the float value, or {@code null} when {@code obj} is {@code null}
+     */
     public static Float asFloat(Object obj) {
         Number value = (Number)obj;
         return value != null ? value.floatValue() : null;
     }
 
+    /**
+     * Converts a {@link Number} to an {@link Integer}.
+     *
+     * @param obj the number to convert, or {@code null}
+     *
+     * @return the integer value, or {@code null} when {@code obj} is {@code null}
+     */
     public static Integer asInteger(Object obj) {
         Number value = (Number)obj;
         return value != null ? value.intValue() : null;

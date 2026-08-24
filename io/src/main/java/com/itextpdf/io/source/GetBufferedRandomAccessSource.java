@@ -23,13 +23,19 @@
 package com.itextpdf.io.source;
 
 
+/**
+ * A random-access source that caches reads made through its single-byte {@link #get(long)} method.
+ *
+ * <p>
+ * This wrapper closes its underlying source and is not thread-safe.
+ */
 public class GetBufferedRandomAccessSource implements IRandomAccessSource {
 
     private final IRandomAccessSource source;
 
     private final byte[] getBuffer;
-    private long getBufferStart = -1;
-    private long getBufferEnd = -1;
+    private long getBufferStart;
+    private long getBufferEnd;
 
     /**
      * Constructs a new OffsetRandomAccessSource
@@ -45,6 +51,7 @@ public class GetBufferedRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position) throws java.io.IOException {
         if (position < getBufferStart || position > getBufferEnd){
             int count = source.get(position, getBuffer, 0, getBuffer.length);
@@ -60,6 +67,7 @@ public class GetBufferedRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         return source.get(position, bytes, off, len);
     }
@@ -67,6 +75,7 @@ public class GetBufferedRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long length() {
         return source.length();
     }
@@ -74,6 +83,7 @@ public class GetBufferedRandomAccessSource implements IRandomAccessSource {
     /**
      * Does nothing - the underlying source is not closed
      */
+    @Override
     public void close() throws java.io.IOException {
         source.close();
         getBufferStart = -1;

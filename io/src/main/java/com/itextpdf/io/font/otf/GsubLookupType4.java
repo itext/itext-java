@@ -35,14 +35,25 @@ public class GsubLookupType4 extends OpenTableLookup {
      * The key is the first character. The first element in the int array is the
      * output ligature
      */
-    private Map<Integer,List<int[]>> ligatures;
-    
+    private Map<Integer, List<int[]>> ligatures;
+
+    /**
+     * Creates a new GSUB Lookup Type 4.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param subTableLocations the sub table locations
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public GsubLookupType4(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
         ligatures = new HashMap<>();
         readSubTables();
     }
-    
+
     @Override
     public boolean transformOne(GlyphLine line) {
         if (line.getIdx() >= line.getEnd())
@@ -73,7 +84,7 @@ public class GsubLookupType4 extends OpenTableLookup {
         if (match) {
             changed = true;
         }
-        line.setIdx(line.getIdx()+1);
+        line.setIdx(line.getIdx() + 1);
         return changed;
     }
 
@@ -110,5 +121,5 @@ public class GsubLookupType4 extends OpenTableLookup {
             }
             ligatures.put(coverageGlyphIds.get(k), components);
         }
-    }    
+    }
 }

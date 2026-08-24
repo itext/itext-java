@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font.otf;
 
+/**
+ * Represents the GPOS value record of an OpenType font.
+ */
 public class GposValueRecord {
     private int xPlacement;
     private int yPlacement;

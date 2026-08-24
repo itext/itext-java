@@ -52,6 +52,11 @@ class Jbig2ImageHelper {
         }
     }
 
+    /**
+     * Parses the selected page of a JBIG2 image and populates its image attributes.
+     *
+     * @param jbig2 JBIG2 image data to process
+     */
     public static void processImage(ImageData jbig2) {
         if (jbig2.getOriginalType() != ImageType.JBIG2)
             throw new IllegalArgumentException("JBIG2 image expected");

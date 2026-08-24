@@ -35,6 +35,17 @@ public class GposLookupType4 extends OpenTableLookup {
 
     private final List<MarkToBase> marksbases;
 
+    /**
+     * Creates a new GPOS Lookup Type 4.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param subTableLocations the sub table locations
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public GposLookupType4(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
         marksbases = new ArrayList<>();
@@ -126,8 +137,17 @@ public class GposLookupType4 extends OpenTableLookup {
         marksbases.add(markToBase);
     }
 
+    /**
+     * Represents the mark to base component of an OpenType font.
+     */
     public static class MarkToBase {
+        /**
+         * Maps mark glyph identifiers to their mark records.
+         */
         public final Map<Integer, OtfMarkRecord> marks = new HashMap<>();
+        /**
+         * Maps base glyph identifiers to their anchor arrays.
+         */
         public final Map<Integer, GposAnchor[]> bases = new HashMap<>();
     }
 }

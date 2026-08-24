@@ -27,9 +27,19 @@ import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.woff2.Woff2Converter;
 
+/**
+ * Creates lightweight descriptors from registered, file-based, or in-memory font programs.
+ */
 public final class FontProgramDescriptorFactory {
     private static boolean FETCH_CACHED_FIRST = true;
 
+    /**
+     * Attempts to create a descriptor for a font name or font file path.
+     *
+     * @param fontName registered font name, standard font name, or source path
+     *
+     * @return matching descriptor, or {@code null} when the source is invalid or unsupported
+     */
     public static FontProgramDescriptor fetchDescriptor(String fontName) {
         if (fontName == null || fontName.length() == 0) {
             return null;
@@ -74,6 +84,13 @@ public final class FontProgramDescriptorFactory {
         return fontDescriptor;
     }
 
+    /**
+     * Attempts to create a descriptor from in-memory TrueType/OpenType or Type 1 font data.
+     *
+     * @param fontProgram font bytes
+     *
+     * @return descriptor, or {@code null} when bytes are empty, invalid, or unsupported
+     */
     public static FontProgramDescriptor fetchDescriptor(byte[] fontProgram) {
         if (fontProgram == null || fontProgram.length == 0) {
             return null;
@@ -100,6 +117,13 @@ public final class FontProgramDescriptorFactory {
         return fontDescriptor;
     }
 
+    /**
+     * Creates a descriptor from an already parsed font program.
+     *
+     * @param fontProgram parsed font program
+     *
+     * @return descriptor populated from the program's names and metrics
+     */
     public static FontProgramDescriptor fetchDescriptor(FontProgram fontProgram) {
         return fetchDescriptorFromFontProgram(fontProgram);
     }

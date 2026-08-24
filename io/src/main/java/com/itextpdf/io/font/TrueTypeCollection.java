@@ -33,6 +33,9 @@ import com.itextpdf.commons.utils.FileUtil;
  */
 public class TrueTypeCollection {
 
+    /**
+     * Provides random access to the collection bytes.
+     */
     protected RandomAccessFileOrArray raf;
     private int TTCSize = 0;
     private String ttcPath;

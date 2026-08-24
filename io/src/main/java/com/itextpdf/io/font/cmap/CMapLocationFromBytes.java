@@ -26,14 +26,29 @@ import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
 
+/**
+ * Supplies a CMap tokenizer backed by an in-memory byte array.
+ */
 public class CMapLocationFromBytes implements ICMapLocation {
 
     private byte[] data;
 
+    /**
+     * Creates a location backed by the provided CMap bytes.
+     *
+     * @param data the CMap source bytes; retained without copying
+     */
     public CMapLocationFromBytes(byte[] data) {
         this.data = data;
     }
 
+    /**
+     * Creates a tokenizer for the retained CMap bytes.
+     *
+     * @param location ignored because this implementation has one in-memory source
+     *
+     * @return a new tokenizer over the retained bytes
+     */
     public PdfTokenizer getLocation(String location) {
         return new PdfTokenizer(new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(data)));
     }
