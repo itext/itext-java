@@ -29,7 +29,6 @@ import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -42,6 +41,7 @@ import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
 import com.itextpdf.layout.properties.LineHeight;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.layout.properties.VerticalTextOrientation;
@@ -54,8 +54,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 @Tag("IntegrationTest")
@@ -274,6 +278,7 @@ public class VerticalTextTest extends ExtendedITextTest {
     }
 
     @Test
+    // TODO DEVSIX-10183 vertical and horizontal text in one paragraph.
     public void verticalTextAndHorizontalTextTest() throws IOException, InterruptedException {
         String fileName = "verticalTextAndHorizontalText";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -842,6 +847,313 @@ public class VerticalTextTest extends ExtendedITextTest {
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void verticalTextWithWordSpaceTest() throws IOException, InterruptedException {
+        String fileName = "verticalTextWithWordSpaceTest";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+            Paragraph paragraph = new Paragraph();
+            paragraph.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph.setHeight(500);
+
+            Text wordSpacing30 = new Text("word-spacing 30pt with line\nbreak.\n\n\n");
+            wordSpacing30.setBackgroundColor(ColorConstants.GREEN);
+            wordSpacing30.setWordSpacing(30);
+            paragraph.add(wordSpacing30);
+
+            Text wordSpacing10 = new Text("word-spacing 10pt with line\nbreak.\n\n\n");
+            wordSpacing10.setBackgroundColor(ColorConstants.ORANGE);
+            wordSpacing10.setWordSpacing(10);
+            paragraph.add(wordSpacing10);
+
+            Text wordSpacingMinus15 = new Text("word-spacing minus 15pt with line\nbreak.\n\n\n");
+            wordSpacingMinus15.setBackgroundColor(ColorConstants.RED);
+            wordSpacingMinus15.setWordSpacing(-15);
+            paragraph.add(wordSpacingMinus15);
+
+            document.add(paragraph);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void verticalTextWithCharacterSpaceTest() throws IOException, InterruptedException {
+        String fileName = "verticalTextWithCharacterSpaceTest";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+            Paragraph paragraph = new Paragraph();
+            paragraph.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph.setHeight(500);
+
+            Text characterSpacing30 = new Text("character-spacing 30pt with line\nbreak.\n\n\n");
+            characterSpacing30.setBackgroundColor(ColorConstants.GREEN);
+            characterSpacing30.setCharacterSpacing(30);
+            paragraph.add(characterSpacing30);
+
+            Text characterSpacing10 = new Text("character-spacing 10pt with line\nbreak.\n\n\n");
+            characterSpacing10.setBackgroundColor(ColorConstants.ORANGE);
+            characterSpacing10.setCharacterSpacing(10);
+            paragraph.add(characterSpacing10);
+
+            Text characterSpacingMinus5 = new Text("character-spacing minus 5pt with line\nbreak.\n\n\n");
+            characterSpacingMinus5.setBackgroundColor(ColorConstants.RED);
+            characterSpacingMinus5.setCharacterSpacing(-5);
+            paragraph.add(characterSpacingMinus5);
+
+            document.add(paragraph);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
+    public void verticalTextWithCharacterAndWordSpaceExtremeValuesTest() throws IOException, InterruptedException {
+        String fileName = "verticalTextWithCharacterAndWordSpaceExtremeValuesTest";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+            Paragraph paragraph = new Paragraph();
+            paragraph.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph.setHeight(500);
+            paragraph.setPaddingTop(400);
+
+            Text characterSpacingMinus30 = new Text("character-spacing minus 30pt with line\nbreak.\n\n\n");
+            characterSpacingMinus30.setBackgroundColor(ColorConstants.GREEN);
+            characterSpacingMinus30.setCharacterSpacing(-30);
+            paragraph.add(characterSpacingMinus30);
+
+            Text wordSpacingMinus300 = new Text("word-spacing minus 300pt with line\nbreak.\n\n\n");
+            wordSpacingMinus300.setBackgroundColor(ColorConstants.ORANGE);
+            wordSpacingMinus300.setWordSpacing(-300);
+            paragraph.add(wordSpacingMinus300);
+
+            Text characterSpacing300 = new Text("character-spacing 300pt with line\nbreak.\n\n\n");
+            characterSpacing300.setBackgroundColor(ColorConstants.RED);
+            characterSpacing300.setCharacterSpacing(300);
+            paragraph.add(characterSpacing300);
+
+            document.add(paragraph);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void justifiedAlignmentTest() throws IOException, InterruptedException {
+        String fileName = "justifiedAlignmentTest";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+            Paragraph container = new Paragraph();
+            Text alignedText1 = new Text("text to be aligned with line\nbreak.");
+            alignedText1.setBackgroundColor(ColorConstants.GREEN);
+            Text alignedText2 = new Text("text to be aligned with line\nbreak.");
+            alignedText2.setBackgroundColor(ColorConstants.ORANGE);
+            Text alignedText3 = new Text("text to be aligned with line\nbreak.");
+            alignedText3.setBackgroundColor(ColorConstants.RED);
+
+            Paragraph paragraph0 = new Paragraph();
+            paragraph0.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph0.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph0.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph0.setTextAlignment(TextAlignment.LEFT);
+            paragraph0.setHeight(700);
+            paragraph0.setMargin(10);
+
+            paragraph0.add(alignedText1);
+            paragraph0.add(alignedText2);
+            paragraph0.add(alignedText3);
+            container.add(paragraph0);
+
+            Paragraph paragraph1 = new Paragraph();
+            paragraph1.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph1.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph1.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph1.setHeight(700);
+            paragraph1.setTextAlignment(TextAlignment.JUSTIFIED_ALL);
+            paragraph1.setMargin(10);
+            // Extremely large ratio results in word spacing being negative. However, any further increase doesn't affect word spacing.
+            paragraph1.setSpacingRatio(10000f);
+
+            paragraph1.add(alignedText1);
+            paragraph1.add(alignedText2);
+            paragraph1.add(alignedText3);
+            container.add(paragraph1);
+
+            Paragraph paragraph2 = new Paragraph();
+            paragraph2.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph2.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph2.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph2.setHeight(700);
+            paragraph2.setTextAlignment(TextAlignment.JUSTIFIED_ALL);
+            paragraph2.setMargin(10);
+            paragraph2.setSpacingRatio(1f);
+
+            paragraph2.add(alignedText1);
+            paragraph2.add(alignedText2);
+            paragraph2.add(alignedText3);
+            container.add(paragraph2);
+
+            Paragraph paragraph3 = new Paragraph();
+            paragraph3.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph3.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph3.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph3.setHeight(700);
+            paragraph3.setTextAlignment(TextAlignment.JUSTIFIED_ALL);
+            paragraph3.setMargin(10);
+            // Extremely low ration results in word-spacing being close to zero, and character spacing taking over.
+            paragraph3.setSpacingRatio(0.0001f);
+
+            paragraph3.add(alignedText1);
+            paragraph3.add(alignedText2);
+            paragraph3.add(alignedText3);
+            container.add(paragraph3);
+
+            document.add(container);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void differentAlignmentValuesTogetherTest() throws IOException, InterruptedException {
+        String fileName = "differentAlignmentValuesTogetherTest";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+            Paragraph container = new Paragraph();
+            Text alignedText1 = new Text("text to be aligned with line\nbreak.");
+            alignedText1.setBackgroundColor(ColorConstants.GREEN);
+            Text alignedText2 = new Text("text to be aligned with line\nbreak.");
+            alignedText2.setBackgroundColor(ColorConstants.ORANGE);
+            Text alignedText3 = new Text("text to be aligned with line\nbreak.");
+            alignedText3.setBackgroundColor(ColorConstants.RED);
+
+            Paragraph paragraph0 = new Paragraph();
+            paragraph0.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph0.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph0.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph0.setTextAlignment(TextAlignment.LEFT);
+            paragraph0.setHeight(700);
+            paragraph0.setMargin(10);
+
+            paragraph0.add(alignedText1);
+            paragraph0.add(alignedText2);
+            paragraph0.add(alignedText3);
+            container.add(paragraph0);
+
+            Paragraph paragraph1 = new Paragraph();
+            paragraph1.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph1.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph1.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph1.setHeight(700);
+            paragraph1.setTextAlignment(TextAlignment.CENTER);
+            paragraph1.setMargin(10);
+
+            paragraph1.add(alignedText1);
+            paragraph1.add(alignedText2);
+            paragraph1.add(alignedText3);
+            container.add(paragraph1);
+
+            Paragraph paragraph2 = new Paragraph();
+            paragraph2.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph2.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph2.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph2.setHeight(700);
+            paragraph2.setTextAlignment(TextAlignment.RIGHT);
+            paragraph2.setMargin(10);
+
+            paragraph2.add(alignedText1);
+            paragraph2.add(alignedText2);
+            paragraph2.add(alignedText3);
+            container.add(paragraph2);
+
+            Paragraph paragraph3 = new Paragraph();
+            paragraph3.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph3.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph3.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph3.setHeight(700);
+            paragraph3.setTextAlignment(TextAlignment.JUSTIFIED_ALL);
+            paragraph3.setMargin(10);
+
+            paragraph3.add(alignedText1);
+            paragraph3.add(alignedText2);
+            paragraph3.add(alignedText3);
+            container.add(paragraph3);
+
+            document.add(container);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @ParameterizedTest
+    @MethodSource("alignmentValues")
+    public void verticalTextWithAlignmentTest(TextAlignment alignment) throws IOException, InterruptedException {
+        String fileName = "verticalTextWithAlignment" + alignment;
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+            Paragraph paragraph = new Paragraph();
+            paragraph.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph.setHeight(500);
+            paragraph.setTextAlignment(alignment);
+
+            // TextAlignment.JUSTIFIED does nothing since line ends with a line break.
+            Text alignedText1 = new Text("text to be aligned with line\nbreak.");
+            alignedText1.setBackgroundColor(ColorConstants.GREEN);
+            paragraph.add(alignedText1);
+
+            // TextAlignment.JUSTIFIED does nothing since line ends with a line break.
+            Text alignedText2 = new Text("text to be aligned with line\nbreak.");
+            alignedText2.setBackgroundColor(ColorConstants.ORANGE);
+            paragraph.add(alignedText2);
+
+            // TextAlignment.JUSTIFIED justifies the content.
+            Text alignedText3 = new Text("text to be aligned without line break.");
+            alignedText3.setBackgroundColor(ColorConstants.RED);
+            paragraph.add(alignedText3);
+
+            document.add(paragraph);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    public static Collection<TextAlignment> alignmentValues() {
+        return Arrays.asList(TextAlignment.LEFT, TextAlignment.CENTER, TextAlignment.RIGHT, TextAlignment.JUSTIFIED, TextAlignment.JUSTIFIED_ALL);
     }
 
     private void addAlignedElement(Paragraph p, InlineVerticalAlignmentType verticalAlignment) {

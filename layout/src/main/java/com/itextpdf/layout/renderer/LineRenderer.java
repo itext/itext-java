@@ -120,9 +120,13 @@ public class LineRenderer extends AbstractRenderer {
                 layoutContext instanceof LineLayoutContext ? (LineLayoutContext) layoutContext
                         : new LineLayoutContext(layoutContext);
         if (lineLayoutContext.getTextIndent() != 0) {
-            layoutBox
-                    .moveRight(lineLayoutContext.getTextIndent())
-                    .setWidth(layoutBox.getWidth() - lineLayoutContext.getTextIndent());
+            if (isVerticalWriting) {
+                layoutBox.moveDown(lineLayoutContext.getTextIndent())
+                        .setHeight(layoutBox.getHeight() - lineLayoutContext.getTextIndent());
+            } else {
+                layoutBox.moveRight(lineLayoutContext.getTextIndent())
+                        .setWidth(layoutBox.getWidth() - lineLayoutContext.getTextIndent());
+            }
         }
 
         occupiedArea = new LayoutArea(layoutContext.getArea().getPageNumber(),
@@ -827,6 +831,11 @@ public class LineRenderer extends AbstractRenderer {
         return occupiedArea.getBBox().getY() - maxDescent;
     }
 
+    @Override
+    protected boolean allowLastYLineRecursiveExtraction() {
+        return !isVerticalWriting();
+    }
+
     public float getLeadingValue(Leading leading) {
         switch (leading.getType()) {
             case Leading.FIXED:
@@ -867,20 +876,35 @@ public class LineRenderer extends AbstractRenderer {
 
     @Override
     protected Float getLastYLineRecursively() {
+        if (!allowLastYLineRecursiveExtraction()) {
+            return null;
+        }
         return getYLine();
     }
 
-    public void justify(float width) {
+    /**
+     * Justifies words equally inside a single line. The behavior is similar to CSS "align-text: justify".
+     *
+     * @param availableSpace space available along the main axis of a layout box
+     */
+    public void justify(float availableSpace) {
         float ratio = (float) this.getPropertyAsFloat(Property.SPACING_RATIO);
         IRenderer lastChildRenderer = getLastNonFloatChildRenderer();
         if (lastChildRenderer == null) {
             return;
         }
-        float freeWidth = occupiedArea.getBBox().getX() + width - lastChildRenderer.getOccupiedArea().getBBox().getX() -
-                lastChildRenderer.getOccupiedArea().getBBox().getWidth();
+        float freeSpace;
+        boolean verticalWriting = isVerticalWriting();
+        if (verticalWriting) {
+            freeSpace = availableSpace - occupiedArea.getBBox().getHeight();
+        } else {
+            freeSpace = occupiedArea.getBBox().getX() + availableSpace -
+                    lastChildRenderer.getOccupiedArea().getBBox().getX() -
+                    lastChildRenderer.getOccupiedArea().getBBox().getWidth();
+        }
         int numberOfSpaces = getNumberOfSpaces();
         int baseCharsCount = baseCharactersCount();
-        float baseFactor = freeWidth / (ratio * numberOfSpaces + (1 - ratio) * (baseCharsCount - 1));
+        float baseFactor = freeSpace / (ratio * numberOfSpaces + (1 - ratio) * (baseCharsCount - 1));
 
         //Prevent a NaN when trying to justify a single word with spacing_ratio == 1.0
         if (Float.isInfinite(baseFactor) || Float.isNaN(baseFactor)) {
@@ -889,14 +913,25 @@ public class LineRenderer extends AbstractRenderer {
         float wordSpacing = ratio * baseFactor;
         float characterSpacing = (1 - ratio) * baseFactor;
 
-        float lastRightPos = occupiedArea.getBBox().getX();
+        float lastPosition;
+        if (verticalWriting) {
+            lastPosition = occupiedArea.getBBox().getTop();
+        } else {
+            lastPosition = occupiedArea.getBBox().getX();
+        }
         for (final IRenderer child : getChildRenderers()) {
             if (FloatingHelper.isRendererFloating(child)) {
                 continue;
             }
-            float childX = child.getOccupiedArea().getBBox().getX();
-            child.move(lastRightPos - childX, 0);
-            childX = lastRightPos;
+            float childPosition;
+            if (verticalWriting) {
+                childPosition = child.getOccupiedArea().getBBox().getTop();
+                child.move(0, lastPosition - childPosition);
+            } else {
+                childPosition = child.getOccupiedArea().getBBox().getX();
+                child.move(lastPosition - childPosition, 0);
+            }
+            childPosition = lastPosition;
             if (child instanceof TextRenderer) {
                 float childHSCale = (float) ((TextRenderer) child).getPropertyAsFloat(Property.HORIZONTAL_SCALING, 1f);
                 Float oldCharacterSpacing = ((TextRenderer) child).getPropertyAsFloat(Property.CHARACTER_SPACING);
@@ -907,16 +942,31 @@ public class LineRenderer extends AbstractRenderer {
                 child.setProperty(Property.WORD_SPACING,
                         (null == oldWordSpacing ? 0 : (float) oldWordSpacing) + wordSpacing / childHSCale);
                 boolean isLastTextRenderer = child == lastChildRenderer;
-                float widthAddition = (isLastTextRenderer ? (((TextRenderer) child).lineLength() - 1)
+                float spaceAddition = (isLastTextRenderer ? (((TextRenderer) child).lineLength() - 1)
                         : ((TextRenderer) child).lineLength()) * characterSpacing +
                         wordSpacing * ((TextRenderer) child).getNumberOfSpaces();
-                child.getOccupiedArea().getBBox()
-                        .setWidth(child.getOccupiedArea().getBBox().getWidth() + widthAddition);
+                if (verticalWriting) {
+                    child.getOccupiedArea().getBBox()
+                            .setHeight(child.getOccupiedArea().getBBox().getHeight() + spaceAddition);
+                    child.getOccupiedArea().getBBox().moveDown(spaceAddition);
+                } else {
+                    child.getOccupiedArea().getBBox()
+                            .setWidth(child.getOccupiedArea().getBBox().getWidth() + spaceAddition);
+                }
             }
-            lastRightPos = childX + child.getOccupiedArea().getBBox().getWidth();
+            if (verticalWriting) {
+                lastPosition = childPosition - child.getOccupiedArea().getBBox().getHeight();
+            } else {
+                lastPosition = childPosition + child.getOccupiedArea().getBBox().getWidth();
+            }
         }
 
-        getOccupiedArea().getBBox().setWidth(width);
+        if (verticalWriting) {
+            getOccupiedArea().getBBox().moveDown(freeSpace);
+            getOccupiedArea().getBBox().setHeight(availableSpace);
+        } else {
+            getOccupiedArea().getBBox().setWidth(availableSpace);
+        }
     }
 
     protected int getNumberOfSpaces() {
