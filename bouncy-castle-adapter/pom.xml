@@ -33,7 +33,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk18on</artifactId>
-      <version>${bouncycastle.version}</version>
+      <version>${bouncycastle.provider.version}</version>
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>

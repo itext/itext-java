@@ -86,6 +86,7 @@
   <properties>
     <argLine>-Xmx1024m</argLine>
     <bouncycastle.version>1.84</bouncycastle.version>
+    <bouncycastle.provider.version>1.84</bouncycastle.provider.version>
     <dependencyCheck.version>7.0.0</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <jacoco.version>0.8.4</jacoco.version>
@@ -1039,7 +1040,7 @@
         <dependency>
           <groupId>org.bouncycastle</groupId>
           <artifactId>bcprov-jdk18on</artifactId>
-          <version>${bouncycastle.version}</version>
+          <version>${bouncycastle.provider.version}</version>
         </dependency>
       </dependencies>
       <build>
