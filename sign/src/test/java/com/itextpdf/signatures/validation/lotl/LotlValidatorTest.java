@@ -712,16 +712,25 @@ public class LotlValidatorTest extends ExtendedITextTest {
             }
     )
     public void cacheRefreshWithValidationWorksButCertsNotIncluded() throws InterruptedException {
+        // This test is similar to cacheRefreshWithValidationWorksButCertsNotIncludedMultipleCountries.
+        // Here we load LOTL data into cache, then make cache stale (that is why the staleness is that small).
+        // Then we request LOTL data again, but this time the country specific LOTL file is invalid.
+        // The cache refresh should not update the cache with the invalid data and the validator should still be valid.
+        // But the number of certificates should decrease.
+
         LotlFetchingProperties properties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         properties.setCountryNames("NL");
-        properties.setCacheStalenessInMilliseconds(50);
+        properties.setCacheStalenessInMilliseconds(100);
         properties.setRefreshIntervalCalculator((f) -> Integer.MAX_VALUE);
 
         int originalAmountOfCertificates;
         LotlValidator validator2;
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(properties.getCacheStalenessInMilliseconds(),
+                properties.getOnCountryFetchFailureStrategy());
         try (LotlService service = new EuropeanLotlService(properties)) {
             service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.withLotlServiceCache(cache);
 
             // Simulate a failure in the cache refresh
             service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
@@ -742,6 +751,7 @@ public class LotlValidatorTest extends ExtendedITextTest {
                             "https://www.rdi.nl/site/binaries/site-content/collections/documents/current-tsl.xml",
                             "application/xml"));
                     result.put(r.createUniqueIdentifier(), r);
+
                     return result;
                 }
             });
@@ -754,14 +764,18 @@ public class LotlValidatorTest extends ExtendedITextTest {
             Assertions.assertTrue(originalAmountOfCertificates > 0,
                     "Expected some certificates to be present after the first validation, but got: "
                             + originalAmountOfCertificates);
-            Thread.sleep(80);
 
-            // Increase cache staleness to stabilize the refresh during the simulated failure
-            properties.setCacheStalenessInMilliseconds(10000000);
-            service.withLotlServiceCache(new InMemoryLotlServiceCache(properties.getCacheStalenessInMilliseconds(),
-                    properties.getOnCountryFetchFailureStrategy()));
+            // Make cache stale
+            Thread.sleep(120);
 
             service.tryAndRefreshCache();
+
+            // Protect all caches from becoming stale except for the NL country specific LOTL file
+            // which will be invalidated. We need this to ensure validator will not meet any staleness again after
+            // service.tryAndRefreshCache(). To test if this is needed you can call Thread.sleep(1200)
+            // before validation. Without unstaleCacheExceptNL(cache) the validator will fail.
+            unstaleCacheExceptNL(cache);
+
             validator2 = service.getLotlValidator();
             ValidationReport report = validator2.validate();
             Assertions.assertTrue(report.getValidationResult() == ValidationReport.ValidationResult.VALID,
@@ -776,7 +790,6 @@ public class LotlValidatorTest extends ExtendedITextTest {
         }
     }
 
-
     @Test
     @LogMessages(
             messages = {
@@ -785,16 +798,21 @@ public class LotlValidatorTest extends ExtendedITextTest {
             }
     )
     public void cacheRefreshWithValidationWorksButCertsNotIncludedMultipleCountries() throws InterruptedException {
+        // See the description of cacheRefreshWithValidationWorksButCertsNotIncluded for the test logic
+
         LotlFetchingProperties properties = new LotlFetchingProperties(
                 new RemoveOnFailingCountryData());
         properties.setCountryNames("NL", "BE");
-        properties.setCacheStalenessInMilliseconds(50);
+        properties.setCacheStalenessInMilliseconds(100);
         properties.setRefreshIntervalCalculator((f) -> Integer.MAX_VALUE);
 
         int originalAmountOfCertificates;
         LotlValidator validator2;
+        InMemoryLotlServiceCache cache = new InMemoryLotlServiceCache(properties.getCacheStalenessInMilliseconds(),
+                properties.getOnCountryFetchFailureStrategy());
         try (LotlService service = new EuropeanLotlService(properties)) {
             service.withCustomResourceRetriever(new FromDiskResourceRetriever(SOURCE_FOLDER_LOTL_FILES));
+            service.withLotlServiceCache(cache);
 
             // Simulate a failure in the cache refresh
             service.withCountrySpecificLotlFetcher(new CountrySpecificLotlFetcher(service) {
@@ -815,8 +833,8 @@ public class LotlValidatorTest extends ExtendedITextTest {
                             "https://www.rdi.nl/site/binaries/site-content/collections/documents/current-tsl.xml",
                             "application/xml"));
                     result.put(r.createUniqueIdentifier(), r);
-                    return result;
 
+                    return result;
                 }
             });
 
@@ -828,14 +846,18 @@ public class LotlValidatorTest extends ExtendedITextTest {
             Assertions.assertTrue(originalAmountOfCertificates > 0,
                     "Expected some certificates to be present after the first validation, but got: "
                             + originalAmountOfCertificates);
-            Thread.sleep(80);
 
-            // Increase cache staleness to stabilize the refresh during the simulated failure
-            properties.setCacheStalenessInMilliseconds(10000000);
-            service.withLotlServiceCache(new InMemoryLotlServiceCache(properties.getCacheStalenessInMilliseconds(),
-                    properties.getOnCountryFetchFailureStrategy()));
+            // Make cache stale
+            Thread.sleep(120);
 
             service.tryAndRefreshCache();
+
+            // Protect all caches from becoming stale except for the NL country specific LOTL file
+            // which will be invalidated. We need this to ensure validator will not meet any staleness again after
+            // service.tryAndRefreshCache(). To test if this is needed you can call Thread.sleep(1200)
+            // before validation. Without unstaleCacheExceptNL(cache) the validator will fail.
+            unstaleCacheExceptNL(cache);
+
             validator2 = service.getLotlValidator();
             ValidationReport report = validator2.validate();
             Assertions.assertTrue(report.getValidationResult() == ValidationReport.ValidationResult.VALID,
@@ -896,6 +918,19 @@ public class LotlValidatorTest extends ExtendedITextTest {
 
     private static LotlFetchingProperties getLotlFetchingProperties() {
         return new LotlFetchingProperties(new RemoveOnFailingCountryData());
+    }
+
+    private static void unstaleCacheExceptNL(InMemoryLotlServiceCache cache) {
+        HashMap<String, Long> newTimestamps = new HashMap<>();
+        for (Map.Entry<String, Long> timeStampEntry : cache.getTimeStamps().entrySet()) {
+            if ("NL_https://www.rdi.nl/site/binaries/site-content/collections/documents/current-tsl.xml"
+                    .equals(timeStampEntry.getKey())) {
+                newTimestamps.put(timeStampEntry.getKey(), timeStampEntry.getValue());
+            } else {
+                newTimestamps.put(timeStampEntry.getKey(), Long.MAX_VALUE);
+            }
+        }
+        cache.setTimeStamps(newTimestamps);
     }
 }
 
