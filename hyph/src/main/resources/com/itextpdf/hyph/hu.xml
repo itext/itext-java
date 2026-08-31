@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- created from huhyp.tex by sngeza@mail.drotposta.hu and converted to Latin-2 -->
+<!-- 2023-05-18: classes section fixed by https://github.com/onlyonce -->
 <hyphenation-info>
 
 <hyphen-char value="-"/>
@@ -7,6 +8,7 @@
 
 <classes>
 aA
+áÁ
 bB
 cC
 dD
@@ -34,7 +36,7 @@ tT
 uU
 úÚ
 üÜ
-üŰ
+űŰ
 vV
 wW
 xX
