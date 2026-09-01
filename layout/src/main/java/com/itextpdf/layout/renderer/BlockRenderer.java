@@ -982,7 +982,7 @@ public abstract class BlockRenderer extends AbstractRenderer {
         }
     }
 
-    void applyWidth(Rectangle parentBBox, Float blockWidth, OverflowPropertyValue overflowX) {
+    boolean applyWidth(Rectangle parentBBox, Float blockWidth, OverflowPropertyValue overflowX) {
         // maxWidth has already taken in attention in blockWidth,
         // therefore only `parentBBox > minWidth` needs to be checked.
         Float rotation = this.getPropertyAsFloat(Property.ROTATION_ANGLE);
@@ -993,13 +993,16 @@ public abstract class BlockRenderer extends AbstractRenderer {
                         rotation != null ||
                         (!isOverflowFit(overflowX)))) {
             parentBBox.setWidth((float) blockWidth);
+            return true;
         } else {
             Float minWidth = retrieveMinWidth(parentBBox.getWidth());
             //Shall we check overflow-x here?
             if (minWidth != null && minWidth > parentBBox.getWidth()) {
                 parentBBox.setWidth((float) minWidth);
+                return true;
             }
         }
+        return false;
     }
 
     boolean applyMaxHeight(Rectangle parentBBox, Float blockMaxHeight, MarginsCollapseHandler marginsCollapseHandler,

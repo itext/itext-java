@@ -84,7 +84,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         TextRenderer textRenderer = new TextRenderer(new Text(THAI_TEXT));
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
         textRenderer.setText(THAI_TEXT);
-        Assertions.assertTrue(TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer));
+        Assertions.assertTrue(TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer, true));
     }
 
     @Test
@@ -93,13 +93,13 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(THAI_FONT, PdfEncodings.IDENTITY_H));
         textRenderer.setText(THAI_TEXT);
         textRenderer.setSpecialScriptsWordBreakPoints(new ArrayList<Integer>());
-        Assertions.assertFalse(TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer));
+        Assertions.assertFalse(TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer, true));
     }
 
     @Test
     public void isNotTextRenderer() {
         TabRenderer tabRenderer = new TabRenderer(new Tab());
-        Assertions.assertFalse(TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(tabRenderer));
+        Assertions.assertFalse(TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(tabRenderer, true));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         textRenderer.setProperty(Property.FONT, PdfFontFactory.createFont(REGULAR_FONT, PdfEncodings.IDENTITY_H));
         textRenderer.setText(nonSpecialScriptText);
         Assertions.assertNull(textRenderer.getSpecialScriptsWordBreakPoints());
-        TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer);
+        TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(textRenderer, true);
         Assertions.assertNotNull(textRenderer.getSpecialScriptsWordBreakPoints());
         Assertions.assertTrue(textRenderer.getSpecialScriptsWordBreakPoints().isEmpty());
 
@@ -665,7 +665,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
         TextSequenceWordWrapping.resetTextSequenceIfItEnded(textRendererLayoutResults, false, tabRenderer, 1,
-                minMaxWidthOfTextRendererSequenceHelper, false, widthHandler);
+                minMaxWidthOfTextRendererSequenceHelper, false, widthHandler, true);
         Assertions.assertTrue(textRendererLayoutResults.isEmpty());
     }
 
@@ -689,7 +689,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         int childPosDuringResetAttempt = 1;
         TextSequenceWordWrapping
                 .resetTextSequenceIfItEnded(textRendererLayoutResults, false, tabRenderer, childPosDuringResetAttempt,
-                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler);
+                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler, true);
         Assertions.assertTrue(textRendererLayoutResults.isEmpty());
     }
 
@@ -703,7 +703,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         int childPosNotToBeAdded = 1;
         TextSequenceWordWrapping
                 .updateTextSequenceLayoutResults(textRendererLayoutResults, true, tabRenderer, childPosNotToBeAdded,
-                new LayoutResult(LayoutResult.FULL, new LayoutArea(1, new Rectangle(10, 10)), null, null, null));
+                new LayoutResult(LayoutResult.FULL, new LayoutArea(1, new Rectangle(10, 10)), null, null, null), true);
         Assertions.assertTrue(textRendererLayoutResults.isEmpty());
     }
 
@@ -721,7 +721,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
         TextSequenceWordWrapping.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, textRenderer, 1,
-                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler);
+                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler, true);
         Assertions.assertTrue(specialScriptLayoutResults.isEmpty());
     }
 
@@ -733,7 +733,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         LayoutResult res = new LayoutResult(LayoutResult.NOTHING,
                 new LayoutArea(0, new Rectangle(0, 0, 10, 10)), null, null);
 
-        TextSequenceWordWrapping.updateTextSequenceLayoutResults(specialScriptLayoutResults, true, textRenderer, 1, res);
+        TextSequenceWordWrapping.updateTextSequenceLayoutResults(specialScriptLayoutResults, true, textRenderer, 1, res, true);
         Assertions.assertTrue(specialScriptLayoutResults.isEmpty());
     }
 
@@ -754,7 +754,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         int secondKey = firstKey + 1;
         TextSequenceWordWrapping.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, textRenderer, secondKey,
-                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler);
+                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler, true);
         Assertions.assertEquals(1, specialScriptLayoutResults.size());
         Assertions.assertTrue(specialScriptLayoutResults.containsKey(firstKey));
     }
@@ -772,7 +772,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         int secondKey = firstKey + 1;
         TextSequenceWordWrapping
-                .updateTextSequenceLayoutResults(specialScriptLayoutResults, true, textRenderer, secondKey, res);
+                .updateTextSequenceLayoutResults(specialScriptLayoutResults, true, textRenderer, secondKey, res, true);
         Assertions.assertTrue(specialScriptLayoutResults.containsKey(firstKey));
         Assertions.assertTrue(specialScriptLayoutResults.containsKey(secondKey));
         Assertions.assertEquals(2, specialScriptLayoutResults.size());

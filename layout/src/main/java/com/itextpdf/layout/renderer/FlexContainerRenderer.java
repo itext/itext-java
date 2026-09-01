@@ -408,7 +408,7 @@ public class FlexContainerRenderer extends DivRenderer {
         final Rectangle recalculatedRectangle = Rectangle.getCommonRectangle(occupiedArea.getBBox(),
                 resultBBox);
         if (isVerticalWriting()) {
-            occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), resultBBox));
+            occupiedArea.setBBox(recalculatedRectangle);
         } else {
             occupiedArea.getBBox().setY(recalculatedRectangle.getY());
             occupiedArea.getBBox().setHeight(recalculatedRectangle.getHeight());

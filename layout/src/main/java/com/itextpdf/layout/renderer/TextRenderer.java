@@ -709,7 +709,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
         }
         // indicates whether the placing is forced while the layout result is LayoutResult.NOTHING
         boolean isPlacingForcedWhileNothing = false;
-        boolean lineWidthExceeds = currentLineWidth > layoutBox.getWidth() + HEIGHT_WIDTH_EPS;
+        float verticalWritingLineWidth = calculateLineHeight(ascender, descender, fontSize, textRise, 0F, 0F, null);
+        boolean lineWidthExceeds = verticalWritingLineWidth > layoutBox.getWidth() + HEIGHT_WIDTH_EPS;
         boolean lineHeightExceeds = currentLineHeight > layoutBox.getHeight() + HEIGHT_WIDTH_EPS;
         if (isVerticalWriting ? lineWidthExceeds : lineHeightExceeds) {
             if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT)) && isOverflowFit(overflowY)) {
@@ -740,8 +741,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             float lineStart = line.getStart();
             float lineEnd = line.getEnd();
             if (lineStart != lineEnd) {
-                float symbolHeight = calculateLineHeight(ascender, descender, fontSize, textRise, 0f, 0f, null);
-                occupiedArea.getBBox().setWidth(symbolHeight);
+                occupiedArea.getBBox().setWidth(verticalWritingLineWidth);
             }
         } else {
             occupiedArea.getBBox().setWidth(occupiedArea.getBBox().getWidth() + italicSkewAddition + boldSimulationAddition);

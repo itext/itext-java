@@ -278,7 +278,6 @@ public class VerticalTextTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-10183 vertical and horizontal text in one paragraph.
     public void verticalTextAndHorizontalTextTest() throws IOException, InterruptedException {
         String fileName = "verticalTextAndHorizontalText";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -480,7 +479,7 @@ public class VerticalTextTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO fix underline positioning
+    // TODO DEVSIX-10180 fix underline positioning
     public void underlineTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "underline.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_underline.pdf";
@@ -859,7 +858,6 @@ public class VerticalTextTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO Background last item too narrow
     public void verticalTextWithWordSpaceTest() throws IOException, InterruptedException {
         String fileName = "verticalTextWithWordSpaceTest";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -896,7 +894,6 @@ public class VerticalTextTest extends ExtendedITextTest {
     }
 
     @Test
-    //TODO Background last item too narrow
     public void verticalTextWithCharacterSpaceTest() throws IOException, InterruptedException {
         String fileName = "verticalTextWithCharacterSpaceTest";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -1036,7 +1033,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             paragraph3.setHeight(700);
             paragraph3.setTextAlignment(TextAlignment.JUSTIFIED_ALL);
             paragraph3.setMargin(10);
-            // Extremely low ration results in word-spacing being close to zero, and character spacing taking over.
+            // Extremely low ratio results in word-spacing being close to zero, and character spacing taking over.
             paragraph3.setSpacingRatio(0.0001f);
 
             paragraph3.add(alignedText1);
