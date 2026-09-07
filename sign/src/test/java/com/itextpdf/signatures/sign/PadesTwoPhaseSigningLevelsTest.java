@@ -44,7 +44,6 @@ import com.itextpdf.test.ExtendedITextTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -100,7 +99,8 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     }
 
     public static Iterable<Object[]> CreateParameters() {
-        return Arrays.asList(new Object[] {true, DigestAlgorithms.SHA256, "RSA", 1},
+        return Arrays.asList(
+                new Object[] {true, DigestAlgorithms.SHA256, "RSA", 1},
                 new Object[] {false, DigestAlgorithms.SHA256, "RSASSA", 2},
                 new Object[] {false, DigestAlgorithms.SHAKE256, "ED448", 3},
                 new Object[] {false, DigestAlgorithms.SHA3_384, "RSA", 4});
@@ -131,12 +131,6 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
         }
 
         try (ByteArrayOutputStream preparedDoc = new ByteArrayOutputStream()) {
-            if (DigestAlgorithms.SHAKE256.equals(digestAlgorithm) && FIPS_MODE) {
-                Assertions.assertThrows(NoSuchAlgorithmException.class, () ->
-                        twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain, digestAlgorithm,
-                                new PdfReader(srcFileName), preparedDoc, createSignerProperties()));
-                return;
-            }
             CMSContainer container = twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain,
                     digestAlgorithm, new PdfReader(srcFileName), preparedDoc, createSignerProperties());
 
@@ -186,12 +180,6 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
         }
 
         try (ByteArrayOutputStream preparedDoc = new ByteArrayOutputStream()) {
-            if (DigestAlgorithms.SHAKE256.equals(digestAlgorithm) && FIPS_MODE) {
-                Assertions.assertThrows(NoSuchAlgorithmException.class, () ->
-                        twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain, digestAlgorithm,
-                                new PdfReader(srcFileName), preparedDoc, createSignerProperties()));
-                return;
-            }
             CMSContainer container = twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain,
                     digestAlgorithm, new PdfReader(srcFileName), preparedDoc, createSignerProperties());
 
@@ -215,7 +203,8 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     public void twoStepSigningBaselineLTTest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
         setUp(signAlgorithm);
-        String fileName = "twoStepSigningBaselineLTTest" + comparisonPdfId + (FIPS_MODE && "RSASSA".equals(signAlgorithm) ? "_FIPS.pdf" : ".pdf");
+        String fileName = "twoStepSigningBaselineLTTest" + comparisonPdfId +
+                (FIPS_MODE && ("RSASSA".equals(signAlgorithm) || "ED448".equals(signAlgorithm)) ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
@@ -248,12 +237,6 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
         }
 
         try (ByteArrayOutputStream preparedDoc = new ByteArrayOutputStream()) {
-            if (DigestAlgorithms.SHAKE256.equals(digestAlgorithm) && FIPS_MODE) {
-                Assertions.assertThrows(NoSuchAlgorithmException.class, () ->
-                        twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain, digestAlgorithm,
-                                new PdfReader(srcFileName), preparedDoc, createSignerProperties()));
-                return;
-            }
             CMSContainer container = twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain,
                     digestAlgorithm, new PdfReader(srcFileName), preparedDoc, createSignerProperties());
 
@@ -277,7 +260,8 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
     public void twoStepSigningBaselineLTATest(Boolean useTempFolder, String digestAlgorithm, String signAlgorithm,
             Integer comparisonPdfId) throws Exception {
         setUp(signAlgorithm);
-        String fileName = "twoStepSigningBaselineLTATest" + comparisonPdfId + (FIPS_MODE && "RSASSA".equals(signAlgorithm) ? "_FIPS.pdf" : ".pdf");
+        String fileName = "twoStepSigningBaselineLTATest" + comparisonPdfId +
+                (FIPS_MODE && ("RSASSA".equals(signAlgorithm) || "ED448".equals(signAlgorithm)) ? "_FIPS.pdf" : ".pdf");
         String outFileName = destinationFolder + fileName;
         String cmpFileName = sourceFolder + "cmp_" + fileName;
         String srcFileName = sourceFolder + "helloWorldDoc.pdf";
@@ -310,12 +294,6 @@ public class PadesTwoPhaseSigningLevelsTest extends ExtendedITextTest {
         }
         
         try (ByteArrayOutputStream preparedDoc = new ByteArrayOutputStream()) {
-            if (DigestAlgorithms.SHAKE256.equals(digestAlgorithm) && FIPS_MODE) {
-                Assertions.assertThrows(NoSuchAlgorithmException.class, () ->
-                        twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain, digestAlgorithm,
-                                new PdfReader(srcFileName), preparedDoc, createSignerProperties()));
-                return;
-            }
             CMSContainer container = twoPhaseSigningHelper.createCMSContainerWithoutSignature(certChain,
                     digestAlgorithm, new PdfReader(srcFileName), preparedDoc, createSignerProperties());
 

@@ -28,12 +28,12 @@ import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
 
 import java.security.Security;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class DigestAlgorithmsTest extends ExtendedITextTest {
@@ -79,14 +79,5 @@ public class DigestAlgorithmsTest extends ExtendedITextTest {
         String name = "SM3";
         String oid = "1.2.156.10197.1.401";
         Assertions.assertEquals(FIPS_MODE ? oid : name, DigestAlgorithms.getDigest(oid));
-    }
-
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, ignore = true)})
-    @Test
-    public void notAllowedNameGetAllowedDigestTest() {
-        String name = "SM3";
-        String oid = "1.2.156.10197.1.401";
-        Assertions.assertEquals(FIPS_MODE ? null : oid, DigestAlgorithms.getAllowedDigest(name));
     }
 }

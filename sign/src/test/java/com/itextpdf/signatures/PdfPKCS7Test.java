@@ -57,8 +57,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("BouncyCastleUnitTest")
 public class PdfPKCS7Test extends PdfPKCS7BasicTest {
@@ -346,17 +346,6 @@ public class PdfPKCS7Test extends PdfPKCS7BasicTest {
         byte[] cmpBytes = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "cmpBytesPkcs7WithRevInfo.txt"));
         Assertions.assertEquals("SHA256withRSA", pkcs7.getSignatureMechanismName());
         Assertions.assertEquals(serializedAsString(bytes), serializedAsString(cmpBytes));
-    }
-
-    @Test
-    public void verifyEd448SignatureTest() throws IOException, GeneralSecurityException {
-        // SHAKE256 is not available in BCFIPS
-        if ("BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName())) {
-            Assertions.assertThrows(PdfException.class,
-                    () -> verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf"));
-        } else {
-            verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf");
-        }
     }
 
     @Test

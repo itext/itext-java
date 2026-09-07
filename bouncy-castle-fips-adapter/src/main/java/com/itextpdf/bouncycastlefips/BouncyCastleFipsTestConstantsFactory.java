@@ -32,6 +32,6 @@ class BouncyCastleFipsTestConstantsFactory implements IBouncyCastleTestConstants
 
     @Override
     public String getCertificateInfoTestConst() {
-        return "DEF length 8 object truncated by 4";
+        return "corrupted stream - out of bounds length found: 8 >= 6";
     }
 }

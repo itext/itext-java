@@ -22,13 +22,10 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.exceptions.PdfException;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 // The behavior is different on .NET
 @Tag("BouncyCastleUnitTest")
@@ -37,13 +34,7 @@ public class PdfPKCS7ManuallyPortedTest extends PdfPKCS7BasicTest {
     @Test
     public void verifyEd25519SignatureTest()
             throws IOException, GeneralSecurityException {
-        // ED25519 is not available in FIPS approved mode
-        if (BOUNCY_CASTLE_FACTORY.isInApprovedOnlyMode()) {
-            Assertions.assertThrows(PdfException.class,
-                    () -> verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf"));
-        } else {
-            verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf");
-        }
+        verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf");
     }
 
     @Test
@@ -66,4 +57,8 @@ public class PdfPKCS7ManuallyPortedTest extends PdfPKCS7BasicTest {
         verifyIsoExtensionExample("RSASSA-PSS", "sample-pss-sha3_256.pdf");
     }
 
+    @Test
+    public void verifyEd448SignatureTest() throws IOException, GeneralSecurityException {
+        verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf");
+    }
 }
