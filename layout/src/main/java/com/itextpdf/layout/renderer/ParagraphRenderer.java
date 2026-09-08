@@ -28,6 +28,7 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.VerticalParagraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -61,22 +62,35 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This class represents the {@link IRenderer renderer} object for a {@link Paragraph}
+ * This class represents the {@link IRenderer renderer} object for a {@link Paragraph} or a {@link VerticalParagraph}
  * object. It will draw the glyphs of the textual content on the {@link DrawContext}.
  */
 public class ParagraphRenderer extends BlockRenderer {
 
     private static final LazyLogger LOGGER = new LazyLogger(ParagraphRenderer.class);
+    private final Map<Integer, String> unsupportedProperties;
 
     protected List<LineRenderer> lines = null;
 
     /**
      * Creates a ParagraphRenderer from its corresponding layout object.
      *
-     * @param modelElement the {@link com.itextpdf.layout.element.Paragraph} which this object should manage
+     * @param modelElement the {@link Paragraph} which this object should manage
      */
     public ParagraphRenderer(Paragraph modelElement) {
         super(modelElement);
+        this.unsupportedProperties = modelElement.getUnsupportedProperties();
+    }
+
+
+    /**
+     * Creates a ParagraphRenderer from its corresponding layout object.
+     *
+     * @param modelElement the {@link VerticalParagraph} which this object should manage
+     */
+    public ParagraphRenderer(VerticalParagraph modelElement) {
+        super(modelElement);
+        this.unsupportedProperties = modelElement.getUnsupportedProperties();
     }
 
     /**
@@ -618,6 +632,9 @@ public class ParagraphRenderer extends BlockRenderer {
     @Override
     public IRenderer getNextRenderer() {
         logWarningIfGetNextRendererNotOverridden(ParagraphRenderer.class, this.getClass());
+        if (modelElement instanceof VerticalParagraph) {
+            return new ParagraphRenderer((VerticalParagraph) modelElement);
+        }
         return new ParagraphRenderer((Paragraph) modelElement);
     }
 
@@ -780,6 +797,19 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         return rotation != null ? RotationUtils.calculateRotationMinMaxWidth(minMaxWidth, this) : minMaxWidth;
+    }
+
+    @Override
+    public <T1> T1 getProperty(int key) {
+        T1 value = super.<T1>getProperty(key);
+        if (value != null && unsupportedProperties.containsKey(key)) {
+            if (getModelElement() != null && !value.equals(getModelElement().<T1>getDefaultProperty(key))) {
+                LOGGER.warn(() -> MessageFormatUtil.format(LayoutLogMessageConstant.UNSUPPORTED_PROPERTY,
+                        getModelElement().getClass().getSimpleName(), unsupportedProperties.get(key)));
+            }
+            return (T1)(Object) null;
+        }
+        return value;
     }
 
     protected ParagraphRenderer[] split() {

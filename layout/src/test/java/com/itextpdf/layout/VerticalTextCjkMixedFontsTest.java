@@ -32,14 +32,14 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AbstractParagraph;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.element.VerticalParagraph;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
-import com.itextpdf.layout.properties.VerticalTextOrientation;
-import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.layout.testutil.VerticalTextTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -84,9 +84,9 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, chineseSpec, japaneseSpec, koreanSpec));
+            document.add(buildParagraph(new VerticalParagraph(), chineseSpec, japaneseSpec, koreanSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, chineseSpec, japaneseSpec, koreanSpec));
+            document.add(buildParagraph(new Paragraph(), chineseSpec, japaneseSpec, koreanSpec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -108,9 +108,9 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, chineseSpec, latinSpec));
+            document.add(buildParagraph(new VerticalParagraph(), chineseSpec, latinSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, chineseSpec, latinSpec));
+            document.add(buildParagraph(new Paragraph(), chineseSpec, latinSpec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -131,9 +131,9 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, mongolianSpec, chineseSpec));
+            document.add(buildParagraph(new VerticalParagraph(), mongolianSpec, chineseSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, mongolianSpec, chineseSpec));
+            document.add(buildParagraph(new Paragraph(), mongolianSpec, chineseSpec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -155,9 +155,9 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, chineseSpec, japaneseSpec, koreanSpec, mongolianSpec));
+            document.add(buildParagraph(new VerticalParagraph(), chineseSpec, japaneseSpec, koreanSpec, mongolianSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, chineseSpec, japaneseSpec, koreanSpec, mongolianSpec));
+            document.add(buildParagraph(new Paragraph(), chineseSpec, japaneseSpec, koreanSpec, mongolianSpec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -182,9 +182,9 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, smallSpec, mediumSpec, largeSpec));
+            document.add(buildParagraph(new VerticalParagraph(), smallSpec, mediumSpec, largeSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, smallSpec, mediumSpec, largeSpec));
+            document.add(buildParagraph(new Paragraph(), smallSpec, mediumSpec, largeSpec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -206,9 +206,9 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, simplifiedSpec, traditionalSpec));
+            document.add(buildParagraph(new VerticalParagraph(), simplifiedSpec, traditionalSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, simplifiedSpec, traditionalSpec));
+            document.add(buildParagraph(new Paragraph(), simplifiedSpec, traditionalSpec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -222,22 +222,8 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
                 PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
     }
 
-    private static Paragraph verticalParagraph() {
-        Paragraph paragraph = new Paragraph();
-        paragraph.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
-        paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+    private static <T extends AbstractParagraph<T>> T buildParagraph(T paragraph, CjkTextSpec... specs) {
         paragraph.setBorder(new SolidBorder(1));
-        return paragraph;
-    }
-
-    private static Paragraph horizontalParagraph() {
-        Paragraph paragraph = new Paragraph();
-        paragraph.setBorder(new SolidBorder(1));
-        return paragraph;
-    }
-
-    private static Paragraph buildParagraph(boolean vertical, CjkTextSpec... specs) {
-        Paragraph paragraph = vertical ? verticalParagraph() : horizontalParagraph();
         for (CjkTextSpec spec : specs) {
             Text text = new Text(spec.content);
             text.setFont(spec.font);

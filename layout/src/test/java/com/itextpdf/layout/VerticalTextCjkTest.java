@@ -32,15 +32,15 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.AbstractParagraph;
 import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.element.VerticalParagraph;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.Underline;
-import com.itextpdf.layout.properties.VerticalTextOrientation;
-import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.layout.testutil.VerticalTextTestUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -80,9 +80,9 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, spec));
+            document.add(buildParagraph(new VerticalParagraph(), spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, spec));
+            document.add(buildParagraph(new Paragraph(), spec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -102,9 +102,9 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, spec));
+            document.add(buildParagraph(new VerticalParagraph(), spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, spec));
+            document.add(buildParagraph(new Paragraph(), spec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -124,9 +124,9 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, spec));
+            document.add(buildParagraph(new VerticalParagraph(), spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, spec));
+            document.add(buildParagraph(new Paragraph(), spec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -144,9 +144,9 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, spec));
+            document.add(buildParagraph(new VerticalParagraph(), spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, spec));
+            document.add(buildParagraph(new Paragraph(), spec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -164,9 +164,9 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, spec));
+            document.add(buildParagraph(new VerticalParagraph(), spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, spec));
+            document.add(buildParagraph(new Paragraph(), spec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -185,9 +185,9 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, spec));
+            document.add(buildParagraph(new VerticalParagraph(), spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, spec));
+            document.add(buildParagraph(new Paragraph(), spec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -212,11 +212,11 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, sansSpec));
-            document.add(buildParagraph(true, serifSpec));
+            document.add(buildParagraph(new VerticalParagraph(), sansSpec));
+            document.add(buildParagraph(new VerticalParagraph(), serifSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, sansSpec));
-            document.add(buildParagraph(false, serifSpec));
+            document.add(buildParagraph(new Paragraph(), sansSpec));
+            document.add(buildParagraph(new Paragraph(), serifSpec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -234,12 +234,12 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            Paragraph verticalParagraph = buildParagraph(true, spec);
+            VerticalParagraph verticalParagraph = buildParagraph(new VerticalParagraph(), spec);
             verticalParagraph.setHeight(150);
             document.add(verticalParagraph);
 
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            Paragraph horizontalParagraph = buildParagraph(false, spec);
+            Paragraph horizontalParagraph = buildParagraph(new Paragraph(), spec);
             horizontalParagraph.setWidth(150);
             document.add(horizontalParagraph);
         }
@@ -263,9 +263,9 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, underlinedSpec, strikethroughSpec));
+            document.add(buildParagraph(new VerticalParagraph(), underlinedSpec, strikethroughSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, underlinedSpec, strikethroughSpec));
+            document.add(buildParagraph(new Paragraph(), underlinedSpec, strikethroughSpec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -290,9 +290,9 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, regularSpec, simulatedBoldItalicSpec, realBoldSpec));
+            document.add(buildParagraph(new VerticalParagraph(), regularSpec, simulatedBoldItalicSpec, realBoldSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, regularSpec, simulatedBoldItalicSpec, realBoldSpec));
+            document.add(buildParagraph(new Paragraph(), regularSpec, simulatedBoldItalicSpec, realBoldSpec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -315,11 +315,11 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, ideographicSpec));
-            document.add(buildParagraph(true, regularSpaceSpec));
+            document.add(buildParagraph(new VerticalParagraph(), ideographicSpec));
+            document.add(buildParagraph(new VerticalParagraph(), regularSpaceSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, ideographicSpec));
-            document.add(buildParagraph(false, regularSpaceSpec));
+            document.add(buildParagraph(new Paragraph(), ideographicSpec));
+            document.add(buildParagraph(new Paragraph(), regularSpaceSpec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -339,14 +339,13 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, defaultLeadingSpec));
-            Paragraph customLeadingVertical = buildParagraph(true, customLeadingSpec);
-            customLeadingVertical.setMultipliedLeading(2.5F);
+            document.add(buildParagraph(new VerticalParagraph(), defaultLeadingSpec));
+            VerticalParagraph customLeadingVertical = buildParagraph(new VerticalParagraph(), customLeadingSpec);
             document.add(customLeadingVertical);
 
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, defaultLeadingSpec));
-            Paragraph customLeadingHorizontal = buildParagraph(false, customLeadingSpec);
+            document.add(buildParagraph(new Paragraph(), defaultLeadingSpec));
+            Paragraph customLeadingHorizontal = buildParagraph(new Paragraph(), customLeadingSpec);
             customLeadingHorizontal.setMultipliedLeading(2.5F);
             document.add(customLeadingHorizontal);
         }
@@ -366,9 +365,9 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(true, spec));
+            document.add(buildParagraph(new VerticalParagraph(), spec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
-            document.add(buildParagraph(false, spec));
+            document.add(buildParagraph(new Paragraph(), spec));
         }
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
@@ -384,22 +383,8 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
                 PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
     }
 
-    private static Paragraph verticalParagraph() {
-        Paragraph paragraph = new Paragraph();
-        paragraph.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
-        paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+    private static <T extends AbstractParagraph<T>> T buildParagraph(T paragraph, CjkTextSpec... specs) {
         paragraph.setBorder(new SolidBorder(1));
-        return paragraph;
-    }
-
-    private static Paragraph horizontalParagraph() {
-        Paragraph paragraph = new Paragraph();
-        paragraph.setBorder(new SolidBorder(1));
-        return paragraph;
-    }
-
-    private static Paragraph buildParagraph(boolean vertical, CjkTextSpec... specs) {
-        Paragraph paragraph = vertical ? verticalParagraph() : horizontalParagraph();
         for (CjkTextSpec spec : specs) {
             Text text = new Text(spec.content);
             text.setFont(spec.font);

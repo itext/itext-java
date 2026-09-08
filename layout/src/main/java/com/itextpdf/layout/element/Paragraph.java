@@ -22,23 +22,18 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
-import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.LineHeight;
 import com.itextpdf.layout.properties.ParagraphOrphansControl;
 import com.itextpdf.layout.properties.ParagraphWidowsControl;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
-import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.margins.FootnoteAnchor;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * A layout element that represents a self-contained block of textual and
@@ -46,9 +41,7 @@ import java.util.TreeMap;
  * It is a {@link BlockElement} which essentially acts as a container for
  * {@link ILeafElement leaf elements}.
  */
-public class Paragraph extends BlockElement<Paragraph> {
-
-    protected DefaultAccessibilityProperties tagProperties;
+public class Paragraph extends AbstractParagraph<Paragraph> {
 
     /**
      * Creates a new {@link Paragraph} instance.
@@ -82,8 +75,9 @@ public class Paragraph extends BlockElement<Paragraph> {
      *
      * @return this {@link Paragraph}
      */
+    @Override
     public Paragraph add(String text) {
-        return add(new Text(text));
+        return super.add(new Text(text));
     }
 
     /**
@@ -91,11 +85,11 @@ public class Paragraph extends BlockElement<Paragraph> {
      *
      * @param element the content to be added, any {@link ILeafElement}
      *
-     * @return this {@link Paragraph}
+     * @return (T)this {@link Paragraph}
      */
+    @Override
     public Paragraph add(ILeafElement element) {
-        childElements.add(element);
-        return this;
+        return super.add(element);
     }
 
     /**
@@ -103,7 +97,7 @@ public class Paragraph extends BlockElement<Paragraph> {
      *
      * @param element the content to be added, any {@link IBlockElement}
      *
-     * @return this {@link Paragraph}
+     * @return (T)this {@link Paragraph}
      */
     public Paragraph add(IBlockElement element) {
         childElements.add(element);
@@ -183,23 +177,6 @@ public class Paragraph extends BlockElement<Paragraph> {
         return this;
     }
 
-    @Override
-    public <T1> T1 getDefaultProperty(int property) {
-        switch (property) {
-            case Property.LEADING:
-                return (T1) (Object) new Leading(Leading.MULTIPLIED, childElements.size() == 1 && childElements.get(0) instanceof Image ? 1 : 1.35f);
-            case Property.FIRST_LINE_INDENT:
-                return (T1) (Object) 0f;
-            case Property.MARGIN_TOP:
-            case Property.MARGIN_BOTTOM:
-                return (T1) (Object) UnitValue.createPointValue(4f);
-            case Property.TAB_DEFAULT:
-                return (T1) (Object) 50f;
-            default:
-                return super.<T1>getDefaultProperty(property);
-        }
-    }
-
     /**
      * Sets the indent value for the first line of the {@link Paragraph}.
      *
@@ -208,9 +185,9 @@ public class Paragraph extends BlockElement<Paragraph> {
      *
      * @return this Paragraph
      */
+    @Override
     public Paragraph setFirstLineIndent(float indent) {
-        setProperty(Property.FIRST_LINE_INDENT, indent);
-        return this;
+        return super.setFirstLineIndent(indent);
     }
 
     /**
@@ -220,9 +197,9 @@ public class Paragraph extends BlockElement<Paragraph> {
      *
      * @return this {@link Paragraph} instance
      */
+    @Override
     public Paragraph setOrphansControl(ParagraphOrphansControl orphansControl) {
-        setProperty(Property.ORPHANS_CONTROL, orphansControl);
-        return this;
+        return super.setOrphansControl(orphansControl);
     }
 
     /**
@@ -232,9 +209,9 @@ public class Paragraph extends BlockElement<Paragraph> {
      *
      * @return this {@link Paragraph} instance
      */
+    @Override
     public Paragraph setWidowsControl(ParagraphWidowsControl widowsControl) {
-        setProperty(Property.WIDOWS_CONTROL, widowsControl);
-        return this;
+        return super.setWidowsControl(widowsControl);
     }
 
     /**
@@ -278,19 +255,7 @@ public class Paragraph extends BlockElement<Paragraph> {
         } else {
             setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, leading));
         }
-
         return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public AccessibilityProperties getAccessibilityProperties() {
-        if (tagProperties == null) {
-            tagProperties = new DefaultAccessibilityProperties(StandardRoles.P);
-        }
-        return tagProperties;
     }
 
     /**
@@ -299,16 +264,5 @@ public class Paragraph extends BlockElement<Paragraph> {
     @Override
     protected IRenderer makeNewRenderer() {
         return new ParagraphRenderer(this);
-    }
-
-    private void addTabStopsAsProperty(java.util.List<TabStop> newTabStops) {
-        Map<Float, TabStop> tabStops = this.<Map<Float, TabStop>>getProperty(Property.TAB_STOPS);
-        if (tabStops == null) {
-            tabStops = new TreeMap<>();
-            setProperty(Property.TAB_STOPS, tabStops);
-        }
-        for (TabStop tabStop : newTabStops) {
-            tabStops.put(tabStop.getTabPosition(), tabStop);
-        }
     }
 }

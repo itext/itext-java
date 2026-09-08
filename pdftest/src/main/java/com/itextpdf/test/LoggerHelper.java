@@ -83,7 +83,7 @@ public class LoggerHelper {
                         .append(prevMessage.getLevel()).append(" : ")
                         .append(prevMessage.getFormattedMessage())
                         .append("\n");
-                count=0;
+                count=1;
             }
             prevMessage = event;
         }
