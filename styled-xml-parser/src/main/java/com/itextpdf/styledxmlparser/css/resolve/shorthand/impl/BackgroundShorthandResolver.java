@@ -32,6 +32,7 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.ShorthandResolverFactory;
 import com.itextpdf.styledxmlparser.css.util.CssBackgroundUtils;
 import com.itextpdf.styledxmlparser.css.util.CssBackgroundUtils.BackgroundPropertyType;
+import com.itextpdf.styledxmlparser.css.util.CssGradientUtil;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
@@ -213,7 +214,7 @@ public class BackgroundShorthandResolver implements IShorthandResolver {
         for (final String value : props) {
             final int slashCharInd = value.indexOf('/');
             if (slashCharInd > 0 && slashCharInd < value.length() - 1 && !slashEncountered && !value.contains("url(")
-                    && !value.contains("device-cmyk(")) {
+                    && !value.contains("device-cmyk(") && !CssGradientUtil.isCssGradientValue(value)) {
                 slashEncountered = true;
                 propertyProcessedCorrectly = processValueWithSlash(value, slashCharInd, resolvedProps, usedTypes);
             } else {

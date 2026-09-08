@@ -177,5 +177,6 @@ public class CssBackgroundValidatorTest extends ExtendedITextTest {
         Assertions.assertTrue(validator.isValid("url(img.png),url(img2.png),url(img3.jpg)"));
         Assertions.assertTrue(validator.isValid("url(img.png),none,url(img3.jpg)"));
         Assertions.assertTrue(validator.isValid("linear-gradient(red, red, red),url(img2.png),url(img3.jpg)"));
+        Assertions.assertTrue(validator.isValid("radial-gradient(circle, red, red, red),url(img2.png),url(img3.jpg)"));
     }
 }

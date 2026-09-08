@@ -49,6 +49,7 @@ public class StrategyBasedRadialGradientBuilder extends AbstractRadialGradientBu
     private boolean xRadiusRelative = false;
     private double yRadius = 0d;
     private boolean yRadiusRelative = false;
+    private boolean radiusRelativeToScaledDiagonal = false;
     // from center based radius definition
     private GradientStrategy gradientStrategy = GradientStrategy.FARTHEST_CORNER;
     private boolean isCircular = false;
@@ -71,8 +72,8 @@ public class StrategyBasedRadialGradientBuilder extends AbstractRadialGradientBu
      * @param xOffset         the offset value to add/subtract for X
      * @param xOffsetRelative if {@code true} then X offset treated as relative to bbox width,
      *                        if {@code false} then X offset treated as absolute
-     * @param bottomToTop     if {@code true} then Y offset would be subtracted from the top side Y value,
-     *                        if {@code false} then Y offset would be added to the bottom side Y value
+     * @param bottomToTop     if {@code true} then Y offset would be added to the bottom side Y value,
+     *                        if {@code false} then Y offset would be subtracted from the top side Y value
      * @param yOffset         the offset value to add/subtract for Y
      * @param yOffsetRelative if {@code true} then Y offset treated as relative to bbox height,
      *                        if {@code false} then Y offset treated as absolute
@@ -110,6 +111,25 @@ public class StrategyBasedRadialGradientBuilder extends AbstractRadialGradientBu
         this.xRadiusRelative = xRadiusRelative;
         this.yRadius = yRadius;
         this.yRadiusRelative = yRadiusRelative;
+        this.radiusRelativeToScaledDiagonal = false;
+
+        this.isFromCenterStrategy = false;
+        return this;
+    }
+
+    /**
+     * Sets a circular radius as a percentage of the gradient box's scaled diagonal.
+     *
+     * @param radius the radius as a fraction of the scaled diagonal
+     *
+     * @return the current builder instance
+     */
+    public StrategyBasedRadialGradientBuilder setRadiusRelativeToScaledDiagonal(double radius) {
+        this.xRadius = radius;
+        this.xRadiusRelative = true;
+        this.yRadius = radius;
+        this.yRadiusRelative = true;
+        this.radiusRelativeToScaledDiagonal = true;
 
         this.isFromCenterStrategy = false;
         return this;
@@ -127,9 +147,127 @@ public class StrategyBasedRadialGradientBuilder extends AbstractRadialGradientBu
             GradientStrategy gradientStrategy) {
         this.isCircular = isCircular;
         this.gradientStrategy = gradientStrategy != null ? gradientStrategy : GradientStrategy.FARTHEST_CORNER;
+        this.radiusRelativeToScaledDiagonal = false;
 
         this.isFromCenterStrategy = true;
         return this;
+    }
+
+    /**
+     * Checks if the from-center radius strategy is used.
+     *
+     * @return {@code true} if from-center radius strategy is used, {@code false} otherwise
+     */
+    public boolean isFromCenterStrategy() {
+        return isFromCenterStrategy;
+    }
+
+    /**
+     * Checks if the gradient strategy is circular.
+     *
+     * @return {@code true} if circular, {@code false} if elliptical
+     */
+    public boolean isCircular() {
+        return isCircular;
+    }
+
+    /**
+     * Gets the gradient strategy.
+     *
+     * @return the {@link GradientStrategy}
+     */
+    public GradientStrategy getGradientStrategy() {
+        return gradientStrategy;
+    }
+
+    /**
+     * Checks if the horizontal offset is measured from left to right.
+     *
+     * @return {@code true} if offset from left, {@code false} if from right
+     */
+    public boolean isLeftToRight() {
+        return leftToRight;
+    }
+
+    /**
+     * Gets the X offset.
+     *
+     * @return the X offset value
+     */
+    public double getXOffset() {
+        return xOffset;
+    }
+
+    /**
+     * Checks if the X offset is relative.
+     *
+     * @return {@code true} if X offset is relative, {@code false} if absolute
+     */
+    public boolean isXOffsetRelative() {
+        return xOffsetRelative;
+    }
+
+    /**
+     * Checks if the vertical offset is measured from bottom to top.
+     *
+     * @return {@code true} if offset from bottom, {@code false} if from top
+     */
+    public boolean isBottomToTop() {
+        return bottomToTop;
+    }
+
+    /**
+     * Gets the Y offset.
+     *
+     * @return the Y offset value
+     */
+    public double getYOffset() {
+        return yOffset;
+    }
+
+    /**
+     * Checks if the Y offset is relative.
+     *
+     * @return {@code true} if Y offset is relative, {@code false} if absolute
+     */
+    public boolean isYOffsetRelative() {
+        return yOffsetRelative;
+    }
+
+    /**
+     * Gets the X radius for manual radius definition.
+     *
+     * @return the X radius value
+     */
+    public double getXRadius() {
+        return xRadius;
+    }
+
+    /**
+     * Checks if the X radius is relative.
+     *
+     * @return {@code true} if X radius is relative, {@code false} if absolute
+     */
+    public boolean isXRadiusRelative() {
+        return xRadiusRelative;
+    }
+
+    /**
+     * Gets the Y radius for manual radius definition.
+     *
+     * @return the Y radius value
+     */
+    public double getYRadius() {
+        return yRadius;
+    }
+
+    /**
+     * Checks if the Y radius is relative.
+     *
+     * @return {@code true} if Y radius is relative, {@code false} if absolute
+     */
+    public boolean isYRadiusRelative() {
+        return yRadiusRelative;
     }
 
     /**
@@ -273,6 +411,12 @@ public class StrategyBasedRadialGradientBuilder extends AbstractRadialGradientBu
     }
 
     private double[] getRadiusForManualStrategy(Rectangle targetBoundingBox) {
+        if (radiusRelativeToScaledDiagonal) {
+            double scaledDiagonal = Math.sqrt(Math.pow(targetBoundingBox.getWidth(), 2)
+                    + Math.pow(targetBoundingBox.getHeight(), 2)) / Math.sqrt(2);
+            double radius = scaledDiagonal * xRadius;
+            return new double[] {radius, radius};
+        }
         double rX = evaluateValueOnSegment(0, targetBoundingBox.getWidth(), true, xRadius, xRadiusRelative);
         double rY = evaluateValueOnSegment(0, targetBoundingBox.getHeight(), true, yRadius, yRadiusRelative);
 

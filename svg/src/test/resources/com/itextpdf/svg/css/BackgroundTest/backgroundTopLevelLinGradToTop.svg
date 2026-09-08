@@ -1,0 +1,3 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" style="background: linear-gradient(to top, blue, red);">
+  <circle cx="100" cy="100" r="50" fill="lightblue"/>
+</svg>

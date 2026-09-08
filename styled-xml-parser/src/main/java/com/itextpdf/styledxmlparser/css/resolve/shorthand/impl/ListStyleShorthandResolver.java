@@ -90,7 +90,7 @@ public class ListStyleShorthandResolver implements IShorthandResolver {
         String listStyleImageValue = null;
 
         for (String value : props) {
-            if (value.contains("url(") || CssGradientUtil.isCssLinearGradientValue(value) ||
+            if (value.contains("url(") || CssGradientUtil.isCssGradientValue(value) ||
                     (CommonCssConstants.NONE.equals(value) && listStyleTypeValue != null)) {
                 listStyleImageValue = value;
             } else if (LIST_STYLE_TYPE_VALUES.contains(value)) {

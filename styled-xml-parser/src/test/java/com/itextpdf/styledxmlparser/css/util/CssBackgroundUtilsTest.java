@@ -72,6 +72,8 @@ public class CssBackgroundUtilsTest extends ExtendedITextTest {
         Assertions.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_IMAGE,
                 CssBackgroundUtils.resolveBackgroundPropertyType("linear-gradient(#e66465, #9198e5)"));
         Assertions.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_IMAGE,
+                CssBackgroundUtils.resolveBackgroundPropertyType("radial-gradient(circle, #e66465, #9198e5)"));
+        Assertions.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_IMAGE,
                 CssBackgroundUtils.resolveBackgroundPropertyType("none"));
         Assertions.assertEquals(CssBackgroundUtils.BackgroundPropertyType.BACKGROUND_REPEAT,
                 CssBackgroundUtils.resolveBackgroundPropertyType("repeat-x"));

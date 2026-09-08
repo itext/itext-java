@@ -552,6 +552,36 @@ public class CssShorthandResolverTest extends ExtendedITextTest {
     }
 
     @Test
+    public void radialGradientInlistStyleImageTest() {
+        String shorthandExpression = "inside radial-gradient(red, green, blue)";
+        Set<String> expectedResolvedProperties = new HashSet<>(Arrays.asList(
+                "list-style-type: initial",
+                "list-style-position: inside",
+                "list-style-image: radial-gradient(red,green,blue)"
+        ));
+
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.LIST_STYLE);
+        Assertions.assertNotNull(resolver);
+        List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
+        compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
+    }
+
+    @Test
+    public void repeatingRadialGradientInlistStyleImageTest() {
+        String shorthandExpression = "square inside repeating-radial-gradient(circle, blue 7%, red 10%)";
+        Set<String> expectedResolvedProperties = new HashSet<>(Arrays.asList(
+                "list-style-type: square",
+                "list-style-position: inside",
+                "list-style-image: repeating-radial-gradient(circle,blue 7%,red 10%)"
+        ));
+
+        IShorthandResolver resolver = ShorthandResolverFactory.getShorthandResolver(com.itextpdf.styledxmlparser.css.CommonCssConstants.LIST_STYLE);
+        Assertions.assertNotNull(resolver);
+        List<CssDeclaration> resolvedShorthandProps = resolver.resolveShorthand(shorthandExpression);
+        compareResolvedProps(resolvedShorthandProps, expectedResolvedProperties);
+    }
+
+    @Test
     public void noneInlistStyleImageTest() {
         String shorthandExpression = "circle none inside";
         Set<String> expectedResolvedProperties = new HashSet<>(Arrays.asList(

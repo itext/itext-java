@@ -72,11 +72,18 @@ public class BackgroundTest extends SvgIntegrationTest {
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.WAS_NOT_ABLE_TO_DEFINE_BACKGROUND_CSS_SHORTHAND_PROPERTIES)
-    })
     public void backgroundTopLevelRadGradTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "backgroundTopLevelRadGrad", properties);
+    }
+
+    @Test
+    public void backgroundTopLevelLinGradToTopTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "backgroundTopLevelLinGradToTop", properties);
+    }
+
+    @Test
+    public void backgroundTopLevelRadGradAtTopTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "backgroundTopLevelRadGradAtTop", properties);
     }
 
     @Test

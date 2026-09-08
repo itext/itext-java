@@ -989,6 +989,11 @@ public class CommonCssConstants {
     public static final String ARMENIAN = "armenian";
 
     /**
+     * The Constant AT.
+     */
+    public static final String AT = "at";
+
+    /**
      * The Constant AVOID.
      */
     public static final String AVOID = "avoid";
@@ -1045,6 +1050,16 @@ public class CommonCssConstants {
      * The Constant CIRCLE.
      */
     public static final String CIRCLE = "circle";
+
+    /**
+     * The Constant CLOSEST_CORNER.
+     */
+    public static final String CLOSEST_CORNER = "closest-corner";
+
+    /**
+     * The Constant CLOSEST_SIDE.
+     */
+    public static final String CLOSEST_SIDE = "closest-side";
 
     /**
      * The Constant CJK_IDEOGRAPHIC.
@@ -1140,9 +1155,24 @@ public class CommonCssConstants {
     public static final String EACH_LINE = "each-line";
 
     /**
+     * The Constant ELLIPSE.
+     */
+    public static final String ELLIPSE = "ellipse";
+
+    /**
      * The Constant END.
      */
     public static final String END = "end";
+
+    /**
+     * The Constant FARTHEST_CORNER.
+     */
+    public static final String FARTHEST_CORNER = "farthest-corner";
+
+    /**
+     * The Constant FARTHEST_SIDE.
+     */
+    public static final String FARTHEST_SIDE = "farthest-side";
 
     /**
      * The Constant FIRST.

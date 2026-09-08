@@ -261,6 +261,8 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
         Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "linear-gradient(red,green,blue)")));
         Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "radial-gradient(circle,red,green,blue)")));
+        Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "url()")));
         Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "none")));
@@ -270,6 +272,8 @@ public class CssDeclarationValidationMasterTest extends ExtendedITextTest {
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "none,url(img2.jpg)")));
         Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "linear-gradient(red,green,blue),url(img2.jpg)")));
+        Assertions.assertTrue(CssDeclarationValidationMaster.checkDeclaration(
+                new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "radial-gradient(circle,red,green,blue),url(img2.jpg)")));
 
         Assertions.assertFalse(CssDeclarationValidationMaster.checkDeclaration(
                 new CssDeclaration(CommonCssConstants.BACKGROUND_IMAGE, "ja")));

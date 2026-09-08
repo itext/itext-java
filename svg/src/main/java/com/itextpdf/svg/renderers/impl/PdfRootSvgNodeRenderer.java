@@ -22,6 +22,10 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
+import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.gradients.IGradientBuilder;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
@@ -31,18 +35,22 @@ import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssGradientUtil;
+import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
+import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.svg.exceptions.SvgExceptionMessageConstant;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 
-import java.util.List;
 import java.util.Map;
 
 /**
  * Root renderer responsible for applying the initial axis-flipping transform
  */
 public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfRootSvgNodeRenderer.class);
 
     ISvgNodeRenderer subTreeRoot;
 
@@ -70,9 +78,10 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
         //Set viewport and transformation for pdf-context
         context.addViewPort(calculateViewPort(context));
         PdfCanvas currentCanvas = context.getCurrentCanvas();
+        applyBackgroundColor(context);
+        applyBackgroundImage(context);
         currentCanvas.concatMatrix(this.calculateTransformation(context));
         currentCanvas.writeLiteral("% svg root\n");
-        applyBackgroundColor(context);
         subTreeRoot.draw(context);
     }
 
@@ -154,6 +163,43 @@ public class PdfRootSvgNodeRenderer implements ISvgNodeRenderer {
                     (double) backgroundArea.getY(),
                     (double) backgroundArea.getWidth(),
                     (double) backgroundArea.getHeight()).fill().restoreState();
+        }
+    }
+
+    // TODO DEVSIX-8832 this method needs to support more types of images
+    private void applyBackgroundImage(SvgDrawContext context) {
+        final String backgroundImageStr = subTreeRoot.getAttribute(CommonCssConstants.BACKGROUND_IMAGE);
+        if (!CssGradientUtil.isCssGradientValue(backgroundImageStr)) {
+            return;
+        }
+
+        final float emValue = subTreeRoot instanceof AbstractSvgNodeRenderer
+                ? ((AbstractSvgNodeRenderer) subTreeRoot).getCurrentFontSize(context)
+                : context.getCssContext().getRootFontSize();
+        final float remValue = context.getCssContext().getRootFontSize();
+        final IGradientBuilder gradientBuilder;
+        try {
+            gradientBuilder = CssGradientUtil.parseCssGradient(backgroundImageStr, emValue, remValue);
+        } catch (StyledXMLParserException e) {
+            LOGGER.warn(() -> MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, backgroundImageStr));
+            return;
+        }
+        if (gradientBuilder == null) {
+            return;
+        }
+
+        final Rectangle backgroundArea = context.getCurrentViewPort();
+        final PdfCanvas canvas = context.getCurrentCanvas();
+        final Color gradientColor = gradientBuilder.buildColor(backgroundArea,
+                context.getCurrentCanvasTransform(), canvas.getDocument());
+        if (gradientColor != null) {
+            canvas.saveState()
+                    .setFillColor(gradientColor)
+                    .rectangle((double) backgroundArea.getX(), (double) backgroundArea.getY(),
+                            (double) backgroundArea.getWidth(), (double) backgroundArea.getHeight())
+                    .fill()
+                    .restoreState();
         }
     }
 

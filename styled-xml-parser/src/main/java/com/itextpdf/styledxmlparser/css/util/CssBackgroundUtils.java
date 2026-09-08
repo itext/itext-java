@@ -101,7 +101,7 @@ public final class CssBackgroundUtils {
                 && value.indexOf(')') == value.length() - 1) {
             return BackgroundPropertyType.BACKGROUND_IMAGE;
         }
-        if (CssGradientUtil.isCssLinearGradientValue(value) || CommonCssConstants.NONE.equals(value)) {
+        if (CssGradientUtil.isCssGradientValue(value) || CommonCssConstants.NONE.equals(value)) {
             return BackgroundPropertyType.BACKGROUND_IMAGE;
         }
         if (CommonCssConstants.BACKGROUND_REPEAT_VALUES.contains(value)) {
