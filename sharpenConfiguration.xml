@@ -382,10 +382,6 @@
                 <file path="com/itextpdf/commons/bouncycastle/crypto/fips/AbstractFipsUnapprovedOperationError.java"/>
                 <file path="com/itextpdf/bouncycastlefips/crypto/fips/FipsUnapprovedOperationErrorBCFips.java"/>
             </fileset>
-            <!-- TODO DEVSIX-10172 Remove this when Bouncy Castle is updated on dotnet-->
-            <fileset reason="Exception message is different due to Bouncy Castle lower version on dotnet">
-                <file path="com/itextpdf/bouncycastle/BouncyCastleTestConstantsFactory.java"/>
-            </fileset>
             <!-- kernel -->
             <file path="com/itextpdf/kernel/pdf/CountOutputStream.java"/>
             <file path="com/itextpdf/kernel/crypto/securityhandler/EncryptionUtils.java"/>
@@ -690,50 +686,17 @@
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelBTest1.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelBTest2.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelBTest3.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTATest1.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTATest2.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTATest3.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTTest1.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTTest2.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelLTTest3.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelTTest1.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelTTest2.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_padesSignatureLevelTTest3.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest1.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest2.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest3.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest1_FIPS.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest2_FIPS.pdf"/>
             <file path="com/itextpdf/signatures/sign/PdfPadesSignerLevelsTest/cmp_prolongDocumentSignaturesTest3_FIPS.pdf"/>
-            
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTATest1.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTATest2.pdf"/>
+
             <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTATest2_FIPS.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTATest3.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTATest4.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTTest1.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTTest2.pdf"/>
             <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTTest2_FIPS.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTTest3.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineLTTest4.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineTTest1.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineTTest2.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineTTest3.pdf"/>
-            <file path="com/itextpdf/signatures/sign/PadesTwoPhaseSigningLevelsTest/cmp_twoStepSigningBaselineTTest4.pdf"/>
-            
-            <file path="com/itextpdf/signatures/sign/PdfPadesSignerTest/cmp_defaultSignerPropertiesTest.pdf"/>
 
-            <file path="com/itextpdf/signatures/sign/TimestampSigTest/cmp_timestampTest01.pdf"/>
-            <file path="com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/cmp_testTroughPdfSignerWithTsaClient.pdf"/>
             <file path="com/itextpdf/signatures/PKCS7ExternalSignatureContainerTest/cmp_testTroughPdfSignerWithTsaClient_FIPS.pdf"/>
-
-            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signMacProtectedDocInAppendModeTest_timestamping.pdf"/>
-            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signMacProtectedDocTest_timestamping.pdf"/>
-            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signMacProtectedDocWithSHA3_384Test_timestamping.pdf"/>
-            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signMacPublicEncryptionDocTest_timestamping.pdf"/>
-            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signNotMacProtectedDoc17Test_timestamping.pdf"/>
-            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signNotMacProtectedDocInAppendModeTest_timestamping.pdf"/>
-            <file path="com/itextpdf/signatures/mac/SignedDocumentWithMacTest/cmp_signNotMacProtectedDocTest_timestamping.pdf"/>
         </fileset>
         <fileset reason="Bug in java version, not in sharp version, therefor a separate reference file is needed see DEVSIX-6752">
             <file path="com/itextpdf/kernel/pdf/xobject/GetImageBytesTest/grayImages.png" />
