@@ -5,3 +5,5 @@ cmr10.pfb | OFL-1.1  | LICENSE_OFL-1.1.txt | Based on "https://www.ams.org/arc/r
 FreeSans.ttf | GPL license | GNU General Public License.txt | Based on "https://savannah.gnu.org/projects/freefont" (28.01.2026)
 FreeSans_changed_cmap.ttf | GPL license | Based on FreeSans font under license detailed in 'GNU General Public License.txt' file with the following modifications: the cmap table has been modified to not contain (3,1), (3,0), (1,0) 'cmap' subtables
 iTextFreeSansWithE001Glyph.ttf | GPL license | Based on FreeSans font under license detailed in 'GNU General Public License.txt' file with the following modifications: E001 glyph was added at 05.05.2025
+NotoNaskhArabic-Regular.ttf | OFL-1.1 |  LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Naskh+Arabic" (09.09.2026)
+NotoSans-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035fd5138d6653a2176ba728b5b6f8cc533 (30.10.2019) from repository: "https://github.com/googlefonts/noto-fonts"

@@ -98,7 +98,7 @@ public class PdfUAStringTest extends ExtendedITextTest {
         // present in the resulting file.
         // Even though the file is valid, there was clearly an attempt to create human-readable PdfString with
         // Unicode PUA, that's why we fail.
-        framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.TEXT_STRING_USES_UNICODE_PUA);
+        framework.assertITextFailVeraPdfValid(filename, PdfUAExceptionMessageConstants.TEXT_STRING_USES_UNICODE_PUA);
     }
 
     @ParameterizedTest
@@ -114,7 +114,7 @@ public class PdfUAStringTest extends ExtendedITextTest {
             page.addAnnotation(textAnnotation);
         });
         // VeraPdf doesn't fail because they mistakenly don't check all the PdfString entries in the document.
-        framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.TEXT_STRING_USES_UNICODE_PUA);
+        framework.assertITextFailVeraPdfValid(filename, PdfUAExceptionMessageConstants.TEXT_STRING_USES_UNICODE_PUA);
     }
 
     @ParameterizedTest
@@ -130,7 +130,7 @@ public class PdfUAStringTest extends ExtendedITextTest {
             page.addAnnotation(textAnnotation);
         });
         // VeraPdf doesn't fail because they mistakenly don't check all the PdfString entries in the document.
-        framework.assertOnlyITextFail(filename, PdfUAExceptionMessageConstants.TEXT_STRING_USES_UNICODE_PUA);
+        framework.assertITextFailVeraPdfValid(filename, PdfUAExceptionMessageConstants.TEXT_STRING_USES_UNICODE_PUA);
     }
 
     @ParameterizedTest

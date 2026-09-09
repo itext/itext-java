@@ -24,15 +24,20 @@ package com.itextpdf.pdfua;
 
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.font.PdfFontFactory.EmbeddingStrategy;
+import com.itextpdf.kernel.font.PdfType3Font;
+import com.itextpdf.kernel.font.Type3Glyph;
 import com.itextpdf.kernel.pdf.PdfConformance;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
@@ -55,8 +60,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class PdfUAFontsTest extends ExtendedITextTest {
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUAFontsTest/";
-    private static final String FONT = "./src/test/resources/com/itextpdf/pdfua/font/FreeSans.ttf";
-    private static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/pdfua/font/";
+    private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfua/font/";
+    private static final String FONT = FONTS_FOLDER + "FreeSans.ttf";
 
     @BeforeAll
     public static void beforeClass() {
@@ -220,7 +225,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             PdfFont font;
             try {
                 font = PdfFontFactory.createFont(
-                        FontProgramFactory.createType1Font(FONT_FOLDER + "cmr10.afm", FONT_FOLDER + "cmr10.pfb"),
+                        FontProgramFactory.createType1Font(FONTS_FOLDER + "cmr10.afm", FONTS_FOLDER + "cmr10.pfb"),
                         FontEncoding.FONT_SPECIFIC, EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
                 throw new PdfException(e);
@@ -237,7 +242,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     // TODO DEVSIX-9076 NPE when cmap of True Type Font doesn't contain Microsoft Unicode or Macintosh Roman encodings
     public void nonSymbolicTtfWithChangedCmapTest() {
         Assertions.assertThrows(NullPointerException.class,
-                () -> PdfFontFactory.createFont(FONT_FOLDER + "FreeSans_changed_cmap.ttf", PdfEncodings.MACROMAN,
+                () -> PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans_changed_cmap.ttf", PdfEncodings.MACROMAN,
                         EmbeddingStrategy.FORCE_EMBEDDED));
     }
 
@@ -290,7 +295,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
-                font = PdfFontFactory.createFont(FONT_FOLDER + "iTextSymbolicFont.ttf", PdfEncodings.MACROMAN,
+                font = PdfFontFactory.createFont(FONTS_FOLDER + "iTextSymbolicFont.ttf", PdfEncodings.MACROMAN,
                         EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
                 throw new PdfException(e);
@@ -311,7 +316,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             Document document = new Document(pdfDoc);
             PdfFont font;
             try {
-                font = PdfFontFactory.createFont(FONT_FOLDER + "iTextSymbolicFont.ttf", PdfEncodings.MACROMAN,
+                font = PdfFontFactory.createFont(FONTS_FOLDER + "iTextSymbolicFont.ttf", PdfEncodings.MACROMAN,
                         EmbeddingStrategy.FORCE_EMBEDDED);
             } catch (IOException e) {
                 throw new PdfException(e);
@@ -323,7 +328,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
             document.add(paragraph);
         });
         // VeraPDF is valid since iText fixes symbolic flag to non-symbolic on closing.
-        framework.assertOnlyITextFail("symbolicTtfWithEncoding",
+        framework.assertITextFailVeraPdfValid("symbolicTtfWithEncoding",
                 PdfUAExceptionMessageConstants.SYMBOLIC_TTF_SHALL_NOT_CONTAIN_ENCODING);
     }
 
@@ -347,10 +352,10 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         });
         // VeraPDF is valid since iText fixes symbolic flag to non-symbolic on closing.
         if (PdfConformance.PDF_UA_1.equals(conformance)) {
-            framework.assertOnlyITextFail("symbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
+            framework.assertITextFailVeraPdfValid("symbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
                     SYMBOLIC_TTF_SHALL_CONTAIN_EXACTLY_ONE_OR_AT_LEAST_MICROSOFT_SYMBOL_CMAP);
         } else {
-            framework.assertOnlyITextFail("symbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
+            framework.assertITextFailVeraPdfValid("symbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
                     SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_SYMBOL_CMAP);
         }
     }
@@ -375,10 +380,10 @@ public class PdfUAFontsTest extends ExtendedITextTest {
         });
         // VeraPDF is valid since the file itself is valid, but itext code is modified for testing.
         if (PdfConformance.PDF_UA_1.equals(conformance) ) {
-            framework.assertOnlyITextFail("nonSymbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
+            framework.assertITextFailVeraPdfValid("nonSymbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
                     NON_SYMBOLIC_TTF_SHALL_CONTAIN_NON_SYMBOLIC_CMAP);
         } else {
-            framework.assertOnlyITextFail("nonSymbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
+            framework.assertITextFailVeraPdfValid("nonSymbolicTtfWithInvalidCmapTest", PdfUAExceptionMessageConstants.
                     NON_SYMBOLIC_TTF_SHALL_CONTAIN_MAC_ROMAN_OR_MICROSOFT_UNI_CMAP);
         }
     }
@@ -387,9 +392,186 @@ public class PdfUAFontsTest extends ExtendedITextTest {
     // TODO DEVSIX-9076 NPE when cmap of True Type Font doesn't contain Microsoft Unicode or Macintosh Roman encodings
     public void symbolicTtfWithChangedCmapTest() {
         Assertions.assertThrows(NullPointerException.class,
-                () -> PdfFontFactory.createFont(FONT_FOLDER + "iTextSymbolicFontChangedCmap.ttf",
+                () -> PdfFontFactory.createFont(FONTS_FOLDER + "iTextSymbolicFontChangedCmap.ttf",
                         EmbeddingStrategy.FORCE_EMBEDDED));
     }
+
+    @Test
+    public void notdefGlyphTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false, PdfConformance.PDF_UA_2);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoNaskhArabic-Regular.ttf");
+            } catch (IOException e) {
+                // ignore
+            }
+            GlyphLine glyphLine = new GlyphLine();
+            final FontProgram fontProgram = font.getFontProgram();
+            // zero glyph in the font is .notdef glyph without Unicode
+            glyphLine.add(fontProgram.getGlyphByCode(0));
+            glyphLine.setEnd(glyphLine.size());
+
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(pdfDoc.getFirstPage())
+                    .addTag(StandardRoles.H1);
+            canvas.
+                    saveState().
+                    openTag(tagPointer.getTagReference()).
+                    beginText().
+                    moveText(36, 786).
+                    setFontAndSize(font, 10).
+                    showText(glyphLine).
+                    endText().
+                    restoreState().
+                    closeTag();
+        });
+        framework.assertBothFail("notdefGlyph", MessageFormatUtil.format(
+                PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "�"));
+    }
+
+    @Test
+    public void zeroUnicodeGlyphTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false, PdfConformance.PDF_UA_2);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoNaskhArabic-Regular.ttf");
+            } catch (IOException e) {
+                // ignore
+            }
+            GlyphLine glyphLine = new GlyphLine();
+            final FontProgram fontProgram = font.getFontProgram();
+            // 1 index glyph in the font is .null glyph with Unicode U+0000
+            glyphLine.add(fontProgram.getGlyphByCode(1));
+            glyphLine.setEnd(glyphLine.size());
+
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(pdfDoc.getFirstPage())
+                    .addTag(StandardRoles.H1);
+            canvas.
+                    saveState().
+                    openTag(tagPointer.getTagReference()).
+                    beginText().
+                    moveText(36, 786).
+                    setFontAndSize(font, 10).
+                    showText(glyphLine).
+                    endText().
+                    restoreState().
+                    closeTag();
+        });
+        // TODO DEVSIX-10160 missing check on iText side for ToUnicode mapping to 0, fffe and feff
+        framework.assertVeraPdfFailITextValid("zeroUnicodeGlyph");
+    }
+
+    @Test
+    public void glyphsWithoutUnicodeTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false,
+                PdfConformance.PDF_UA_2);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoNaskhArabic-Regular.ttf");
+            } catch (IOException e) {
+                // ignore
+            }
+            GlyphLine glyphLine = new GlyphLine();
+            final FontProgram fontProgram = font.getFontProgram();
+            // 0 index glyph is .notdef without Unicode
+            // 1 index glyph is .null with Unicode U+0000
+            for (int i = 2; i < fontProgram.countOfGlyphs(); i++) {
+                glyphLine.add(fontProgram.getGlyphByCode(i));
+            }
+            glyphLine.setEnd(glyphLine.size());
+
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(pdfDoc.getFirstPage())
+                    .addTag(StandardRoles.H1);
+            canvas.
+                    saveState().
+                    openTag(tagPointer.getTagReference()).
+                    beginText().
+                    moveText(36, 786).
+                    setFontAndSize(font, 10).
+                    showText(glyphLine).
+                    endText().
+                    restoreState().
+                    closeTag();
+        });
+        framework.assertBothFail("glyphsWithoutUnicode", MessageFormatUtil.format(
+                PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "�"));
+    }
+
+    @Test
+    public void fontWithReplacementCharTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false,
+                PdfConformance.PDF_UA_2);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSans-Regular.ttf");
+            } catch (IOException e) {
+                // ignore
+            }
+            GlyphLine glyphLine = new GlyphLine();
+            final FontProgram fontProgram = font.getFontProgram();
+            // font contain replacement char U+FFFD
+            for (int i = 0; i < fontProgram.countOfGlyphs(); i++) {
+                glyphLine.add(fontProgram.getGlyphByCode(i));
+            }
+            glyphLine.setEnd(glyphLine.size());
+
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            TagTreePointer tagPointer = new TagTreePointer(pdfDoc)
+                    .setPageForTagging(pdfDoc.getFirstPage())
+                    .addTag(StandardRoles.H1);
+            canvas.
+                    saveState().
+                    openTag(tagPointer.getTagReference()).
+                    beginText().
+                    moveText(36, 786).
+                    setFontAndSize(font, 10).
+                    showText(glyphLine).
+                    endText().
+                    restoreState().
+                    closeTag();
+        });
+        // TODO DEVSIX-10160 missing check on iText side for ToUnicode mapping to 0, fffe and feff
+        // TODO DEVSIX-10160 glyphs without Unicode mapped to Replacement Char which exist in the font, it's why iText doesn't fail
+        framework.assertVeraPdfFailITextValid("fontWithReplacementChar");
+    }
+
+    @Test
+    public void notdefGlyphType3FontTest() throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, false,
+                PdfConformance.PDF_UA_2);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfType3Font font = PdfFontFactory.createType3Font(pdfDoc, "itextFont", "itextFont", false);
+            Type3Glyph a = font.addGlyph('A', 600, 0, 0, 600, 700);
+            a.setLineWidth(100);
+            a.moveTo(5, 5);
+            a.lineTo(300, 695);
+            a.lineTo(595, 5);
+            a.closePathFillStroke();
+
+            // Need to populate CharProcs, because it's done only on font flushing,
+            // but iText check that field before document closing
+            PdfDictionary charProcs = new PdfDictionary();
+            charProcs.put(new PdfName("A"), a.getContentStream());
+            font.getPdfObject().put(PdfName.CharProcs, charProcs);
+
+            Document doc = new Document(pdfDoc);
+            doc.setFont(font);
+            // In simple fonts (which is Type3) we just ignore not defined glyphs, see PdfSimpleFont.createGlyphLine
+            Paragraph p = new Paragraph("AB");
+            doc.add(p);
+        });
+        framework.assertBothValid("notdefGlyphType3Font");
+    }
+
 
     private static class CustomSymbolicTrueTypeFont extends TrueTypeFont {
         public CustomSymbolicTrueTypeFont(String path) throws IOException {

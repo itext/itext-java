@@ -7,3 +7,4 @@ NotoSans-Regular.ttf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 4cdde035f
 NotoSerifCJK-VF.ttf.ttc | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on commit 9b0f1436e455d902de067a2501422e5dc71ad16b (30.07.2024) from "https://github.com/googlefonts/noto-fonts"
 Puritan-Regular.otf | OFL-1.1 | LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Puritan" (26.01.2026)
 SourceSerif4-Black.woff | OFL-1.1 |  LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/specimen/Source+Serif+4" (26.01.2026)
+NotoNaskhArabic-Regular.ttf | OFL-1.1 |  LICENSE_OFL-1.1.txt | Based on "https://fonts.google.com/noto/specimen/Noto+Naskh+Arabic" (09.09.2026)

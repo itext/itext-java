@@ -106,7 +106,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         if (framework.isPdf2Based(conformance)) {
             framework.assertBothValid("xobjectTesting");
         } else {
-            framework.assertOnlyVeraPdfFail("xobjectTesting");
+            framework.assertVeraPdfFailITextValid("xobjectTesting");
         }
 
     }
@@ -140,7 +140,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         });
         //itext should thrown an exception here but it does not.
         // because even if it's not tagged the inner content stream is not compliant as the font is not embeded
-        framework.assertOnlyVeraPdfFail("copyPageAsFormXobjectWithUnTaggedPdf");
+        framework.assertVeraPdfFailITextValid("copyPageAsFormXobjectWithUnTaggedPdf");
     }
 
 
@@ -202,7 +202,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
             }
         });
 
-        framework.assertOnlyVeraPdfFail("manuallyAddToCanvasWithUnTaggedContentButBadFont");
+        framework.assertVeraPdfFailITextValid("manuallyAddToCanvasWithUnTaggedContentButBadFont");
     }
 
 
@@ -328,7 +328,7 @@ public class PdfUACanvasXObjectTest extends ExtendedITextTest {
         if (framework.isPdf2Based(conformance)) {
             framework.assertBothValid("manuallyCanvasCorrectFontAndArtifact");
         } else {
-            framework.assertOnlyVeraPdfFail("manuallyCanvasCorrectFontAndArtifact");
+            framework.assertVeraPdfFailITextValid("manuallyCanvasCorrectFontAndArtifact");
         }
     }
 

@@ -258,7 +258,7 @@ public class PdfUATest extends ExtendedITextTest {
 
         // TODO DEVSIX-10196 - iText should also fail here
         // Also create a test for some other not valid lang entry like "en-GB-123"
-        framework.assertOnlyVeraPdfFail("emptyLangInStructureElement");
+        framework.assertVeraPdfFailITextValid("emptyLangInStructureElement");
     }
 
     @ParameterizedTest
@@ -604,7 +604,7 @@ public class PdfUATest extends ExtendedITextTest {
         });
 
         if (conformance.getUAConformance() == PdfUAConformance.PDF_UA_1) {
-            framework.assertOnlyITextFail("documentWithDuplicatingIdInStructTree",
+            framework.assertITextFailVeraPdfValid("documentWithDuplicatingIdInStructTree",
                     MessageFormatUtil.format(PdfUAExceptionMessageConstants.NON_UNIQUE_ID_ENTRY_IN_STRUCT_TREE_ROOT,
                             "hello-element"));
         } else {

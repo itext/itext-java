@@ -720,7 +720,7 @@ public class PdfUACanvasTest extends ExtendedITextTest {
                     .showText("Hello but nested").endText().endMarkedContent().closeTag().restoreState().closeTag();
         });
 
-        framework.assertOnlyVeraPdfFail("validRoleAddedInsideMarkedContentMCR_IN_MCR");
+        framework.assertVeraPdfFailITextValid("validRoleAddedInsideMarkedContentMCR_IN_MCR");
     }
 
     @ParameterizedTest

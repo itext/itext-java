@@ -145,7 +145,7 @@ public class PdfUA2LinkAnnotationTest extends ExtendedITextTest {
             // VeraPDF doesn't allow actions with structure destination being placed in D entry. Instead, it requires
             // structure destination to be added into special SD entry. There is no such requirement in released
             // PDF 2.0 spec. Although it is already mentioned in errata version.
-            framework.assertOnlyVeraPdfFail("linkAnnotationWithReferenceTag_" + destLocation.getValue());
+            framework.assertVeraPdfFailITextValid("linkAnnotationWithReferenceTag_" + destLocation.getValue());
         } else {
             framework.assertBothValid("linkAnnotationWithReferenceTag_" + destLocation.getValue());
         }
