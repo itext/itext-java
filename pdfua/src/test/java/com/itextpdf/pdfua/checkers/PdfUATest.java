@@ -239,6 +239,30 @@ public class PdfUATest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("data")
+    public void emptyLangInStructureElementTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addBeforeGenerationHook(pdfDocument -> {
+            Document doc = new Document(pdfDocument);
+            PdfFont font;
+            try {
+                font = PdfFontFactory.createFont(FONT, PdfEncodings.WINANSI, EmbeddingStrategy.PREFER_EMBEDDED);
+            } catch (IOException e) {
+                throw new PdfException(e.getMessage());
+            }
+            doc.setFont(font);
+
+            Paragraph p = new Paragraph("Some paragraph in unknown language");
+            p.getAccessibilityProperties().setLanguage("");
+            doc.add(p);
+        });
+
+        // TODO DEVSIX-10196 - iText should also fail here
+        // Also create a test for some other not valid lang entry like "en-GB-123"
+        framework.assertOnlyVeraPdfFail("emptyLangInStructureElement");
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
     public void documentWithInvalidLangEntryTest(PdfConformance conformance) throws IOException {
         UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
         PdfDocument pdfDoc = framework.createPdfDocument(null,

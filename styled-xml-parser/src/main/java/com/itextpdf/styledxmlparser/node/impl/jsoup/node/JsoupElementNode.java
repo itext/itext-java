@@ -51,6 +51,7 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
     
     /** The language. */
     private String lang = null;
+    private boolean langRetrieved = false;
 
     /**
      * Creates a new {@link JsoupElementNode} instance.
@@ -128,16 +129,13 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
      */
     @Override
     public String getLang() {
-        if (lang != null) {
+        if (lang != null || langRetrieved) {
             return lang;
         } else {
             INode parent = parentNode;
             lang = parent instanceof IElementNode ? ((IElementNode) parent).getLang() : null;
-            if (lang == null) {
-                // Set to empty string to "cache", i.e. not to traverse parent chain each time the method is called for
-                // documents with no "lang" attribute
-                lang = "";
-            }
+            langRetrieved = true;
+
             return lang;
         }
     }
@@ -151,4 +149,3 @@ public class JsoupElementNode extends JsoupNode implements IElementNode {
         return element.text();
     }
 }
-
