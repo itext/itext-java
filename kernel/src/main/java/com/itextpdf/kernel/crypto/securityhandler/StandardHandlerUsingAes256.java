@@ -40,7 +40,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -356,8 +355,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
                 // c)
                 MessageDigest md = null;
-                BigInteger i = new BigInteger(1, Arrays.copyOf(e, 16));
-                int remainder = i.remainder(BigInteger.valueOf(3)).intValue();
+                int remainder = sumUnsignedBytes(e, 0, 16) % 3;
                 switch (remainder) {
                     case 0:
                         md = mdSha256;
@@ -403,5 +401,13 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
         byte[] truncated = new byte[48];
         System.arraycopy(byteArray, 0, truncated, 0, 48);
         return truncated;
+    }
+
+    private static int sumUnsignedBytes(byte[] array, int from, int to) {
+        int sum = 0;
+        for (int i = from; i < to; ++i) {
+            sum += (array[i] & 0xFF);
+        }
+        return sum;
     }
 }
