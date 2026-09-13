@@ -50,6 +50,8 @@ class FootnotesCounterHandler {
     private static final int DEFAULT_FONT_SIZE = 6;
     private static final int DEFAULT_TEXT_RISE = 7;
 
+    private boolean footnoteAnchorsWereLaidOut;
+
     private final Map<Footnote, FootnoteRenderer> footnotes = new LinkedHashMap<>();
 
     /**
@@ -57,6 +59,13 @@ class FootnotesCounterHandler {
      */
     public FootnotesCounterHandler() {
         // Empty constructor.
+    }
+
+    static void anchorLaidOut(IRenderer renderer) {
+        final FootnotesCounterHandler footnotesCounterHandler = getFootnotesCounterHandler(renderer);
+        if (footnotesCounterHandler != null) {
+            footnotesCounterHandler.footnoteAnchorsWereLaidOut = true;
+        }
     }
 
     /**
@@ -81,6 +90,7 @@ class FootnotesCounterHandler {
      * Resets current {@link FootnotesCounterHandler} before collecting placed footnotes.
      */
     void reset() {
+        footnoteAnchorsWereLaidOut = false;
         footnotes.clear();
     }
 
@@ -97,6 +107,9 @@ class FootnotesCounterHandler {
             List<FootnoteAnchorRenderer> footnotesAnchorsFound) {
         footnotesAnchorsFound.clear();
         footnotes.clear();
+        if (!footnoteAnchorsWereLaidOut) {
+            return footnotes;
+        }
 
         collectFromTree(renderer, footnotes, footnotesAnchorsFound);
         return footnotes;
