@@ -26,6 +26,8 @@ import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.RandomAccessSourceFactory;
@@ -352,6 +354,21 @@ public class PdfA1Checker extends PdfAChecker {
         if (index != -1) {
             throw new PdfAConformanceException(
                     PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void checkGlyphLine(GlyphLine glyphLine, PdfFont font) {
+        for (int i = glyphLine.getStart(); i < glyphLine.getEnd(); i++) {
+            Glyph glyph = glyphLine.get(i);
+            if (glyph.getCode() == 0 || font.getFontProgram().getGlyphByCode(glyph.getCode()) == null) {
+                // .notdef glyph or glyph isn't present in a font
+                throw new PdfAConformanceException(
+                        PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
+            }
         }
     }
 

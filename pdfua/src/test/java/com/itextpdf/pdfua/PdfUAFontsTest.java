@@ -540,8 +540,8 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     closeTag();
         });
         // TODO DEVSIX-10160 missing check on iText side for ToUnicode mapping to 0, fffe and feff
-        // TODO DEVSIX-10160 glyphs without Unicode mapped to Replacement Char which exist in the font, it's why iText doesn't fail
-        framework.assertVeraPdfFailITextValid("fontWithReplacementChar");
+        framework.assertBothFail("fontWithReplacementChar", MessageFormatUtil.format(
+                PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "�"));
     }
 
     @Test

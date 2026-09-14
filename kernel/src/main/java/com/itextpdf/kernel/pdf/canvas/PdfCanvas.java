@@ -753,7 +753,7 @@ public class PdfCanvas {
         }
 
         checkTextOnAddition(text);
-        document.checkIsoConformance(new FontValidationContext(text.toString(), currentGs.getFont()));
+        document.checkIsoConformance(new FontValidationContext(text, currentGs.getFont()));
 
         final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
         float charSpacing = currentGs.getCharSpacing();

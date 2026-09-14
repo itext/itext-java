@@ -24,6 +24,7 @@ package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.colors.IccProfile;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
@@ -273,7 +274,11 @@ public abstract class PdfAChecker implements IValidationChecker {
                 break;
             case FONT:
                 FontValidationContext fontContext = (FontValidationContext) context;
-                checkText(fontContext.getText(), fontContext.getFont());
+                if (fontContext.getGlyphLine() == null) {
+                    checkText(fontContext.getText(), fontContext.getFont());
+                } else {
+                    checkGlyphLine(fontContext.getGlyphLine(), fontContext.getFont());
+                }
                 break;
             case FILE_SPEC_DATA:
                 PdfFileSpecDataValidationContext fileSpecDataContext = (PdfFileSpecDataValidationContext) context;
@@ -530,6 +535,18 @@ public abstract class PdfAChecker implements IValidationChecker {
      * @param font font to verify the text against
      */
     public abstract void checkText(String text, PdfFont font);
+
+    /**
+     * Verify the conformity of the glyph line written by the specified font.
+     *
+     * @param glyphLine glyph line to verify
+     * @param font font to verify the glyph line against
+     */
+    protected void checkGlyphLine(GlyphLine glyphLine, PdfFont font) {
+        // Do nothing
+        // TODO DEVSIX-8808 iText Core related api breaks for the next major release
+        //  After major release the method must become abstract
+    }
 
     /**
      * Validates the operators and operands in the given content stream against the

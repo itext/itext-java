@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.validation.context;
 
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.validation.IValidationContext;
 import com.itextpdf.kernel.validation.ValidationType;
@@ -30,6 +31,7 @@ import com.itextpdf.kernel.validation.ValidationType;
  * Class for font validation context.
  */
 public class FontValidationContext implements IValidationContext {
+    private final GlyphLine glyphLine;
     private final String text;
     private final PdfFont font;
 
@@ -42,6 +44,19 @@ public class FontValidationContext implements IValidationContext {
     public FontValidationContext(String text, PdfFont font) {
         this.text = text;
         this.font = font;
+        this.glyphLine = null;
+    }
+
+    /**
+     * Instantiates a new {@link FontValidationContext} based on glyph line and font.
+     *
+     * @param glyphLine the glyph line
+     * @param font the font
+     */
+    public FontValidationContext(GlyphLine glyphLine, PdfFont font) {
+        this.glyphLine = glyphLine;
+        this.font = font;
+        this.text = null;
     }
 
     /**
@@ -51,6 +66,15 @@ public class FontValidationContext implements IValidationContext {
      */
     public String getText() {
         return text;
+    }
+
+    /**
+     * Gets the glyph line.
+     *
+     * @return the glyph line
+     */
+    public GlyphLine getGlyphLine() {
+        return glyphLine;
     }
 
     /**

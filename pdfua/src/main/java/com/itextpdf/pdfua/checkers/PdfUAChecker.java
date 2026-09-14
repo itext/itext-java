@@ -28,6 +28,8 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.constants.FontDescriptorFlags;
+import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
@@ -273,6 +275,24 @@ public abstract class PdfUAChecker implements IValidationChecker {
         if (index != -1) {
             throw new PdfUAConformanceException(MessageFormatUtil.format(
                     PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, str.charAt(index)));
+        }
+    }
+
+    /**
+     * Checks that embedded fonts define all glyphs referenced for rendering within the conforming file.
+     *
+     * @param glyphLine the glyph line to check
+     * @param font the font to check
+     */
+    protected void checkGlyphLine(GlyphLine glyphLine, PdfFont font) {
+        for (int i = glyphLine.getStart(); i < glyphLine.getEnd(); i++) {
+            Glyph glyph = glyphLine.get(i);
+            if (glyph.getCode() == 0 || font.getFontProgram().getGlyphByCode(glyph.getCode()) == null ||
+                    !glyph.hasValidUnicode()) {
+                // .notdef glyph or glyph isn't present in a font or glyph doesn't have a valid unicode value
+                throw new PdfUAConformanceException(MessageFormatUtil.format(
+                        PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, glyph.getUnicodeString()));
+            }
         }
     }
 

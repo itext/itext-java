@@ -76,7 +76,11 @@ public class WellTaggedPdfForReuseChecker extends WellTaggedPdfForAccessibilityC
                 break;
             case FONT:
                 FontValidationContext fontContext = (FontValidationContext) context;
-                checkText(fontContext.getText(), fontContext.getFont());
+                if (fontContext.getGlyphLine() == null) {
+                    checkText(fontContext.getText(), fontContext.getFont());
+                } else {
+                    checkGlyphLine(fontContext.getGlyphLine(), fontContext.getFont());
+                }
                 break;
             case CANVAS_BEGIN_MARKED_CONTENT:
                 validateCanvasBmc((CanvasBmcValidationContext) context);
