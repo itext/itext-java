@@ -32,6 +32,8 @@ import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.OverflowWrapPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.VerticalTextOrientation;
+import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.layout.renderer.LineRenderer.LineAscentDescentState;
 
 import java.util.ArrayList;
@@ -86,8 +88,8 @@ final class TextSequenceWordWrapping {
      * </ul>
      *
      * @param lineRenderer line renderer containing text sequence to process
-     * @param childPos     index of the childRenderer in LineRenderer#childRenderers
-     *                     from which the a continuous sequence of TextRenderer containing special scripts starts
+     * @param childPos index of the childRenderer in LineRenderer#childRenderers
+     * from which the a continuous sequence of TextRenderer containing special scripts starts
      */
     public static void processSpecialScriptPreLayout(LineRenderer lineRenderer, int childPos) {
         SpecialScriptsContainingTextRendererSequenceInfo info =
@@ -103,19 +105,18 @@ final class TextSequenceWordWrapping {
     }
 
     public static void updateTextSequenceLayoutResults(Map<Integer, LayoutResult> textRendererLayoutResults,
-            boolean specialScripts,
-            IRenderer childRenderer, int childPos,
-            LayoutResult childResult, boolean sameDirection) {
+                                                       boolean specialScripts,
+                                                       IRenderer childRenderer, int childPos,
+                                                       LayoutResult childResult, boolean sameDirection) {
 
         if (isTextRendererAndParentWritingCorrespondsToChild(childRenderer, specialScripts, sameDirection)) {
             textRendererLayoutResults.put(childPos, childResult);
         }
     }
 
-    public static void resetTextSequenceIfItEnded(Map<Integer, LayoutResult> textRendererLayoutResults,
-            boolean specialScripts,
-            IRenderer childRenderer, int childPos,
-            MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper,
+    public static void resetTextSequenceIfItEnded(
+            Map<Integer, LayoutResult> textRendererLayoutResults, boolean specialScripts, IRenderer childRenderer,
+            int childPos, MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper,
             boolean noSoftWrap, AbstractWidthHandler widthHandler, boolean sameDirection) {
 
         if (isTextRendererAndParentWritingCorrespondsToChild(childRenderer, specialScripts, sameDirection)
@@ -138,11 +139,9 @@ final class TextSequenceWordWrapping {
         }
     }
 
-    public static LineAscentDescentState updateTextRendererSequenceAscentDescent(LineRenderer lineRenderer,
-            Map<Integer, float[]> textRendererSequenceAscentDescent,
-            int childPos, float[] childAscentDescent,
-            LineAscentDescentState preTextSequenceAscentDescent, boolean sameDirection) {
-
+    public static LineAscentDescentState updateTextRendererSequenceAscentDescent(
+            LineRenderer lineRenderer, Map<Integer, float[]> textRendererSequenceAscentDescent, int childPos,
+            float[] childAscentDescent, LineAscentDescentState preTextSequenceAscentDescent, boolean sameDirection) {
         IRenderer childRenderer = getRenderer(lineRenderer, childPos);
         if (isTextRendererAndParentWritingCorrespondsToChild(childRenderer, false, sameDirection)) {
             if (textRendererSequenceAscentDescent.isEmpty()) {
@@ -197,12 +196,11 @@ final class TextSequenceWordWrapping {
 
         lastAnalyzedTextLayoutResult = null;
         int lastAnalyzedTextRenderer = childPos;
-        boolean verticalWriting = lineRenderer.isVerticalWriting();
-
+        WritingMode lineWritingMode = getWritingMode(lineRenderer);
         for (int i = childPos; i >= 0; i--) {
             IRenderer childRenderer = getRenderer(lineRenderer, i);
             if (childRenderer instanceof TextRenderer &&
-                    verticalWriting == ((TextRenderer) childRenderer).isVerticalWriting() &&
+                    lineWritingMode == getWritingMode((TextRenderer) childRenderer) &&
                     !LineRenderer.isChildFloating(childRenderer)) {
                 TextRenderer textRenderer = (TextRenderer) childRenderer;
                 if (!textRenderer.textContainsSpecialScriptGlyphs(true)) {
@@ -233,7 +231,8 @@ final class TextSequenceWordWrapping {
                         // used for the original layouting, however it seems to be an overkill to preserve them all.
                         LayoutResult newChildLayoutResult = textRenderer
                                 .layout(new LayoutContext(layoutArea, wasParentsHeightClipped));
-                        textRenderer.setIndexOfFirstCharacterToBeForcedToOverflow(TextRenderer.UNDEFINED_FIRST_CHAR_TO_FORCE_OVERFLOW);
+                        textRenderer.setIndexOfFirstCharacterToBeForcedToOverflow(
+                                TextRenderer.UNDEFINED_FIRST_CHAR_TO_FORCE_OVERFLOW);
                         if (newChildLayoutResult.getStatus() == LayoutResult.FULL) {
                             lastAnalyzedTextLayoutResult = new TextLayoutResult(LayoutResult.NOTHING, null,
                                     null, getRenderer(lineRenderer, lastAnalyzedTextRenderer));
@@ -290,7 +289,7 @@ final class TextSequenceWordWrapping {
 
     public static LastFittingChildRendererData getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts
             (LineRenderer lineRenderer, int childPos, Map<Integer, LayoutResult> specialScriptLayoutResults,
-                    boolean wasParentsHeightClipped, boolean isOverflowFit) {
+             boolean wasParentsHeightClipped, boolean isOverflowFit) {
         int indexOfRendererContainingLastFullyFittingWord = childPos;
         int splitPosition = 0;
         boolean needToSplitRendererContainingLastFullyFittingWord = false;
@@ -422,9 +421,9 @@ final class TextSequenceWordWrapping {
      * @param sameDirection {@code true} if child {@link TextRenderer} writing-mode is equal to parent's.
      */
     public static void preprocessTextSequenceOverflow(LineRenderer lineRenderer,
-            boolean textSequenceOverflowProcessing, IRenderer childRenderer,
-            boolean wasOverflowChanged, OverflowPropertyValue oldOverflow, int overflowProperty,
-                                                      boolean sameDirection) {
+                                                      boolean textSequenceOverflowProcessing, IRenderer childRenderer,
+                                                      boolean wasOverflowChanged, OverflowPropertyValue oldOverflow,
+                                                      int overflowProperty, boolean sameDirection) {
         boolean specialScripts = childRenderer instanceof TextRenderer && sameDirection &&
                 ((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(true);
         if (textSequenceOverflowProcessing && specialScripts) {
@@ -517,9 +516,10 @@ final class TextSequenceWordWrapping {
                 sequentialTextContentBuilder.toString(), indicesOfFloating);
     }
 
-    static void distributePossibleBreakPointsOverSequentialTextRenderers(LineRenderer lineRenderer,
-            int childPos, int numberOfSequentialTextRenderers, List<Integer> possibleBreakPointsGlobal,
-            List<Integer> indicesOfFloating) {
+    static void distributePossibleBreakPointsOverSequentialTextRenderers(LineRenderer lineRenderer, int childPos,
+                                                                         int numberOfSequentialTextRenderers,
+                                                                         List<Integer> possibleBreakPointsGlobal,
+                                                                         List<Integer> indicesOfFloating) {
         int alreadyProcessedNumberOfCharsWithinGlyphLines = 0;
         int indexToBeginWith = 0;
         for (int i = 0; i < numberOfSequentialTextRenderers; i++) {
@@ -565,13 +565,14 @@ final class TextSequenceWordWrapping {
      * {@link TextRenderer}-s containing special scripts is to be moved to the next line;
      * - Otherwise a forced split is to happen.
      *
-     * @param lineRenderer              line renderer containing text sequence to process
+     * @param lineRenderer line renderer containing text sequence to process
      * @param analyzedTextRendererIndex index of the latter child
-     *                                  that has been analyzed on the subject of possible breaks
+     * that has been analyzed on the subject of possible breaks
+     *
      * @return {@link SpecialScriptsContainingSequenceStatus} instance standing for the strategy to proceed with.
      */
-    static SpecialScriptsContainingSequenceStatus getSpecialScriptsContainingSequenceStatus(LineRenderer lineRenderer,
-            int analyzedTextRendererIndex) {
+    static SpecialScriptsContainingSequenceStatus getSpecialScriptsContainingSequenceStatus(
+            LineRenderer lineRenderer, int analyzedTextRendererIndex) {
         boolean moveSequenceContainingSpecialScriptsOnNextLine = false;
         boolean moveToPreviousTextRendererContainingSpecialScripts = false;
 
@@ -603,7 +604,7 @@ final class TextSequenceWordWrapping {
     }
 
     static float getCurWidthRelayoutedTextSequenceDecrement(int childPos, int newChildPos,
-            Map<Integer, LayoutResult> textRendererLayoutResults) {
+                                                            Map<Integer, LayoutResult> textRendererLayoutResults) {
         float decrement = 0.0f;
         // if childPos == newChildPos, curWidth doesn't include width of the current childRenderer yet,
         // so no decrement is needed
@@ -719,6 +720,15 @@ final class TextSequenceWordWrapping {
         }
     }
 
+    private static WritingMode getWritingMode(AbstractRenderer renderer) {
+        WritingMode writingMode = renderer.<WritingMode>getProperty(Property.WRITING_MODE);
+        if (writingMode != null && renderer.<VerticalTextOrientation>getProperty(Property.TEXT_ORIENTATION)
+                == VerticalTextOrientation.UPRIGHT) {
+            return writingMode;
+        }
+        return WritingMode.HORIZONTAL_TB;
+    }
+
     private static IRenderer getRenderer(LineRenderer lineRenderer, int childPos) {
         IRenderer childRenderer = lineRenderer.childRenderers.get(childPos);
         if (childRenderer instanceof FootnoteAnchorRenderer) {
@@ -739,7 +749,7 @@ final class TextSequenceWordWrapping {
         public boolean anythingPlacedBeforeTextRendererSequence;
 
         public MinMaxWidthOfTextRendererSequenceHelper(float minWidthPreSequence, float textIndent,
-                boolean anythingPlacedBeforeTextRendererSequence) {
+                                                       boolean anythingPlacedBeforeTextRendererSequence) {
             this.minWidthPreSequence = minWidthPreSequence;
             this.textIndent = textIndent;
             this.anythingPlacedBeforeTextRendererSequence = anythingPlacedBeforeTextRendererSequence;

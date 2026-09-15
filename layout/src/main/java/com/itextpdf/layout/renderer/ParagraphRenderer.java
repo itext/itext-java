@@ -49,6 +49,8 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalTextOrientation;
+import com.itextpdf.layout.properties.WritingMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -367,6 +369,8 @@ public class ParagraphRenderer extends BlockRenderer {
                             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
                             fixOccupiedAreaIfOverflowedX(isVerticalWriting, overflowX, layoutBox);
                         }
+                        // Correct lines for split renderer in case of paragraph split.
+                        correctLinesForRtlMode();
 
                         if (marginsCollapsingEnabled) {
                             marginsCollapseHandler.endMarginsCollapse(layoutBox);
@@ -507,10 +511,12 @@ public class ParagraphRenderer extends BlockRenderer {
         if (blockMaxHeight != null && blockMaxHeight < parentHeight + EPS) {
             fixOccupiedAreaIfOverflowedY(overflowY, layoutBox);
         }
-        // Adjust occupied area width for vertical text after lines layout.
         if (isVerticalWriting && widthSet) {
+            // Adjust occupied area width for vertical text after lines layout.
             fixOccupiedAreaIfOverflowedX(true, overflowX, layoutBox);
         }
+        // Adjust lines for vertical-rl text after lines layout.
+        correctLinesForRtlMode();
 
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
@@ -816,6 +822,20 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         } else {
             fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
+        }
+    }
+
+    private void correctLinesForRtlMode() {
+        if (this.<WritingMode>getProperty(Property.WRITING_MODE) == WritingMode.VERTICAL_RL
+                && this.<VerticalTextOrientation>getProperty(Property.TEXT_ORIENTATION)
+                == VerticalTextOrientation.UPRIGHT) {
+            // Correct the lines for vertical-rl writing mode
+            // by mirroring them relative to the center of the occupied area.
+            float middleX = occupiedArea.getBBox().getX() + occupiedArea.getBBox().getWidth() / 2;
+            for (LineRenderer line : lines) {
+                float middleLineX = line.occupiedArea.getBBox().getX() + line.occupiedArea.getBBox().getWidth() / 2;
+                line.move(2 * (middleX - middleLineX), 0);
+            }
         }
     }
 

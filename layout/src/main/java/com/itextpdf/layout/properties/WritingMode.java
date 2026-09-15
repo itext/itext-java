@@ -31,7 +31,11 @@ public enum WritingMode {
      */
     HORIZONTAL_TB,
     /**
-     * Lays out text vertically, lines progression is from left to right.
+     * Lays out text vertically, line progression is from left to right.
      */
-    VERTICAL_LR
+    VERTICAL_LR,
+    /**
+     * Lays out text vertically, line progression is from right to left.
+     */
+    VERTICAL_RL
 }

@@ -79,10 +79,10 @@ import com.itextpdf.layout.properties.BoxSizingPropertyValue;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
-import com.itextpdf.layout.properties.VerticalTextOrientation;
 import com.itextpdf.layout.properties.Transform;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalTextOrientation;
 import com.itextpdf.layout.properties.WritingMode;
 
 import java.util.ArrayList;
@@ -262,7 +262,7 @@ public abstract class AbstractRenderer implements IRenderer {
             while (pos < childPositionedRenderers.size()) {
                 if (AbstractRenderer.verticalCoordinateMissingForAbsolutePosition(childPositionedRenderers.get(pos))
                         && AbstractRenderer.horizontalCoordinateMissingForAbsolutePosition(
-                                childPositionedRenderers.get(pos))) {
+                        childPositionedRenderers.get(pos))) {
                     pos++;
                 } else {
                     positionedRenderers.add(childPositionedRenderers.get(pos));
@@ -626,7 +626,7 @@ public abstract class AbstractRenderer implements IRenderer {
      */
     @Deprecated
     public static PdfFormXObject createXObject(AbstractLinearGradientBuilder linearGradientBuilder,
-            Rectangle xObjectArea, PdfDocument document) {
+                                               Rectangle xObjectArea, PdfDocument document) {
         return createXObject((IGradientBuilder) linearGradientBuilder, xObjectArea, document);
     }
 
@@ -2940,7 +2940,8 @@ public abstract class AbstractRenderer implements IRenderer {
 
     boolean isVerticalWriting() {
         if (isVerticalMode == null) {
-            isVerticalMode = this.<WritingMode>getProperty(Property.WRITING_MODE) == WritingMode.VERTICAL_LR
+            WritingMode writingMode = this.<WritingMode>getProperty(Property.WRITING_MODE);
+            isVerticalMode = (writingMode == WritingMode.VERTICAL_LR || writingMode == WritingMode.VERTICAL_RL)
                     && this.<VerticalTextOrientation>getProperty(Property.TEXT_ORIENTATION)
                     == VerticalTextOrientation.UPRIGHT;
         }

@@ -917,6 +917,11 @@ public class CommonCssConstants {
     public static final String VERTICAL_LR = "vertical-lr";
 
     /**
+     * The Constant VERTICAL_RL.
+     */
+    public static final String VERTICAL_RL = "vertical-rl";
+
+    /**
      * The Constant VISIBILITY.
      */
     public static final String VISIBILITY = "visibility";

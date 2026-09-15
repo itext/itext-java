@@ -27,6 +27,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -38,13 +39,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 @Tag("IntegrationTest")
 public class MixedTextDirectionTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/MixedTextDirectionTest/";
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/MixedTextDirectionTest/";
+
+    public static Collection<WritingMode> mixedVertical() {
+        return Arrays.asList(WritingMode.HORIZONTAL_TB, WritingMode.VERTICAL_LR, WritingMode.VERTICAL_RL);
+    }
 
     @BeforeAll
     public static void beforeClass() {
@@ -79,6 +88,102 @@ public class MixedTextDirectionTest extends ExtendedITextTest {
             paragraph.add(text1);
             paragraph.add(text2);
             paragraph.add(text3);
+            paragraph.add(text2);
+            document.add(paragraph);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @ParameterizedTest
+    @MethodSource("mixedVertical")
+    // TODO DEVSIX-10200 Consider text elements with different writing-mode as inline-blocks,
+    //  after that vertical RTL text chunks in vertical LTR paragraphs and vice versa will be fixed.
+    public void paragraphMixedVerticalTextTest(WritingMode paragraphWritingMode)
+            throws IOException, InterruptedException {
+        String fileName = "paragraphMixedVerticalText_" + paragraphWritingMode.name();
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+            Paragraph paragraph = new Paragraph();
+            paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph.setHeight(200);
+            paragraph.setProperty(Property.WRITING_MODE, paragraphWritingMode);
+            paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+            paragraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+
+            Text text1 = new Text("vertical text chunk left-to-right ");
+            text1.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            text1.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            text1.setBackgroundColor(ColorConstants.MAGENTA);
+            Text text2 = new Text("vertical text chunk right-to-left ");
+            text2.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_RL);
+            text2.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            text2.setBackgroundColor(ColorConstants.CYAN);
+            Text text3 = new Text("one more vertical text chunk left-to-right ");
+            text3.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            text3.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            text3.setBackgroundColor(ColorConstants.ORANGE);
+            Text text4 = new Text("horizontal text ");
+            text4.setProperty(Property.WRITING_MODE, WritingMode.HORIZONTAL_TB);
+            text4.setBackgroundColor(ColorConstants.YELLOW);
+
+            paragraph.add(text1);
+            paragraph.add(text2);
+            paragraph.add(text3);
+            paragraph.add(text4);
+            paragraph.add(text2);
+            document.add(paragraph);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @ParameterizedTest
+    @MethodSource("mixedVertical")
+    // TODO DEVSIX-10200 Consider text elements with different writing-mode as inline-blocks,
+    //  after that vertical RTL text chunks in vertical LTR paragraphs and vice versa should be fixed.
+    // No line breaks in vertical text with different writing-mode looks like workaround for horizontal text.
+    public void paragraphMixedVerticalTextNoHeightTest(WritingMode paragraphWritingMode)
+            throws IOException, InterruptedException {
+        String fileName = "paragraphMixedVerticalTextNoHeight_" + paragraphWritingMode.name();
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+            Paragraph paragraph = new Paragraph();
+            paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph.setProperty(Property.WRITING_MODE, paragraphWritingMode);
+            paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+            paragraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.VISIBLE);
+
+            Text text1 = new Text("vertical text chunk\nleft-to-right ");
+            text1.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            text1.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            text1.setBackgroundColor(ColorConstants.MAGENTA);
+            Text text2 = new Text("vertical\ntext chunk\nright-to-left ");
+            text2.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_RL);
+            text2.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            text2.setBackgroundColor(ColorConstants.CYAN);
+            Text text3 = new Text("one more\nvertical text chunk\nleft-to-right ");
+            text3.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            text3.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            text3.setBackgroundColor(ColorConstants.ORANGE);
+            Text text4 = new Text("horizontal\ntext ");
+            text4.setProperty(Property.WRITING_MODE, WritingMode.HORIZONTAL_TB);
+            text4.setBackgroundColor(ColorConstants.YELLOW);
+
+            paragraph.add(text1);
+            paragraph.add(text2);
+            paragraph.add(text3);
+            paragraph.add(text4);
             paragraph.add(text2);
             document.add(paragraph);
         }

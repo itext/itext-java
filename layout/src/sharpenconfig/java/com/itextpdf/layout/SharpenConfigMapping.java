@@ -52,6 +52,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("com.itextpdf.layout.element.AreaBreak.getType", "GetAreaType");
         configurator.mapMethod("com.itextpdf.layout.properties.Leading.getType", "GetLeadingType");
         configurator.addFullName("com.itextpdf.layout.element.Image");
+        configurator.mapType("com.itextpdf.layout.properties.WritingMode", "iText.Layout.Properties.WritingMode?");
         configurator.mapType("com.itextpdf.layout.properties.VerticalAlignment", "iText.Layout.Properties.VerticalAlignment?");
         configurator.mapType("com.itextpdf.layout.properties.InlineVerticalAlignmentType", "iText.Layout.Properties.InlineVerticalAlignmentType?");
         configurator.mapType("com.itextpdf.layout.properties.HorizontalAlignment", "iText.Layout.Properties.HorizontalAlignment?");
