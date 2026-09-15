@@ -23,6 +23,7 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
@@ -31,6 +32,7 @@ import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.SvgCoordinateUtils;
+import com.itextpdf.svg.xobject.SvgImageXObject;
 
 /**
  * Responsible for drawing Images to the canvas.
@@ -106,6 +108,11 @@ public class ImageSvgNodeRenderer extends AbstractSvgNodeRenderer {
             Rectangle viewBox;
             if (xObject.getWidth() <= 0 || xObject.getHeight() <= 0) {
                 viewBox = new Rectangle(currentViewPort);
+                // TODO DEVSIX-4107 - we do not support svg inside svg yet.
+                // But at least we should not produce corrupted PDF files with form xobjects without BBox
+                if (xObject instanceof SvgImageXObject) {
+                    ((SvgImageXObject) xObject).setBBox(new PdfArray(viewBox));
+                }
             } else {
                 viewBox = new Rectangle(0, 0, xObject.getWidth(), xObject.getHeight());
             }
