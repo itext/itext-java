@@ -352,8 +352,8 @@ public class PdfA1Checker extends PdfAChecker {
     public void checkText(String text, PdfFont font) {
         int index = FontCheckUtil.checkGlyphsOfText(text, font, new ACharacterChecker());
         if (index != -1) {
-            throw new PdfAConformanceException(
-                    PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
+            throw new PdfAConformanceException(MessageFormatUtil.format(
+                    PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, text.charAt(index)));
         }
     }
 
@@ -366,8 +366,9 @@ public class PdfA1Checker extends PdfAChecker {
             Glyph glyph = glyphLine.get(i);
             if (glyph.getCode() == 0 || font.getFontProgram().getGlyphByCode(glyph.getCode()) == null) {
                 // .notdef glyph or glyph isn't present in a font
-                throw new PdfAConformanceException(
-                        PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
+                throw new PdfAConformanceException(MessageFormatUtil.format(
+                        PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+                        glyph.getUnicodeString()));
             }
         }
     }

@@ -462,7 +462,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     restoreState().
                     closeTag();
         });
-        // TODO DEVSIX-10160 missing check on iText side for ToUnicode mapping to 0, fffe and feff
+        // TODO DEVSIX-10209 missing check on iText side for ToUnicode mapping to 0, fffe and feff
         framework.assertVeraPdfFailITextValid("zeroUnicodeGlyph");
     }
 
@@ -539,7 +539,7 @@ public class PdfUAFontsTest extends ExtendedITextTest {
                     restoreState().
                     closeTag();
         });
-        // TODO DEVSIX-10160 missing check on iText side for ToUnicode mapping to 0, fffe and feff
+        // TODO DEVSIX-10209 missing check on iText side for ToUnicode mapping to 0, fffe and feff
         framework.assertBothFail("fontWithReplacementChar", MessageFormatUtil.format(
                 PdfUAExceptionMessageConstants.GLYPH_IS_NOT_DEFINED_OR_WITHOUT_UNICODE, "�"));
     }

@@ -281,7 +281,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test01.pdf", "iTextSymbolicFont.ttf", "", PdfAConformance.PDF_A_1B)
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, 'e'),
                 e.getMessage());
     }
 
@@ -291,7 +292,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test02.pdf", "iTextSymbolicFont.ttf", PdfEncodings.MACROMAN, PdfAConformance.PDF_A_1B)
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, 'e'),
                 e.getMessage());
     }
 
@@ -301,7 +303,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "iTextSymbolicFont.ttf", "ISO-8859-1", PdfAConformance.PDF_A_1B)
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, 'e'),
                 e.getMessage());
     }
 
@@ -310,7 +313,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test04.pdf", "iTextSymbolicFont.ttf", PdfEncodings.WINANSI, PdfAConformance.PDF_A_1B)
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, 'e'),
                 e.getMessage());
     }
 
@@ -322,7 +326,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test05.pdf", "iTextSymbolicFont.ttf", PdfEncodings.IDENTITY_H, PdfAConformance.PDF_A_1B)
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, 'e'),
                 e.getMessage());
     }
 
@@ -362,7 +367,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> canvas.showText("\u00C5 \u1987")
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, "\u1987"),
                 e.getMessage());
     }
 
@@ -385,7 +391,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> canvas.showText("\u898B\u7A4D\u3082\u308A")
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, "\u898B"),
                 e.getMessage());
     }
 
@@ -403,7 +410,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         p.setFont(font);
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> document.add(p));
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, "\u898B"),
                 e.getMessage());
     }
 
@@ -807,7 +815,8 @@ public class PdfAFontTest extends ExtendedITextTest {
                     endText().
                     restoreState();
         });
-        framework.assertBothFail("notdefGlyph", PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
+        framework.assertBothFail("notdefGlyph", MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, "�"));
     }
 
     @Test
@@ -836,7 +845,7 @@ public class PdfAFontTest extends ExtendedITextTest {
                     endText().
                     restoreState();
         });
-        // TODO DEVSIX-10160 missing check on iText side for ToUnicode mapping to 0, fffe and feff
+        // TODO DEVSIX-10209 missing check on iText side for ToUnicode mapping to 0, fffe and feff
         framework.assertVeraPdfFailITextValid("zeroUnicodeGlyph");
     }
 
@@ -902,8 +911,10 @@ public class PdfAFontTest extends ExtendedITextTest {
                     endText().
                     restoreState();
         });
-        // TODO DEVSIX-10160 missing check on iText side for ToUnicode mapping to 0, fffe and feff
-        framework.assertBothFail("fontWithReplacementChar", PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS);
+        // TODO DEVSIX-10209 missing check on iText side for ToUnicode mapping to 0, fffe and feff
+        framework.assertBothFail("fontWithReplacementChar",
+                MessageFormatUtil.format(
+                        PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, "�"));
     }
 
     @Test
