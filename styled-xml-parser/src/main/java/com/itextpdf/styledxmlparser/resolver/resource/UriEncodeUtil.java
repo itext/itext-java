@@ -83,6 +83,7 @@ class UriEncodeUtil {
         unreservedAndReserved.set(',');
         unreservedAndReserved.set(';');
         unreservedAndReserved.set('=');
+        unreservedAndReserved.set('%');
     }
 
     /**
