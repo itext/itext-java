@@ -469,7 +469,7 @@ public class VerticalTextPropertiesTest extends ExtendedITextTest {
             Text text2 = new Text("Raised").setTextRise(5);
             Text text3 = new Text("Lowered").setTextRise(-5);
             paragraph.add(text1).add(" ").add(text2).add(" ").add(text3);
-            paragraph.setHeight(200).setWidth(100).setBorder(new SolidBorder(1));
+            paragraph.setHeight(300).setWidth(100).setBorder(new SolidBorder(1));
 
             document.add(paragraph);
         }

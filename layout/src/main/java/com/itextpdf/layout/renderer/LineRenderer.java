@@ -843,7 +843,7 @@ public class LineRenderer extends AbstractRenderer {
 
         if (anythingPlaced || floatsPlacedInLine) {
             if (isVerticalWriting) {
-                toProcess.adjustChildrenXLineVerticalWritingMode();
+                toProcess.adjustChildrenXLineVerticalWritingMode(minMaxWidth);
             } else if (writingMode == childWritingMode && !childrenWithDifferentDirections) {
                 toProcess.adjustChildrenYLine().adjustChildrenXLine();
             } else {
@@ -1870,15 +1870,18 @@ public class LineRenderer extends AbstractRenderer {
         return false;
     }
 
-    private void adjustChildrenXLineVerticalWritingMode() {
+    private void adjustChildrenXLineVerticalWritingMode(MinMaxWidth minMaxWidth) {
         float lineWidth = getOccupiedArea().getBBox().getWidth();
+        boolean hasTextRise = false;
         for (final IRenderer renderer : getChildRenderers()) {
             IRenderer unwrapped = unwrapChildRendererIfNeeded(renderer);
             float textChunkWidth = unwrapped.getOccupiedArea().getBBox().getWidth();
             unwrapped.move((lineWidth - textChunkWidth) / 2, 0);
+            hasTextRise = hasTextRise || (unwrapped instanceof TextRenderer
+                    && ((TextRenderer) unwrapped).getPropertyAsFloat(Property.TEXT_RISE) != 0);
         }
-        if (hasInlineBlocksWithVerticalAlignment()) {
-            InlineVerticalAlignmentHelper.adjustChildrenXLineVerticalText(this);
+        if (hasTextRise || hasInlineBlocksWithVerticalAlignment()) {
+            InlineVerticalAlignmentHelper.adjustChildrenXLineVerticalText(this, minMaxWidth);
         }
     }
 

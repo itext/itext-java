@@ -845,7 +845,8 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
      */
     public T setLineThrough() {
         // 7/24 is the average between default browser behavior(1/4) and iText5 behavior(1/3)
-        return setUnderline(null, .75f, 0, 0, 7 / 24f, PdfCanvasConstants.LineCapStyle.BUTT);
+        return setUnderline(new Underline(null, .75f, 0, 0, 7 / 24f, PdfCanvasConstants.LineCapStyle.BUTT)
+                .setXPosition(0, 0.5f));
     }
 
     /**

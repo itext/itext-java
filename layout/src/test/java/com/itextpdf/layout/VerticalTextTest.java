@@ -438,14 +438,13 @@ public class VerticalTextTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-10180 Support text rise in html mode for vertical text
     public void lineThroughWithTextRiseTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "lineThroughWithTextRise.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_lineThroughWithTextRise.pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             Text textUp = new Text("textRise10f_with_lineThrough");
-            textUp.setTextRise(-10f);
+            textUp.setTextRise(10f);
             textUp.setLineThrough();
             textUp.setFontColor(ColorConstants.GREEN);
 
@@ -464,7 +463,6 @@ public class VerticalTextTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-10180 fix underline positioning
     public void underlineTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "underline.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_underline.pdf";
@@ -483,8 +481,10 @@ public class VerticalTextTest extends ExtendedITextTest {
                     .setBorder(new SolidBorder(ColorConstants.RED, 1));
 
             TransparentColor strokeColor = new TransparentColor(ColorConstants.GREEN, 0.5f);
+            // Center the line-through across vertical text, independently of its horizontal baseline offset.
             Underline underline2 = new Underline(ColorConstants.DARK_GRAY, 0, 0.1f, 0, 0.3f,
-                    PdfCanvasConstants.LineCapStyle.BUTT).setStrokeWidth(1).setStrokeColor(strokeColor);
+                    PdfCanvasConstants.LineCapStyle.BUTT).setXPosition(0, 0.5f)
+                    .setStrokeWidth(1).setStrokeColor(strokeColor);
             Paragraph p2 = new Paragraph("Text with line-through and default underline.").setFontSize(50)
                     .setStrokeWidth(1).setFontColor(ColorConstants.DARK_GRAY).setStrokeColor(strokeColor)
                     .setUnderline(underline2)
@@ -656,7 +656,6 @@ public class VerticalTextTest extends ExtendedITextTest {
     }
 
     @Test
-    // TODO DEVSIX-10180 Support text rise in html mode for vertical text
     public void verticalAlignTextRiseTest() throws IOException, InterruptedException {
         String fileName = "verticalAlignTextRise";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";

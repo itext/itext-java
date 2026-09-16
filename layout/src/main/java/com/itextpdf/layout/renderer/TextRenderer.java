@@ -1138,7 +1138,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     @Override
     public float getDescent() {
         float mainAxisSize = isVerticalWriting() ? getOccupiedAreaBBox().getWidth() : getOccupiedAreaBBox().getHeight();
-        return -(mainAxisSize - yLineOffset - (float) this.getPropertyAsFloat(Property.TEXT_RISE));
+        float textRise = isVerticalWriting() ? 0 : (float) this.getPropertyAsFloat(Property.TEXT_RISE);
+        return -(mainAxisSize - yLineOffset - textRise);
     }
 
     /**
@@ -1148,14 +1149,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
      * @return the y position of this text on the {@link DrawContext}
      */
     public float getYLine() {
-        // TODO DEVSIX-10180 We apply text rise shift for horizontal text here
+        // In vertical writing, text rise moves the occupied area along the x axis during line alignment.
+        float textRise = isVerticalWriting() ? 0 : (float) this.getPropertyAsFloat(Property.TEXT_RISE);
         return occupiedArea.getBBox().getY() + occupiedArea.getBBox().getHeight() - yLineOffset
-                - (float) this.getPropertyAsFloat(Property.TEXT_RISE);
-    }
-
-    private float getXLine() {
-        // TODO DEVSIX-10180 Support text rise in html mode for vertical text
-        return occupiedArea.getBBox().getX();
+                - textRise;
     }
 
     /**
@@ -1568,8 +1565,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             Rectangle innerAreaBbox = getInnerAreaBBox();
             Rectangle underlineBBox;
             if (isVerticalWriting()) {
-                float xLine = getXLine();
-                float underlineXPosition = xLine + underline.getYPosition(occupiedArea.getBBox().getWidth());
+                float innerLeft = innerAreaBbox.getX();
+                float underlineXPosition = innerLeft + underline.getXPosition(innerAreaBbox.getWidth());
                 underlineBBox = new Rectangle(underlineXPosition - underlineThickness / 2,
                         innerAreaBbox.getY(), underlineThickness, innerAreaBbox.getHeight());
             } else {
@@ -1914,7 +1911,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             fontColor.applyFillTransparency(canvas);
         }
         Float textRise = this.getPropertyAsFloat(Property.TEXT_RISE);
-        if (textRise != null && textRise != 0) {
+        if (!verticalWriting && textRise != null && textRise != 0) {
             canvas.setTextRise((float) textRise);
         }
         Float characterSpacing = this.getPropertyAsFloat(Property.CHARACTER_SPACING);
