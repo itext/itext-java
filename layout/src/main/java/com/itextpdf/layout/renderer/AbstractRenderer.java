@@ -161,6 +161,7 @@ public abstract class AbstractRenderer implements IRenderer {
     protected IRenderer parent;
     protected Map<Integer, Object> properties = new HashMap<>();
     protected boolean isLastRendererForModelElement = true;
+    private Boolean isVerticalMode;
 
     private boolean relativePositioningTranslationApplied = false;
 
@@ -2938,11 +2939,13 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     boolean isVerticalWriting() {
-        if (this.<WritingMode>getProperty(Property.WRITING_MODE) == WritingMode.VERTICAL_LR) {
-            return this.<VerticalTextOrientation>getProperty(Property.TEXT_ORIENTATION)
+        if (isVerticalMode == null) {
+            isVerticalMode = this.<WritingMode>getProperty(Property.WRITING_MODE) == WritingMode.VERTICAL_LR
+                    && this.<VerticalTextOrientation>getProperty(Property.TEXT_ORIENTATION)
                     == VerticalTextOrientation.UPRIGHT;
         }
-        return false;
+
+        return isVerticalMode.booleanValue();
     }
 
     private void removeThisFromParent(IRenderer toRemove) {
