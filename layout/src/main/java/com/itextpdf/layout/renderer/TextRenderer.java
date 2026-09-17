@@ -1564,7 +1564,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         innerAreaBbox.getY(), underlineThickness, innerAreaBbox.getHeight());
             } else {
                 float yLine = getYLine();
-                float underlineYPosition = underline.getYPosition(fontSize) + yLine;
+                // yLine compensates text rise which is set on canvas separately,
+                // so we need to add it back to get correct underline position
+                float underlineYPosition = underline.getYPosition(fontSize) + yLine +
+                        (float) this.getPropertyAsFloat(Property.TEXT_RISE);
                 float italicWidthSubtraction = .5f * fontSize * italicAngleTan;
                 underlineBBox = new Rectangle(innerAreaBbox.getX(),
                         underlineYPosition - underlineThickness / 2,

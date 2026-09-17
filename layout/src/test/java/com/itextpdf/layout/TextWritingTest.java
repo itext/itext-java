@@ -487,7 +487,6 @@ public class TextWritingTest extends ExtendedITextTest {
 
     @Test
     public void lineThroughTest() throws IOException, InterruptedException {
-        //TODO: update after DEVSIX-2623 fix
         String outFileName = DESTINATION_FOLDER + "lineThrough.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_lineThrough.pdf";
         PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
