@@ -790,6 +790,15 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
         }
 
+        if (isVerticalWriting && occupiedArea != null) {
+            // For vertical text max width is equal to min width, and it's single symbol width.
+            Rectangle innerArea = getInnerAreaBBox();
+            countedMinMaxWidth.setChildrenMinWidth(innerArea.getWidth());
+            countedMinMaxWidth.setChildrenMaxWidth(innerArea.getWidth());
+            leftMinWidth = innerArea.getWidth();
+            rightMinWidth = innerArea.getWidth();
+        }
+
         result.setMinMaxWidth(countedMinMaxWidth);
         if (!noSoftWrap) {
             for (float dimension : leftMarginBorderPadding) {
@@ -808,6 +817,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             result.setLeftMinWidth(countedMinMaxWidth.getMinWidth());
             result.setRightMinWidth(-1f);
         }
+
         boolean[] startsEnds = isStartsWithSplitCharWhiteSpaceAndEndsWithSplitChar(splitCharacters);
         result.setStartsWithSplitCharacterWhiteSpace(startsEnds[0])
                 .setEndsWithSplitCharacter(startsEnds[1]);

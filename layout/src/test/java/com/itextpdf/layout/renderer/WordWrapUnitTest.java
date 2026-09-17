@@ -665,7 +665,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
         TextSequenceWordWrapping.resetTextSequenceIfItEnded(textRendererLayoutResults, false, tabRenderer, 1,
-                minMaxWidthOfTextRendererSequenceHelper, false, widthHandler, true);
+                minMaxWidthOfTextRendererSequenceHelper, false, widthHandler, true, false);
         Assertions.assertTrue(textRendererLayoutResults.isEmpty());
     }
 
@@ -689,7 +689,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         int childPosDuringResetAttempt = 1;
         TextSequenceWordWrapping
                 .resetTextSequenceIfItEnded(textRendererLayoutResults, false, tabRenderer, childPosDuringResetAttempt,
-                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler, true);
+                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler, true, false);
         Assertions.assertTrue(textRendererLayoutResults.isEmpty());
     }
 
@@ -721,7 +721,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
         AbstractWidthHandler widthHandler = new MaxSumWidthHandler(new MinMaxWidth());
 
         TextSequenceWordWrapping.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, textRenderer, 1,
-                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler, true);
+                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler, true, false);
         Assertions.assertTrue(specialScriptLayoutResults.isEmpty());
     }
 
@@ -754,7 +754,7 @@ public class WordWrapUnitTest extends ExtendedITextTest {
 
         int secondKey = firstKey + 1;
         TextSequenceWordWrapping.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, textRenderer, secondKey,
-                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler, true);
+                minMaxWidthOfTextRendererSequenceHelper, true, widthHandler, true, false);
         Assertions.assertEquals(1, specialScriptLayoutResults.size());
         Assertions.assertTrue(specialScriptLayoutResults.containsKey(firstKey));
     }

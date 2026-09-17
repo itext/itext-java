@@ -117,7 +117,7 @@ final class TextSequenceWordWrapping {
     public static void resetTextSequenceIfItEnded(
             Map<Integer, LayoutResult> textRendererLayoutResults, boolean specialScripts, IRenderer childRenderer,
             int childPos, MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper,
-            boolean noSoftWrap, AbstractWidthHandler widthHandler, boolean sameDirection) {
+            boolean noSoftWrap, AbstractWidthHandler widthHandler, boolean sameDirection, boolean isVerticalWriting) {
 
         if (isTextRendererAndParentWritingCorrespondsToChild(childRenderer, specialScripts, sameDirection)
                 && !LineRenderer.isChildFloating(childRenderer)) {
@@ -133,8 +133,10 @@ final class TextSequenceWordWrapping {
                 }
             }
             LayoutResult childResult = textRendererLayoutResults.get(lastChildInTextSequence);
-            updateMinMaxWidthOfLineRendererAfterTextRendererSequenceProcessing(noSoftWrap, lastChildInTextSequence,
-                    childResult, widthHandler, minMaxWidthOfTextRendererSequenceHelper, textRendererLayoutResults);
+            if (!isVerticalWriting) {
+                updateMinMaxWidthOfLineRendererAfterTextRendererSequenceProcessing(noSoftWrap, lastChildInTextSequence,
+                        childResult, widthHandler, minMaxWidthOfTextRendererSequenceHelper, textRendererLayoutResults);
+            }
             textRendererLayoutResults.clear();
         }
     }

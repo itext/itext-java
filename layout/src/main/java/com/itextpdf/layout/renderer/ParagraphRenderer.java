@@ -181,7 +181,12 @@ public class ParagraphRenderer extends BlockRenderer {
         wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, overflowY);
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth);
-        AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
+        AbstractWidthHandler widthHandler;
+        if (isVerticalWriting) {
+            widthHandler = new SumSumWidthHandler(minMaxWidth);
+        } else {
+            widthHandler = new MaxMaxWidthHandler(minMaxWidth);
+        }
 
         List<Rectangle> areas;
         if (isPositioned) {
@@ -229,6 +234,21 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean includeFloatsInOccupiedArea = BlockFormattingContextUtil.isRendererCreateBfc(this);
         Rectangle originalLayoutBox = layoutBox.clone();
         Map<LineRenderer, LineLayoutResult> lineLayoutResults = new LinkedHashMap<>();
+
+        // A workaround, to identify min-max width calculations, needed for vertical text layout.
+        // The value is still big enough so that no reasonable layout can pass the check.
+        if (layoutBox.getHeight() > AbstractRenderer.INF - 1000F) {
+            if (isVerticalWriting || this.getChildRenderers().stream().anyMatch(
+                    child -> child instanceof AbstractRenderer && ((AbstractRenderer) child).isVerticalWriting())) {
+                Float parentRecursiveHeight = getParentHeightRecursively(this);
+                if (parentRecursiveHeight != null) {
+                    float heightDifference = layoutBox.getHeight() - (float) parentRecursiveHeight;
+                    layoutBox.setHeight((float) parentRecursiveHeight);
+                    layoutBox.setY(layoutBox.getY() + heightDifference);
+                    overflowY = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+                }
+            }
+        }
 
         while (currentRenderer != null) {
             currentRenderer.setProperty(Property.TAB_DEFAULT, this.getPropertyAsFloat(Property.TAB_DEFAULT));
@@ -770,6 +790,23 @@ public class ParagraphRenderer extends BlockRenderer {
         ParagraphRenderer overflowRenderer = createOverflowRenderer(parent);
 
         return new ParagraphRenderer[]{splitRenderer, overflowRenderer};
+    }
+
+    private static Float getParentHeightRecursively(IRenderer renderer) {
+        if (renderer == null) {
+            return null;
+        }
+        // If the height is a percentage value, we ignore it and look for a point value.
+        if (renderer.<UnitValue>getProperty(Property.HEIGHT) != null &&
+                renderer.<UnitValue>getProperty(Property.HEIGHT).isPointValue()) {
+            return renderer.<UnitValue>getProperty(Property.HEIGHT).getValue();
+        } else if (renderer.getModelElement() != null &&
+                renderer.getModelElement().<UnitValue>getProperty(Property.HEIGHT) != null &&
+                renderer.getModelElement().<UnitValue>getProperty(Property.HEIGHT).isPointValue()) {
+            return renderer.getModelElement().<UnitValue>getProperty(Property.HEIGHT).getValue();
+        } else {
+            return getParentHeightRecursively(renderer.getParent());
+        }
     }
 
     private static void alignStaticKids(LineRenderer renderer, float shift, boolean isVerticalWriting) {

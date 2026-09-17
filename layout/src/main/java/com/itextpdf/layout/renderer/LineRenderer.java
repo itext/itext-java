@@ -162,7 +162,9 @@ public class LineRenderer extends AbstractRenderer {
 
         MinMaxWidth minMaxWidth = new MinMaxWidth();
         AbstractWidthHandler widthHandler;
-        if (noSoftWrap) {
+        if (isVerticalWriting) {
+            widthHandler = new MaxMaxWidthHandler(minMaxWidth);
+        } else if (noSoftWrap) {
             widthHandler = new SumSumWidthHandler(minMaxWidth);
         } else {
             widthHandler = new MaxSumWidthHandler(minMaxWidth);
@@ -200,6 +202,7 @@ public class LineRenderer extends AbstractRenderer {
             IRenderer childRenderer = unwrapChildRendererIfNeeded(directChildRenderer);
             childWritingMode = getWritingMode(childRenderer);
             boolean sameDirection = childWritingMode == writingMode;
+            boolean childVerticalWriting = isChildVerticallyWritten(childPos);
 
             LayoutResult childResult = null;
             Rectangle bbox;
@@ -227,10 +230,12 @@ public class LineRenderer extends AbstractRenderer {
             }
             TextSequenceWordWrapping.resetTextSequenceIfItEnded(
                     specialScriptLayoutResults, true, childRenderer, childPos,
-                    minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler, sameDirection);
+                    minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler, sameDirection,
+                    isVerticalWriting);
             TextSequenceWordWrapping.resetTextSequenceIfItEnded(
                     textRendererLayoutResults, false, childRenderer, childPos,
-                    minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler, sameDirection);
+                    minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler, sameDirection,
+                    isVerticalWriting);
 
             if (childRenderer instanceof TextRenderer) {
                 // Delete these properties in case of relayout. We might have applied them during justify().
@@ -409,7 +414,9 @@ public class LineRenderer extends AbstractRenderer {
                             float childMinWidth = childBlockMinMaxWidth.getMinWidth() + MIN_MAX_WIDTH_CORRECTION_EPS;
                             inlineBlockWidth = Math.max(childMinWidth, inlineBlockWidth);
                         }
-                        bbox.setWidth(inlineBlockWidth);
+                        if (!childVerticalWriting) {
+                            bbox.setWidth(inlineBlockWidth);
+                        }
 
                         if (childBlockMinMaxWidth.getMinWidth() > bbox.getWidth()) {
                             LOGGER.warn(() -> IoLogMessageConstant.INLINE_BLOCK_ELEMENT_WILL_BE_CLIPPED);
@@ -617,7 +624,7 @@ public class LineRenderer extends AbstractRenderer {
                 if (!forceOverflowForTextRendererPartialResult) {
                     updateAscentDescentAfterChildLayout(childAscentDescent, childRenderer, isChildFloating);
                 }
-                if (isChildVerticallyWritten(childPos)) {
+                if (childVerticalWriting) {
                     if (childResult != null && childResult.getOccupiedArea() != null) {
                         maxHeight = Math.max(maxHeight, childResult.getOccupiedArea().getBBox().getHeight());
                     } else {
@@ -680,10 +687,12 @@ public class LineRenderer extends AbstractRenderer {
                                 childResult.getStatus() == LayoutResult.NOTHING ?
                                         0 : childResult.getOccupiedArea().getBBox().getWidth());
                         // Html/css and browsers also use line height as line width for vertical text.
-                        float lineHeight = maxAscent - maxDescent;
+                        float lineHeight = Math.max(maxAscent - maxDescent, maxLineWidth);
                         occupiedArea.setBBox(new Rectangle(layoutBox.getX(),
                                 layoutBox.getY() + layoutBox.getHeight() - curMainAxisOccupiedSize,
-                                Math.max(lineHeight, maxLineWidth), curMainAxisOccupiedSize));
+                                lineHeight, curMainAxisOccupiedSize));
+                        widthHandler.updateMaxChildWidth(lineHeight);
+                        widthHandler.updateMinChildWidth(lineHeight);
                     } else {
                         occupiedArea.setBBox(
                                 new Rectangle(layoutBox.getX(), layoutBox.getY() + layoutBox.getHeight() - maxHeight,
@@ -769,9 +778,9 @@ public class LineRenderer extends AbstractRenderer {
         }
 
         TextSequenceWordWrapping.resetTextSequenceIfItEnded(specialScriptLayoutResults, true, null, childPos,
-                minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler, true);
+                minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler, true, isVerticalWriting);
         TextSequenceWordWrapping.resetTextSequenceIfItEnded(textRendererLayoutResults, false, null, childPos,
-                minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler, true);
+                minMaxWidthOfTextRendererSequenceHelper, noSoftWrap, widthHandler, true, isVerticalWriting);
 
         if (result == null) {
             boolean noOverflowedFloats =
@@ -1341,6 +1350,13 @@ public class LineRenderer extends AbstractRenderer {
         return WritingMode.HORIZONTAL_TB;
     }
 
+    private boolean isChildVerticallyWritten(int childIndex) {
+        if (childRenderers.size() > childIndex && childRenderers.get(childIndex) instanceof AbstractRenderer) {
+            return ((AbstractRenderer) childRenderers.get(childIndex)).isVerticalWriting();
+        }
+        return false;
+    }
+
     private boolean childChangingWritingDirection(int childIndex) {
         if (childRenderers.size() > childIndex + 1) {
             if (childRenderers.get(childIndex) instanceof AbstractRenderer &&
@@ -1349,13 +1365,6 @@ public class LineRenderer extends AbstractRenderer {
                 AbstractRenderer renderer2 = (AbstractRenderer) childRenderers.get(childIndex + 1);
                 return getWritingMode(renderer1) != getWritingMode(renderer2);
             }
-        }
-        return false;
-    }
-
-    boolean isChildVerticallyWritten(int childIndex) {
-        if (childRenderers.size() > childIndex && childRenderers.get(childIndex) instanceof AbstractRenderer) {
-            return ((AbstractRenderer) childRenderers.get(childIndex)).isVerticalWriting();
         }
         return false;
     }
