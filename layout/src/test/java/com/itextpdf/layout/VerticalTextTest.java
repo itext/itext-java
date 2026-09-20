@@ -42,6 +42,7 @@ import com.itextpdf.layout.element.VerticalParagraph;
 import com.itextpdf.layout.properties.InlineVerticalAlignment;
 import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
 import com.itextpdf.layout.properties.LineHeight;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -84,7 +85,7 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
             paragraph.add(new Text("some text"));
             document.add(paragraph);
         }
@@ -99,17 +100,15 @@ public class VerticalTextTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
-                Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
-            paragraph.add(new Text("some text"));
+             Document document = new Document(pdfDocument)) {
+            VerticalParagraph paragraph = new VerticalParagraph(false);
+            paragraph.add(new Text("some text line 1\nsome text line 2"));
             paragraph.setFirstLineIndent(20F);
             document.add(paragraph);
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
-
-
 
     @Test
     public void verticalTextDifferentFontsInParagraphTest() throws IOException, InterruptedException {
@@ -118,7 +117,7 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
             Text text1 = new Text("some text in courier font.\nFont size is 25.\n");
             PdfFont courier = PdfFontFactory.createFont(StandardFonts.COURIER);
             text1.setFont(courier);
@@ -133,6 +132,7 @@ public class VerticalTextTest extends ExtendedITextTest {
 
             document.add(paragraph);
         }
+
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
 
@@ -143,7 +143,7 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
             Text text1 = new Text("some text in courier font. Font size is 25.");
             PdfFont courier = PdfFontFactory.createFont(StandardFonts.COURIER);
             text1.setFont(courier);
@@ -178,7 +178,7 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
             paragraph.add(new Text("first text chunk "));
             paragraph.add(new Text("second text chunk "));
             paragraph.add(new Text("third text chunk "));
@@ -195,7 +195,7 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
             paragraph.add(new Text("some long vertical text to trigger multiple line breaks. Font size will be also " +
                     "increased to make it easier."));
             paragraph.setFontSize(25);
@@ -212,7 +212,7 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
             paragraph.add(new Text("some long vertical text\nto trigger multiple line breaks.\nFont size will be " +
                     "also increased\nto make it easier."));
             paragraph.setFontSize(25);
@@ -230,7 +230,7 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
             paragraph.add(new Text("some long vertical\ntext to trigger multiple line breaks.\nFont size will be " +
                     "also increased to make it easier.\n"));
             paragraph.add(new Text("Additional chunk of text,\n to trigger page break.\n" +
@@ -304,7 +304,10 @@ public class VerticalTextTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.add(new Paragraph("Long word, first line and first word:"));
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
+            paragraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.FIT);
+            paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+
             Text longWordText = new Text("Tooooooooolongword");
             longWordText.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph.setBorder(new SolidBorder(1));
@@ -314,7 +317,10 @@ public class VerticalTextTest extends ExtendedITextTest {
             document.add(paragraph);
 
             document.add(new Paragraph("Long word, first line and not first word:"));
-            paragraph = new VerticalParagraph();
+            paragraph = new VerticalParagraph(false);
+            paragraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.FIT);
+            paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+
             longWordText = new Text("Tooooooooolongword");
             longWordText.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph.setBorder(new SolidBorder(1));
@@ -325,7 +331,10 @@ public class VerticalTextTest extends ExtendedITextTest {
             document.add(paragraph);
 
             document.add(new Paragraph("Long word, not first line:"));
-            paragraph = new VerticalParagraph();
+            paragraph = new VerticalParagraph(false);
+            paragraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.FIT);
+            paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
+
             longWordText = new Text("Tooooooooolongword");
             longWordText.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph.setBorder(new SolidBorder(1));
@@ -340,14 +349,15 @@ public class VerticalTextTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 2))
     public void verticalTextWithMaxHeightWidthParagraphTest() throws IOException, InterruptedException {
         String fileName = "verticalTextWithMaxHeightParagraph";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
+            paragraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.HIDDEN);
+            paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.HIDDEN);
             Text longText = new Text(
                     "Pretty long text example is provided here, " +
                             "especially given its font-size is set to bigger value"
@@ -381,7 +391,9 @@ public class VerticalTextTest extends ExtendedITextTest {
                     .setBackgroundColor(ColorConstants.LIGHT_GRAY);
             Text threeMSpaceWrappedText = new Text(" MMM ").setBackgroundColor(ColorConstants.LIGHT_GRAY);
 
-            VerticalParagraph vParagraph = new VerticalParagraph();
+            VerticalParagraph vParagraph = new VerticalParagraph(false);
+            vParagraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.FIT);
+            vParagraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
             vParagraph.setBorder(new SolidBorder(1));
             vParagraph.add(whitespacesRiddenText);
             vParagraph.add(normalText);
@@ -393,7 +405,9 @@ public class VerticalTextTest extends ExtendedITextTest {
             hParagraph.add(normalText);
             document.add(hParagraph);
 
-            vParagraph = new VerticalParagraph();
+            vParagraph = new VerticalParagraph(false);
+            vParagraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.FIT);
+            vParagraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
             vParagraph.setBorder(new SolidBorder(1));
             // fine-tune height to fit threeMSpaceWrappedText characters
             vParagraph.setFontSize(12);
@@ -440,7 +454,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             textDown.setLineThrough();
             textDown.setFontColor(ColorConstants.RED);
 
-            VerticalParagraph n = new VerticalParagraph("baseline");
+            VerticalParagraph n = new VerticalParagraph("baseline", false);
             n.add(textUp).add(textDown);
 
             document.add(n);
@@ -649,6 +663,8 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
             Div div = new Div();
             div.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
             div.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
@@ -789,7 +805,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             div.setFont(bioRhyme);
             div.setProperty(Property.LINE_HEIGHT, LineHeight.createMultipliedValue(2));
 
-            VerticalParagraph paragraph1 = new VerticalParagraph()
+            VerticalParagraph paragraph1 = new VerticalParagraph(false)
                     .setBackgroundColor(new DeviceRgb(210, 250, 179))
                     .setBorder(new SolidBorder(new DeviceRgb(0, 128, 0), 1));
 
@@ -831,12 +847,12 @@ public class VerticalTextTest extends ExtendedITextTest {
 
         Image img = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
-                Document document = new Document(pdfDocument)) {
+             Document document = new Document(pdfDocument)) {
             {
                 Paragraph title = new Paragraph("VerticalParagraph with 2 paragraph children")
                         .setFontSize(20);
 
-                VerticalParagraph paragraph = new VerticalParagraph();
+                VerticalParagraph paragraph = new VerticalParagraph(false);
                 paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
                 paragraph.add(new Paragraph("First child paragraph").setBackgroundColor(ColorConstants.GREEN));
                 paragraph.add(new Paragraph("Second child paragraph").setBackgroundColor(ColorConstants.ORANGE));
@@ -849,7 +865,7 @@ public class VerticalTextTest extends ExtendedITextTest {
                 Paragraph title = new Paragraph("VerticalParagraph with 1 paragraph child containing divs")
                         .setFontSize(20);
 
-                VerticalParagraph paragraph = new VerticalParagraph();
+                VerticalParagraph paragraph = new VerticalParagraph(false);
                 paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
                 Paragraph child = new Paragraph().setBackgroundColor(ColorConstants.GREEN);
                 child.add(new Div().setBackgroundColor(ColorConstants.YELLOW).add(new Paragraph("Child 1")));
@@ -864,7 +880,7 @@ public class VerticalTextTest extends ExtendedITextTest {
                 Paragraph title = new Paragraph("VerticalParagraph with 1 image")
                         .setFontSize(20);
 
-                VerticalParagraph paragraph = new VerticalParagraph("Vertical paragraph");
+                VerticalParagraph paragraph = new VerticalParagraph("Vertical paragraph", false);
                 paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
                 paragraph.add(img);
 
@@ -876,7 +892,7 @@ public class VerticalTextTest extends ExtendedITextTest {
                 Paragraph title = new Paragraph("VerticalParagraph with 1 paragraph child containing image")
                         .setFontSize(20);
 
-                VerticalParagraph paragraph = new VerticalParagraph();
+                VerticalParagraph paragraph = new VerticalParagraph(false);
                 paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
                 Paragraph child = new Paragraph().setBackgroundColor(ColorConstants.GREEN);
                 child.add(new Div().setBackgroundColor(ColorConstants.YELLOW).add(new Paragraph("Child 1")));
@@ -897,7 +913,7 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
             paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph.setHeight(500);
 
@@ -929,7 +945,7 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
             paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph.setHeight(500);
 
@@ -962,7 +978,9 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
+            paragraph.setProperty(Property.OVERFLOW_Y, OverflowPropertyValue.FIT);
+            paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.FIT);
             paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph.setHeight(500);
             paragraph.setPaddingTop(400);
@@ -1003,7 +1021,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             Text alignedText3 = new Text("text to be aligned with line\nbreak.");
             alignedText3.setBackgroundColor(ColorConstants.RED);
 
-            VerticalParagraph paragraph0 = new VerticalParagraph();
+            VerticalParagraph paragraph0 = new VerticalParagraph(false);
             paragraph0.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph0.setTextAlignment(TextAlignment.LEFT);
             paragraph0.setHeight(700);
@@ -1014,7 +1032,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             paragraph0.add(alignedText3);
             container.add(paragraph0);
 
-            VerticalParagraph paragraph1 = new VerticalParagraph();
+            VerticalParagraph paragraph1 = new VerticalParagraph(false);
             paragraph1.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph1.setHeight(700);
             paragraph1.setTextAlignment(TextAlignment.JUSTIFIED_ALL);
@@ -1027,7 +1045,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             paragraph1.add(alignedText3);
             container.add(paragraph1);
 
-            VerticalParagraph paragraph2 = new VerticalParagraph();
+            VerticalParagraph paragraph2 = new VerticalParagraph(false);
             paragraph2.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph2.setHeight(700);
             paragraph2.setTextAlignment(TextAlignment.JUSTIFIED_ALL);
@@ -1039,7 +1057,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             paragraph2.add(alignedText3);
             container.add(paragraph2);
 
-            VerticalParagraph paragraph3 = new VerticalParagraph();
+            VerticalParagraph paragraph3 = new VerticalParagraph(false);
             paragraph3.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph3.setHeight(700);
             paragraph3.setTextAlignment(TextAlignment.JUSTIFIED_ALL);
@@ -1073,7 +1091,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             Text alignedText3 = new Text("text to be aligned with line\nbreak.");
             alignedText3.setBackgroundColor(ColorConstants.RED);
 
-            VerticalParagraph paragraph0 = new VerticalParagraph();
+            VerticalParagraph paragraph0 = new VerticalParagraph(false);
             paragraph0.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph0.setTextAlignment(TextAlignment.LEFT);
             paragraph0.setHeight(700);
@@ -1084,7 +1102,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             paragraph0.add(alignedText3);
             container.add(paragraph0);
 
-            VerticalParagraph paragraph1 = new VerticalParagraph();
+            VerticalParagraph paragraph1 = new VerticalParagraph(false);
             paragraph1.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph1.setHeight(700);
             paragraph1.setTextAlignment(TextAlignment.CENTER);
@@ -1095,7 +1113,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             paragraph1.add(alignedText3);
             container.add(paragraph1);
 
-            VerticalParagraph paragraph2 = new VerticalParagraph();
+            VerticalParagraph paragraph2 = new VerticalParagraph(false);
             paragraph2.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph2.setHeight(700);
             paragraph2.setTextAlignment(TextAlignment.RIGHT);
@@ -1106,7 +1124,7 @@ public class VerticalTextTest extends ExtendedITextTest {
             paragraph2.add(alignedText3);
             container.add(paragraph2);
 
-            VerticalParagraph paragraph3 = new VerticalParagraph();
+            VerticalParagraph paragraph3 = new VerticalParagraph(false);
             paragraph3.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph3.setHeight(700);
             paragraph3.setTextAlignment(TextAlignment.JUSTIFIED_ALL);
@@ -1131,7 +1149,7 @@ public class VerticalTextTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            VerticalParagraph paragraph = new VerticalParagraph();
+            VerticalParagraph paragraph = new VerticalParagraph(false);
             paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
             paragraph.setHeight(500);
             paragraph.setTextAlignment(alignment);

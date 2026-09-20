@@ -29,7 +29,9 @@ import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.element.VerticalParagraph;
 import com.itextpdf.layout.properties.BaseDirection;
+import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
@@ -48,6 +50,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 @Tag("IntegrationTest")
 public class VerticalTextRTLTest extends ExtendedITextTest {
@@ -71,12 +75,7 @@ public class VerticalTextRTLTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-
-            Paragraph paragraph = new Paragraph();
-            paragraph.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_RL);
-            paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
-            paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+            VerticalParagraph paragraph = new VerticalParagraph(true);
             paragraph.setHeight(300).setFontSize(16).setBorder(new SolidBorder(1));
             if (width != 0F) {
                 paragraph.setWidth((float) width);
@@ -95,14 +94,9 @@ public class VerticalTextRTLTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-
             document.add(new Div().setHeight(600));
 
-            Paragraph paragraph = new Paragraph();
-            paragraph.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_RL);
-            paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
-            paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+            VerticalParagraph paragraph = new VerticalParagraph(true);
             paragraph.setHeight(300).setWidth(80).setFontSize(16)
                     .setBorder(new SolidBorder(1))
                     .setBackgroundColor(ColorConstants.YELLOW);
@@ -120,12 +114,7 @@ public class VerticalTextRTLTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-
-            Paragraph paragraph = new Paragraph();
-            paragraph.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_RL);
-            paragraph.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
-            paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
+            VerticalParagraph paragraph = new VerticalParagraph(true);
             paragraph.setProperty(Property.BASE_DIRECTION, BaseDirection.RIGHT_TO_LEFT);
             paragraph.setProperty(Property.TEXT_ALIGNMENT, TextAlignment.RIGHT);
             paragraph.setHeight(300).setFontSize(16)
@@ -145,8 +134,6 @@ public class VerticalTextRTLTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
         try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
-            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-
             Paragraph paragraph = new Paragraph();
             paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
             paragraph.setHeight(300).setFontSize(16).setBorder(new SolidBorder(1));
@@ -186,5 +173,58 @@ public class VerticalTextRTLTest extends ExtendedITextTest {
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    // Float + vertical-rl writing mode is not supported.
+    public void floatWithVerticalRlTextTest() throws IOException, InterruptedException {
+        String fileName = "floatWithVerticalRlText";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+
+            // Create a floated DIV
+            Div floatedDiv = new Div()
+                    .setWidth(200)
+                    .setHeight(200)
+                    .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                    .setBorder(new SolidBorder(ColorConstants.BLACK, 1))
+                    .add(new Paragraph("Floated\nElement"));
+            floatedDiv.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
+            document.add(floatedDiv);
+
+            // Add paragraph between the floated elements
+            Paragraph normalParagraph = new Paragraph("Normal text added after right floated div, " +
+                    "but before the next left floated div.");
+            document.add(normalParagraph);
+
+            floatedDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+            document.add(floatedDiv);
+
+            // Add another paragraph after the floated elements.
+            normalParagraph = new Paragraph("Normal text added after vertical paragraphs and divs.");
+            document.add(normalParagraph);
+
+            document.add(new CustomVerticalParagraph("This is a vertical paragraph with a lot of text to " +
+                    "demonstrate how it interacts with floated elements. It should wrap around the floated elements " +
+                    "and continue on the next line if necessary. " +
+                    "The quick brown fox jumps over the lazy dog. 1234567890 ABCDEFG abcdefg.", true)
+                    .setHeight(300));
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    private static class CustomVerticalParagraph extends VerticalParagraph {
+
+        public CustomVerticalParagraph(String text, boolean rightToLeftProgression) {
+            super(text, rightToLeftProgression);
+        }
+
+        @Override
+        public Map<Integer, String> getUnsupportedProperties() {
+            return Collections.<Integer, String>emptyMap();
+        }
     }
 }

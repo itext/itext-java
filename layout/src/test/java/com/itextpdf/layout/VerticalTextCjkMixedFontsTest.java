@@ -84,7 +84,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(new VerticalParagraph(), chineseSpec, japaneseSpec, koreanSpec));
+            document.add(buildParagraph(new VerticalParagraph(false), chineseSpec, japaneseSpec, koreanSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(new Paragraph(), chineseSpec, japaneseSpec, koreanSpec));
         }
@@ -108,7 +108,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(new VerticalParagraph(), chineseSpec, latinSpec));
+            document.add(buildParagraph(new VerticalParagraph(false), chineseSpec, latinSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(new Paragraph(), chineseSpec, latinSpec));
         }
@@ -131,7 +131,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(new VerticalParagraph(), mongolianSpec, chineseSpec));
+            document.add(buildParagraph(new VerticalParagraph(false), mongolianSpec, chineseSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(new Paragraph(), mongolianSpec, chineseSpec));
         }
@@ -155,7 +155,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(new VerticalParagraph(), chineseSpec, japaneseSpec, koreanSpec, mongolianSpec));
+            document.add(buildParagraph(new VerticalParagraph(false), chineseSpec, japaneseSpec, koreanSpec, mongolianSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(new Paragraph(), chineseSpec, japaneseSpec, koreanSpec, mongolianSpec));
         }
@@ -182,7 +182,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(new VerticalParagraph(), smallSpec, mediumSpec, largeSpec));
+            document.add(buildParagraph(new VerticalParagraph(false), smallSpec, mediumSpec, largeSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(new Paragraph(), smallSpec, mediumSpec, largeSpec));
         }
@@ -206,7 +206,7 @@ public class VerticalTextCjkMixedFontsTest extends ExtendedITextTest {
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
-            document.add(buildParagraph(new VerticalParagraph(), simplifiedSpec, traditionalSpec));
+            document.add(buildParagraph(new VerticalParagraph(false), simplifiedSpec, traditionalSpec));
             document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
             document.add(buildParagraph(new Paragraph(), simplifiedSpec, traditionalSpec));
         }

@@ -85,7 +85,7 @@ public class Paragraph extends AbstractParagraph<Paragraph> {
      *
      * @param element the content to be added, any {@link ILeafElement}
      *
-     * @return (T)this {@link Paragraph}
+     * @return this {@link Paragraph}
      */
     @Override
     public Paragraph add(ILeafElement element) {
@@ -97,7 +97,7 @@ public class Paragraph extends AbstractParagraph<Paragraph> {
      *
      * @param element the content to be added, any {@link IBlockElement}
      *
-     * @return (T)this {@link Paragraph}
+     * @return this {@link Paragraph}
      */
     public Paragraph add(IBlockElement element) {
         childElements.add(element);
@@ -124,11 +124,9 @@ public class Paragraph extends AbstractParagraph<Paragraph> {
      *
      * @return this {@link Paragraph}
      */
+    @Override
     public <T2 extends ILeafElement> Paragraph addAll(java.util.List<T2> elements) {
-        for (ILeafElement element : elements) {
-            add(element);
-        }
-        return this;
+        return super.addAll(elements);
     }
 
     /**
@@ -255,6 +253,7 @@ public class Paragraph extends AbstractParagraph<Paragraph> {
         } else {
             setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, leading));
         }
+
         return this;
     }
 

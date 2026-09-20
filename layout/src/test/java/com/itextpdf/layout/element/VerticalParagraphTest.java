@@ -3,6 +3,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.logs.LayoutLogMessageConstant;
+import com.itextpdf.layout.properties.FloatPropertyValue;
 import com.itextpdf.layout.properties.Leading;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.AbstractRenderer;
@@ -20,32 +21,27 @@ import org.junit.jupiter.api.Test;
 public class VerticalParagraphTest extends ExtendedITextTest {
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.UNSUPPORTED_PROPERTY,
-                    logLevel = LogLevelConstants.WARN, count = 2),
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.UNSUPPORTED_PROPERTY,
+            logLevel = LogLevelConstants.WARN, count = 2)})
     public void settingUnsupportedPropertiesMustLogWarning() {
-        VerticalParagraph verticalParagraph = new VerticalParagraph();
+        VerticalParagraph verticalParagraph = new VerticalParagraph(false);
         Leading original = verticalParagraph.<Leading>getProperty(Property.LEADING);
         verticalParagraph.setProperty(com.itextpdf.layout.properties.Property.FLOAT,
                 com.itextpdf.layout.properties.FloatPropertyValue.LEFT);
         verticalParagraph.setProperty(com.itextpdf.layout.properties.Property.LEADING,
                 new Leading(Leading.MULTIPLIED, 3f));
-        //keep sonar happy; the real test is through the log messages, so we just assert true here
+        // Keep sonar happy; the real test is through the log messages, so we just assert true here.
         Assertions.assertEquals(original, verticalParagraph.<Leading>getProperty(Property.LEADING));
     }
 
     @Test
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.UNSUPPORTED_PROPERTY,
-                    logLevel = LogLevelConstants.WARN, count = 1),
-    })
+    @LogMessages(messages = {@LogMessage(messageTemplate = LayoutLogMessageConstant.UNSUPPORTED_PROPERTY,
+            logLevel = LogLevelConstants.WARN),})
     public void unsupportedInheritedPropertiesMustLogWarning() {
-        VerticalParagraph verticalParagraph = new VerticalParagraph();
+        VerticalParagraph verticalParagraph = new VerticalParagraph(false);
         TestRenderer parentRenderer = new TestRenderer();
         parentRenderer.setProperty(Property.LEADING, new Leading(Leading.MULTIPLIED, 3f));
-        parentRenderer.setProperty(com.itextpdf.layout.properties.Property.FLOAT,
-                com.itextpdf.layout.properties.FloatPropertyValue.LEFT);
+        parentRenderer.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
         IRenderer verticalParagraphRenderer = verticalParagraph.getRenderer();
         verticalParagraphRenderer.setParent(parentRenderer);
 

@@ -82,7 +82,6 @@ public class ParagraphRenderer extends BlockRenderer {
         this.unsupportedProperties = modelElement.getUnsupportedProperties();
     }
 
-
     /**
      * Creates a ParagraphRenderer from its corresponding layout object.
      *
@@ -807,7 +806,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 LOGGER.warn(() -> MessageFormatUtil.format(LayoutLogMessageConstant.UNSUPPORTED_PROPERTY,
                         getModelElement().getClass().getSimpleName(), unsupportedProperties.get(key)));
             }
-            return (T1)(Object) null;
+            return (T1) (Object) null;
         }
         return value;
     }
