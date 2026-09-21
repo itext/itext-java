@@ -163,7 +163,6 @@ public class VerticalTextPropertiesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.UNSUPPORTED_PROPERTY, count = 2))
     public void rotationAngleTest() throws IOException, InterruptedException {
         String fileName = "rotationAngle";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -178,6 +177,15 @@ public class VerticalTextPropertiesTest extends ExtendedITextTest {
             document.add(paragraph);
 
             paragraph.setRotationAngle(-Math.PI / 2);
+            document.add(paragraph);
+
+            paragraph.setRotationAngle(Math.PI / 4);
+            document.add(paragraph);
+
+            paragraph.setRotationAngle(-Math.PI / 4);
+            document.add(paragraph);
+
+            paragraph.setRotationAngle(Math.PI);
             document.add(paragraph);
         }
 
@@ -392,6 +400,7 @@ public class VerticalTextPropertiesTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.UNSUPPORTED_PROPERTY, count = 1))
     public void tabStopsTest() throws IOException, InterruptedException {
         String fileName = "tabStops";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -429,7 +438,7 @@ public class VerticalTextPropertiesTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.UNSUPPORTED_PROPERTY))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.UNSUPPORTED_PROPERTY, count = 1))
     public void textAnchorTest() throws IOException, InterruptedException {
         String fileName = "textAnchor";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";

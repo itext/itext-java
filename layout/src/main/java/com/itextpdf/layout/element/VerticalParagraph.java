@@ -22,9 +22,6 @@
  */
 package com.itextpdf.layout.element;
 
-import com.itextpdf.commons.logs.LazyLogger;
-import com.itextpdf.commons.utils.MessageFormatUtil;
-import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
@@ -33,28 +30,10 @@ import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A {@link Paragraph} that is laid out vertically, with text flowing from top to bottom.
  */
 public class VerticalParagraph extends AbstractParagraph<VerticalParagraph> {
-
-    private static final LazyLogger LOGGER = new LazyLogger(VerticalParagraph.class);
-
-    private static final Map<Integer, String> unsupportedProperties = new HashMap<Integer, String>();
-
-    static {
-        unsupportedProperties.put(Property.FLOAT, "Float");
-        unsupportedProperties.put(Property.LEADING, "Leading");
-        unsupportedProperties.put(Property.ROTATION_ANGLE, "Rotation angle");
-        unsupportedProperties.put(Property.TAB_STOPS, "Tab stops");
-        unsupportedProperties.put(Property.TAB_LEADER, "Tab leader");
-        unsupportedProperties.put(Property.TAB_DEFAULT, "Tab default");
-        unsupportedProperties.put(Property.TAB_ANCHOR, "Tab anchor");
-        unsupportedProperties.put(Property.TEXT_ANCHOR, "Text anchor");
-    }
 
     /**
      * Creates a new {@link VerticalParagraph} instance.
@@ -97,29 +76,6 @@ public class VerticalParagraph extends AbstractParagraph<VerticalParagraph> {
     public VerticalParagraph(Text text, boolean rightToLeftProgression) {
         this(rightToLeftProgression);
         super.add(text);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setProperty(int property, Object value) {
-        if (getUnsupportedProperties().containsKey(property)) {
-            LOGGER.warn(() ->
-                    MessageFormatUtil.format(
-                            LayoutLogMessageConstant.UNSUPPORTED_PROPERTY, getClass().getSimpleName(),
-                            getUnsupportedProperties().get(property)));
-            return;
-        }
-        super.setProperty(property, value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Map<Integer, String> getUnsupportedProperties() {
-        return unsupportedProperties;
     }
 
     /**

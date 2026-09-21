@@ -31,7 +31,6 @@ import com.itextpdf.layout.properties.ParagraphWidowsControl;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -75,13 +74,25 @@ public abstract class AbstractParagraph<T extends AbstractParagraph<T>> extends 
     }
 
     /**
-     * Adds a {@link AbstractParagraph} element.
+     * Adds a {@link Paragraph} element.
      *
-     * @param element the content to be added, any {@link AbstractParagraph}
+     * @param element the content to be added, any {@link Paragraph}
      *
      * @return this Element
      */
-    public T add(AbstractParagraph element) {
+    public T add(Paragraph element) {
+        childElements.add(element);
+        return (T) this;
+    }
+
+    /**
+     * Adds a {@link VerticalParagraph} element.
+     *
+     * @param element the content to be added, any {@link VerticalParagraph}
+     *
+     * @return this Element
+     */
+    public T add(VerticalParagraph element) {
         childElements.add(element);
         return (T) this;
     }
@@ -165,16 +176,6 @@ public abstract class AbstractParagraph<T extends AbstractParagraph<T>> extends 
             tagProperties = new DefaultAccessibilityProperties(StandardRoles.P);
         }
         return tagProperties;
-    }
-
-    /**
-     * Returns a map of unsupported properties. The map is empty by default,
-     * but can be overridden by subclasses to specify unsupported properties.
-     *
-     * @return a map of unsupported properties, where the key is the property ID and the value is the property name
-     */
-    public Map<Integer, String> getUnsupportedProperties() {
-        return Collections.<Integer, String>emptyMap();
     }
 
     /**

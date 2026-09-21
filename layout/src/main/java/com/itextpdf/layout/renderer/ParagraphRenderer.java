@@ -55,6 +55,7 @@ import com.itextpdf.layout.properties.WritingMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -68,7 +69,17 @@ import java.util.Set;
 public class ParagraphRenderer extends BlockRenderer {
 
     private static final LazyLogger LOGGER = new LazyLogger(ParagraphRenderer.class);
-    private final Map<Integer, String> unsupportedProperties;
+
+    private static final Map<Integer, String> unsupportedPropertiesForVerticalWriting = new HashMap<Integer, String>();
+
+    static {
+        unsupportedPropertiesForVerticalWriting.put(Property.FLOAT, "Float");
+        unsupportedPropertiesForVerticalWriting.put(Property.TAB_STOPS, "Tab stops");
+        unsupportedPropertiesForVerticalWriting.put(Property.TAB_LEADER, "Tab leader");
+        unsupportedPropertiesForVerticalWriting.put(Property.TAB_DEFAULT, "Tab default");
+        unsupportedPropertiesForVerticalWriting.put(Property.TAB_ANCHOR, "Tab anchor");
+        unsupportedPropertiesForVerticalWriting.put(Property.TEXT_ANCHOR, "Text anchor");
+    }
 
     protected List<LineRenderer> lines = null;
 
@@ -79,7 +90,6 @@ public class ParagraphRenderer extends BlockRenderer {
      */
     public ParagraphRenderer(Paragraph modelElement) {
         super(modelElement);
-        this.unsupportedProperties = modelElement.getUnsupportedProperties();
     }
 
     /**
@@ -89,7 +99,6 @@ public class ParagraphRenderer extends BlockRenderer {
      */
     public ParagraphRenderer(VerticalParagraph modelElement) {
         super(modelElement);
-        this.unsupportedProperties = modelElement.getUnsupportedProperties();
     }
 
     /**
@@ -112,6 +121,17 @@ public class ParagraphRenderer extends BlockRenderer {
         updateParentLines(this);
         updateParentLines((ParagraphRenderer) layoutResult.getSplitRenderer());
         return layoutResult;
+    }
+
+    @Override
+    public IRenderer setParent(IRenderer parent) {
+        if (super.getParent() == parent) {
+            return this;
+        }
+        super.setParent(parent);
+        isVerticalMode = null;
+        checkProperties();
+        return this;
     }
 
     protected LayoutResult directLayout(LayoutContext layoutContext) {
@@ -734,6 +754,17 @@ public class ParagraphRenderer extends BlockRenderer {
         return null;
     }
 
+    private void checkProperties() {
+        if (isVerticalWriting()) {
+            for (Map.Entry<Integer, String> entry : unsupportedPropertiesForVerticalWriting.entrySet()) {
+                if (this.hasProperty(entry.getKey())) {
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            LayoutLogMessageConstant.UNSUPPORTED_PROPERTY, "vertical text", entry.getValue()));
+                }
+            }
+        }
+    }
+
     private ParagraphRenderer createOverflowRenderer() {
         return (ParagraphRenderer) getNextRenderer();
     }
@@ -796,19 +827,6 @@ public class ParagraphRenderer extends BlockRenderer {
         }
 
         return rotation != null ? RotationUtils.calculateRotationMinMaxWidth(minMaxWidth, this) : minMaxWidth;
-    }
-
-    @Override
-    public <T1> T1 getProperty(int key) {
-        T1 value = super.<T1>getProperty(key);
-        if (value != null && unsupportedProperties.containsKey(key)) {
-            if (getModelElement() != null && !value.equals(getModelElement().<T1>getDefaultProperty(key))) {
-                LOGGER.warn(() -> MessageFormatUtil.format(LayoutLogMessageConstant.UNSUPPORTED_PROPERTY,
-                        getModelElement().getClass().getSimpleName(), unsupportedProperties.get(key)));
-            }
-            return (T1) (Object) null;
-        }
-        return value;
     }
 
     protected ParagraphRenderer[] split() {

@@ -161,7 +161,7 @@ public abstract class AbstractRenderer implements IRenderer {
     protected IRenderer parent;
     protected Map<Integer, Object> properties = new HashMap<>();
     protected boolean isLastRendererForModelElement = true;
-    private Boolean isVerticalMode;
+    protected Boolean isVerticalMode;
 
     private boolean relativePositioningTranslationApplied = false;
 

@@ -79,7 +79,8 @@ public final class LayoutLogMessageConstant {
     public static final String ROTATED_LAYOUT_ELEMENT_DOES_NOT_FIT_AREA =
             "Layout element does not fit current area with infinite height.";
 
-    public static final String UNSUPPORTED_PROPERTY = "Property {1} is not supported for {0} and will be ignored.";
+    public static final String UNSUPPORTED_PROPERTY = "Property {1} is not supported for {0} and can result in"
+            + " unexpected behaviour.";
 
     private LayoutLogMessageConstant() {
         // Private constructor will prevent the instantiation of this class directly.

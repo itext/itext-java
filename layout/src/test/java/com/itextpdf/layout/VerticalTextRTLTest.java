@@ -50,8 +50,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
 
 @Tag("IntegrationTest")
 public class VerticalTextRTLTest extends ExtendedITextTest {
@@ -206,7 +204,7 @@ public class VerticalTextRTLTest extends ExtendedITextTest {
             normalParagraph = new Paragraph("Normal text added after vertical paragraphs and divs.");
             document.add(normalParagraph);
 
-            document.add(new CustomVerticalParagraph("This is a vertical paragraph with a lot of text to " +
+            document.add(new VerticalParagraph("This is a vertical paragraph with a lot of text to " +
                     "demonstrate how it interacts with floated elements. It should wrap around the floated elements " +
                     "and continue on the next line if necessary. " +
                     "The quick brown fox jumps over the lazy dog. 1234567890 ABCDEFG abcdefg.", true)
@@ -214,17 +212,5 @@ public class VerticalTextRTLTest extends ExtendedITextTest {
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
-    }
-
-    private static class CustomVerticalParagraph extends VerticalParagraph {
-
-        public CustomVerticalParagraph(String text, boolean rightToLeftProgression) {
-            super(text, rightToLeftProgression);
-        }
-
-        @Override
-        public Map<Integer, String> getUnsupportedProperties() {
-            return Collections.<Integer, String>emptyMap();
-        }
     }
 }
