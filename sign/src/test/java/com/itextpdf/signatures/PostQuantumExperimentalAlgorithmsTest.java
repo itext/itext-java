@@ -63,7 +63,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final boolean FIPS_MODE = "BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName());
-    private static final boolean IS_NATIVE = System.getProperty("org.graalvm.nativeimage.imagecode") != null;
 
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/signatures/PostQuantumExperimentalAlgorithmsTest/";
@@ -101,7 +100,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC), ignore = true)
     public void signVerifyPQCTest(String signatureAlgo, String expectedSigAlgoIdentifier, int signatureBytesSize)
             throws Exception {
-        checkXMSSInNative(signatureAlgo);
 
         String outFile = Paths.get(DESTINATION_FOLDER, signatureAlgo + ".pdf").toString();
         String certPath = SOURCE_FOLDER + "cert_" + signatureAlgo + ".pem";
@@ -117,7 +115,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC), ignore = true)
     public void signExternalContainerPQCTest(String signatureAlgo, String expectedSigAlgoIdentifier,
                                              int signatureBytesSize) throws Exception {
-        checkXMSSInNative(signatureAlgo);
 
         String outFile = Paths.get(DESTINATION_FOLDER, "ext_cont_" + signatureAlgo + ".pdf").toString();
         String certPath = SOURCE_FOLDER + "cert_" + signatureAlgo + ".pem";
@@ -133,7 +130,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC), ignore = true)
     public void signDeferredPQCTest(String signatureAlgo, String expectedSigAlgoIdentifier, int signatureBytesSize)
             throws Exception {
-        checkXMSSInNative(signatureAlgo);
 
         String preparedFile = Paths.get(DESTINATION_FOLDER, "prep_" + signatureAlgo + ".pdf").toString();
         String outFile = Paths.get(DESTINATION_FOLDER, "deferred_" + signatureAlgo + ".pdf").toString();
@@ -151,7 +147,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC), ignore = true)
     public void twoPhaseSigningPQCTest(String signatureAlgo, String expectedSigAlgoIdentifier,
                                        int signatureBytesSize) throws Exception {
-        checkXMSSInNative(signatureAlgo);
 
         String outFile = Paths.get(DESTINATION_FOLDER, "two_phase_" + signatureAlgo + ".pdf").toString();
         String certPath = SOURCE_FOLDER + "cert_" + signatureAlgo + ".pem";
@@ -167,7 +162,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC), ignore = true)
     public void timestampPQCTest(String signatureAlgo, String expectedSigAlgoIdentifier, int signatureBytesSize)
             throws Exception {
-        checkXMSSInNative(signatureAlgo);
 
         String outFile = Paths.get(DESTINATION_FOLDER, "timestamp_" + signatureAlgo + ".pdf").toString();
         String certPath = SOURCE_FOLDER + "timestamp/ts_cert_" + signatureAlgo + ".pem";
@@ -315,13 +309,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
             if (expectedSigAlgoIdentifier != null) {
                 Assertions.assertEquals(expectedSigAlgoIdentifier, data.getSignatureMechanismOid());
             }
-        }
-    }
-
-    private static void checkXMSSInNative(String signatureAlgo) {
-        if (IS_NATIVE && XMSS.equals(signatureAlgo)) {
-            // TODO DEVSIX-9622 GraalVM: investigate XMSS PQC test failure (reproduces for graalvm-23.0.1)
-            Assumptions.assumeTrue(false);
         }
     }
 }
