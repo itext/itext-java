@@ -26,6 +26,9 @@ import com.itextpdf.kernel.PdfException;
 import java.io.IOException;
 
 public class OutputStreamAesEncryption extends OutputStreamEncryption {
+
+    private static final SecureRandomHolder RNG = new SecureRandomHolder();
+
     protected AESCipher cipher;
     private boolean finished;
 
@@ -38,7 +41,10 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
      */
     public OutputStreamAesEncryption(java.io.OutputStream out, byte[] key, int off, int len) {
         super(out);
-        byte[] iv = IVGenerator.getIV();
+
+        byte[] iv = new byte[16];
+        RNG.getSecureRandom().nextBytes(iv);
+
         byte[] nkey = new byte[len];
         System.arraycopy(key, off, nkey, 0, len);
         cipher = new AESCipher(true, nkey, iv);
