@@ -45,12 +45,12 @@ package com.itextpdf.kernel.crypto.securityhandler;
 
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
+import com.itextpdf.kernel.crypto.SecureRandomHolder;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.AESCipherCBCnoPad;
 import com.itextpdf.kernel.crypto.AesDecryptor;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.crypto.IDecryptor;
-import com.itextpdf.kernel.crypto.IVGenerator;
 import com.itextpdf.kernel.crypto.OutputStreamAesEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -70,6 +70,7 @@ import org.slf4j.LoggerFactory;
 
 public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
+    private static final SecureRandomHolder RNG = new SecureRandomHolder();
 
     private static final int VALIDATION_SALT_OFFSET = 32;
     private static final int KEY_SALT_OFFSET = 40;
@@ -132,10 +133,13 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             }
 
             // first 8 bytes are validation salt; second 8 bytes are key salt
-            byte[] userValAndKeySalt = IVGenerator.getIV(16);
-            byte[] ownerValAndKeySalt = IVGenerator.getIV(16);
+            byte[] userValAndKeySalt = new byte[16];
+            RNG.getSecureRandom().nextBytes(userValAndKeySalt);
+            byte[] ownerValAndKeySalt = new byte[16];
+            RNG.getSecureRandom().nextBytes(ownerValAndKeySalt);
 
-            nextObjectKey = IVGenerator.getIV(32);
+            nextObjectKey = new byte[32];
+            RNG.getSecureRandom().nextBytes(nextObjectKey);
             nextObjectKeySize = 32;
 
             byte[] hash;
@@ -163,7 +167,8 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
 
             // Algorithm 10
-            byte[] permsp = IVGenerator.getIV(16);
+            byte[] permsp = new byte[16];
+            RNG.getSecureRandom().nextBytes(permsp);
             permsp[0] = (byte) permissions;
             permsp[1] = (byte) (permissions >> 8);
             permsp[2] = (byte) (permissions >> 16);
