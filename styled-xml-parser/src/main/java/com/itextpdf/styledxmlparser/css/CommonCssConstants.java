@@ -65,6 +65,11 @@ public class CommonCssConstants {
     public static final String ALIGN_SELF = "align-self";
 
     /**
+     * The Constant ALL.
+     */
+    public static final String ALL = "all";
+
+    /**
      * The constant ATTRIBUTE.
      */
     public static final String ATTRIBUTE = "attr";

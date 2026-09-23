@@ -249,6 +249,7 @@ public final class Property {
     public static final int POSITIONED_ELEMENT_WRAPPER_LAYOUT = 165;
     public static final int WRITING_MODE = 169;
     public static final int TEXT_ORIENTATION = 170;
+    public static final int TEXT_COMBINE_UPRIGHT = 171;
 
     /**
      * Some properties must be passed to {@link IPropertyContainer} objects that
@@ -256,7 +257,7 @@ public final class Property {
      * related to textual operations. Indicates whether this type of property is inheritable.
      */
     private static final boolean[] INHERITED_PROPERTIES;
-    private static final int MAX_INHERITED_PROPERTY_ID = 170;
+    private static final int MAX_INHERITED_PROPERTY_ID = 171;
 
     static {
         INHERITED_PROPERTIES = new boolean[MAX_INHERITED_PROPERTY_ID + 1];
@@ -313,6 +314,7 @@ public final class Property {
         INHERITED_PROPERTIES[Property.MITER_LIMIT] = true;
         INHERITED_PROPERTIES[Property.WRITING_MODE] = true;
         INHERITED_PROPERTIES[Property.TEXT_ORIENTATION] = true;
+        INHERITED_PROPERTIES[Property.TEXT_COMBINE_UPRIGHT] = true;
     }
 
     private Property() {

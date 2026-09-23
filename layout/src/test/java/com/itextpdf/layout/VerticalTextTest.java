@@ -46,6 +46,7 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.TextCombineUpright;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.layout.properties.VerticalTextOrientation;
@@ -1070,6 +1071,31 @@ public class VerticalTextTest extends ExtendedITextTest {
             container.add(paragraph3);
 
             document.add(container);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void combineUprightTest() throws IOException, InterruptedException {
+        String fileName = "combineUprightTest";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            VerticalParagraph paragraph = new VerticalParagraph(false);
+            paragraph.setBackgroundColor(ColorConstants.LIGHT_GRAY);
+            paragraph.setHeight(700);
+            paragraph.setFontSize(20);
+
+            paragraph.add("combine-upright ");
+            Text text = new Text("2026");
+            text.setProperty(Property.TEXT_COMBINE_UPRIGHT, TextCombineUpright.ALL);
+            text.setBackgroundColor(ColorConstants.ORANGE);
+            paragraph.add(text);
+            paragraph.add(" test.");
+
+            document.add(paragraph);
         }
 
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));

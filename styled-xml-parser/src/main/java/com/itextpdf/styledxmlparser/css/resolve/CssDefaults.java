@@ -126,6 +126,7 @@ public class CssDefaults {
         defaultValues.put(CommonCssConstants.QUOTES, "\"\\00ab\" \"\\00bb\"");
 
         defaultValues.put(CommonCssConstants.TEXT_ALIGN, CommonCssConstants.START);
+        defaultValues.put(CommonCssConstants.TEXT_COMBINE_UPRIGHT, CommonCssConstants.NONE);
         defaultValues.put(CommonCssConstants.TEXT_DECORATION, CommonCssConstants.NONE);
         defaultValues.put(CommonCssConstants.TEXT_DECORATION_LINE, CommonCssConstants.NONE);
         defaultValues.put(CommonCssConstants.TEXT_DECORATION_STYLE, CommonCssConstants.SOLID);

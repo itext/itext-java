@@ -302,7 +302,6 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
 
-    //TODO DEVSIX-10167: Update test after fix
     @Test
     public void verticalTextCjkIdeographicSpaceVsRegularSpaceTest() throws IOException, InterruptedException {
         String fileName = "verticalTextCjkIdeographicSpaceVsRegularSpace";
@@ -324,6 +323,69 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
 
         Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
         Assertions.assertTrue(VerticalTextTestUtil.containsAllCharacters(extractedCounts, "文字", 4));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void verticalTextCjkDashVariantsRotationTest() throws IOException, InterruptedException {
+        String fileName = "verticalTextCjkDashVariantsRotation";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        String content = "前-中‐後‑終‒段–節—章―末−了";
+        CjkTextSpec spec = new CjkTextSpec(content, loadCjkFont(NOTO_SANS_SC), 24)
+                .backgroundColor(ColorConstants.LIGHT_GRAY);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            document.add(buildParagraph(new VerticalParagraph(false), spec));
+            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+            document.add(buildParagraph(new Paragraph(), spec));
+        }
+
+        Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
+        Assertions.assertTrue(VerticalTextTestUtil.containsAllCharacters(extractedCounts, "前中後終段節章末了"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void verticalTextCjkConsecutiveSpacesAndDashesTest() throws IOException, InterruptedException {
+        String fileName = "verticalTextCjkConsecutiveSpacesAndDashes";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        CjkTextSpec spaceSpec = new CjkTextSpec("甲  乙\u3000\u3000丙", loadCjkFont(NOTO_SANS_SC), 24)
+                .backgroundColor(ColorConstants.LIGHT_GRAY);
+        CjkTextSpec dashSpec = new CjkTextSpec("丁--戊——己", loadCjkFont(NOTO_SANS_SC), 24)
+                .backgroundColor(ColorConstants.CYAN);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            document.add(buildParagraph(new VerticalParagraph(false), spaceSpec, dashSpec));
+            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+            document.add(buildParagraph(new Paragraph(), spaceSpec, dashSpec));
+        }
+
+        Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
+        Assertions.assertTrue(VerticalTextTestUtil.containsAllCharacters(extractedCounts, "甲乙丙丁戊己"));
+        Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
+    }
+
+    @Test
+    public void verticalTextCjkDashBeforeAndAfterSpacesTest() throws IOException, InterruptedException {
+        String fileName = "verticalTextCjkDashBeforeAndAfterSpaces";
+        String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
+        String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
+        CjkTextSpec spec = new CjkTextSpec("始 — 中 \u3000-\u3000 終", loadCjkFont(NOTO_SANS_SC), 24)
+                .backgroundColor(ColorConstants.LIGHT_GRAY);
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+             Document document = new Document(pdfDocument)) {
+            document.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+            document.add(buildParagraph(new VerticalParagraph(false), spec));
+            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+            document.add(buildParagraph(new Paragraph(), spec));
+        }
+
+        Map<Character, Integer> extractedCounts = VerticalTextTestUtil.extractPageCharacterCounts(outFileName);
+        Assertions.assertTrue(VerticalTextTestUtil.containsAllCharacters(extractedCounts, "始中終"));
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
     }
 
@@ -378,36 +440,36 @@ public class VerticalTextCjkTest extends ExtendedITextTest {
     }
 
     private static final class CjkTextSpec {
-        protected final String content;
-        protected final PdfFont font;
-        protected final float fontSize;
-        protected Color backgroundColor;
-        protected Underline underline;
-        protected boolean boldSimulation;
-        protected boolean italicSimulation;
+        final String content;
+        final PdfFont font;
+        final float fontSize;
+        Color backgroundColor;
+        Underline underline;
+        boolean boldSimulation;
+        boolean italicSimulation;
 
-        protected CjkTextSpec(String content, PdfFont font, float fontSize) {
+        CjkTextSpec(String content, PdfFont font, float fontSize) {
             this.content = content;
             this.font = font;
             this.fontSize = fontSize;
         }
 
-        protected CjkTextSpec backgroundColor(Color color) {
+        CjkTextSpec backgroundColor(Color color) {
             this.backgroundColor = color;
             return this;
         }
 
-        protected CjkTextSpec underline(Underline underline) {
+        CjkTextSpec underline(Underline underline) {
             this.underline = underline;
             return this;
         }
 
-        protected CjkTextSpec boldSimulation() {
+        CjkTextSpec boldSimulation() {
             this.boldSimulation = true;
             return this;
         }
 
-        protected CjkTextSpec italicSimulation() {
+        CjkTextSpec italicSimulation() {
             this.italicSimulation = true;
             return this;
         }

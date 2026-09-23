@@ -70,15 +70,15 @@ public class ParagraphRenderer extends BlockRenderer {
 
     private static final LazyLogger LOGGER = new LazyLogger(ParagraphRenderer.class);
 
-    private static final Map<Integer, String> unsupportedPropertiesForVerticalWriting = new HashMap<Integer, String>();
+    private static final Map<Integer, String> UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING = new HashMap<>();
 
     static {
-        unsupportedPropertiesForVerticalWriting.put(Property.FLOAT, "Float");
-        unsupportedPropertiesForVerticalWriting.put(Property.TAB_STOPS, "Tab stops");
-        unsupportedPropertiesForVerticalWriting.put(Property.TAB_LEADER, "Tab leader");
-        unsupportedPropertiesForVerticalWriting.put(Property.TAB_DEFAULT, "Tab default");
-        unsupportedPropertiesForVerticalWriting.put(Property.TAB_ANCHOR, "Tab anchor");
-        unsupportedPropertiesForVerticalWriting.put(Property.TEXT_ANCHOR, "Text anchor");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.FLOAT, "Float");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.TAB_STOPS, "Tab stops");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.TAB_LEADER, "Tab leader");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.TAB_DEFAULT, "Tab default");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.TAB_ANCHOR, "Tab anchor");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.TEXT_ANCHOR, "Text anchor");
     }
 
     protected List<LineRenderer> lines = null;
@@ -112,7 +112,7 @@ public class ParagraphRenderer extends BlockRenderer {
             return OrphansWidowsLayoutHelper.orphansWidowsAwareLayout(this, layoutContext, orphansControl, widowsControl);
         }
         if (RenderingMode.SVG_MODE == this.<RenderingMode>getProperty(Property.RENDERING_MODE) &&
-                !TypographyUtils.isPdfCalligraphAvailable()) {
+                (!TypographyUtils.isPdfCalligraphAvailable() || isVerticalWriting())) {
             // BASE_DIRECTION property is always set to the SVG text since we can't easily check whether typography is
             // available at svg module level, but it makes no sense without typography, so it is removed here.
             this.deleteProperty(Property.BASE_DIRECTION);
@@ -756,7 +756,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
     private void checkProperties() {
         if (isVerticalWriting()) {
-            for (Map.Entry<Integer, String> entry : unsupportedPropertiesForVerticalWriting.entrySet()) {
+            for (Map.Entry<Integer, String> entry : UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.entrySet()) {
                 if (this.hasProperty(entry.getKey())) {
                     LOGGER.warn(() -> MessageFormatUtil.format(
                             LayoutLogMessageConstant.UNSUPPORTED_PROPERTY, "vertical text", entry.getValue()));

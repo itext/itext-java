@@ -59,6 +59,7 @@ import com.itextpdf.layout.properties.VerticalTextOrientation;
 import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.LastFittingChildRendererData;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRendererSequenceHelper;
+import com.itextpdf.layout.renderer.typography.DefaultTypographyApplier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -225,7 +226,7 @@ public class LineRenderer extends AbstractRenderer {
 
             if (TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(
                     childRenderer, sameDirection)
-                    && TypographyUtils.isPdfCalligraphAvailable()) {
+                    && TypographyUtils.isPdfCalligraphAvailable() && !isVerticalWriting) {
                 TextSequenceWordWrapping.processSpecialScriptPreLayout(this, childPos);
             }
             TextSequenceWordWrapping.resetTextSequenceIfItEnded(
@@ -825,7 +826,13 @@ public class LineRenderer extends AbstractRenderer {
                 System.arraycopy(levels, 0, lineLevels, 0, splitIntoGlyphsData.getLineGlyphs().size());
             }
 
-            final int[] newOrder = TypographyUtils.reorderLine(splitIntoGlyphsData.getLineGlyphs(), lineLevels, levels);
+            final int[] newOrder;
+            if (isVerticalWriting) {
+                newOrder = new DefaultTypographyApplier().reorderLine(
+                        splitIntoGlyphsData.getLineGlyphs(), lineLevels, levels);
+            } else {
+                newOrder = TypographyUtils.reorderLine(splitIntoGlyphsData.getLineGlyphs(), lineLevels, levels);
+            }
             if (newOrder != null) {
                 reorder(toProcess, splitIntoGlyphsData, newOrder);
                 adjustChildPositionsAfterReordering(toProcess.getChildRenderers(), occupiedArea.getBBox().getLeft());
@@ -1790,8 +1797,13 @@ public class LineRenderer extends AbstractRenderer {
                 final SequenceId sequenceId = pdfDocument == null ? null : pdfDocument.getDocumentIdWrapper();
                 final MetaInfoContainer metaInfoContainer = this.<MetaInfoContainer>getProperty(Property.META_INFO);
                 final IMetaInfo metaInfo = metaInfoContainer == null ? null : metaInfoContainer.getMetaInfo();
-                levels = TypographyUtils.getBidiLevels(baseDirection, ArrayUtil.toIntArray(unicodeIdsReorderingList),
-                        sequenceId, metaInfo);
+                if (isVerticalWriting()) {
+                    levels = new DefaultTypographyApplier().getBidiLevels(
+                            baseDirection, ArrayUtil.toIntArray(unicodeIdsReorderingList), sequenceId, metaInfo);
+                } else {
+                    levels = TypographyUtils.getBidiLevels(baseDirection,
+                            ArrayUtil.toIntArray(unicodeIdsReorderingList), sequenceId, metaInfo);
+                }
             } else {
                 levels = null;
             }

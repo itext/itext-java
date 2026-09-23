@@ -99,6 +99,9 @@ public class CssDefaultValidator implements ICssDeclarationValidator {
                         new CssQuotesValidator()));
         defaultValidators.put(CommonCssConstants.TRANSFORM,
                 new SingleTypeDeclarationValidator(new CssTransformValidator()));
+        defaultValidators.put(CommonCssConstants.TEXT_COMBINE_UPRIGHT,
+                new MultiTypeDeclarationValidator(new CssEnumValidator(CommonCssConstants.NONE, CommonCssConstants.ALL),
+                        inheritInitialUnsetValidator));
 
         defaultValidators.put(CommonCssConstants.FONT_SIZE, new MultiTypeDeclarationValidator(
                 new CssLengthValueValidator(false), new CssPercentageValueValidator(false), relativeSizeValidator,
