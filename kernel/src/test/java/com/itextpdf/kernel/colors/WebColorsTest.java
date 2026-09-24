@@ -110,6 +110,28 @@ public class WebColorsTest extends ExtendedITextTest {
     }
 
     @Test
+    public void getRGBAColorBy4DigitCodeTest() {
+        String hexString = "#9009";
+        float[] cmpRgba = new float[]{(float)(0x99/RGB_MAX_VAL), (float)(0.0), (float)(0.0), (float)(0x99/RGB_MAX_VAL)};
+        float delta = (float)(0.0001);
+
+        float[] resultRgba = WebColors.getRGBAColor(hexString);
+
+        Assertions.assertArrayEquals(cmpRgba, resultRgba, delta);
+    }
+
+    @Test
+    public void getRGBAColorBy8DigitCodeTest() {
+        String hexString = "#90000090";
+        float[] cmpRgba = new float[]{(float)(0x90/RGB_MAX_VAL), (float)(0.0), (float)(0.0), (float)(0x90/RGB_MAX_VAL)};
+        float delta = (float)(0.0001);
+
+        float[] resultRgba = WebColors.getRGBAColor(hexString);
+
+        Assertions.assertArrayEquals(cmpRgba, resultRgba, delta);
+    }
+
+    @Test
     public void getRGBAColorByRgbObjectTest() {
         //corresponding color name = "violet"
         String rgbString = "rgb(238,130,238)";
@@ -209,7 +231,6 @@ public class WebColorsTest extends ExtendedITextTest {
         float[] resultCmyk = WebColors.getRGBAColor("rgba(44, 100, 0, 0,75)");
         Assertions.assertNull(resultCmyk);
     }
-
 
     @Test
     public void getCMYKColorTest() {

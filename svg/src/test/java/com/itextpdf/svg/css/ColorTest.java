@@ -75,4 +75,9 @@ public class ColorTest extends SvgIntegrationTest {
     public void colorTypesTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "color-types");
     }
+
+    @Test
+    public void rgbaTypesTest() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "rgba-types");
+    }
 }

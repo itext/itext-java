@@ -259,10 +259,12 @@ public class WebColors extends HashMap<String, int[]> {
     }
 
     /**
-     * Gives an array of four floats that contain RGBA values, each value is between 0 and 1. 
-     * @param name a name such as black, violet, cornflowerblue or #RGB or
-     *             #RRGGBB or RGB or RRGGBB or rgb(R,G,B) or rgb(R,G,B,A)
-     * @return the corresponding array of four floats, or <code>null</code> if parsing failed.
+     * Provides an array of four floats that contain RGBA values, each value is between 0 and 1.
+     *
+     * @param name a name such as black, violet, cornflowerblue or #RGB or #RGBA or
+     *             #RRGGBB or #RRGGBBAA or RGB or RRGGBB or rgb(R,G,B) or rgb(R,G,B,A)
+     *
+     * @return the corresponding array of four floats, or <code>null</code> if parsing failed
      */
     public static float[] getRGBAColor(String name) {
         float[] color = null;
@@ -274,19 +276,26 @@ public class WebColors extends HashMap<String, int[]> {
                     // lop off the # to unify hex parsing.
                     colorName = colorName.substring(1);
                 }
-                if (colorName.length() == 3) {
+                if (colorName.length() == 3 || colorName.length() == 4) {
                     String red = colorName.substring(0, 1);
                     color = new float[]{0, 0, 0, 1};
                     color[0] = (float) (Integer.parseInt(red + red, 16) / RGB_MAX_VAL);
                     String green = colorName.substring(1, 2);
                     color[1] = (float) (Integer.parseInt(green + green, 16) / RGB_MAX_VAL);
-                    String blue = colorName.substring(2);
+                    String blue = colorName.substring(2, 3);
                     color[2] = (float) (Integer.parseInt(blue + blue, 16) / RGB_MAX_VAL);
-                } else if (colorName.length() == 6) {
+                    if (colorName.length() == 4) {
+                        String alpha = colorName.substring(3, 4);
+                        color[3] = (float) (Integer.parseInt(alpha + alpha, 16) / RGB_MAX_VAL);
+                    }
+                } else if (colorName.length() == 6 || colorName.length() == 8) {
                     color = new float[]{0, 0, 0, 1};
                     color[0] = (float) (Integer.parseInt(colorName.substring(0, 2), 16) / RGB_MAX_VAL);
                     color[1] = (float) (Integer.parseInt(colorName.substring(2, 4), 16) / RGB_MAX_VAL);
-                    color[2] = (float) (Integer.parseInt(colorName.substring(4), 16) / RGB_MAX_VAL);
+                    color[2] = (float) (Integer.parseInt(colorName.substring(4, 6), 16) / RGB_MAX_VAL);
+                    if (colorName.length() == 8) {
+                        color[3] = (float) (Integer.parseInt(colorName.substring(6, 8), 16) / RGB_MAX_VAL);
+                    }
                 } else {
                     LOGGER.error(() -> IoLogMessageConstant.UNKNOWN_COLOR_FORMAT_MUST_BE_RGB_OR_RRGGBB);
                 }
