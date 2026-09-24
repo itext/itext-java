@@ -43,9 +43,9 @@ import com.itextpdf.svg.renderers.INoDrawSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
+import com.itextpdf.svg.renderers.impl.AbstractGradientSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.DefsSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
-import com.itextpdf.svg.renderers.impl.LinearGradientSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.StopSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
 import com.itextpdf.svg.utils.SvgTextUtil;
@@ -179,10 +179,10 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                     }
 
                     if (renderer instanceof StopSvgNodeRenderer) {
-                        if (parentRenderer instanceof LinearGradientSvgNodeRenderer) {
-                            // It is necessary to add StopSvgNodeRenderer only as a child of LinearGradientSvgNodeRenderer,
+                        if (parentRenderer instanceof AbstractGradientSvgNodeRenderer) {
+                            // It is necessary to add StopSvgNodeRenderer only as a child of gradient renderer,
                             // because StopSvgNodeRenderer performs an auxiliary function and should not be drawn at all
-                            ((LinearGradientSvgNodeRenderer) parentRenderer).addChild(renderer);
+                            ((AbstractGradientSvgNodeRenderer) parentRenderer).addChild(renderer);
                         }
                     }
                     // DefsSvgNodeRenderer should not have parental relationship with any renderer, it only serves as a storage

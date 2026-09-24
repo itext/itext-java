@@ -52,6 +52,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -65,6 +66,11 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
     @BeforeEach
     public void setUp() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -97,7 +103,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
     @Test
     public void incrementFieldNameEven() throws IOException, InterruptedException {
         String destination = DESTINATION_FOLDER + "incrementFieldNameEven.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destination))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destination))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true, new AddIndexStrategy());
             for (int i = 1; i < 3; i++) {
                 Rectangle rect = new Rectangle(20, 20);
@@ -133,7 +139,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
     @Test
     public void testAddFormFieldWithoutConfiguration() throws IOException, InterruptedException {
         String destination = DESTINATION_FOLDER + "testAddFormFieldWithoutConfiguration.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destination));) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destination));) {
             Rectangle rect = new Rectangle(20, 20);
             rect.setY(100);
             rect.setX(100);
@@ -165,7 +171,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
     @Test
     public void incrementFieldNameUnEven() throws IOException, InterruptedException {
         String destination = DESTINATION_FOLDER + "incrementFieldNameUnEven.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destination));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destination));
 
         PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true, new AddIndexStrategy());
         for (int i = 1; i < 4; i++) {
@@ -238,7 +244,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
     })
     public void flattenReadOnlyAddIndexTo() throws IOException, InterruptedException {
         String destination = DESTINATION_FOLDER + "flattenReadOnlyAddIndexTo.pdf";
-        PdfWriter writer = new PdfWriter(destination);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destination);
         PdfDocument pdfDoc = new PdfDocument(writer);
 
         final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FormFieldFlatteningTest/";
@@ -281,7 +287,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
     @Test
     public void mergeFieldsStrategyTest() throws IOException {
         String destination = SOURCE_FOLDER + "mergeFieldsStrategyTest.pdf";
-        try(PdfDocument pdfDocument = new PdfDocument(new PdfReader(destination), new PdfWriter(new ByteArrayOutputStream()))){
+        try(PdfDocument pdfDocument = new PdfDocument(CompareTool.createOutputReader(destination), new PdfWriter(new ByteArrayOutputStream()))){
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDocument, true, new MergeFieldsStrategy());
 
             PdfTextFormField firstField = new TextFormFieldBuilder(pdfDocument, "samplefield")
@@ -307,7 +313,7 @@ public class OnDuplicateFormFieldNameStrategyTest extends ExtendedITextTest {
                 }
             });
 
-            try (PdfDocument pdfInnerDoc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + "add_index.pdf"))) {
+            try (PdfDocument pdfInnerDoc = new PdfDocument(CompareTool.createTestPdfWriter(DESTINATION_FOLDER + "add_index.pdf"))) {
                 Document doc = new Document(pdfInnerDoc);
 
                 doc.add(new CheckBox("test1").setBorder(new SolidBorder(ColorConstants.RED, 1)));

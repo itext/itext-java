@@ -26,7 +26,6 @@ import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -46,6 +45,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -62,6 +62,11 @@ public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 4),
@@ -70,7 +75,7 @@ public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
     public void combineKeepTogetherDivWithTableTest() throws IOException, InterruptedException {
         String cmpFile = SOURCE_FOLDER + "cmp_combineKeepTogetherDivWithTable.pdf";
         String destPdf = DESTINATION_FOLDER + "combineKeepTogetherDivWithTable.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destPdf))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destPdf))) {
             Document doc = new Document(pdfDoc);
 
             for (int i = 0; i < 10; i++) {
@@ -94,7 +99,7 @@ public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
     public void combineKeepTogetherDivWithTablePossibleLayout2pageTest() throws IOException, InterruptedException {
         String cmpFile = SOURCE_FOLDER + "cmp_combineKeepTogetherDivWithTablePossibleLayout2page.pdf";
         String destPdf = DESTINATION_FOLDER + "combineKeepTogetherDivWithTablePossibleLayout2page.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destPdf))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destPdf))) {
             Document doc = new Document(pdfDoc);
 
             for (int i = 0; i < 10; i++) {
@@ -121,7 +126,7 @@ public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
     public void combineKeepTogetherDivWithTextTest() throws IOException, InterruptedException {
         String cmpFile = SOURCE_FOLDER + "cmp_combineKeepTogetherDivWithText.pdf";
         String destPdf = DESTINATION_FOLDER + "combineKeepTogetherDivWithText.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destPdf))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destPdf))) {
             Document doc = new Document(pdfDoc);
 
             for (int i = 0; i < 1; i++) {
@@ -154,7 +159,7 @@ public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
     public void combineKeepTogetherDivWithTableWithImageTest() throws IOException, InterruptedException {
         String cmpFile = SOURCE_FOLDER + "cmp_combineKeepTogetherDivWithTableWithImage.pdf";
         String destPdf = DESTINATION_FOLDER + "combineKeepTogetherDivWithTableWithImage.pdf";
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destPdf))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destPdf))) {
             Document doc = new Document(pdfDoc);
 
             for (int i = 0; i < 1; i++) {
@@ -186,7 +191,7 @@ public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
     public void paragraphTableSameDivKeepNextTest() throws IOException, InterruptedException {
         String cmpFile = SOURCE_FOLDER + "cmp_paragraphTableSameDivKeepNext.pdf";
         String destPdf = DESTINATION_FOLDER + "paragraphTableSameDivKeepNext.pdf";
-        try (PdfDocument pdf = new PdfDocument(new PdfWriter(destPdf))) {
+        try (PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(destPdf))) {
             Document document = new Document(pdf, pdf.getDefaultPageSize(), false);
 
             Div div = new Div().setKeepTogether(true).setKeepWithNext(true);
@@ -205,7 +210,7 @@ public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
     public void paragraphTableWithAnotherParagraphKeepNextTest() throws IOException, InterruptedException {
         String cmpFile = SOURCE_FOLDER + "cmp_paragraphTableWithAnotherParagraphKeepNext.pdf";
         String destPdf = DESTINATION_FOLDER + "paragraphTableWithAnotherParagraphKeepNext.pdf";
-        try (PdfDocument pdf = new PdfDocument(new PdfWriter(destPdf))) {
+        try (PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(destPdf))) {
             Document document = new Document(pdf, pdf.getDefaultPageSize(), false);
 
             Div div = new Div().setKeepTogether(true).setKeepWithNext(true);
@@ -225,7 +230,7 @@ public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
     public void combineKeepTogether2TablesTest() throws IOException, InterruptedException {
         String cmpFile = SOURCE_FOLDER + "cmp_combineKeepTogether2Tables.pdf";
         String destPdf = DESTINATION_FOLDER + "combineKeepTogether2Tables.pdf";
-        try (PdfDocument pdf = new PdfDocument(new PdfWriter(destPdf))) {
+        try (PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(destPdf))) {
             Document document = new Document(pdf, pdf.getDefaultPageSize(), false);
 
             Div div1 = new Div().setKeepTogether(true).setKeepWithNext(true);
@@ -250,7 +255,7 @@ public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
     public void combineKeepTogether2LargeTablesTest() throws IOException, InterruptedException {
         String cmpFile = SOURCE_FOLDER + "cmp_combineKeepTogether2LargeTables.pdf";
         String destPdf = DESTINATION_FOLDER + "combineKeepTogether2LargeTables.pdf";
-        try (PdfDocument pdf = new PdfDocument(new PdfWriter(destPdf))) {
+        try (PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(destPdf))) {
             Document document = new Document(pdf, pdf.getDefaultPageSize(), false);
 
             Div div1 = new Div().setKeepTogether(true).setKeepWithNext(true);
@@ -274,7 +279,7 @@ public class KeepTogetherDivAndTableTest extends ExtendedITextTest {
     public void divWithLargeTableTest() throws IOException, InterruptedException {
         String cmpFile = SOURCE_FOLDER + "cmp_divWithLargeTable.pdf";
         String destPdf = DESTINATION_FOLDER + "divWithLargeTable.pdf";
-        try (PdfDocument pdf = new PdfDocument(new PdfWriter(destPdf))) {
+        try (PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(destPdf))) {
             Document document = new Document(pdf, pdf.getDefaultPageSize(), false);
             document.immediateFlush = false;
 

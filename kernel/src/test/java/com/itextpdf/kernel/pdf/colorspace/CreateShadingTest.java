@@ -40,8 +40,8 @@ import com.itextpdf.kernel.pdf.colorspace.shading.ShadingType;
 import com.itextpdf.kernel.pdf.function.AbstractPdfFunction;
 import com.itextpdf.kernel.pdf.function.PdfType2Function;
 import com.itextpdf.kernel.pdf.function.PdfType3Function;
+import com.itextpdf.kernel.utils.CompareToolResult;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.itextpdf.kernel.utils.CompareTool.CompareResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
@@ -235,8 +235,8 @@ public class CreateShadingTest extends ExtendedITextTest {
 
         Assertions.assertTrue(outShDictionary.isDictionary());
 
-        CompareResult compareResult = new CompareTool()
-                .compareDictionariesStructure((PdfDictionary) outShDictionary, (PdfDictionary) cmpShDictionary);
+        CompareToolResult compareResult = new CompareTool()
+                .compareDictionariesByStructure((PdfDictionary) outShDictionary, (PdfDictionary) cmpShDictionary);
         Assertions.assertNull(compareResult);
 
         outPdf.close();

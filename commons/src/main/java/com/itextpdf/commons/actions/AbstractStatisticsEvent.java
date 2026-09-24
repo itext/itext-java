@@ -24,18 +24,17 @@ package com.itextpdf.commons.actions;
 
 import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.logs.CommonsLogMessageConstant;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class which defines statistics event. Only for internal usage.
  */
 public abstract class AbstractStatisticsEvent extends AbstractProductITextEvent {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStatisticsEvent.class);
+    private static final LazyLogger LOGGER = new LazyLogger(AbstractStatisticsEvent.class);
 
     /**
      * Creates instance of abstract statistics iText event based on passed product data. Only for internal usage.
@@ -55,7 +54,7 @@ public abstract class AbstractStatisticsEvent extends AbstractProductITextEvent 
      * @return new instance of {@link AbstractStatisticsAggregator}
      */
     public AbstractStatisticsAggregator createStatisticsAggregatorFromName(String statisticsName) {
-        LOGGER.warn(MessageFormatUtil.format(CommonsLogMessageConstant.INVALID_STATISTICS_NAME, statisticsName));
+        LOGGER.warn(() -> MessageFormatUtil.format(CommonsLogMessageConstant.INVALID_STATISTICS_NAME, statisticsName));
         return null;
     }
 

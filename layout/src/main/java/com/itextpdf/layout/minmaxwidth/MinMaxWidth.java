@@ -23,8 +23,6 @@
 package com.itextpdf.layout.minmaxwidth;
 
 public class MinMaxWidth {
-
-
     private float childrenMinWidth;
     private float childrenMaxWidth;
     private float additionalWidth;

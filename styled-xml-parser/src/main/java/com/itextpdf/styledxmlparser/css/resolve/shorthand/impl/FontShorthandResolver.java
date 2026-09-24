@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
@@ -29,8 +30,6 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.ArrayList;
@@ -44,6 +43,8 @@ import java.util.Set;
  * {@link IShorthandResolver} implementation for fonts.
  */
 public class FontShorthandResolver implements IShorthandResolver {
+
+    private static final LazyLogger LOGGER = new LazyLogger(FontShorthandResolver.class);
 
     /** Unsupported shorthand values. */
     private static final Set<String> UNSUPPORTED_VALUES_OF_FONT_SHORTHAND = Collections
@@ -85,8 +86,8 @@ public class FontShorthandResolver implements IShorthandResolver {
     @Override
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {
         if (UNSUPPORTED_VALUES_OF_FONT_SHORTHAND.contains(shorthandExpression)) {
-            Logger logger = LoggerFactory.getLogger(FontShorthandResolver.class);
-            logger.error(MessageFormatUtil.format("The \"{0}\" value of CSS shorthand property \"font\" is not supported", shorthandExpression));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    "The \"{0}\" value of CSS shorthand property \"font\" is not supported", shorthandExpression));
         }
         if (CommonCssConstants.INITIAL.equals(shorthandExpression) || CommonCssConstants.INHERIT.equals(shorthandExpression)) {
             return Arrays.asList(

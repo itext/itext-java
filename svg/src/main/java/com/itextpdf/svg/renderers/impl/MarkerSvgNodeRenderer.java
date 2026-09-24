@@ -22,6 +22,7 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
@@ -40,13 +41,13 @@ import com.itextpdf.svg.utils.SvgCssUtils;
 import com.itextpdf.svg.utils.SvgTextUtil;
 
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link ISvgNodeRenderer} implementation for the &lt;marker&gt; tag.
  */
 public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(MarkerSvgNodeRenderer.class);
 
     /**
      * Attribute defining the marker index on polygon, line or polyline.
@@ -186,7 +187,6 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
     }
 
     private static boolean markerWidthHeightAreCorrect(MarkerSvgNodeRenderer namedObject) {
-        Logger log = LoggerFactory.getLogger(MarkerSvgNodeRenderer.class);
         String markerWidth = namedObject.getAttribute(SvgConstants.Attributes.MARKER_WIDTH);
         // TODO: DEVSIX-3923 remove normalization (.toLowerCase)
         if (markerWidth == null) {
@@ -201,20 +201,20 @@ public class MarkerSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         if (markerWidth != null) {
             float absoluteMarkerWidthValue = CssDimensionParsingUtils.parseAbsoluteLength(markerWidth);
             if (absoluteMarkerWidthValue == 0) {
-                log.warn(SvgLogMessageConstant.MARKER_WIDTH_IS_ZERO_VALUE);
+                LOGGER.warn(() -> SvgLogMessageConstant.MARKER_WIDTH_IS_ZERO_VALUE);
                 isCorrect = false;
             } else if (absoluteMarkerWidthValue < 0) {
-                log.warn(SvgLogMessageConstant.MARKER_WIDTH_IS_NEGATIVE_VALUE);
+                LOGGER.warn(() -> SvgLogMessageConstant.MARKER_WIDTH_IS_NEGATIVE_VALUE);
                 isCorrect = false;
             }
         }
         if (markerHeight != null) {
             float absoluteMarkerHeightValue = CssDimensionParsingUtils.parseAbsoluteLength(markerHeight);
             if (absoluteMarkerHeightValue == 0) {
-                log.warn(SvgLogMessageConstant.MARKER_HEIGHT_IS_ZERO_VALUE);
+                LOGGER.warn(() -> SvgLogMessageConstant.MARKER_HEIGHT_IS_ZERO_VALUE);
                 isCorrect = false;
             } else if (absoluteMarkerHeightValue < 0) {
-                log.warn(SvgLogMessageConstant.MARKER_HEIGHT_IS_NEGATIVE_VALUE);
+                LOGGER.warn(() -> SvgLogMessageConstant.MARKER_HEIGHT_IS_NEGATIVE_VALUE);
                 isCorrect = false;
             }
         }

@@ -22,14 +22,17 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.layout.LayoutContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LinkRenderer extends TextRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(LinkRenderer.class);
 
     /**
      * Creates a LinkRenderer from its corresponding layout object.
@@ -51,22 +54,13 @@ public class LinkRenderer extends TextRenderer {
         super(linkElement, text);
     }
 
-    @Override
-    public void draw(DrawContext drawContext) {
-        if (occupiedArea == null) {
-            Logger logger = LoggerFactory.getLogger(LinkRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
-                    "Drawing won't be performed."));
-            return;
-        }
-        super.draw(drawContext);
-
-        boolean isRelativePosition = isRelativePosition();
-        if (isRelativePosition) {
-            applyRelativePositioningTranslation(false);
-        }
-
-
+    /**
+     * Creates a new {@link LinkRenderer} as a copy of the given one.
+     *
+     * @param other the {@link LinkRenderer} to copy
+     */
+    protected LinkRenderer(LinkRenderer other) {
+        super(other);
     }
 
     /**
@@ -85,5 +79,19 @@ public class LinkRenderer extends TextRenderer {
     public IRenderer getNextRenderer() {
         logWarningIfGetNextRendererNotOverridden(LinkRenderer.class, this.getClass());
         return new LinkRenderer((Link) modelElement);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
+        if (LinkRenderer.class != this.getClass()) {
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN));
+        }
+
+        LinkRenderer copy = new LinkRenderer(this);
+        copy.setProcessedGlyphLineAndFont(gl, font);
+        return copy;
     }
 }

@@ -25,7 +25,6 @@ package com.itextpdf.kernel.font;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -56,7 +55,8 @@ public class PdfType3FontIntegrationTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_flushMultCIDToSingleUnicodeDefaultMapping.pdf";
         int fontObjNumber = 4;
 
-        try (PdfDocument pdf = new PdfDocument(new PdfReader(sourceFileName), new PdfWriter(outFileName))) {
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(sourceFileName),
+                CompareTool.createTestPdfWriter(outFileName))) {
             PdfType3Font font = (PdfType3Font) PdfFontFactory.createFont(
                     (PdfDictionary) pdf.getPdfObject(fontObjNumber));
             font.flush();
@@ -72,7 +72,8 @@ public class PdfType3FontIntegrationTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_flushMultCIDToSingleUnicodeToUnicodeCMap.pdf";
         int fontObjNumber = 4;
 
-        try (PdfDocument pdf = new PdfDocument(new PdfReader(sourceFileName), new PdfWriter(outFileName))) {
+        try (PdfDocument pdf = new PdfDocument(new PdfReader(sourceFileName),
+                CompareTool.createTestPdfWriter(outFileName))) {
             PdfType3Font font = (PdfType3Font) PdfFontFactory.createFont(
                     (PdfDictionary) pdf.getPdfObject(fontObjNumber));
             font.flush();

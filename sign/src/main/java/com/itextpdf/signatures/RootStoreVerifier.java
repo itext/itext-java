@@ -69,6 +69,7 @@ public class RootStoreVerifier extends CertificateVerifier {
      * @return a list of <code>VerificationOK</code> objects.
      * The list will be empty if the certificate couldn't be verified.
      */
+    @Override
     public List<VerificationOK> verify(X509Certificate signCert, X509Certificate issuerCert,
             Date signDate) throws GeneralSecurityException {
         // verify using the CertificateVerifier if root store is missing

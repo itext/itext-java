@@ -54,6 +54,8 @@ public class SvgDrawContext {
     private final Deque<Rectangle> viewports = new LinkedList<>();
     private final Stack<String> useIds = new Stack<>();
     private final Stack<String> patternIds = new Stack<>();
+    private final Stack<String> maskIds = new Stack<>();
+    private final Stack<Boolean> luminosityMaskRenderingModes = new Stack<>();
     private final ResourceResolver resourceResolver;
     private final FontProvider fontProvider;
     private SvgTextProperties textProperties = new SvgTextProperties();
@@ -217,6 +219,7 @@ public class SvgDrawContext {
     public ISvgNodeRenderer getNamedObject(String name) {
         return this.namedObjects.get(name);
     }
+
 
     /**
      * Gets the ResourceResolver to be used during the drawing operations.
@@ -416,6 +419,66 @@ public class SvgDrawContext {
      */
     public void popPatternId() {
         this.patternIds.pop();
+    }
+
+    /**
+     * Add mask id to stack. Check if the id is already in the stack.
+     * If it is, return {@code false}; otherwise add it and return {@code true}.
+     *
+     * @param maskId mask id
+     * @return {@code true} if mask id was pushed; {@code false} if it is already active
+     */
+    public boolean pushMaskId(String maskId) {
+        if (this.maskIds.contains(maskId)) {
+            return false;
+        }
+        this.maskIds.push(maskId);
+        return true;
+    }
+
+    /**
+     * Checks whether the specified mask is the currently rendered mask.
+     *
+     * @param maskId mask id
+     * @return {@code true} if the specified mask is at the top of the active mask stack
+     */
+    public boolean isCurrentMaskId(String maskId) {
+        return maskId != null && !this.maskIds.isEmpty() && maskId.equals(this.maskIds.peek());
+    }
+
+    /**
+     * Pops the last mask id from the stack.
+     */
+    public void popMaskId() {
+        this.maskIds.pop();
+    }
+
+    /**
+     * Adds the rendering mode for the mask whose content is about to be drawn.
+     *
+     * @param luminosity {@code true} to convert vector paints to SVG luminance;
+     *                    {@code false} to preserve paints for an alpha mask
+     */
+    public void pushMaskRenderingMode(boolean luminosity) {
+        luminosityMaskRenderingModes.push(luminosity);
+    }
+
+    /**
+     * Removes the current mask content rendering mode.
+     */
+    public void popMaskRenderingMode() {
+        if (!luminosityMaskRenderingModes.isEmpty()) {
+            luminosityMaskRenderingModes.pop();
+        }
+    }
+
+    /**
+     * Checks whether vector paints are currently being rendered as luminosity mask content.
+     *
+     * @return {@code true} while rendering a luminosity mask
+     */
+    public boolean isRenderingLuminosityMask() {
+        return !luminosityMaskRenderingModes.isEmpty() && luminosityMaskRenderingModes.peek();
     }
 
     /**

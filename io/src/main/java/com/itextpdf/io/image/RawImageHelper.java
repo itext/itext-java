@@ -22,16 +22,27 @@
  */
 package com.itextpdf.io.image;
 
-import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.codec.CCITTG4Encoder;
 import com.itextpdf.io.codec.TIFFFaxDecoder;
+import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Applies PDF image attributes to raw image data.
+ */
 public final class RawImageHelper {
 
+    /**
+     * Sets filters, decoding parameters, and attributes required to embed raw image data.
+     *
+     * @param image      raw image to update
+     * @param additional additional attributes to retain for non-CCITT images
+     *
+     * @throws IllegalArgumentException if {@code image} is not raw image data
+     */
     public static void updateImageAttributes(RawImageData image, Map<String, Object> additional) {
         if (!image.isRawImage())
             throw new IllegalArgumentException("Raw image expected.");
@@ -93,6 +104,7 @@ public final class RawImageHelper {
      * @param components 1,3 or 4 for GrayScale, RGB and CMYK
      * @param bpc bits per component. Must be 1,2,4 or 8
      * @param data the image data
+     *
      * @throws IOException on error
      */
     protected static void updateRawImageParameters(RawImageData image, int width, int height, int components,
@@ -108,6 +120,22 @@ public final class RawImageHelper {
         image.data = data;
     }
 
+    /**
+     * Updates a raw image and optional component transparency ranges.
+     *
+     * <p>
+     * Bilevel grayscale input is converted to CCITT Group 4 data.
+     *
+     * @param image        image to mutate
+     * @param width        image width in pixels
+     * @param height       image height in pixels
+     * @param components   number of color components
+     * @param bpc          bits per component
+     * @param data         encoded sample bytes
+     * @param transparency component-value pairs, or {@code null}
+     *
+     * @throws IOException if parameters or transparency ranges are invalid
+     */
     protected static void updateRawImageParameters(RawImageData image, int width, int height, int components,
                                                 int bpc, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != components * 2)
@@ -122,6 +150,20 @@ public final class RawImageHelper {
         }
     }
 
+    /**
+     * Updates a CCITT-compressed raw image and optional transparency range.
+     *
+     * @param image        image to mutate
+     * @param width        image width in pixels
+     * @param height       image height in pixels
+     * @param reverseBits  whether to reverse bits in {@code data} in place
+     * @param typeCCITT    CCITT compression type
+     * @param parameters   CCITT decoding parameters
+     * @param data         CCITT-compressed bytes to retain
+     * @param transparency two-value transparency range, or {@code null}
+     *
+     * @throws IOException if the transparency range or compression type is invalid
+     */
     protected static void updateRawImageParameters(RawImageData image, int width, int height, boolean reverseBits,
                                                 int typeCCITT, int parameters, byte[] data, int[] transparency) {
         if (transparency != null && transparency.length != 2)
@@ -130,6 +172,19 @@ public final class RawImageHelper {
         image.setTransparency(transparency);
     }
 
+    /**
+     * Updates dimensions and CCITT parameters of a raw image.
+     *
+     * @param image       image to mutate
+     * @param width       image width in pixels
+     * @param height      image height in pixels
+     * @param reverseBits whether to reverse bits in {@code data} in place
+     * @param typeCcitt   CCITT compression type
+     * @param parameters  CCITT decoding parameters
+     * @param data        CCITT-compressed bytes to retain
+     *
+     * @throws IOException if {@code typeCcitt} is unsupported
+     */
     protected static void updateCcittImageParameters(RawImageData image, int width, int height, boolean reverseBits, int typeCcitt, int parameters, byte[] data) {
         if (typeCcitt != RawImageData.CCITTG4 && typeCcitt != RawImageData.CCITTG3_1D && typeCcitt != RawImageData.CCITTG3_2D)
             throw new IOException(IoExceptionMessageConstant.CCITT_COMPRESSION_TYPE_MUST_BE_CCITTG4_CCITTG3_1D_OR_CCITTG3_2D);

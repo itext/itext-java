@@ -48,7 +48,9 @@ public abstract class OpenTableLookup {
      * Instantiates a new instance of {@link OpenTableLookup}.
      *
      * @param openReader the OpenType font table reader
-     * @param lookupFlag the lookup flag
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
      * @param subTableLocations the subtables locations
      */
     protected OpenTableLookup(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) {
@@ -63,6 +65,8 @@ public abstract class OpenTableLookup {
      * <p>
      * The flag indicates to a text-processing client certain processing
      * options to use when substituting or positioning glyphs.
+     * e.g. whether to skip base glyphs, marks or ligatures during glyph substitution or positioning.
+     * See <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
      *
      * @return the lookup flag
      */
@@ -210,7 +214,9 @@ public abstract class OpenTableLookup {
          * Reads the next glyph taking into account glyph class and lookup flag.
          *
          * @param openReader the OpenType reader to check glyph class against lookup flag
-         * @param lookupFlag the lookup flag
+         * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+         *                   ligatures during glyph substitution or positioning. See
+         *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
          */
         public void nextGlyph(OpenTypeFontTableReader openReader, int lookupFlag) {
             glyph = null;
@@ -227,7 +233,9 @@ public abstract class OpenTableLookup {
          * Reads the previous glyph taking into account glyph class and lookup flag.
          *
          * @param openReader the OpenType reader to check glyph class against lookup flag
-         * @param lookupFlag the lookup flag
+         * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+         *                   ligatures during glyph substitution or positioning. See
+         *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
          */
         public void previousGlyph(OpenTypeFontTableReader openReader, int lookupFlag) {
             glyph = null;

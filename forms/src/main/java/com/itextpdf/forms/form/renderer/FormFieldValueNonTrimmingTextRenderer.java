@@ -22,7 +22,7 @@
  */
 package com.itextpdf.forms.form.renderer;
 
-import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
@@ -32,8 +32,6 @@ import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.layout.TextLayoutResult;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TextRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Custom implementation for rendering form field values. It makes sure that text value
@@ -41,6 +39,9 @@ import org.slf4j.LoggerFactory;
  */
 
 class FormFieldValueNonTrimmingTextRenderer extends TextRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(FormFieldValueNonTrimmingTextRenderer.class);
+
     // Determines whether we want to trim leading space. In particular, we don't want to trim
     // the very first leading spaces of the text value. When text overflows to the next lines,
     // whether we should trim the text depends on why the overflow happened
@@ -81,8 +82,7 @@ class FormFieldValueNonTrimmingTextRenderer extends TextRenderer {
     @Override
     protected TextRenderer createCopy(GlyphLine gl, PdfFont font) {
         if (FormFieldValueNonTrimmingTextRenderer.class != this.getClass()) {
-            Logger logger = LoggerFactory.getLogger(FormFieldValueNonTrimmingTextRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN));
+            LOGGER.error(() -> IoLogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN);
         }
         FormFieldValueNonTrimmingTextRenderer copy = new FormFieldValueNonTrimmingTextRenderer((Text) this.modelElement);
         copy.setProcessedGlyphLineAndFont(gl, font);

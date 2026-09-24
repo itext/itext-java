@@ -28,7 +28,6 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfVersion;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
@@ -59,6 +58,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.MessageFormat;
 import javax.xml.parsers.ParserConfigurationException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -77,10 +77,14 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void simpleDocDefault() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "simpleDocDefault.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "simpleDocDefault.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -101,8 +105,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void simpleDocNullNsByDefault() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "simpleDocNullNsByDefault.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "simpleDocNullNsByDefault.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
         pdfDocument.getTagStructureContext().setDocumentDefaultNamespace(null);
 
@@ -123,8 +126,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void simpleDocExplicitlyOldStdNs() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "simpleDocExplicitlyOldStdNs.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "simpleDocExplicitlyOldStdNs.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
         PdfNamespace namespace = tagsContext.fetchNamespace(StandardNamespaces.PDF_1_7);
@@ -147,8 +149,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void customRolesMappingPdf2() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "customRolesMappingPdf2.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "customRolesMappingPdf2.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
@@ -190,8 +191,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void customRolesMappingPdf17() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "customRolesMappingPdf17.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "customRolesMappingPdf17.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         PdfNamespace xhtmlNs = new PdfNamespace("http://www.w3.org/1999/xhtml");
@@ -234,8 +234,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void docWithExplicitAndImplicitDefaultNsAtTheSameTime() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithExplicitAndImplicitDefaultNsAtTheSameTime.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithExplicitAndImplicitDefaultNsAtTheSameTime.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
         tagsContext.setDocumentDefaultNamespace(null);
@@ -306,8 +305,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void docWithInvalidMapping01() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping01.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithInvalidMapping01.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
         tagsContext.setDocumentDefaultNamespace(null);
@@ -331,8 +329,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void docWithInvalidMapping02() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping02.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithInvalidMapping02.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
         tagsContext.setDocumentDefaultNamespace(null);
@@ -355,8 +352,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void docWithInvalidMapping03() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping03.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithInvalidMapping03.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         try (Document document = new Document(pdfDocument)) {
@@ -372,8 +368,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void docWithInvalidMapping04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping04.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithInvalidMapping04.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         TagStructureContext tagsCntxt = pdfDocument.getTagStructureContext();
@@ -398,8 +393,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void docWithInvalidMapping05() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping05.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithInvalidMapping05.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         try (Document document = new Document(pdfDocument)) {
@@ -425,8 +419,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void docWithInvalidMapping06() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping06.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithInvalidMapping06.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -460,8 +453,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CANNOT_RESOLVE_ROLE_IN_NAMESPACE_TOO_MUCH_TRANSITIVE_MAPPINGS, count = 1))
     public void docWithInvalidMapping07() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping07.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithInvalidMapping07.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         try (Document document = new Document(pdfDocument)) {
@@ -488,8 +480,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
 
     @Test
     public void docWithInvalidMapping08() throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping08.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_1_7)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithInvalidMapping08.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_1_7)));
         pdfDocument.setTagged();
 
         try (Document document = new Document(pdfDocument)) {
@@ -505,8 +496,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING))
     public void docWithInvalidMapping09() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping09.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithInvalidMapping09.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
@@ -525,8 +515,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING))
     public void docWithInvalidMapping10() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithInvalidMapping10.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithInvalidMapping10.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         TagStructureContext tagsContext = pdfDocument.getTagStructureContext();
@@ -546,8 +535,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void stampTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleDocOldStdNs.pdf"),
-                new PdfWriter(destinationFolder + "stampTest01.pdf",
-                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+                CompareTool.createTestPdfWriter(destinationFolder + "stampTest01.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -560,8 +548,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void stampTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleDocNoNs.pdf"),
-                new PdfWriter(destinationFolder + "stampTest02.pdf",
-                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+                CompareTool.createTestPdfWriter(destinationFolder + "stampTest02.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -574,8 +561,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void stampTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleDocNewStdNs.pdf"),
-                new PdfWriter(destinationFolder + "stampTest03.pdf",
-                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+                CompareTool.createTestPdfWriter(destinationFolder + "stampTest03.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -588,8 +574,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void stampTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleDoc1_7.pdf"),
-                new PdfWriter(destinationFolder + "stampTest04.pdf",
-                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+                CompareTool.createTestPdfWriter(destinationFolder + "stampTest04.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -603,8 +588,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void stampTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument pdfDocument = new PdfDocument(new PdfReader(sourceFolder + "simpleDocNewStdNs.pdf"),
-                new PdfWriter(destinationFolder + "stampTest05.pdf",
-                        new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+                CompareTool.createTestPdfWriter(destinationFolder + "stampTest05.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
 
         TagStructureContext tagCntxt = pdfDocument.getTagStructureContext();
         PdfNamespace xhtmlNs = tagCntxt.fetchNamespace("http://www.w3.org/1999/xhtml");
@@ -623,8 +607,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void copyTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument srcPdf = new PdfDocument(new PdfReader(sourceFolder + "simpleDocNewStdNs.pdf"));
-        PdfDocument outPdf = new PdfDocument(new PdfWriter(destinationFolder + "copyTest01.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument outPdf = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyTest01.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
 
         outPdf.setTagged();
         srcPdf.copyPagesTo(1, 1, outPdf);
@@ -638,8 +621,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void docWithSectInPdf2() throws IOException, ParserConfigurationException, SAXException,
             InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "docWithSectInPdf2.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "docWithSectInPdf2.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -668,8 +650,7 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
     @Test
     public void copyTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         PdfDocument srcPdf = new PdfDocument(new PdfReader(sourceFolder + "docSeveralNs.pdf"));
-        PdfDocument outPdf = new PdfDocument(new PdfWriter(destinationFolder + "copyTest02.pdf",
-                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
+        PdfDocument outPdf = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "copyTest02.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)));
 
         outPdf.setTagged();
         srcPdf.copyPagesTo(1, 1, outPdf);
@@ -766,9 +747,9 @@ public class LayoutTaggingPdf2Test extends ExtendedITextTest {
         String outPdf = destinationFolder + outFileName;
         String cmpPdf = sourceFolder + cmpFileName;
 
+        String taggedStructureDifferences = compareTool.compareTagStructures(outPdf, cmpPdf);
         String contentDifferences = compareTool.compareByContent(outPdf,
                 cmpPdf, destinationFolder, testName + "Diff_");
-        String taggedStructureDifferences = compareTool.compareTagStructures(outPdf, cmpPdf);
 
         String errorMessage = "";
         errorMessage += taggedStructureDifferences == null ? "" : taggedStructureDifferences + "\n";

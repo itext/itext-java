@@ -30,6 +30,7 @@ import com.itextpdf.commons.actions.sequence.SequenceId;
 import com.itextpdf.commons.exceptions.ProductEventHandlerRepeatException;
 import com.itextpdf.commons.exceptions.UnknownProductException;
 import com.itextpdf.commons.logs.CommonsLogMessageConstant;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.util.ArrayList;
@@ -39,8 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Handles events based oh their origin.
@@ -48,7 +47,7 @@ import org.slf4j.LoggerFactory;
 final class ProductEventHandler extends AbstractContextBasedEventHandler {
     static final ProductEventHandler INSTANCE = new ProductEventHandler();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductEventHandler.class);
+    private static final LazyLogger LOGGER = new LazyLogger(ProductEventHandler.class);
     // The constant has the following value for two reasons. First, to avoid the infinite loop.
     // Second, to retry event processing several times for technical reasons.
     private static final int MAX_EVENT_RETRY_COUNT = 4;
@@ -169,7 +168,7 @@ final class ProductEventHandler extends AbstractContextBasedEventHandler {
                         productEventProcessor.getUsageType(),
                         productEventProcessor.getProducer()));
             } else {
-                LOGGER.warn(MessageFormatUtil.format(CommonsLogMessageConstant.UNREPORTED_EVENT,
+                LOGGER.warn(() -> MessageFormatUtil.format(CommonsLogMessageConstant.UNREPORTED_EVENT,
                         confirmedEvent.getProductName(), confirmedEvent.getEventType()));
             }
         }

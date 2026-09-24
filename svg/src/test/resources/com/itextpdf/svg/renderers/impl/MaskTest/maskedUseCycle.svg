@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+  <defs>
+    <mask id="m">
+      <rect width="100" height="100" fill="white"/>
+    </mask>
+    <use id="u1" href="#u2" mask="url(#m)"/>
+    <use id="u2" href="#u1"/>
+  </defs>
+  <use href="#u1"/>
+</svg>
+

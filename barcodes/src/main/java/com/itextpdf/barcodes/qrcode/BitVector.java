@@ -157,6 +157,7 @@ final class BitVector {
     /**
      * @return String representation of the bitvector
      */
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder(sizeInBits);
         for (int i = 0; i < sizeInBits; ++i) {

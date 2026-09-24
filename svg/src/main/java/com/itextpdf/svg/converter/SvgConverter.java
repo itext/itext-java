@@ -52,8 +52,6 @@ import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.renderers.impl.PdfRootSvgNodeRenderer;
 import com.itextpdf.svg.utils.SvgCssUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +67,6 @@ import java.io.OutputStream;
 public final class SvgConverter {
 
     public static final String SVG_DEFAULT_ROLE = StandardRoles.FIGURE;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SvgConverter.class);
 
     private SvgConverter() {
         //empty constructor

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.tagging;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -52,14 +53,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * The class is a helper which is used to correctly create structure
  * tree for layout element (with keeping right order for tags).
  */
 public class LayoutTaggingHelper {
+
+    private static final LazyLogger LOGGER = new LazyLogger(LayoutTaggingHelper.class);
+
     private final TagStructureContext context;
     private final PdfDocument document;
     private final boolean immediateFlush;
@@ -404,8 +405,7 @@ public class LayoutTaggingHelper {
         hintKey.setFinished();
         TagTreePointer existingArtifactTag = new TagTreePointer(document);
         if (context.getWaitingTagsManager().tryMovePointerToWaitingTag(existingArtifactTag, hintKey)) {
-            Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(IoLogMessageConstant.ALREADY_TAGGED_HINT_MARKED_ARTIFACT);
+            LOGGER.error(() -> IoLogMessageConstant.ALREADY_TAGGED_HINT_MARKED_ARTIFACT);
 
             context.getWaitingTagsManager().removeWaitingState(hintKey);
             if (immediateFlush) {
@@ -682,8 +682,7 @@ public class LayoutTaggingHelper {
             // - forced placement
             // - some other cases?
             // if (!hint.isFinished()) {
-            //      Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            //      logger.warn(LogMessageConstant.TAGGING_HINT_NOT_FINISHED_BEFORE_CLOSE);
+            //      LOGGER.warn(() -> LogMessageConstant.TAGGING_HINT_NOT_FINISHED_BEFORE_CLOSE);
             // }
             releaseHint(hint, null, false);
         }
@@ -852,8 +851,7 @@ public class LayoutTaggingHelper {
             return -1;
         }
         if (kidHintKey.isFinished()) {
-            Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(IoLogMessageConstant.CANNOT_REPLACE_FINISHED_HINT);
+            LOGGER.error(() -> IoLogMessageConstant.CANNOT_REPLACE_FINISHED_HINT);
 
             // If kidHintKey is finished you won't be able to add it anywhere after replacing is ended.
             // If kidHintKey might be finished, use moveKidHint instead.
@@ -868,8 +866,7 @@ public class LayoutTaggingHelper {
             int i = removeParentHint(newKidKey);
             if (i == RETVAL_PARENT_AND_KID_FINISHED
                     || i == RETVAL_NO_PARENT && newKidKey.isFinished()) {
-                Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-                logger.error(IoLogMessageConstant.CANNOT_MOVE_FINISHED_HINT);
+                LOGGER.error(() -> IoLogMessageConstant.CANNOT_MOVE_FINISHED_HINT);
                 continue;
             }
             kidsToBeAdded.add(newKidKey);
@@ -920,16 +917,14 @@ public class LayoutTaggingHelper {
      */
     public int moveKidHint(TaggingHintKey hintKeyOfKidToMove, TaggingHintKey newParent, int insertIndex) {
         if (newParent.isFinished()) {
-            Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(IoLogMessageConstant.CANNOT_MOVE_HINT_TO_FINISHED_PARENT);
+            LOGGER.error(() -> IoLogMessageConstant.CANNOT_MOVE_HINT_TO_FINISHED_PARENT);
             return -1;
         }
 
         int removeRes = removeParentHint(hintKeyOfKidToMove);
         if (removeRes == RETVAL_PARENT_AND_KID_FINISHED
                 || removeRes == RETVAL_NO_PARENT && hintKeyOfKidToMove.isFinished()) {
-            Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(IoLogMessageConstant.CANNOT_MOVE_FINISHED_HINT);
+            LOGGER.error(() -> IoLogMessageConstant.CANNOT_MOVE_FINISHED_HINT);
             return -1;
         }
         addKidsHint(newParent, Collections.<TaggingHintKey>singletonList(hintKeyOfKidToMove), insertIndex, true);
@@ -1011,8 +1006,7 @@ public class LayoutTaggingHelper {
         }
 
         if (!skipFinishedChecks && parentKey.isFinished()) {
-            Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(IoLogMessageConstant.CANNOT_ADD_HINTS_TO_FINISHED_PARENT);
+            LOGGER.error(() -> IoLogMessageConstant.CANNOT_ADD_HINTS_TO_FINISHED_PARENT);
             return;
         }
 
@@ -1031,13 +1025,11 @@ public class LayoutTaggingHelper {
             TaggingHintKey prevParent = getParentHint(kidKey);
             if (prevParent != null) {
                 // Seems to be a legit use case to re-add hints to just ensure that hints are added
-                // Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-                // logger.error(LogMessageConstant.CANNOT_ADD_KID_HINT_WHICH_IS_ALREADY_ADDED_TO_ANOTHER_PARENT);
+                // LOGGER.error(() -> LogMessageConstant.CANNOT_ADD_KID_HINT_WHICH_IS_ALREADY_ADDED_TO_ANOTHER_PARENT);
                 continue;
             }
             if (!skipFinishedChecks && kidKey.isFinished()) {
-                Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-                logger.error(IoLogMessageConstant.CANNOT_ADD_FINISHED_HINT_AS_A_NEW_KID_HINT);
+                LOGGER.error(() -> IoLogMessageConstant.CANNOT_ADD_FINISHED_HINT_AS_A_NEW_KID_HINT);
                 continue;
             }
             if (insertIndex > -1) {
@@ -1068,8 +1060,7 @@ public class LayoutTaggingHelper {
 
     private boolean createSingleTag(TaggingHintKey hintKey, TagTreePointer tagPointer) {
         if (hintKey.isFinished()) {
-            Logger logger = LoggerFactory.getLogger(LayoutTaggingHelper.class);
-            logger.error(IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT);
+            LOGGER.error(() -> IoLogMessageConstant.ATTEMPT_TO_CREATE_A_TAG_FOR_FINISHED_HINT);
             return false;
         }
 

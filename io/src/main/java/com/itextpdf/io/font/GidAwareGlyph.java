@@ -27,14 +27,32 @@ import com.itextpdf.io.font.otf.Glyph;
 class GidAwareGlyph extends Glyph {
     private int gid;
 
+    /**
+     * Creates a glyph with an initially unset glyph identifier.
+     *
+     * @param code    the character code
+     * @param width   the glyph width
+     * @param unicode the Unicode code point
+     * @param bbox    the glyph bounding box
+     */
     public GidAwareGlyph(int code, int width, int unicode, int[] bbox) {
         super(code, width, unicode, bbox);
     }
 
+    /**
+     * Sets the font glyph identifier.
+     *
+     * @param index the glyph identifier
+     */
     public void setGid(int index) {
         this.gid = index;
     }
 
+    /**
+     * Returns the font glyph identifier.
+     *
+     * @return the glyph identifier
+     */
     public int getGid() {
         return gid;
     }

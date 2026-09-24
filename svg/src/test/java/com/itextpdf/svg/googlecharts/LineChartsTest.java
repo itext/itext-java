@@ -34,31 +34,31 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class LineChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/LineChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/LineChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/LineChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/LineChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void lineChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "lineChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "lineChart");
     }
 
     @Test
     public void lineClassicChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "lineClassicChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "lineClassicChart");
     }
 
     @Test
     public void lineMaterialChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "lineMaterialChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "lineMaterialChart");
     }
 
     @Test
     public void lineTopXChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "lineTopXChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "lineTopXChart");
     }
 }

@@ -64,6 +64,7 @@ public class PdfBoolean extends PdfPrimitiveObject {
         return value;
     }
 
+    @Override
     public byte getType() {
         return BOOLEAN;
     }

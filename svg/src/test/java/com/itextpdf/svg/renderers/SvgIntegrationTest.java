@@ -58,7 +58,7 @@ public class SvgIntegrationTest extends ExtendedITextTest {
     }
 
     public void convert(String svg, String output, PageSize size, SvgConverterProperties properties) throws IOException {
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(output, new WriterProperties().setCompressionLevel(0)))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(output, new WriterProperties().setCompressionLevel(0)))) {
             doc.addNewPage(size);
             properties.setBaseUri(svg);
             SvgConverter.drawOnDocument(FileUtil.getInputStreamForFile(svg), doc, 1, properties);
@@ -66,7 +66,7 @@ public class SvgIntegrationTest extends ExtendedITextTest {
     }
 
     public static PdfDocument convertWithResult(String svg, String output) throws IOException {
-        PdfDocument doc = new PdfDocument(new PdfWriter(output, new WriterProperties().setCompressionLevel(0)));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(output, new WriterProperties().setCompressionLevel(0)));
         doc.addNewPage();
         ISvgConverterProperties properties = new SvgConverterProperties().setBaseUri(svg);
         SvgConverter.drawOnDocument(FileUtil.getInputStreamForFile(svg), doc, 1, properties);
@@ -137,6 +137,6 @@ public class SvgIntegrationTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool()
                 .compareByContent(destinationFolder + filename + ".pdf",
                         sourceFolder + "cmp_" + filename + ".pdf",
-                        destinationFolder, "diff_"));
+                        destinationFolder));
     }
 }

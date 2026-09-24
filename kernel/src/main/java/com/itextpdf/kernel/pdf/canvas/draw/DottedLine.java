@@ -105,6 +105,7 @@ public class DottedLine implements ILineDrawer {
      *
      * @return line thickness
      */
+    @Override
     public float getLineWidth() {
         return lineWidth;
     }
@@ -114,6 +115,7 @@ public class DottedLine implements ILineDrawer {
      *
      * @param lineWidth new line width
      */
+    @Override
     public void setLineWidth(float lineWidth) {
         this.lineWidth = lineWidth;
     }

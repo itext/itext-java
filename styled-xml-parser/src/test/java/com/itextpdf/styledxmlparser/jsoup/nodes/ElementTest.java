@@ -13,6 +13,7 @@ import com.itextpdf.styledxmlparser.jsoup.select.Evaluator;
 import com.itextpdf.styledxmlparser.jsoup.select.NodeFilter;
 import com.itextpdf.styledxmlparser.jsoup.select.NodeVisitor;
 import com.itextpdf.styledxmlparser.jsoup.select.QueryParser;
+import com.itextpdf.styledxmlparser.node.impl.jsoup.node.JsoupElementNode;
 import com.itextpdf.test.ExtendedITextTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -2039,12 +2040,31 @@ public class ElementTest extends ExtendedITextTest {
         Assertions.assertFalse(p.hasChildNodes());
     }
 
-    @Test public void emptyChildrenElementsIsModifiable() {
+    @Test
+    public void emptyChildrenElementsIsModifiable() {
         // using unmodifiable empty in childElementList as short circuit, but people may be modifying Elements.
         Element p = new Element("p");
         Elements els = p.children();
         Assertions.assertEquals(0, els.size());
         els.add(new Element("a"));
         Assertions.assertEquals(1, els.size());
+    }
+
+    @Test
+    public void getMissingLanguageTest() {
+        Document doc = Jsoup.parse("<div>Some div without a language set</div>");
+        Element el = doc.selectFirst("body");
+        JsoupElementNode node = new JsoupElementNode(el);
+
+        Assertions.assertNull(node.getLang());
+    }
+
+    @Test
+    public void getLanguageTest() {
+        Document doc = Jsoup.parse("<div lang=\"en\">Some div without a language set</div>");
+        Element el = doc.selectFirst("div");
+        JsoupElementNode node = new JsoupElementNode(el);
+
+        Assertions.assertEquals("en", node.getLang());
     }
 }

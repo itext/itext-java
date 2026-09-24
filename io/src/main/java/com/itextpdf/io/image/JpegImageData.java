@@ -24,12 +24,25 @@ package com.itextpdf.io.image;
 
 import java.net.URL;
 
+/**
+ * Image data originating from a JPEG image.
+ */
 public class JpegImageData extends ImageData {
 
+    /**
+     * Creates JPEG image data to be loaded from a URL.
+     *
+     * @param url source URL, not {@code null}
+     */
     protected JpegImageData(URL url) {
         super(url, ImageType.JPEG);
     }
 
+    /**
+     * Creates JPEG image data from encoded bytes.
+     *
+     * @param bytes encoded JPEG bytes; the array is retained
+     */
     protected JpegImageData(byte[] bytes) {
         super(bytes, ImageType.JPEG);
     }

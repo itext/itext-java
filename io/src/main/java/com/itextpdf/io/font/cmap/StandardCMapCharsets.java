@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * Maintains charset encoders for standard non-identity CMaps.
+ */
 public final class StandardCMapCharsets {
     private static final Map<String, CMapCharsetEncoder> encoders = new HashMap<>();
     private static final CMapCharsetEncoder UTF16_ENCODER = new CMapCharsetEncoder(StandardCharsets.UTF_16BE);
@@ -67,6 +70,13 @@ public final class StandardCMapCharsets {
         registerHV("UniKS-UTF16", UTF16_ENCODER);
     }
 
+    /**
+     * Retrieves the encoder registered for a standard CMap.
+     *
+     * @param stdCmapName the standard CMap name
+     *
+     * @return the registered encoder, or {@code null} when none is enabled
+     */
     public static CMapCharsetEncoder getEncoder(String stdCmapName) {
         return encoders.get(stdCmapName);
     }

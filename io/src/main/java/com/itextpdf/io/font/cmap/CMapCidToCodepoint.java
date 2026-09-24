@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Maps character identifiers to their encoded character code byte sequences.
+ */
 public class CMapCidToCodepoint extends AbstractCMap {
     private static final byte[] EMPTY = {};
 
@@ -43,6 +46,13 @@ public class CMapCidToCodepoint extends AbstractCMap {
         }
     }
 
+    /**
+     * Looks up the character code assigned to a CID.
+     *
+     * @param cid the character identifier
+     *
+     * @return the mapped byte sequence, or a shared empty array when no mapping exists
+     */
     public byte[] lookup(int cid) {
         byte[] ser = map.get(cid);
         if (ser == null) {
@@ -52,6 +62,11 @@ public class CMapCidToCodepoint extends AbstractCMap {
         }
     }
 
+    /**
+     * Builds a mapping from integer character codes to CIDs.
+     *
+     * @return a new reverse mapping
+     */
     public IntHashtable getReversMap() {
         IntHashtable code2cid = new IntHashtable(map.size());
         for (Map.Entry<Integer, byte[]> entry : map.entrySet()) {

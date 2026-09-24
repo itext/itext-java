@@ -22,8 +22,11 @@
  */
 package com.itextpdf.svg.renderers;
 
+import com.itextpdf.svg.logs.SvgLogMessageConstant;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,8 +36,8 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class StrokeTest extends SvgIntegrationTest {
 
-    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/StrokeTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/StrokeTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/StrokeTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/StrokeTest/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -83,7 +86,6 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-2258
     public void advancedStrokeTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeAdvanced");
     }
@@ -99,9 +101,88 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO DEVSIX-2258: update cmp after supporting
     public void strokeAttributesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-attributes");
+    }
+
+    @Test
+    public void strokeLinecapGraphicalElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linecap-graphical-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    // TODO DEVSIX-9306 SVG space collapsing removes spaces at the beginning and end of a tspan
+    public void strokeLinecapTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linecap-text-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    // TODO DEVSIX-9306 SVG space collapsing removes spaces at the beginning and end of a tspan
+    public void strokeLinecapDashedTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linecap-dashed-text-elements");
+    }
+
+    @Test
+    public void strokeLinejoinGraphicalElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linejoin-graphical-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    // TODO DEVSIX-9306 SVG space collapsing removes spaces at the beginning and end of a tspan
+    public void strokeLinejoinTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linejoin-text-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    // TODO DEVSIX-9306 SVG space collapsing removes spaces at the beginning and end of a tspan
+    public void strokeLinejoinDashedTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-linejoin-dashed-text-elements");
+    }
+
+    @Test
+    public void strokeMiterlimitGraphicalElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-miterlimit-graphical-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    // TODO DEVSIX-9306 SVG space collapsing removes spaces at the beginning and end of a tspan
+    public void strokeMiterlimitTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-miterlimit-text-elements");
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = SvgLogMessageConstant.UNMAPPED_TAG, count = 3),
+    })
+    // TODO DEVSIX-2255 SVG: Textpath element
+    // TODO DEVSIX-9306 SVG space collapsing removes spaces at the beginning and end of a tspan
+    public void strokeMiterlimitDashedTextElementsTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-miterlimit-dashed-text-elements");
+    }
+
+    @Test
+    public void strokeCombinedGraphicalPropertiesTest() throws IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "stroke-combined-graphical-properties");
     }
 
     @Test
@@ -125,7 +206,6 @@ public class StrokeTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update cmp-file after DEVSIX-2258
     public void strokeDashArrayLinesTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "strokeDashArrayLines");
     }

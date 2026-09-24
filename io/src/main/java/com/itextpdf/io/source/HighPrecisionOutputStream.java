@@ -36,8 +36,11 @@ public class HighPrecisionOutputStream<T extends java.io.OutputStream> extends j
     // long=19 + max frac=6 => 26 => round to 32.
     private final ByteBuffer numBuffer = new ByteBuffer(32);
     private Boolean localHighPrecision;
+    /** The stream that receives all output. */
     protected java.io.OutputStream outputStream = null;
+    /** The number of bytes successfully written through this stream. */
     protected long currentPos = 0;
+    /** Whether {@link #close()} closes {@link #outputStream}. */
     protected boolean closeStream = true;
 
     /**
@@ -106,18 +109,27 @@ public class HighPrecisionOutputStream<T extends java.io.OutputStream> extends j
         this.localHighPrecision = localHighPrecision;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void write(int b) throws java.io.IOException {
         outputStream.write(b);
         currentPos++;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void write(byte[] b) throws java.io.IOException {
         outputStream.write(b);
         currentPos += b.length;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void write(byte[] b, int off, int len) throws java.io.IOException {
         outputStream.write(b, off, len);
@@ -139,11 +151,17 @@ public class HighPrecisionOutputStream<T extends java.io.OutputStream> extends j
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void flush() throws java.io.IOException {
         outputStream.flush();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws java.io.IOException {
         if (closeStream) {

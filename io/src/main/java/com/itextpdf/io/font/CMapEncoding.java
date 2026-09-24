@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.font.cmap.CMapCidToCodepoint;
 import com.itextpdf.io.font.cmap.CMapCodepointToCid;
 import com.itextpdf.io.font.cmap.CMapLocationFromBytes;
@@ -33,12 +34,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class representing CMap encoding in pdf document.
  */
 public class CMapEncoding {
+
+    private static final LazyLogger LOGGER = new LazyLogger(CMapEncoding.class);
 
     private static final List<byte[]> IDENTITY_H_V_CODESPACE_RANGES = Arrays.asList(new byte[] {0, 0}, new byte[] {(byte)0xff, (byte)0xff});
 
@@ -102,7 +104,7 @@ public class CMapEncoding {
             code2Cid = CMapEncoding.getCodeToCidCmap(cmap, cid2Code);
             this.codeSpaceRanges = cid2Code.getCodeSpaceRanges();
         } catch (IOException e) {
-            LoggerFactory.getLogger(getClass()).error(IoLogMessageConstant.FAILED_TO_PARSE_ENCODING_STREAM);
+            LOGGER.error(() -> IoLogMessageConstant.FAILED_TO_PARSE_ENCODING_STREAM);
         }
     }
 
@@ -205,6 +207,15 @@ public class CMapEncoding {
         return result;
     }
 
+    /**
+     * Encodes a CID into the supplied byte array.
+     *
+     * @param cid    character identifier to encode
+     * @param array  destination array
+     * @param offset destination offset
+     *
+     * @return new destination offset
+     */
     public int fillCmapBytes(int cid, byte[] array, int offset) {
         if (isDirect) {
             array[offset++] = (byte)((cid & 0xff00) >> 8);
@@ -218,6 +229,12 @@ public class CMapEncoding {
         return offset;
     }
 
+    /**
+     * Appends the encoded form of a CID to a byte buffer.
+     *
+     * @param cid    character identifier to encode
+     * @param buffer destination buffer
+     */
     public void fillCmapBytes(int cid, ByteBuffer buffer) {
         if (isDirect) {
             buffer.append((byte)((cid & 0xff00) >> 8));
@@ -228,6 +245,13 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Gets the number of bytes required to encode a CID.
+     *
+     * @param cid character identifier to encode
+     *
+     * @return number of bytes required to encode a CID
+     */
     public int getCmapBytesLength(int cid) {
         if (isDirect) {
             return 2;
@@ -236,6 +260,13 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Converts a CMap code to its CID.
+     *
+     * @param cmapCode CMap code
+     *
+     * @return mapped CID
+     */
     public int getCidCode(int cmapCode) {
         if (isDirect) {
             return cmapCode;
@@ -244,6 +275,11 @@ public class CMapEncoding {
         }
     }
 
+    /**
+     * Gets the CMap code space ranges.
+     *
+     * @return list of low/high byte array pairs used by this encoding
+     */
     public List<byte[]> getCodeSpaceRanges() {
         return codeSpaceRanges;
     }

@@ -34,7 +34,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-
 @Tag("IntegrationTest")
 public class OverflowAttributeTest extends SvgIntegrationTest {
 
@@ -52,7 +51,6 @@ public class OverflowAttributeTest extends SvgIntegrationTest {
     public void before() {
         properties = new SvgConverterProperties().setBaseUri(SOURCE_FOLDER);
     }
-
 
     @Test
     public void overflowVisibleInMarkerElementTest() throws IOException, InterruptedException {

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.layer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -42,9 +43,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This class represents /OCProperties entry if pdf catalog and manages
  * the layers of the pdf document.
@@ -53,6 +51,8 @@ import org.slf4j.LoggerFactory;
  * must be indirect.
  */
 public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfOCProperties.class);
 
     static final String OC_CONFIG_NAME_PATTERN = "OCConfigName";
 
@@ -135,8 +135,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
     public PdfObject fillDictionary(boolean removeNonDocumentOcgs) {
         PdfArray gr = new PdfArray();
         for (PdfLayer layer : layers) {
-            if (layer.getTitle() == null)
+            if (layer.getTitle() == null) {
                 gr.add(layer.getIndirectReference());
+            }
         }
         getPdfObject().put(PdfName.OCGs, gr);
 
@@ -186,8 +187,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
         PdfArray locked = new PdfArray();
         for (PdfLayer layer : layers) {
-            if (layer.getTitle() == null && layer.isLocked())
+            if (layer.getTitle() == null && layer.isLocked()) {
                 locked.add(layer.getIndirectReference());
+            }
         }
         if (!locked.isEmpty()) {
             filledDDictionary.put(PdfName.Locked, locked);
@@ -292,14 +294,12 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
     private static void copyDDictionaryField(PdfName fieldToAdd, PdfDictionary fromDictionary, PdfDictionary toDictionary) {
         PdfObject value = fromDictionary.get(fieldToAdd);
-        if(value != null) {
+        if (value != null) {
             if (PdfOCProperties.checkDDictonaryFieldValue(fieldToAdd, value)) {
                 toDictionary.put(fieldToAdd, value);
             } else {
-                Logger logger = LoggerFactory.getLogger(PdfOCProperties.class);
-                String warnText = MessageFormatUtil.format(KernelLogMessageConstant.INVALID_DDICTIONARY_FIELD_VALUE,
-                        fieldToAdd, value);
-                logger.warn(warnText);
+                LOGGER.warn(() -> MessageFormatUtil.format(KernelLogMessageConstant.INVALID_DDICTIONARY_FIELD_VALUE,
+                        fieldToAdd, value));
             }
         }
     }
@@ -340,25 +340,27 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         for (PdfLayer layer : layers) {
             if (layer.getTitle() == null && !layer.getPdfObject().isFlushed()) {
                 PdfDictionary usage = layer.getPdfObject().getAsDictionary(PdfName.Usage);
-                if (usage != null && usage.get(category) != null)
+                if (usage != null && usage.get(category) != null) {
                     arr.add(layer.getPdfObject().getIndirectReference());
+                }
             }
         }
-        if (arr.isEmpty())
-            return;
-        PdfDictionary d = getPdfObject().getAsDictionary(PdfName.D);
-        PdfArray arras = d.getAsArray(PdfName.AS);
-        if (arras == null) {
-            arras = new PdfArray();
-            d.put(PdfName.AS, arras);
+
+        if (!arr.isEmpty()) {
+            PdfDictionary d = getPdfObject().getAsDictionary(PdfName.D);
+            PdfArray arras = d.getAsArray(PdfName.AS);
+            if (arras == null) {
+                arras = new PdfArray();
+                d.put(PdfName.AS, arras);
+            }
+            PdfDictionary as = new PdfDictionary();
+            as.put(PdfName.Event, event);
+            PdfArray categoryArray = new PdfArray();
+            categoryArray.add(category);
+            as.put(PdfName.Category, categoryArray);
+            as.put(PdfName.OCGs, arr);
+            arras.add(as);
         }
-        PdfDictionary as = new PdfDictionary();
-        as.put(PdfName.Event, event);
-        PdfArray categoryArray = new PdfArray();
-        categoryArray.add(category);
-        as.put(PdfName.Category, categoryArray);
-        as.put(PdfName.OCGs, arr);
-        arras.add(as);
     }
 
     /**
@@ -366,8 +368,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
      */
     private void readLayersFromDictionary() {
         PdfArray ocgs = getPdfObject().getAsArray(PdfName.OCGs);
-        if (ocgs == null || ocgs.isEmpty())
+        if (ocgs == null || ocgs.isEmpty()) {
             return;
+        }
 
         Map<PdfIndirectReference, PdfLayer> layerMap = new TreeMap<>();
         for (int ind = 0; ind < ocgs.size(); ind++) {
@@ -414,8 +417,9 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
 
         // Add the layers which should not be displayed on the panel to the order list
         for (PdfLayer layer : layerMap.values()) {
-            if (!layer.isOnPanel())
+            if (!layer.isOnPanel()) {
                 layers.add(layer);
+            }
         }
     }
 
@@ -438,8 +442,10 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
                     layer.onPanel = true;
                 }
 
-                if (parent != null)
+                if (parent != null) {
                     parent.addChild(layer);
+                }
+
                 if (i + 1 < orderArray.size() && orderArray.get(i + 1).getType() == PdfObject.ARRAY) {
                     final PdfArray nextArray = orderArray.getAsArray(i + 1);
                     if (!nextArray.isEmpty() && nextArray.get(0).getType() != PdfObject.STRING) {
@@ -482,7 +488,7 @@ public class PdfOCProperties extends PdfObjectWrapper<PdfDictionary> {
         int uniqueID = 0;
         Set<String> usedNames = new HashSet<>();
         PdfArray configs = getPdfObject().getAsArray(PdfName.Configs);
-        if (null != configs) {
+        if (configs != null) {
             for (int i = 0; i < configs.size(); i++) {
                 PdfDictionary alternateDictionary = configs.getAsDictionary(i);
                 if (null != alternateDictionary && alternateDictionary.containsKey(PdfName.Name)) {

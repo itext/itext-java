@@ -25,10 +25,20 @@ package com.itextpdf.io.util;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A fixed-size, generic array backed by a list.
+ *
+ * @param <T> the element type
+ */
 public class GenericArray<T> {
 
-    private List<T> array;
+    private final List<T> array;
 
+    /**
+     * Creates an array whose entries are initially {@code null}.
+     *
+     * @param size the number of entries
+     */
     public GenericArray(int size) {
         array = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -36,10 +46,25 @@ public class GenericArray<T> {
         }
     }
 
+    /**
+     * Returns the element at an index.
+     *
+     * @param index the zero-based index
+     *
+     * @return the element at {@code index}
+     */
     public T get(int index) {
         return array.get(index);
     }
 
+    /**
+     * Replaces the element at an index.
+     *
+     * @param index   the zero-based index
+     * @param element the replacement element
+     *
+     * @return the previously stored element
+     */
     public T set(int index, T element) {
         return array.set(index, element);
     }

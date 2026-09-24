@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontMetrics;
@@ -46,8 +47,6 @@ import com.itextpdf.kernel.pdf.PdfString;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
 
@@ -312,10 +311,8 @@ public abstract class PdfSimpleFont<T extends FontProgram> extends PdfFont {
                 }
                 list.add(glyph);
             } else {
-                Logger logger = LoggerFactory.getLogger(this.getClass());
-                if (logger.isWarnEnabled()) {
-                    logger.warn(MessageFormatUtil.format(IoLogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, code));
-                }
+                LazyLogger logger = new LazyLogger(this.getClass());
+                logger.warn(() -> MessageFormatUtil.format(IoLogMessageConstant.COULD_NOT_FIND_GLYPH_WITH_CODE, code));
                 allCodesDecoded = false;
             }
         }

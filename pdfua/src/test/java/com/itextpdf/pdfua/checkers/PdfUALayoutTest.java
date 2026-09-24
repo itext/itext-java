@@ -47,6 +47,11 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.RenderingMode;
+import com.itextpdf.layout.properties.VerticalTextOrientation;
+import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.pdfua.PdfUADocument;
 import com.itextpdf.pdfua.UaValidationTestFramework;
 import com.itextpdf.test.ExtendedITextTest;
@@ -118,6 +123,25 @@ public class PdfUALayoutTest extends ExtendedITextTest {
         });
         framework.assertBothValid("simpleParagraphWithUnderline");
 
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void verticalTaggingDocumentTest(PdfConformance conformance) throws IOException {
+        UaValidationTestFramework framework = new UaValidationTestFramework(DESTINATION_FOLDER, conformance);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = loadFont();
+            Document doc = new Document(pdfDoc);
+            doc.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
+
+            Paragraph verticalText = new Paragraph().setFont(font);
+            verticalText.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
+            verticalText.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
+            verticalText.setHeight(70);
+            verticalText.add(new Text("Simple layout UA document with vertical text."));
+            doc.add(verticalText);
+        });
+        framework.assertBothValid("verticalTaggingDocument");
     }
 
     @ParameterizedTest

@@ -57,7 +57,7 @@ public class TestTimestampTokenBuilder {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final List<String> EXPERIMENTAL_PQC_ALGORITHMS = new ArrayList<>(
-            Arrays.asList("fn-dsa", "falcon", "lms", "xmss", "picnic", "rainbow", "gemss"));
+            Arrays.asList("fn-dsa", "falcon", "lms", "xmss", "rainbow", "gemss"));
     private static final String SIGN_ALG = "SHA256withRSA";
     private static final String DIGEST_ALG = "SHA1";
 

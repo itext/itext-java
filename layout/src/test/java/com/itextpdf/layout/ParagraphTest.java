@@ -25,7 +25,6 @@ package com.itextpdf.layout;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Paragraph;
@@ -41,6 +40,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -56,11 +56,16 @@ public class ParagraphTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void cannotPlaceABigChunkOnALineTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cannotPlaceABigChunkOnALineTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_cannotPlaceABigChunkOnALineTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 
@@ -79,7 +84,7 @@ public class ParagraphTest extends ExtendedITextTest {
     public void cannotPlaceABigChunkOnALineTest02() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "cannotPlaceABigChunkOnALineTest02.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_cannotPlaceABigChunkOnALineTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 
@@ -98,7 +103,7 @@ public class ParagraphTest extends ExtendedITextTest {
     public void forceOverflowForTextRendererPartialResult01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "forceOverflowForTextRendererPartialResult01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_forceOverflowForTextRendererPartialResult01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 
@@ -123,7 +128,7 @@ public class ParagraphTest extends ExtendedITextTest {
     public void wordWasSplitAndItWillFitOntoNextLineTest02() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "wordWasSplitAndItWillFitOntoNextLineTest02.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_wordWasSplitAndItWillFitOntoNextLineTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -144,7 +149,7 @@ public class ParagraphTest extends ExtendedITextTest {
     public void paragraphUsingSvgRenderingModeTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "paragraphUsingSvgRenderingMode.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_paragraphUsingSvgRenderingMode.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDocument)) {
             Paragraph paragraph1 = new Paragraph().setBorder(new SolidBorder(ColorConstants.YELLOW, 1));
             paragraph1.setWidth(200).setHorizontalAlignment(HorizontalAlignment.RIGHT);
@@ -172,7 +177,7 @@ public class ParagraphTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "leadingInHtmlModeTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_leadingInHtmlModeTest.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
                 Document document = new Document(pdfDocument)) {
 
             String longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. "

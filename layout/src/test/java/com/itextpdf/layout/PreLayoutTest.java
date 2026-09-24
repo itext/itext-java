@@ -27,7 +27,6 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
@@ -42,6 +41,7 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -58,11 +58,16 @@ public class PreLayoutTest extends ExtendedITextTest{
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void preLayoutTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "preLayoutTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_preLayoutTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName)).setTagged();
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName)).setTagged();
 
         Document document = new Document(pdfDocument, PageSize.DEFAULT, false);
 
@@ -102,7 +107,7 @@ public class PreLayoutTest extends ExtendedITextTest{
     public void preLayoutTest02() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "preLayoutTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_preLayoutTest02.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDoc, PageSize.DEFAULT, false);
 
@@ -142,7 +147,7 @@ public class PreLayoutTest extends ExtendedITextTest{
     public void columnDocumentRendererRelayoutTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "columnDocumentRendererRelayoutTest.pdf";
         String cmpFileName = sourceFolder + "cmp_columnDocumentRendererRelayoutTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName)).setTagged();
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName)).setTagged();
 
         Document document = new Document(pdfDoc, PageSize.DEFAULT, false);
         Rectangle column1 = new Rectangle(40, 40, 200, 720);

@@ -22,11 +22,11 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationValueTokenizer;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
@@ -34,6 +34,8 @@ import java.util.ArrayList;
  * Helper class to deal with quoted values in strings.
  */
 public class CssQuotes {
+
+    private static final LazyLogger LOGGER = new LazyLogger(CssQuotes.class);
 
     /**
      * The empty quote value.
@@ -92,7 +94,7 @@ public class CssQuotes {
             if (quotes.get(0).size() == quotes.get(1).size() && !quotes.get(0).isEmpty() && !error) {
                 return new CssQuotes(quotes.get(0), quotes.get(1));
             } else {
-                LoggerFactory.getLogger(CssQuotes.class).error(MessageFormatUtil.format(
+                LOGGER.error(() -> MessageFormatUtil.format(
                         StyledXmlParserLogMessageConstant.QUOTES_PROPERTY_INVALID, quotesString));
             }
         }

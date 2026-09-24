@@ -22,9 +22,8 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 
@@ -37,13 +36,13 @@ public class VersionConforming {
     public static final String NOT_SUPPORTED_AES_GCM = "Advanced Encryption Standard-Galois/Counter Mode " +
             "(AES-GCM) encryption algorithm is supported starting from PDF 2.0.";
 
-    private static final Logger logger = LoggerFactory.getLogger(VersionConforming.class);
+    private static final LazyLogger LOGGER = new LazyLogger(VersionConforming.class);
 
     public static boolean validatePdfVersionForDictEntry(PdfDocument document, PdfVersion expectedVersion, PdfName entryKey, PdfName dictType) {
         if (document != null && document.getPdfVersion().compareTo(expectedVersion) < 0) {
-            logger.warn(
-                    MessageFormat.format(IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, entryKey,
-                            dictType, expectedVersion, document.getPdfVersion()));
+            LOGGER.warn(() -> MessageFormat.format(
+                    IoLogMessageConstant.VERSION_INCOMPATIBILITY_FOR_DICTIONARY_ENTRY, entryKey,
+                    dictType, expectedVersion, document.getPdfVersion()));
             return true;
         } else {
             return false;
@@ -52,7 +51,7 @@ public class VersionConforming {
 
     public static boolean validatePdfVersionForDeprecatedFeatureLogWarn(PdfDocument document, PdfVersion expectedVersion, String deprecatedFeatureLogMessage) {
         if (document.getPdfVersion().compareTo(expectedVersion) >= 0) {
-            logger.warn(deprecatedFeatureLogMessage);
+            LOGGER.warn(() -> deprecatedFeatureLogMessage);
             return true;
         } else {
             return false;
@@ -61,7 +60,7 @@ public class VersionConforming {
 
     public static boolean validatePdfVersionForDeprecatedFeatureLogError(PdfDocument document, PdfVersion expectedVersion, String deprecatedFeatureLogMessage) {
         if (document.getPdfVersion().compareTo(expectedVersion) >= 0) {
-            logger.error(deprecatedFeatureLogMessage);
+            LOGGER.error(() -> deprecatedFeatureLogMessage);
             return true;
         } else {
             return false;
@@ -83,7 +82,7 @@ public class VersionConforming {
         if (document.getPdfVersion().compareTo(expectedStartVersion) >= 0) {
             return true;
         }
-        logger.error(notSupportedFeatureLogMessage);
+        LOGGER.error(() -> notSupportedFeatureLogMessage);
         return false;
     }
 

@@ -451,6 +451,7 @@ public final class SerializeOptions extends Options
 	 *
 	 * @return Returns clone of this SerializeOptions-object with the same options set.
      */
+	@Override
 	public Object clone() {
 		SerializeOptions clone;
 		try
@@ -473,6 +474,7 @@ public final class SerializeOptions extends Options
 	/**
 	 * @see Options#defineOptionName(int)
 	 */
+	@Override
 	protected String defineOptionName(int option)
 	{
 		switch (option)
@@ -493,6 +495,7 @@ public final class SerializeOptions extends Options
 	/**
 	 * @see Options#getValidOptions()
 	 */
+	@Override
 	protected int getValidOptions()
 	{
 		return

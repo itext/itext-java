@@ -29,8 +29,8 @@ import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.ColumnDocumentRenderer;
 import com.itextpdf.layout.Document;
@@ -53,9 +53,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.DocumentRenderer;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 public class OrphansWidowsTestUtil {
 
@@ -77,7 +75,7 @@ public class OrphansWidowsTestUtil {
     public static void produceOrphansWidowsTestCase(String outPdf, int linesLeft, boolean orphans, Paragraph testPara,
             boolean applyMarginsOnTestPara) throws IOException {
         PageSize pageSize = new PageSize(PageSize.A4.getWidth(), PageSize.A5.getHeight());
-        Document doc = new Document(new PdfDocument(new PdfWriter(outPdf)), pageSize);
+        Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)), pageSize);
 
         Rectangle[] columns = initUniformColumns(pageSize, 2);
         doc.setRenderer(new ColumnDocumentRenderer(doc, columns));
@@ -125,7 +123,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsAndMaxHeightLimitTestCase(String outPdf, boolean orphans)
             throws IOException {
-        Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)));
         singleMaxHeightCase(document, orphans, false);
         document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
         singleMaxHeightCase(document, orphans, true);
@@ -134,7 +132,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsOnCanvasOfLimitedSizeTestCase(String outPdf, boolean orphans)
             throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         Document document = new Document(pdfDocument);
         String orphansOrWidows = orphans ? "orphans" : "widows";
 
@@ -164,7 +162,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsWithinDivOfLimitedSizeTestCase(String outPdf, boolean orphans)
             throws IOException {
-        Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)));
         String orphansOrWidows = orphans ? "orphans" : "widows";
         Paragraph testDescription = new Paragraph().setBorder(new SolidBorder(ColorConstants.RED, 1));
         testDescription.add("The paragraph beneath has property " + StringNormalizer.toUpperCase(orphansOrWidows) + "_CONTROL,"
@@ -191,7 +189,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsKeepTogetherTestCase(String outPdf, boolean orphans, boolean large)
             throws IOException {
-        Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)));
         Paragraph paragraph = new Paragraph(PARA_TEXT).setMargin(0).setBackgroundColor(new DeviceRgb(232, 232, 232));
         if (large) {
             paragraph.add(PARA_TEXT).add(PARA_TEXT).add(PARA_TEXT).add(PARA_TEXT);
@@ -247,7 +245,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsInlineImageTestCase(String outPdf, String imagePath, boolean orphans)
             throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         Document document = new Document(pdfDocument);
         Image img = new Image(ImageDataFactory.create(imagePath));
         singleInlineImageCase(document, img, orphans, true);
@@ -258,7 +256,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsHugeInlineImageTestCase(String outPdf, String imagePath, boolean orphans)
             throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         Document document = new Document(pdfDocument);
         Image img = new Image(ImageDataFactory.create(imagePath));
         String text = "Just two lines\nJust two lines\n";
@@ -302,7 +300,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsInlineBlockTestCase(String outPdf, boolean orphans)
             throws IOException {
-        Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)));
 
         Paragraph inlineBlockParagraph = setParagraphStylingProperties(new Paragraph(OrphansWidowsTestUtil.PARA_TEXT),
                 false);
@@ -341,7 +339,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsInlineFloatTestCase(String outPdf, boolean orphans)
             throws IOException {
-        Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)));
 
         Paragraph inlineFloatParagraph = setParagraphStylingProperties(new Paragraph(OrphansWidowsTestUtil.PARA_TEXT),
                 false);
@@ -388,7 +386,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsFloatingDivTestCase(String outPdf, boolean orphans)
             throws IOException {
-        Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)));
 
         Paragraph paraInFloatingDiv = setParagraphStylingProperties(new Paragraph(OrphansWidowsTestUtil.PARA_TEXT),
                 false);
@@ -438,7 +436,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsBiggerThanLinesCountTestCase(String outPdf, boolean orphans,
             boolean singleLine) throws IOException {
-        Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)));
 
         Paragraph smallParagraph = setParagraphStylingProperties(new Paragraph(), false);
         if (singleLine) {
@@ -469,7 +467,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansWidowsUnexpectedWidthOfNextAreaTestCase(String outPdf, boolean widerNextPage)
             throws IOException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         Document document = new Document(pdfDocument);
         pdfDocument.addNewPage();
         pdfDocument.addNewPage(widerNextPage ? PageSize.A2 : PageSize.A6);
@@ -515,7 +513,7 @@ public class OrphansWidowsTestUtil {
 
     public static void produceOrphansOrWidowsTestCase(String outPdf, int linesLeft, boolean orphans,
             Paragraph testPara) throws IOException {
-        Document doc = new Document(new PdfDocument(new PdfWriter(outPdf)));
+        Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)));
 
         PageSize pageSize = new PageSize(PageSize.A4.getWidth(), PageSize.A5.getHeight());
         doc.getPdfDocument().setDefaultPageSize(pageSize);
@@ -561,7 +559,7 @@ public class OrphansWidowsTestUtil {
     }
 
     public static void produceOrphansAndWidowsTestCase(String outPdf, Paragraph testPara) throws IOException {
-        Document doc = new Document(new PdfDocument(new PdfWriter(outPdf)));
+        Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)));
 
         PageSize pageSize = new PageSize(PageSize.A4.getWidth(), PageSize.A5.getHeight());
         doc.getPdfDocument().setDefaultPageSize(pageSize);

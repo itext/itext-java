@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="550" height="805">
+  <style>
+    .case { fill: none; stroke: black; stroke-width: 14; }
+    .highlight { fill: none; stroke: red; stroke-width: 1; }
+  </style>
+
+  <text x="10" y="25">path: butt cap, miter join, miter limit 1</text>
+  <path class="case" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="1"
+      d="M115,140 L125,80 L135,140"/>
+
+  <text x="10" y="155">path: round cap, miter join, miter limit 4</text>
+  <path class="case" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4"
+      d="M115,270 L125,210 L135,270"/>
+
+  <text x="10" y="285">path: square cap, miter join, miter limit 10</text>
+  <path class="case" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="10"
+      d="M115,400 L125,340 L135,400"/>
+
+  <text x="10" y="415">polyline: butt cap, miter join, miter limit 1</text>
+  <polyline class="case" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="1"
+      points="115,530 125,470 135,530"/>
+
+  <text x="10" y="545">polyline: round cap, miter join, miter limit 4</text>
+  <polyline class="case" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4"
+      points="115,660 125,600 135,660"/>
+
+  <text x="10" y="675">polyline: square cap, miter join, miter limit 10</text>
+  <polyline class="case" stroke-linecap="square" stroke-linejoin="miter" stroke-miterlimit="10"
+      points="115,790 125,730 135,790"/>
+
+  <path class="highlight" d="M115,140 L125,80 L135,140
+      M115,270 L125,210 L135,270 M115,400 L125,340 L135,400
+      M115,530 L125,470 L135,530 M115,660 L125,600 L135,660
+      M115,790 L125,730 L135,790"/>
+</svg>

@@ -27,6 +27,7 @@ import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.resolve.IStyleInheritance;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
+import com.itextpdf.styledxmlparser.css.util.CssUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,7 @@ public final class StyleUtil {
     public static Map<String, String> mergeParentStyleDeclaration(Map<String, String> styles,
             String styleProperty, String parentPropValue, String parentFontSizeString,
             Set<IStyleInheritance> inheritanceRules) {
-        String childPropValue = styles.get(styleProperty);
+        String childPropValue = CssUtils.normalizeCssProperty(styles.get(styleProperty));
         if ((childPropValue == null && checkInheritance(styleProperty, inheritanceRules))
                 || CommonCssConstants.INHERIT.equals(childPropValue)) {
             if (valueIsOfMeasurement(parentPropValue, CommonCssConstants.EM)
@@ -120,3 +121,4 @@ public final class StyleUtil {
                 .isNumber(value.substring(0, value.length() - measurement.length()).trim());
     }
 }
+

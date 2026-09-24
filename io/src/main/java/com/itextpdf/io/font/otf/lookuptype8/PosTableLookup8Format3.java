@@ -35,8 +35,17 @@ import java.util.Set;
  * Chained Contexts Positioning Format 3: Coverage-based Glyph Contexts
  */
 public class PosTableLookup8Format3 extends ChainingContextualTable<ContextualPositionRule> {
-    private PosRuleFormat3 posRule;
+    private final PosRuleFormat3 posRule;
 
+    /**
+     * Creates a new Chained Contexts Positioning Format 3.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param rule the rule
+     */
     public PosTableLookup8Format3(OpenTypeFontTableReader openReader, int lookupFlag, PosRuleFormat3 rule) {
         super(openReader, lookupFlag);
         this.posRule = rule;
@@ -51,14 +60,25 @@ public class PosTableLookup8Format3 extends ChainingContextualTable<ContextualPo
         return Collections.<ContextualPositionRule>emptyList();
     }
 
+    /**
+     * Represents the positioning rule format3 of an OpenType font.
+     */
     public static class PosRuleFormat3 extends ContextualPositionRule {
-        private List<Set<Integer>> inputCoverages;
-        private List<Set<Integer>> backtrackCoverages;
-        private List<Set<Integer>> lookaheadCoverages;
-        private PosLookupRecord[] posLookupRecords;
+        private final List<Set<Integer>> inputCoverages;
+        private final List<Set<Integer>> backtrackCoverages;
+        private final List<Set<Integer>> lookaheadCoverages;
+        private final PosLookupRecord[] posLookupRecords;
 
+        /**
+         * Creates a new positioning rule format3.
+         *
+         * @param backtrackCoverages the backtrack coverages
+         * @param inputCoverages the input coverages
+         * @param lookaheadCoverages the lookahead coverages
+         * @param posLookupRecords the positioning lookup records
+         */
         public PosRuleFormat3(List<Set<Integer>> backtrackCoverages, List<Set<Integer>> inputCoverages,
-                                List<Set<Integer>> lookaheadCoverages, PosLookupRecord[] posLookupRecords) {
+                              List<Set<Integer>> lookaheadCoverages, PosLookupRecord[] posLookupRecords) {
             this.backtrackCoverages = backtrackCoverages;
             this.inputCoverages = inputCoverages;
             this.lookaheadCoverages = lookaheadCoverages;
@@ -75,6 +95,13 @@ public class PosTableLookup8Format3 extends ChainingContextualTable<ContextualPo
             return inputCoverages.size();
         }
 
+        /**
+         * Returns the input coverage.
+         *
+         * @param idx the idx
+         *
+         * @return the requested result
+         */
         public Set<Integer> getInputCoverage(int idx) {
             return inputCoverages.get(idx);
         }

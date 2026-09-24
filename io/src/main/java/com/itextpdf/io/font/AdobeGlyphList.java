@@ -32,10 +32,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+/**
+ * Provides mappings between Adobe glyph names and Unicode code points.
+ */
 public class AdobeGlyphList {
 
-    private static Map<Integer, String> unicode2names = new HashMap<>();
-    private static Map<String, Integer> names2unicode = new HashMap<>();
+    private static final Map<Integer, String> unicode2names = new HashMap<>();
+    private static final Map<String, Integer> names2unicode = new HashMap<>();
 
     static {
         InputStream resource = null;
@@ -95,6 +98,13 @@ public class AdobeGlyphList {
         }
     }
 
+    /**
+     * Resolves an Adobe glyph name to a Unicode code point.
+     *
+     * @param name the glyph name
+     *
+     * @return the code point, or {@code -1} when the name is unknown
+     */
     public static int nameToUnicode(String name) {
         int v = -1;
         if (names2unicode.containsKey(name)) {
@@ -109,14 +119,31 @@ public class AdobeGlyphList {
         return v;
     }
 
+    /**
+     * Resolves a Unicode code point to an Adobe glyph name.
+     *
+     * @param num the Unicode code point
+     *
+     * @return the glyph name, or {@code null} when unknown
+     */
     public static String unicodeToName(int num) {
         return unicode2names.get(num);
     }
 
+    /**
+     * Returns the number of loaded glyph names.
+     *
+     * @return the number of loaded glyph-name mappings
+     */
     public static int getNameToUnicodeLength() {
         return names2unicode.size();
     }
 
+    /**
+     * Returns the number of loaded unicodes.
+     *
+     * @return the number of loaded Unicode mappings
+     */
     public static int getUnicodeToNameLength() {
         return unicode2names.size();
     }

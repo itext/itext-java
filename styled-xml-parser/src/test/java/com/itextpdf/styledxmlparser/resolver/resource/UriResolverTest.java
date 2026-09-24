@@ -368,6 +368,19 @@ public class UriResolverTest extends ExtendedITextTest {
         Assertions.assertEquals(absolutePathRoot + "%25homepath%25", resolver.getBaseUri());
     }
 
+    @Test
+    void preservesEncodedSpaceImmediatelyAfterUnicodeCharacter() {
+        String input = "https://img.shields.io/badge/⬇%20Apple%20";
+        String expected = "https://img.shields.io/badge/%E2%AC%87%20Apple%20";
+        Assertions.assertEquals(expected, UriEncodeUtil.encode(input));
+    }
+
+    @Test
+    void preservesAlreadyEncodedUnicodeAndSpaces() {
+        String input = "https://img.shields.io/badge/%E2%AC%87%20Apple%20";
+        Assertions.assertEquals(input, UriEncodeUtil.encode(input));
+    }
+
     private void testPaths(UriResolver resolver, String path) throws MalformedURLException {
         Assertions.assertEquals(path + "test/folder/index.html", resolver.getBaseUri());
         Assertions.assertEquals(path + "test/folder/innerTest", resolver.resolveAgainstBaseUri("innerTest").toExternalForm());

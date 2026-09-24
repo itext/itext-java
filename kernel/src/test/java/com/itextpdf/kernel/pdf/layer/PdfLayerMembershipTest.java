@@ -358,7 +358,7 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         String filename = DESTINATION_FOLDER + "layerPropertiesPersistence.pdf";
 
         // Create document with layers
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = pdfDocument.addNewPage();
 
         // Create a layer that is ON
@@ -394,7 +394,8 @@ public class PdfLayerMembershipTest extends ExtendedITextTest{
         pdfDocument.close();
 
         // Reopen the document and verify layer states are persisted
-        PdfDocument reopenedDoc = new PdfDocument(new PdfReader(filename), new PdfWriter(new ByteArrayOutputStream()));
+        PdfDocument reopenedDoc = new PdfDocument(CompareTool.createOutputReader(filename),
+                new PdfWriter(new ByteArrayOutputStream()));
 
         Assertions.assertEquals(2, reopenedDoc.getPage(1).getPdfLayers().size());
 

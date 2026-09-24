@@ -46,6 +46,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -70,6 +71,11 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
     }
 
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void blocksInsideDiv() throws IOException, InterruptedException {
     /* this test shows different combinations of 3 float values blocks  within divParent containers
@@ -77,7 +83,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "blocksInsideDiv";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument( new PdfWriter( outFileName ) );
+        PdfDocument pdfDocument = new PdfDocument( CompareTool.createTestPdfWriter(outFileName) );
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );
 
@@ -115,7 +121,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "blocksInsideDivFloat";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument( new PdfWriter( outFileName ) );
+        PdfDocument pdfDocument = new PdfDocument( CompareTool.createTestPdfWriter(outFileName) );
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );
 
@@ -153,7 +159,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "blocksInsideEachOther";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument( new PdfWriter( outFileName ) );
+        PdfDocument pdfDocument = new PdfDocument( CompareTool.createTestPdfWriter(outFileName) );
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );
 
@@ -191,7 +197,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "blocksInsideEachOther_sameFixedWidthsNesting";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument( new PdfWriter( outFileName ) );
+        PdfDocument pdfDocument = new PdfDocument( CompareTool.createTestPdfWriter(outFileName) );
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );
 
@@ -265,7 +271,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
 
     private void createDocumentWithBlocks(String outFileName, HorizontalAlignment horizontalAlignment)
             throws IOException {
-        PdfDocument pdfDocument = new PdfDocument( new PdfWriter( outFileName ) );
+        PdfDocument pdfDocument = new PdfDocument( CompareTool.createTestPdfWriter(outFileName) );
         pdfDocument.setTagged();
         Document document = new Document( pdfDocument );
 
@@ -299,7 +305,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "inlineBlocksAndFloatsWithTextAlignmentTest01";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -325,7 +331,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "inlineBlocksAndFloatsWithTextAlignmentTest02";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -351,7 +357,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "inlineBlocksAndFloatsWithTextAlignmentTest03";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -380,7 +386,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "inlineBlocksAndFloatsWithTextAlignmentTest04";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        try(PdfWriter writer = new PdfWriter(outFileName)) {
+        try(PdfWriter writer = CompareTool.createTestPdfWriter(outFileName)) {
             try (PdfDocument pdfDocument = new PdfDocument(writer)) {
                 pdfDocument.setDefaultPageSize(PageSize.A5);
                 try (Document document = new Document(pdfDocument)) {
@@ -418,7 +424,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "floatsOnlyJustificationTest01";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -441,7 +447,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tableWithAlignmentNextToRightFloat.pdf";
         String cmpFileName = sourceFolder + "cmp_tableWithAlignmentNextToRightFloat.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -478,7 +484,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tableWithAlignmentNextToLeftFloat.pdf";
         String cmpFileName = sourceFolder + "cmp_tableWithAlignmentNextToLeftFloat.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -515,7 +521,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tableWithAlignmentBetweenFloats.pdf";
         String cmpFileName = sourceFolder + "cmp_tableWithAlignmentBetweenFloats.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -558,7 +564,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tableWithBigLeftMarginAfterFloat.pdf";
         String cmpFileName = sourceFolder + "cmp_tableWithBigLeftMarginAfterFloat.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -598,7 +604,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tableWithBigRightMarginAfterFloat.pdf";
         String cmpFileName = sourceFolder + "cmp_tableWithBigRightMarginAfterFloat.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -638,7 +644,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "tableWithSideMarginsBetweenFloat.pdf";
         String cmpFileName = sourceFolder + "cmp_tableWithSideMarginsBetweenFloat.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -683,7 +689,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "floatPositioningOutsideBlocks";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div floatLeft = new Div()
                     .setBorder(new SolidBorder(ColorConstants.GREEN, 3))
                     .setBackgroundColor(ColorConstants.GREEN, 0.3f)
@@ -741,7 +747,7 @@ public class FloatAndAlignmentTest extends ExtendedITextTest {
         String testName = "floatPositioningOutsideFlexContainer";
         String outFileName = destinationFolder + testName + ".pdf";
         String cmpFileName = sourceFolder + "cmp_" + testName + ".pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             Div floatLeft = new Div()
                     .setBorder(new SolidBorder(ColorConstants.GREEN, 1))
                     .setBackgroundColor(ColorConstants.GREEN, 0.3f)

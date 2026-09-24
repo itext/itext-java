@@ -40,12 +40,6 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,13 +51,18 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Arrays;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("BouncyCastleIntegrationTest")
 public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final boolean FIPS_MODE = "BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName());
-    private static final boolean IS_NATIVE = System.getProperty("org.graalvm.nativeimage.imagecode") != null;
 
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/signatures/PostQuantumExperimentalAlgorithmsTest/";
@@ -74,7 +73,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     private static final String SIGNATURE_FIELD = "Signature";
     private static final char[] KEY_PASSPHRASE = "testpassphrase".toCharArray();
 
-    private static final String PICNIC_OID = "1.3.6.1.4.1.22554.2.6.2.2";
     private static final String DIGEST_ALGO = DigestAlgorithms.SHAKE256;
     private static final String XMSS = "XMSS";
 
@@ -91,11 +89,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
                 {"Falcon-512", "1.3.9999.3.11", 1500},
                 {"Falcon-1024", "1.3.9999.3.14", 2500},
 
-                {"Picnic3-L1", PICNIC_OID, 100000},
-                {"Picnic-L1-FS", PICNIC_OID, 100000},
-                {"Picnic-L1-Full", PICNIC_OID, 100000},
-                {"Picnic-L1-UR", PICNIC_OID, 100000},
-
                 {"LMS", "1.2.840.113549.1.9.16.3.17", 10000},
                 {XMSS, "1.3.6.1.4.1.22554.2.2.10", 10000}
         });
@@ -107,15 +100,12 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC), ignore = true)
     public void signVerifyPQCTest(String signatureAlgo, String expectedSigAlgoIdentifier, int signatureBytesSize)
             throws Exception {
-        checkXMSSInNative(signatureAlgo);
 
         String outFile = Paths.get(DESTINATION_FOLDER, signatureAlgo + ".pdf").toString();
         String certPath = SOURCE_FOLDER + "cert_" + signatureAlgo + ".pem";
         System.out.println("Out pdf: " + UrlUtil.getNormalizedFileUriString(outFile));
 
-        String finalSignatureAlgo = signatureAlgo.contains("Picnic") ? "Picnic" : signatureAlgo;
-
-        doSign(finalSignatureAlgo, certPath, outFile, signatureBytesSize);
+        doSign(signatureAlgo, certPath, outFile, signatureBytesSize);
         doVerify(outFile, expectedSigAlgoIdentifier);
     }
 
@@ -125,7 +115,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC), ignore = true)
     public void signExternalContainerPQCTest(String signatureAlgo, String expectedSigAlgoIdentifier,
                                              int signatureBytesSize) throws Exception {
-        checkXMSSInNative(signatureAlgo);
 
         String outFile = Paths.get(DESTINATION_FOLDER, "ext_cont_" + signatureAlgo + ".pdf").toString();
         String certPath = SOURCE_FOLDER + "cert_" + signatureAlgo + ".pem";
@@ -141,7 +130,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC), ignore = true)
     public void signDeferredPQCTest(String signatureAlgo, String expectedSigAlgoIdentifier, int signatureBytesSize)
             throws Exception {
-        checkXMSSInNative(signatureAlgo);
 
         String preparedFile = Paths.get(DESTINATION_FOLDER, "prep_" + signatureAlgo + ".pdf").toString();
         String outFile = Paths.get(DESTINATION_FOLDER, "deferred_" + signatureAlgo + ".pdf").toString();
@@ -159,7 +147,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC), ignore = true)
     public void twoPhaseSigningPQCTest(String signatureAlgo, String expectedSigAlgoIdentifier,
                                        int signatureBytesSize) throws Exception {
-        checkXMSSInNative(signatureAlgo);
 
         String outFile = Paths.get(DESTINATION_FOLDER, "two_phase_" + signatureAlgo + ".pdf").toString();
         String certPath = SOURCE_FOLDER + "cert_" + signatureAlgo + ".pem";
@@ -175,15 +162,12 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
     @LogMessage(messageTemplate = KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC), ignore = true)
     public void timestampPQCTest(String signatureAlgo, String expectedSigAlgoIdentifier, int signatureBytesSize)
             throws Exception {
-        checkXMSSInNative(signatureAlgo);
 
         String outFile = Paths.get(DESTINATION_FOLDER, "timestamp_" + signatureAlgo + ".pdf").toString();
         String certPath = SOURCE_FOLDER + "timestamp/ts_cert_" + signatureAlgo + ".pem";
         System.out.println("Out pdf: " + UrlUtil.getNormalizedFileUriString(outFile));
 
-        String finalSignatureAlgo = signatureAlgo.contains("Picnic") ? "Picnic" : signatureAlgo;
-
-        doTimestamp(finalSignatureAlgo, certPath, outFile, signatureBytesSize);
+        doTimestamp(signatureAlgo, certPath, outFile, signatureBytesSize);
         // OIDs are different for timestamp signatures, but they're not final since we use experimental algorithms.
         doVerify(outFile, null);
     }
@@ -325,13 +309,6 @@ public class PostQuantumExperimentalAlgorithmsTest extends ExtendedITextTest {
             if (expectedSigAlgoIdentifier != null) {
                 Assertions.assertEquals(expectedSigAlgoIdentifier, data.getSignatureMechanismOid());
             }
-        }
-    }
-
-    private static void checkXMSSInNative(String signatureAlgo) {
-        if (IS_NATIVE && XMSS.equals(signatureAlgo)) {
-            // TODO DEVSIX-9622 GraalVM: investigate XMSS PQC test failure (reproduces for graalvm-23.0.1)
-            Assumptions.assumeTrue(false);
         }
     }
 }

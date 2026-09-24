@@ -34,21 +34,21 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TreemapsChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/TreemapsChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/TreemapsChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/TreemapsChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/TreemapsChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void treemapsChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "treemapsChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "treemapsChart");
     }
 
     @Test
     public void treemaps2Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "treemaps2Chart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "treemaps2Chart");
     }
 }

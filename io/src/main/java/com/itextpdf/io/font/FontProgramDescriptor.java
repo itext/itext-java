@@ -87,42 +87,92 @@ public class FontProgramDescriptor {
         this(fontNames, fontMetrics.getItalicAngle(), fontMetrics.isFixedPitch());
     }
 
+    /**
+     * Gets the font name.
+     *
+     * @return font name
+     */
     public String getFontName() {
         return fontName;
     }
 
+    /**
+     * Gets the style name.
+     *
+     * @return style string
+     */
     public String getStyle() {
         return style;
     }
 
+    /**
+     * Gets the font weight.
+     *
+     * @return normalized font weight
+     */
     public int getFontWeight() {
         return weight;
     }
 
+    /**
+     * Gets the italic angle.
+     *
+     * @return counterclockwise degrees from vertical
+     */
     public float getItalicAngle() {
         return italicAngle;
     }
 
+    /**
+     * Checks whether the font is fixed pitch.
+     *
+     * @return {@code true} for a monospaced font
+     */
     public boolean isMonospace() {
         return isMonospace;
     }
 
+    /**
+     * Checks whether the Macintosh style flags declare bold.
+     *
+     * @return {@code true} when bold is declared
+     */
     public boolean isBold() {
         return (macStyle & FontMacStyleFlags.BOLD) != 0;
     }
 
+    /**
+     * Checks whether the Macintosh style flags declare italic.
+     *
+     * @return {@code true} when italic is declared
+     */
     public boolean isItalic() {
         return (macStyle & FontMacStyleFlags.ITALIC) != 0;
     }
 
+    /**
+     * Gets the lowercase full font name used for case-insensitive matching.
+     *
+     * @return lowercase full name
+     */
     public String getFullNameLowerCase() {
         return fullNameLowerCase;
     }
 
+    /**
+     * Gets the lowercase name used for case-insensitive matching.
+     *
+     * @return lowercase font name
+     */
     public String getFontNameLowerCase() {
         return fontNameLowerCase;
     }
 
+    /**
+     * Gets the lowercase preferred family name used for matching.
+     *
+     * @return lowercase family name, or {@code null} when absent
+     */
     public String getFamilyNameLowerCase() {
         return familyNameLowerCase;
     }
@@ -136,8 +186,18 @@ public class FontProgramDescriptor {
         return familyName2LowerCase;
     }
 
+    /**
+     * Gets lowercase full names from every available localization.
+     *
+     * @return internally retained set of localized full names
+     */
     public Set<String> getFullNameAllLangs() { return fullNamesAllLangs; }
 
+    /**
+     * Gets full names from supported English OpenType naming records.
+     *
+     * @return internally retained set of matching full names
+     */
     public Set<String> getFullNamesEnglishOpenType() { return fullNamesEnglishOpenType; }
 
     String getFamilyNameEnglishOpenType() { return familyNameEnglishOpenType; }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.action;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -37,8 +38,6 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfString;
 import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfFileAttachmentAnnotation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -51,6 +50,7 @@ import java.util.Map;
  */
 public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfTarget.class);
 
     private PdfTarget(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -227,8 +227,7 @@ public class PdfTarget extends PdfObjectWrapper<PdfDictionary> {
             }
         }
         if (null == resultAnnotation) {
-            Logger logger = LoggerFactory.getLogger(PdfTarget.class);
-            logger.error(IoLogMessageConstant.SOME_TARGET_FIELDS_ARE_NOT_SET_OR_INCORRECT);
+            LOGGER.error(() -> IoLogMessageConstant.SOME_TARGET_FIELDS_ARE_NOT_SET_OR_INCORRECT);
         }
         return resultAnnotation;
     }

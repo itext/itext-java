@@ -41,6 +41,7 @@ import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -58,13 +59,18 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     //TODO DEVSIX-3148
     public void parenthesisTest01() throws Exception {
         String outFileName = destinationFolder + "parenthesisTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_parenthesisTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDoc, new PageSize(300, 500));
 
         Hyphenator hyphenator = new Hyphenator("de", "de", 3, 3);
@@ -88,7 +94,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "uriTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_uriTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDoc, new PageSize(140, 500));
 
         Hyphenator hyphenator = new Hyphenator("en", "en", 3, 3);
@@ -124,7 +130,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "widthTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_widthTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Text text = new Text("Hier ein link https://stackoverflow " + "\n" + " (Sperrvermerk) (Sperrvermerk)" + "\n" + "„Sperrvermerk“ „Sperrvermerk“" + "\n" + "Der Sperrvermerk Sperrvermerk" + "\n" + "correct Sperr|ver|merk");
@@ -146,7 +152,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "widthTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_widthTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Text text = new Text("Der/Die Depot-/Kontoinhaber muss/m\u00FCssen sich im Klaren dar\u00FCber sein.");
@@ -167,7 +173,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "widthTest03.pdf";
         String cmpFileName = sourceFolder + "cmp_widthTest03.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         String s = "";
@@ -201,7 +207,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "nonBreakingHyphenTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_nonBreakingHyphenTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
         Text text = new Text(
@@ -225,7 +231,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "nonBreakingHyphenTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_nonBreakingHyphenTest02.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
 
@@ -253,7 +259,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "hyphenSymbolTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_hyphenSymbolTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "Roboto-Regular.ttf", PdfEncodings.IDENTITY_H);
@@ -298,7 +304,7 @@ public class HyphenateLayoutTest extends ExtendedITextTest {
         String text = "Soft hyphen at the mid" + SOFT_HYPHEN + "dle,\nhyphen at the end: abcdef" + SOFT_HYPHEN +
                 "ghijklmnopqrst\n" + SOFT_HYPHEN + "hyphen at the beginning.";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
             document.add(new Paragraph(text)
                     .setWidth(150)
                     .setBorder(new SolidBorder(1))

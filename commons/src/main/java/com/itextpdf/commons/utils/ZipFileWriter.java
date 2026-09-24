@@ -103,7 +103,10 @@ public class ZipFileWriter implements Closeable {
      * @param objectToAdd the object to serialize as JSON
      *
      * @throws IOException if some I/O exception occurs
+     *
+     * @deprecated Not used anywhere
      */
+    @Deprecated
     public void addJsonEntry(String fileName, Object objectToAdd) throws IOException {
         if (objectToAdd == null) {
             throw new IOException(CommonsExceptionMessageConstant.JSON_OBJECT_CAN_NOT_BE_NULL);
@@ -112,7 +115,6 @@ public class ZipFileWriter implements Closeable {
             JsonUtil.serializeToStream(zos, objectToAdd);
         });
     }
-
 
     @Override
     public void close() throws IOException {

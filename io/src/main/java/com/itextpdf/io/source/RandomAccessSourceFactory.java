@@ -93,6 +93,13 @@ public final class RandomAccessSourceFactory {
         return this;
     }
 
+    /**
+     * Configures whether file backed sources are opened with a read-write lock.
+     *
+     * @param exclusivelyLockFile {@code true} to request an exclusive lock, {@code false} for read-only access
+     *
+     * @return this factory
+     */
     public RandomAccessSourceFactory setExclusivelyLockFile(boolean exclusivelyLockFile){
         this.exclusivelyLockFile = exclusivelyLockFile;
         return this;
@@ -107,6 +114,18 @@ public final class RandomAccessSourceFactory {
         return new ArrayRandomAccessSource(data);
     }
 
+    /**
+     * Creates a source that reads from an already open random access file.
+     *
+     * <p>
+     * The returned source owns and closes {@code raf}.
+     *
+     * @param raf the file to wrap
+     *
+     * @return a source backed by {@code raf}
+     *
+     * @throws java.io.IOException if the file length cannot be read
+     */
     public IRandomAccessSource createSource(RandomAccessFile raf) throws java.io.IOException {
         return new RAFRandomAccessSource(raf);
     }
@@ -256,6 +275,20 @@ public final class RandomAccessSourceFactory {
         }
     }
 
+    /**
+     * Creates a concatenated source from ranges of another source.
+     *
+     * <p>
+     * Each adjacent pair in {@code ranges} is an offset and length. Closing the returned source closes
+     * the supplied source through each of its window views.
+     *
+     * @param source the source from which ranges are exposed
+     * @param ranges offset-length pairs defining the exposed ranges
+     *
+     * @return a source whose bytes are the requested ranges in order
+     *
+     * @throws java.io.IOException if a source cannot be initialized
+     */
     public IRandomAccessSource createRanged(IRandomAccessSource source, long[] ranges) throws java.io.IOException {
         IRandomAccessSource[] sources = new IRandomAccessSource[ranges.length/2];
         for(int i = 0; i < ranges.length; i+=2){

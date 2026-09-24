@@ -34,6 +34,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -49,13 +50,18 @@ public class PdfFormFieldIntegrationTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void addFormXObjectToPushButtonTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "addFormXObjectToPushButton.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_addFormXObjectToPushButton.pdf";
 
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(SOURCE_FOLDER + "addFormXObjectToPushButton.pdf"),
-                new PdfWriter(outPdf));
+                CompareTool.createTestPdfWriter(outPdf));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 

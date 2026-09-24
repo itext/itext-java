@@ -28,6 +28,8 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -40,6 +42,16 @@ final class JsonValueConverter {
     static String toJson(JsonValue value) {
         try {
             return createObjectMapper().writer().writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            // Should never be here
+            throw new ITextException(MessageFormatUtil.format(
+                    CommonsExceptionMessageConstant.JSON_SERIALIZATION_FAILED, e.getMessage()));
+        }
+    }
+
+    static String toPrettifiedJson(JsonValue value) {
+        try {
+            return createObjectMapper().writer(new CustomPrettyPrinter()).writeValueAsString(value);
         } catch (JsonProcessingException e) {
             // Should never be here
             throw new ITextException(MessageFormatUtil.format(
@@ -65,5 +77,18 @@ final class JsonValueConverter {
         mapper.registerModule(module);
 
         return mapper;
+    }
+
+    private static class CustomPrettyPrinter extends DefaultPrettyPrinter {
+        public CustomPrettyPrinter() {
+            _objectFieldValueSeparatorWithSpaces = ": ";
+            indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE.withLinefeed("\n"));
+            indentObjectsWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE.withLinefeed("\n"));
+        }
+
+        @Override
+        public DefaultPrettyPrinter createInstance() {
+            return new CustomPrettyPrinter();
+        }
     }
 }

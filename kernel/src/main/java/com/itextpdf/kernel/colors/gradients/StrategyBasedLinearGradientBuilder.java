@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.colors.gradients;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -40,6 +41,7 @@ public class StrategyBasedLinearGradientBuilder extends AbstractLinearGradientBu
      * Create a new instance of the builder
      */
     public StrategyBasedLinearGradientBuilder() {
+        // empty constructor
     }
 
     /**
@@ -48,6 +50,7 @@ public class StrategyBasedLinearGradientBuilder extends AbstractLinearGradientBu
      * and covers the area to be filled. Zero angle corresponds to the vector from bottom to top.
      *
      * @param radians the radians value to rotate the coordinates vector
+     *
      * @return the current builder instance
      */
     public StrategyBasedLinearGradientBuilder setGradientDirectionAsCentralRotationAngle(double radians) {
@@ -60,6 +63,7 @@ public class StrategyBasedLinearGradientBuilder extends AbstractLinearGradientBu
      * Set the strategy to predefined one
      *
      * @param gradientStrategy the strategy to set
+     *
      * @return the current builder instance
      */
     public StrategyBasedLinearGradientBuilder setGradientDirectionAsStrategy(GradientStrategy gradientStrategy) {
@@ -95,17 +99,32 @@ public class StrategyBasedLinearGradientBuilder extends AbstractLinearGradientBu
         return isCentralRotationAngleStrategy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Point[] getGradientVector(Rectangle targetBoundingBox, AffineTransform contextTransform) {
-        if (targetBoundingBox == null) {
-            return null;
-        }
-        return this.isCentralRotationAngleStrategy
-                ? buildCentralRotationCoordinates(targetBoundingBox, this.rotateVectorAngle)
-                : buildCoordinatesWithGradientStrategy(targetBoundingBox, this.gradientStrategy);
+        return getGradientVectorWithTransform(targetBoundingBox, contextTransform)
+                .getFirst();
     }
 
-    private static Point[] buildCoordinatesWithGradientStrategy(Rectangle targetBoundingBox,
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Tuple2<Point[], AffineTransform> getGradientVectorWithTransform(Rectangle targetBoundingBox,
+            AffineTransform contextTransform) {
+        if (targetBoundingBox == null) {
+            return new Tuple2<Point[], AffineTransform>(null, null);
+        }
+
+        Point[] vector = this.isCentralRotationAngleStrategy
+                ? buildCentralRotationCoordinates(targetBoundingBox, this.rotateVectorAngle)
+                : buildCoordinatesWithGradientStrategy(targetBoundingBox, this.gradientStrategy);
+        return new Tuple2<Point[], AffineTransform>(vector, null);
+    }
+
+    private Point[] buildCoordinatesWithGradientStrategy(Rectangle targetBoundingBox,
             GradientStrategy gradientStrategy) {
         double xCenter = targetBoundingBox.getX() + targetBoundingBox.getWidth() / 2;
         double yCenter = targetBoundingBox.getY() + targetBoundingBox.getHeight() / 2;
@@ -139,14 +158,14 @@ public class StrategyBasedLinearGradientBuilder extends AbstractLinearGradientBu
         }
     }
 
-    private static Point[] buildCentralRotationCoordinates(Rectangle targetBoundingBox, double angle) {
+    private Point[] buildCentralRotationCoordinates(Rectangle targetBoundingBox, double angle) {
         double xCenter = targetBoundingBox.getX() + targetBoundingBox.getWidth() / 2;
         AffineTransform rotateInstance = AffineTransform.getRotateInstance(angle, xCenter,
                 targetBoundingBox.getY() + targetBoundingBox.getHeight() / 2);
         return buildCoordinates(targetBoundingBox, rotateInstance);
     }
 
-    private static Point[] buildToCornerCoordinates(Rectangle targetBoundingBox, Point gradientCenterLineRightCorner) {
+    private Point[] buildToCornerCoordinates(Rectangle targetBoundingBox, Point gradientCenterLineRightCorner) {
         AffineTransform transform = buildToCornerTransform(
                 new Point(targetBoundingBox.getX() + targetBoundingBox.getWidth() / 2,
                         targetBoundingBox.getY() + targetBoundingBox.getHeight() / 2),
@@ -154,29 +173,29 @@ public class StrategyBasedLinearGradientBuilder extends AbstractLinearGradientBu
         return buildCoordinates(targetBoundingBox, transform);
     }
 
+    private Point[] buildCoordinates(Rectangle targetBoundingBox, AffineTransform transformation) {
+        double xCenter = targetBoundingBox.getX() + targetBoundingBox.getWidth() / 2;
+        Point start = transformation.transform(new Point(xCenter, targetBoundingBox.getBottom()), null);
+        Point end = transformation.transform(new Point(xCenter, targetBoundingBox.getTop()), null);
+        Point[] baseVector = new Point[] {start, end};
+        double[] targetDomain = computeCoveringDomain(baseVector, targetBoundingBox);
+        return createCoordsForNewDomain(targetDomain, baseVector);
+    }
+
     private static AffineTransform buildToCornerTransform(Point center, Point gradientCenterLineRightCorner) {
         double scale = 1d / (center.distance(gradientCenterLineRightCorner));
         double sin = (gradientCenterLineRightCorner.getY() - center.getY()) * scale;
         double cos = (gradientCenterLineRightCorner.getX() - center.getX()) * scale;
-        if (Math.abs(cos) < ZERO_EPSILON) {
+        if (isZero(cos)) {
             cos = 0d;
             sin = sin > 0d ? 1d : -1d;
-        } else if (Math.abs(sin) < ZERO_EPSILON) {
+        } else if (isZero(sin)) {
             sin = 0d;
             cos = cos > 0d ? 1d : -1d;
         }
         double m02 = center.getX() * (1d - cos) + center.getY() * sin;
         double m12 = center.getY() * (1d - cos) - center.getX() * sin;
         return new AffineTransform(cos, sin, -sin, cos, m02, m12);
-    }
-
-    private static Point[] buildCoordinates(Rectangle targetBoundingBox, AffineTransform transformation) {
-        double xCenter = targetBoundingBox.getX() + targetBoundingBox.getWidth() / 2;
-        Point start = transformation.transform(new Point(xCenter, targetBoundingBox.getBottom()), null);
-        Point end = transformation.transform(new Point(xCenter, targetBoundingBox.getTop()), null);
-        Point[] baseVector = new Point[] {start, end};
-        double[] targetDomain = evaluateCoveringDomain(baseVector, targetBoundingBox);
-        return createCoordinatesForNewDomain(targetDomain, baseVector);
     }
 
     private static Point[] createCoordinates(double x1, double y1, double x2, double y2) {

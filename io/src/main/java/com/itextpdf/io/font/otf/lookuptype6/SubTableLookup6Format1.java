@@ -35,9 +35,19 @@ import java.util.Map;
  * Chaining Contextual Substitution Subtable: Simple Chaining Context Glyph Substitution
  */
 public class SubTableLookup6Format1 extends ChainingContextualTable<ContextualSubstRule> {
-    private Map<Integer, List<ContextualSubstRule>> substMap;
+    private final Map<Integer, List<ContextualSubstRule>> substMap;
 
-    public SubTableLookup6Format1(OpenTypeFontTableReader openReader, int lookupFlag, Map<Integer, List<ContextualSubstRule>> substMap) {
+    /**
+     * Creates a new Chaining Contextual Substitution Subtable.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param substMap the substitution map
+     */
+    public SubTableLookup6Format1(OpenTypeFontTableReader openReader, int lookupFlag,
+                                  Map<Integer, List<ContextualSubstRule>> substMap) {
         super(openReader, lookupFlag);
         this.substMap = substMap;
     }
@@ -50,15 +60,27 @@ public class SubTableLookup6Format1 extends ChainingContextualTable<ContextualSu
         return Collections.<ContextualSubstRule>emptyList();
     }
 
+    /**
+     * Represents the substitution rule format1 of an OpenType font.
+     */
     public static class SubstRuleFormat1 extends ContextualSubstRule {
         // inputGlyphIds array omits the first glyph in the sequence,
         // the first glyph is defined by corresponding coverage glyph
-        private int[] inputGlyphIds;
-        private int[] backtrackGlyphIds;
-        private int[] lookAheadGlyphIds;
-        private SubstLookupRecord[] substLookupRecords;
+        private final int[] inputGlyphIds;
+        private final int[] backtrackGlyphIds;
+        private final int[] lookAheadGlyphIds;
+        private final SubstLookupRecord[] substLookupRecords;
 
-        public SubstRuleFormat1(int[] backtrackGlyphIds, int[] inputGlyphIds, int[] lookAheadGlyphIds, SubstLookupRecord[] substLookupRecords) {
+        /**
+         * Creates a new substitution rule format1.
+         *
+         * @param backtrackGlyphIds the backtrack glyph ids
+         * @param inputGlyphIds the input glyph ids
+         * @param lookAheadGlyphIds the look ahead glyph ids
+         * @param substLookupRecords the substitution lookup records
+         */
+        public SubstRuleFormat1(int[] backtrackGlyphIds, int[] inputGlyphIds, int[] lookAheadGlyphIds,
+                                SubstLookupRecord[] substLookupRecords) {
             this.backtrackGlyphIds = backtrackGlyphIds;
             this.inputGlyphIds = inputGlyphIds;
             this.lookAheadGlyphIds = lookAheadGlyphIds;
@@ -69,10 +91,12 @@ public class SubTableLookup6Format1 extends ChainingContextualTable<ContextualSu
         public int getContextLength() {
             return inputGlyphIds.length + 1;
         }
+
         @Override
         public int getLookaheadContextLength() {
             return lookAheadGlyphIds.length;
         }
+
         @Override
         public int getBacktrackContextLength() {
             return backtrackGlyphIds.length;
@@ -87,10 +111,12 @@ public class SubTableLookup6Format1 extends ChainingContextualTable<ContextualSu
         public boolean isGlyphMatchesInput(int glyphId, int atIdx) {
             return glyphId == inputGlyphIds[atIdx - 1];
         }
+
         @Override
         public boolean isGlyphMatchesLookahead(int glyphId, int atIdx) {
             return glyphId == lookAheadGlyphIds[atIdx];
         }
+
         @Override
         public boolean isGlyphMatchesBacktrack(int glyphId, int atIdx) {
             return glyphId == backtrackGlyphIds[atIdx];

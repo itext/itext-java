@@ -54,8 +54,6 @@ class FootnotesContainer extends BlockElement<FootnotesContainer> {
         this.setNeutralRole();
     }
 
-
-
     /**
      * Adds {@link Footnote} to this container.
      *

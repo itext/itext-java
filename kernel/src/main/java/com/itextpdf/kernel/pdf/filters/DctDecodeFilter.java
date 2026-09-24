@@ -22,13 +22,11 @@
  */
 package com.itextpdf.kernel.pdf.filters;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Handles a DCTDecode filter. For now no modification applies and the data would be return as is
@@ -36,11 +34,11 @@ import org.slf4j.LoggerFactory;
  */
 public class DctDecodeFilter implements IFilterHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DctDecodeFilter.class);
+    private static final LazyLogger LOGGER = new LazyLogger(DctDecodeFilter.class);
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        LOGGER.info(KernelLogMessageConstant.DCTDECODE_FILTER_DECODING);
+        LOGGER.info(() -> KernelLogMessageConstant.DCTDECODE_FILTER_DECODING);
         return b;
     }
 }

@@ -28,6 +28,7 @@ import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.commons.actions.processors.ITextProductEventProcessor;
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 import com.itextpdf.commons.logs.CommonsLogMessageConstant;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 
 import java.util.ArrayList;
@@ -37,14 +38,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class is used for producer line building.
  */
 public final class ProducerBuilder extends AbstractITextConfigurationEvent {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProducerBuilder.class);
+    private static final LazyLogger LOGGER = new LazyLogger(ProducerBuilder.class);
 
     private static final ProducerBuilder INSTANCE = new ProducerBuilder();
 
@@ -184,7 +183,7 @@ public final class ProducerBuilder extends AbstractITextConfigurationEvent {
 
             final IPlaceholderPopulator populator = PLACEHOLDER_POPULATORS.get(placeholderName);
             if (populator == null) {
-                LOGGER.info(MessageFormatUtil.format(
+                LOGGER.info(() -> MessageFormatUtil.format(
                         CommonsLogMessageConstant.UNKNOWN_PLACEHOLDER_WAS_IGNORED, placeholderName));
             } else {
                 builder.append(populator.populate(events, parameter));

@@ -32,6 +32,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateStatus;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IOCSPReq;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ISingleResp;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
 import com.itextpdf.io.resolver.resource.IAdvancedResourceRetriever;
@@ -48,8 +49,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * OcspClient implementation using BouncyCastle.
@@ -61,7 +60,7 @@ public class OcspClientBouncyCastle implements IOcspClientBouncyCastle {
     /**
      * The Logger instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(OcspClientBouncyCastle.class);
+    private static final LazyLogger LOGGER = new LazyLogger(OcspClientBouncyCastle.class);
 
     private IAdvancedResourceRetriever resourceRetriever = new DefaultResourceRetriever();
 
@@ -88,7 +87,7 @@ public class OcspClientBouncyCastle implements IOcspClientBouncyCastle {
             }
             return BOUNCY_CASTLE_FACTORY.createBasicOCSPResp(ocspResponse.getResponseObject());
         } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
+            LOGGER.error(() -> ex.getMessage());
         }
         return null;
     }
@@ -107,16 +106,16 @@ public class OcspClientBouncyCastle implements IOcspClientBouncyCastle {
                     ICertificateStatus status = resp.getCertStatus();
                     if (!BOUNCY_CASTLE_FACTORY.createCertificateStatus().getGood().equals(status)) {
                         if (BOUNCY_CASTLE_FACTORY.createRevokedStatus(status) == null) {
-                            LOGGER.info(IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
+                            LOGGER.info(() -> IoLogMessageConstant.OCSP_STATUS_IS_UNKNOWN);
                         } else {
-                            LOGGER.info(IoLogMessageConstant.OCSP_STATUS_IS_REVOKED);
+                            LOGGER.info(() -> IoLogMessageConstant.OCSP_STATUS_IS_REVOKED);
                         }
                     }
                     return basicResponse.getEncoded();
                 }
             }
         } catch (Exception ex) {
-            LOGGER.error(ex.getMessage());
+            LOGGER.error(() -> ex.getMessage());
         }
         return null;
     }
@@ -208,7 +207,7 @@ public class OcspClientBouncyCastle implements IOcspClientBouncyCastle {
      */
     protected InputStream createRequestAndResponse(X509Certificate checkCert, X509Certificate rootCert, String url)
             throws IOException, AbstractOperatorCreationException, AbstractOCSPException, CertificateEncodingException {
-        LOGGER.info("Getting OCSP from " + url);
+        LOGGER.info(() -> "Getting OCSP from " + url);
         IOCSPReq request = generateOCSPRequest(rootCert, checkCert.getSerialNumber());
         byte[] array = request.getEncoded();
         URL urlt = new URL(url);

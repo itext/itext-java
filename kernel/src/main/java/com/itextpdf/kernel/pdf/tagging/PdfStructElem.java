@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -44,8 +45,6 @@ import com.itextpdf.kernel.validation.context.TagStructElementValidationContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A wrapper for structure element dictionaries (ISO-32000 14.7.2 "Structure Hierarchy").
@@ -57,6 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IStructureNode {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfStructElem.class);
 
     public PdfStructElem(PdfDictionary pdfObject) {
         super(pdfObject);
@@ -503,8 +503,7 @@ public class PdfStructElem extends PdfObjectWrapper<PdfDictionary> implements IS
      */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
-            Logger logger = LoggerFactory.getLogger(PdfStructElem.class);
-            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            LOGGER.error(() -> IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         if (null != description) {
             getDocument().getCatalog().getNameTree(PdfName.EmbeddedFiles).addEntry(description, fs.getPdfObject());

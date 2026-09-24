@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.resolver.resource;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.ReadingByteLimitException;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -30,8 +31,6 @@ import com.itextpdf.io.util.UrlUtil;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +41,7 @@ import java.net.URL;
  * on the size of retrieved resources using input stream with a limit on the number of bytes read.
  */
 public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultResourceRetriever.class);
+    private static final LazyLogger LOGGER = new LazyLogger(DefaultResourceRetriever.class);
     private static final int DEFAULT_CONNECT_TIMEOUT = 300_000;
     private static final int DEFAULT_READ_TIMEOUT = 300_000;
     private long resourceSizeByteLimit;
@@ -161,7 +160,7 @@ public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
                     .getInputStreamOfFinalConnection(url, connectTimeout, readTimeout, requestHeaders),
                     resourceSizeByteLimit);
         }
-        LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, url));
+        LOGGER.warn(() -> MessageFormatUtil.format(IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, url));
         return null;
     }
 
@@ -176,7 +175,7 @@ public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
             }
             return null;
         } catch (ReadingByteLimitException ex) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     IoLogMessageConstant.UNABLE_TO_RETRIEVE_RESOURCE_WITH_GIVEN_RESOURCE_SIZE_BYTE_LIMIT,
                     url, resourceSizeByteLimit));
             return null;
@@ -199,7 +198,7 @@ public class DefaultResourceRetriever implements IAdvancedResourceRetriever {
             return new LimitedInputStream(UrlUtil.get(url, request, finalHeaders, connectTimeout, readTimeout),
                     resourceSizeByteLimit);
         }
-        LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, url));
+        LOGGER.warn(() -> MessageFormatUtil.format(IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, url));
         return null;
     }
 

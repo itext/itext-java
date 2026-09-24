@@ -24,6 +24,7 @@ package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.logs.KernelLogMessageConstant;
@@ -36,8 +37,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class that contains a map with the different message digest algorithms.
@@ -118,7 +117,7 @@ public class DigestAlgorithms {
 
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DigestAlgorithms.class);
+    private static final LazyLogger LOGGER = new LazyLogger(DigestAlgorithms.class);
 
     static {
         digestNames.put("1.2.840.113549.2.5", "MD5");
@@ -298,7 +297,7 @@ public class DigestAlgorithms {
         if (ret == null) {
             try {
                 String digest = getMessageDigest(oid, BOUNCY_CASTLE_FACTORY.getProviderName()).getAlgorithm();
-                LOGGER.warn(KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
+                LOGGER.warn(() -> KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
                 return digest;
             } catch (Exception e) {
                 return oid;
@@ -341,7 +340,7 @@ public class DigestAlgorithms {
         }
         allowedDigest = BOUNCY_CASTLE_FACTORY.getDigestAlgorithmOid(StringNormalizer.toUpperCase(name));
         if (allowedDigest != null) {
-            LOGGER.warn(KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
+            LOGGER.warn(() -> KernelLogMessageConstant.ALGORITHM_NOT_FROM_SPEC);
         }
         return allowedDigest;
     }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -32,11 +33,10 @@ import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import java.text.MessageFormat;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class RootTagNormalizer {
 
+    private static final LazyLogger LOGGER = new LazyLogger(RootTagNormalizer.class);
 
     private TagStructureContext context;
     private PdfStructElem rootTagElement;
@@ -152,22 +152,23 @@ class RootTagNormalizer {
     }
 
     private void logCreatedRootTagHasMappingIssue(PdfNamespace rootTagOriginalNs, IRoleMappingResolver mapping) {
-        String origRootTagNs = "";
-        if (rootTagOriginalNs != null && rootTagOriginalNs.getNamespaceName() != null) {
-            origRootTagNs = " in \"" + rootTagOriginalNs.getNamespaceName() + "\" namespace";
-        }
-
-        String mappingRole = " to ";
-        if (mapping != null) {
-            mappingRole += "\"" + mapping.getRole() + "\"";
-            if (mapping.getNamespace() != null && !StandardNamespaces.PDF_1_7.equals(mapping.getNamespace().getNamespaceName())) {
-                mappingRole += " in \"" + mapping.getNamespace().getNamespaceName() + "\" namespace";
+        LOGGER.warn(() -> {
+            String origRootTagNs = "";
+            if (rootTagOriginalNs != null && rootTagOriginalNs.getNamespaceName() != null) {
+                origRootTagNs = " in \"" + rootTagOriginalNs.getNamespaceName() + "\" namespace";
             }
-        } else {
-            mappingRole += "not standard role";
-        }
 
-        Logger logger = LoggerFactory.getLogger(RootTagNormalizer.class);
-        logger.warn(MessageFormat.format(IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING, origRootTagNs, mappingRole));
+            String mappingRole = " to ";
+            if (mapping != null) {
+                mappingRole += "\"" + mapping.getRole() + "\"";
+                if (mapping.getNamespace() != null && !StandardNamespaces.PDF_1_7.equals(mapping.getNamespace().getNamespaceName())) {
+                    mappingRole += " in \"" + mapping.getNamespace().getNamespaceName() + "\" namespace";
+                }
+            } else {
+                mappingRole += "not standard role";
+            }
+            return MessageFormat.format(
+                    IoLogMessageConstant.CREATED_ROOT_TAG_HAS_MAPPING, origRootTagNs, mappingRole);
+        });
     }
 }

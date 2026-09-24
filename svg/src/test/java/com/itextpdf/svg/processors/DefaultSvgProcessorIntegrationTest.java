@@ -29,7 +29,6 @@ import com.itextpdf.svg.processors.impl.DefaultSvgProcessor;
 import com.itextpdf.svg.renderers.IBranchSvgNodeRenderer;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
-import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,11 +40,11 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/processors/impl/DefaultSvgProcessorIntegrationTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/processors/impl/DefaultSvgProcessorIntegrationTest/";
 
     @Test
     public void DefaultBehaviourTest() throws IOException {
-        String svgFile = sourceFolder + "RedCircle.svg";
+        String svgFile = SOURCE_FOLDER + "RedCircle.svg";
         InputStream svg = FileUtil.getInputStreamForFile(svgFile);
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg, null);
@@ -65,7 +64,7 @@ public class DefaultSvgProcessorIntegrationTest extends SvgIntegrationTest {
 
     @Test
     public void namedObjectRectangleTest() throws IOException {
-        String svgFile = sourceFolder + "namedObjectRectangleTest.svg";
+        String svgFile = SOURCE_FOLDER + "namedObjectRectangleTest.svg";
         InputStream svg = FileUtil.getInputStreamForFile(svgFile);
         JsoupXmlParser xmlParser = new JsoupXmlParser();
         IDocumentNode root = xmlParser.parse(svg, null);

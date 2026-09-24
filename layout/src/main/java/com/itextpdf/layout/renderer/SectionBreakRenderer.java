@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -35,9 +36,6 @@ import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static com.itextpdf.layout.renderer.AbstractRenderer.EPS;
 
 /**
@@ -45,7 +43,7 @@ import static com.itextpdf.layout.renderer.AbstractRenderer.EPS;
  * Will terminate the current page content if any and start a new page.
  */
 public class SectionBreakRenderer extends AbstractBreakRenderer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SectionBreakRenderer.class);
+    private static final LazyLogger LOGGER = new LazyLogger(SectionBreakRenderer.class);
 
     private final SectionBreak sectionBreak;
     protected LayoutArea occupiedArea;
@@ -68,7 +66,7 @@ public class SectionBreakRenderer extends AbstractBreakRenderer {
     @Override
     public void addChild(IRenderer renderer) {
         if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
-            LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
+            LOGGER.warn(() -> LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
         }
     }
 
@@ -76,7 +74,7 @@ public class SectionBreakRenderer extends AbstractBreakRenderer {
     public LayoutResult layout(LayoutContext layoutContext) {
         if (Boolean.TRUE.equals(this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS))) {
             if (occupiedArea == null) {
-                LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_IGNORED);
+                LOGGER.warn(() -> LayoutLogMessageConstant.SECTION_BREAK_IGNORED);
             }
             Rectangle layoutContextAreaBbox = layoutContext.getArea().getBBox();
             Rectangle occupiedAreaBbox =
@@ -90,7 +88,7 @@ public class SectionBreakRenderer extends AbstractBreakRenderer {
         boolean pageSizeChanged = false;
         int pageNumber = layoutContext.getArea().getPageNumber();
         if (pageNumber == 0) {
-            LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_LAYOUT_ON_PAGE_0);
+            LOGGER.warn(() -> LayoutLogMessageConstant.SECTION_BREAK_LAYOUT_ON_PAGE_0);
             pageNumber = 1;
         }
         IRenderer parentRenderer = getParent();
@@ -135,7 +133,7 @@ public class SectionBreakRenderer extends AbstractBreakRenderer {
     @Override
     public void draw(DrawContext drawContext) {
         if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
-            LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
+            LOGGER.warn(() -> LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
         }
     }
 
@@ -169,7 +167,7 @@ public class SectionBreakRenderer extends AbstractBreakRenderer {
     @Override
     public void move(float dx, float dy) {
         if (this.<Boolean>getProperty(Property.IGNORE_AREA_AND_SECTION_BREAKS) == null) {
-            LOGGER.warn(LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
+            LOGGER.warn(() -> LayoutLogMessageConstant.SECTION_BREAK_UNEXPECTED);
         }
     }
 

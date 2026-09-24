@@ -33,7 +33,6 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -489,5 +488,13 @@ public class ResourceResolverTest extends ExtendedITextTest {
             Assertions.assertNotNull(stream);
             Assertions.assertEquals(expected.read(), stream.read());
         }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(
+            messageTemplate = StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_IMAGE_WITH_GIVEN_BASE_URI))
+    public void retrieveImageExceptionTest() {
+        ResourceResolver resourceResolver = new ResourceResolver(baseUri);
+        Assertions.assertDoesNotThrow(() -> resourceResolver.retrieveImage("imageWithSvg.svg"));
     }
 }

@@ -69,6 +69,7 @@ public class Hyphen {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         if (noBreak == null
                 && postBreak == null

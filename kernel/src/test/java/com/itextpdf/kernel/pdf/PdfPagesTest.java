@@ -854,7 +854,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "layerPropertiesPersistence.pdf";
 
         // Create document with layers
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = pdfDocument.addNewPage();
 
         // Create a layer that is ON
@@ -892,7 +892,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         pdfDocument.close();
 
         // Reopen the document and verify layer states are persisted
-        PdfDocument reopenedDoc = new PdfDocument(new PdfReader(filename));
+        PdfDocument reopenedDoc = new PdfDocument(CompareTool.createOutputReader(filename));
 
         Assertions.assertEquals(2, reopenedDoc.getPage(1).getPdfLayers().size());
 
@@ -930,7 +930,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         String filename = DESTINATION_FOLDER + "layerStatePersistenceViaOCProperties.pdf";
 
         // Create document with layers
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         PdfPage page = pdfDocument.addNewPage();
 
         // Create a layer that is ON
@@ -964,7 +964,7 @@ public class PdfPagesTest extends ExtendedITextTest {
         pdfDocument.close();
 
         // Reopen the document and verify layer states are persisted via OCProperties
-        PdfDocument reopenedDoc = new PdfDocument(new PdfReader(filename));
+        PdfDocument reopenedDoc = new PdfDocument(CompareTool.createOutputReader(filename));
 
         PdfOCProperties ocProperties = reopenedDoc.getCatalog().getOCProperties(false);
         Assertions.assertNotNull(ocProperties, "OCProperties should exist after reopening");

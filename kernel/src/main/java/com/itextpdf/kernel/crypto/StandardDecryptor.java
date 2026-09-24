@@ -38,12 +38,14 @@ public class StandardDecryptor implements IDecryptor {
         arcfour.prepareARCFOURKey(key, off, len);
     }
 
+    @Override
     public byte[] update(byte[] b, int off, int len) {
         byte[] b2 = new byte[len];
         arcfour.encryptARCFOUR(b, off, len, b2, 0);
         return b2;
     }
 
+    @Override
     public byte[] finish() {
         return null;
     }

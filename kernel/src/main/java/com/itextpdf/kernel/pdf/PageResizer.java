@@ -146,7 +146,7 @@ public class PageResizer {
         double verticalScale = size.getHeight() / originalPageSize.getHeight();
         double horizontalFreeSpace = 0;
         double verticalFreeSpace = 0;
-        if (ResizeType.MAINTAIN_ASPECT_RATIO == type) {
+        if (type == ResizeType.MAINTAIN_ASPECT_RATIO) {
             double scale = Math.min(horizontalScale, verticalScale);
             horizontalScale = scale;
             verticalScale = scale;
@@ -547,9 +547,7 @@ public class PageResizer {
 
         // Scale font size in the Default Appearance string
         String da = null;
-        if (annotDict.getAsString(PdfName.DA) != null) {
-            da = annotDict.getAsString(PdfName.DA).toUnicodeString();
-        } else {
+        if (annotDict.getAsString(PdfName.DA) == null) {
             if (PdfName.Widget.equals(annotDict.getAsName(PdfName.Subtype))) {
                 // For widget annotation we should also check parents
                 da = getDaFromParent(annotDict);
@@ -562,6 +560,8 @@ public class PageResizer {
                     }
                 }
             }
+        } else {
+            da = annotDict.getAsString(PdfName.DA).toUnicodeString();
         }
         if (da != null) {
             annotDict.put(PdfName.DA, new PdfString(scaleDaString(da, lengthScale)));
@@ -653,14 +653,15 @@ public class PageResizer {
         PdfDictionary parentDict = dict.getAsDictionary(PdfName.Parent);
         if (parentDict == null) {
             return null;
-        } else {
-            PdfString da = parentDict.getAsString(PdfName.DA);
-            if (da != null) {
-                return da.toUnicodeString();
-            } else {
-                return getDaFromParent(parentDict);
-            }
         }
+
+        PdfString da = parentDict.getAsString(PdfName.DA);
+        if (da == null) {
+            return getDaFromParent(parentDict);
+        } else {
+            return da.toUnicodeString();
+        }
+
     }
 
     /**

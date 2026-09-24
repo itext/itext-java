@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -44,8 +45,6 @@ import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfObjRef;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +62,8 @@ import java.util.List;
  * given instance valid again, use {@link #moveToRoot()} method.
  */
 public class TagTreePointer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(TagTreePointer.class);
 
     private static final String MCR_MARKER = "MCR";
 
@@ -469,8 +470,7 @@ public class TagTreePointer {
 
         PdfStructElem parent = (PdfStructElem) getCurrentStructElem().getParent();
         if (parent.isFlushed()) {
-            Logger logger = LoggerFactory.getLogger(TagTreePointer.class);
-            logger.warn(IoLogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
+            LOGGER.warn(() -> IoLogMessageConstant.ATTEMPT_TO_MOVE_TO_FLUSHED_PARENT);
 
             moveToRoot();
         } else {

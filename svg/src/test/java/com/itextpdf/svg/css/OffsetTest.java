@@ -36,14 +36,13 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class OffsetTest extends SvgIntegrationTest {
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/OffsetTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/OffsetTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/OffsetTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/OffsetTest/";
 
     @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
-
 
     @Test
     public void offsetLinearGradientTest() throws IOException, InterruptedException {

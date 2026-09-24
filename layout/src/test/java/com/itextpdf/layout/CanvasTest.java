@@ -58,6 +58,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -75,13 +76,18 @@ public class CanvasTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.UNABLE_TO_APPLY_PAGE_DEPENDENT_PROP_UNKNOWN_PAGE_ON_WHICH_ELEMENT_IS_DRAWN))
     public void canvasNoPageLinkTest() throws IOException, InterruptedException {
         String testName = "canvasNoPageLinkTest";
         String out = DESTINATION_FOLDER + testName + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(out));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(out));
         PdfPage page = pdf.addNewPage();
         Rectangle pageSize = page.getPageSize();
         PdfCanvas pdfCanvas = new PdfCanvas(page.getLastContentStream(), page.getResources(), pdf);
@@ -108,7 +114,7 @@ public class CanvasTest extends ExtendedITextTest {
         String testName = "canvasWithPageLinkTest";
         String out = DESTINATION_FOLDER + testName + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(out));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(out));
         PdfPage page = pdf.addNewPage();
         Rectangle pageSize = page.getPageSize();
         Rectangle rectangle = new Rectangle(
@@ -134,7 +140,7 @@ public class CanvasTest extends ExtendedITextTest {
         String testName = "listItemWithoutMarginsInCanvasTest";
         String out = DESTINATION_FOLDER + testName + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(out));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(out));
         PdfPage page = pdf.addNewPage();
         Rectangle pageSize = page.getPageSize();
 
@@ -155,7 +161,7 @@ public class CanvasTest extends ExtendedITextTest {
         String testName = "notApplyingMarginsInCanvasTest";
         String out = DESTINATION_FOLDER + testName + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(out));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(out));
         PdfPage page = pdf.addNewPage();
         Rectangle pageSize = page.getPageSize();
 
@@ -173,7 +179,7 @@ public class CanvasTest extends ExtendedITextTest {
         String testName = "nullableMarginsInCanvasRenderer";
         String out = DESTINATION_FOLDER + testName + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(out));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(out));
         PdfPage page = pdf.addNewPage();
         Rectangle pageSize = page.getPageSize();
 
@@ -191,7 +197,7 @@ public class CanvasTest extends ExtendedITextTest {
         String testName = "canvasWithPageEnableTaggingTest01";
         String out = DESTINATION_FOLDER + testName + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(out));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(out));
 
         pdf.setTagged();
 
@@ -222,7 +228,7 @@ public class CanvasTest extends ExtendedITextTest {
         String testName = "canvasWithPageEnableTaggingTest02";
         String out = DESTINATION_FOLDER + testName + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
-        PdfDocument pdf = new PdfDocument(new PdfWriter(out));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(out));
 
         pdf.setTagged();
 
@@ -256,7 +262,7 @@ public class CanvasTest extends ExtendedITextTest {
         String out = DESTINATION_FOLDER + testName + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
 
-        try (PdfDocument pdf = new PdfDocument(new PdfWriter(out))) {
+        try (PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(out))) {
             pdf.addNewPage();
             Canvas canvas = new Canvas(new PdfCanvas(pdf.getFirstPage()),
                     new Rectangle(120, 650, 60, 80));
@@ -283,7 +289,7 @@ public class CanvasTest extends ExtendedITextTest {
         String out = DESTINATION_FOLDER + testName + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
 
-        try (PdfDocument pdf = new PdfDocument(new PdfWriter(out))) {
+        try (PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(out))) {
             pdf.addNewPage();
 
             Canvas canvas = new Canvas(new PdfCanvas(pdf.getFirstPage()),
@@ -309,7 +315,7 @@ public class CanvasTest extends ExtendedITextTest {
         String out = DESTINATION_FOLDER + testName + ".pdf";
         String cmp = SOURCE_FOLDER + "cmp_" + testName + ".pdf";
 
-        try (PdfDocument pdf = new PdfDocument(new PdfWriter(out))) {
+        try (PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(out))) {
             pdf.addNewPage();
 
             Canvas canvas = new Canvas(new PdfCanvas(pdf.getFirstPage()),

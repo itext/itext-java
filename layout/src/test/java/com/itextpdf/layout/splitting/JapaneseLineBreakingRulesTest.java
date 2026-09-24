@@ -36,6 +36,7 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -53,6 +54,11 @@ public class JapaneseLineBreakingRulesTest extends ExtendedITextTest {
     }
 
     // ---------------- Tests for https://www.w3.org/TR/jlreq/?lang=en#characters_not_starting_a_line section
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void closingBracketsNotStartingLineTest() throws IOException, InterruptedException {
         createPdfAndCompare("closingBracketsNotStartingLine",

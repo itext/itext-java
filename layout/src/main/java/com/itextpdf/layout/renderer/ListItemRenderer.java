@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -40,13 +41,13 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import com.itextpdf.layout.tagging.TaggingDummyElement;
 import com.itextpdf.layout.tagging.TaggingHintKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
 
 public class ListItemRenderer extends DivRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ListItemRenderer.class);
 
     protected IRenderer symbolRenderer;
     protected float symbolAreaWidth;
@@ -84,8 +85,7 @@ public class ListItemRenderer extends DivRenderer {
     @Override
     public void draw(DrawContext drawContext) {
         if (occupiedArea == null) {
-            Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
                     "Drawing won't be performed."));
             return;
         }
@@ -132,19 +132,15 @@ public class ListItemRenderer extends DivRenderer {
                     if (isRtl) {
                         UnitValue marginRightUV = this.getPropertyAsUnitValue(Property.MARGIN_RIGHT);
                         if (!marginRightUV.isPointValue()) {
-                            Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
-                            logger.error(
-                                    MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                                            Property.MARGIN_RIGHT));
+                            LOGGER.error(() -> MessageFormatUtil.format(
+                                    IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_RIGHT));
                         }
                         x -= marginRightUV.getValue();
                     } else {
                         UnitValue marginLeftUV = this.getPropertyAsUnitValue(Property.MARGIN_LEFT);
                         if (!marginLeftUV.isPointValue()) {
-                            Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
-                            logger.error(
-                                    MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                                            Property.MARGIN_LEFT));
+                            LOGGER.error(() -> MessageFormatUtil.format(
+                                    IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, Property.MARGIN_LEFT));
                         }
                         x += marginLeftUV.getValue();
                     }
@@ -323,8 +319,7 @@ public class ListItemRenderer extends DivRenderer {
         UnitValue fontSize = this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (listItemFont != null && fontSize != null) {
             if (!fontSize.isPointValue()) {
-                Logger logger = LoggerFactory.getLogger(ListItemRenderer.class);
-                logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+                LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                         Property.FONT_SIZE));
             }
             float[] ascenderDescender = TextRenderer.calculateAscenderDescender(listItemFont);

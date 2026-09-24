@@ -431,6 +431,81 @@ public class CssMatchesTest extends ExtendedITextTest {
     }
 
     @Test
+    public void matchesAttributeContainsWordTreatsValueAsLiteralTest() {
+        CssAttributeSelectorItem item = new CssAttributeSelectorItem("[data-info~=\"a.c\"]");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<div data-info=\" abc\"></div>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode divNode = bodyNode.childNodes().get(0);
+
+        Assertions.assertFalse(item.matches(divNode));
+    }
+
+    @Test
+    public void matchesAttributeContainsWordLiteralValueTest() {
+        CssAttributeSelectorItem item = new CssAttributeSelectorItem("[data-info~=\"abc\"]");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<div data-info=\" abc\"></div>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode divNode = bodyNode.childNodes().get(0);
+
+        Assertions.assertTrue(item.matches(divNode));
+    }
+
+    @Test
+    public void matchesAttributeContainsWordInvalidRegexValueTest() {
+        CssAttributeSelectorItem item = new CssAttributeSelectorItem("[data-info~=\"(\"]");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<div data-info=\" abc\"></div>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode divNode = bodyNode.childNodes().get(0);
+
+        Assertions.assertFalse(item.matches(divNode));
+    }
+
+    @Test
+    public void specialCharactersTest() {
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        for (int i = 0; i < CssAttributeSelectorItem.SPECIAL_CHARACTERS.length(); i++) {
+            CssAttributeSelectorItem item = new CssAttributeSelectorItem("[data-info~=\""
+                    + CssAttributeSelectorItem.SPECIAL_CHARACTERS.charAt(i) + "\"]");
+            IDocumentNode documentNode = htmlParser.parse("<div data-info=\" "
+                    + CssAttributeSelectorItem.SPECIAL_CHARACTERS.charAt(i) + "\"></div>");
+
+            INode bodyNode = documentNode
+                    .childNodes().get(0)
+                    .childNodes().get(1);
+            INode divNode = bodyNode.childNodes().get(0);
+
+            Assertions.assertTrue(item.matches(divNode));
+        }
+    }
+
+    @Test
+    public void dashCharacterTest() {
+        // '-' is special character on dotnet but only if used inside brackets
+        CssAttributeSelectorItem item = new CssAttributeSelectorItem("[data-info~=\"[1-9]\"]");
+        IXmlParser htmlParser = new JsoupHtmlParser();
+        IDocumentNode documentNode = htmlParser.parse("<div data-info=\" [1-9]\"></div>");
+
+        INode bodyNode = documentNode
+                .childNodes().get(0)
+                .childNodes().get(1);
+        INode divNode = bodyNode.childNodes().get(0);
+
+        Assertions.assertTrue(item.matches(divNode));
+    }
+
+    @Test
     public void cssPageTypeSelectorItemMatchesTest() {
         CssPageTypeSelectorItem item = new CssPageTypeSelectorItem("customPageName");
 

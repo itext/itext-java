@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.itextpdf</groupId>
     <artifactId>root</artifactId>
-    <version>9.7.1</version>
+    <version>9.8.0</version>
   </parent>
 
   <artifactId>bouncy-castle-adapter</artifactId>
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk18on</artifactId>
-      <version>${bouncycastle.version}</version>
+      <version>${bouncycastle.provider.version}</version>
     </dependency>
     <dependency>
       <groupId>com.itextpdf</groupId>

@@ -23,12 +23,13 @@
 package com.itextpdf.commons;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
 import java.util.AbstractMap.SimpleImmutableEntry;
-
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import sharpen.config.DefaultPathMappings;
 import sharpen.config.MappingConfiguration;
 import sharpen.config.MappingConfigurator;
@@ -406,6 +407,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
                 "java.util.List.toArray",
                 "java.util.Map.computeIfAbsent",
                 "java.util.Map.get",
+                "java.util.Map.remove",
                 "java.util.Map.isEmpty",
                 "java.util.Map.put",
                 "java.util.Map.putAll",

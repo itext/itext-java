@@ -122,6 +122,7 @@ public class JsoupAttributes implements IAttributes {
         /* (non-Javadoc)
          * @see java.util.Iterator#remove()
          */
+        @Override
         public void remove() {
             throw new UnsupportedOperationException("remove");
         }

@@ -43,14 +43,19 @@ class JsonValueSerializer extends JsonSerializer<JsonValue> {
         } else if (value instanceof JsonBoolean) {
             gen.writeBoolean(((JsonBoolean) value).getValue());
         } else if (value instanceof JsonNumber) {
-            final double doubleValue = ((JsonNumber) value).getValue();
-            if (Double.isNaN(doubleValue) || Double.isInfinite(doubleValue)) {
-                throw new IOException("NAN and INFINITE are not supported");
-            }
-            if ((long) doubleValue == doubleValue) {
-                gen.writeNumber((long) doubleValue);
+            if (((JsonNumber) value).isDouble()) {
+                final double doubleValue = ((JsonNumber) value).getValue();
+                if (Double.isNaN(doubleValue) || Double.isInfinite(doubleValue)) {
+                    throw new IOException("NAN and INFINITE are not supported");
+                }
+                if ((long) doubleValue == doubleValue) {
+                    gen.writeNumber((long) doubleValue);
+                } else {
+                    gen.writeNumber(doubleValue);
+                }
             } else {
-                gen.writeNumber(doubleValue);
+                final long longValue = ((JsonNumber) value).getLongValue();
+                gen.writeNumber(longValue);
             }
         } else if (value instanceof JsonString) {
             String stringValue = ((JsonString) value).getValue();

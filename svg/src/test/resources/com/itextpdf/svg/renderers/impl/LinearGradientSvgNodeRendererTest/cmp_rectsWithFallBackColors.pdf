@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250103181547+03'00')/ModDate(D:20250103181547+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20260817150239+03'00')/ModDate(D:20260817150239+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -31,7 +31,7 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 600 450]/Length 164/Resources<</ExtGState<</Gs1 8 0 R>>/Pattern<</P1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 450]/Length 172/Resources<</ExtGState<</Gs1 8 0 R>>/Pattern<</P1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 450 re
 W
 n
@@ -41,6 +41,7 @@ q
 /P1 scn
 1 0 1 RG
 15 w
+4 M
 % rect
 75 75 450 300 re
 B
@@ -49,6 +50,7 @@ q
 0.39216 0.58824 0 rg
 0 0.50196 0 RG
 7.5 w
+4 M
 /Gs1 gs
 % rect
 75 75 450 300 re
@@ -91,17 +93,17 @@ xref
 0000000015 00000 n 
 0000000479 00000 n 
 0000000647 00000 n 
-0000000962 00000 n 
-0000000989 00000 n 
-0000001077 00000 n 
-0000001193 00000 n 
-0000001330 00000 n 
-0000001402 00000 n 
-0000001480 00000 n 
-0000001558 00000 n 
+0000000970 00000 n 
+0000000997 00000 n 
+0000001085 00000 n 
+0000001201 00000 n 
+0000001338 00000 n 
+0000001410 00000 n 
+0000001488 00000 n 
+0000001566 00000 n 
 trailer
-<</ID [<1290e8bea6e0b49fee39f52a4e4d599f00a1140339117724f0cfe87852c41cf841fd897dd1a02ce8ec9fbee1fdf9764b90bb269d458ddd967e7c90dbb717bb29><1290e8bea6e0b49fee39f52a4e4d599f00a1140339117724f0cfe87852c41cf841fd897dd1a02ce8ec9fbee1fdf9764b90bb269d458ddd967e7c90dbb717bb29>]/Info 3 0 R/Root 1 0 R/Size 16>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<21250b394d926b2c3510d41ee5a85046cc70925e85e435854c456e1c066e664a0691b8c6677b7161958ac2ebde5114f239a99d1b3e9e0be53f11b304ef763041><21250b394d926b2c3510d41ee5a85046cc70925e85e435854c456e1c066e664a0691b8c6677b7161958ac2ebde5114f239a99d1b3e9e0be53f11b304ef763041>]/Info 3 0 R/Root 1 0 R/Size 16>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-1630
+1638
 %%EOF

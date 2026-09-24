@@ -321,6 +321,7 @@ public class SignDeferredTest extends ExtendedITextTest {
             this.chain = chain;
         }
 
+        @Override
         public byte[] sign(InputStream docBytes) {
             byte[] docBytesHash = calcDocBytesHash(docBytes);
 
@@ -337,6 +338,7 @@ public class SignDeferredTest extends ExtendedITextTest {
             return signatureContent;
         }
 
+        @Override
         public void modifySigningDictionary(PdfDictionary signDic) {
         }
     }
@@ -356,11 +358,13 @@ public class SignDeferredTest extends ExtendedITextTest {
             return docBytesHash;
         }
 
+        @Override
         public byte[] sign(InputStream docBytes) {
             docBytesHash = calcDocBytesHash(docBytes);
             return new byte[0];
         }
 
+        @Override
         public void modifySigningDictionary(PdfDictionary signDic) {
             signDic.put(PdfName.Filter, filter);
             signDic.put(PdfName.SubFilter, subFilter);
@@ -375,10 +379,12 @@ public class SignDeferredTest extends ExtendedITextTest {
         }
 
 
+        @Override
         public byte[] sign(InputStream docBytes) {
             return cmsSignatureContents;
         }
 
+        @Override
         public void modifySigningDictionary(PdfDictionary signDic) {
         }
     }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
@@ -32,8 +33,6 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.CellRenderer;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.commons.utils.MessageFormatUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,8 +91,8 @@ public class Cell extends BlockElement<Cell> {
                 nextRenderer = nextRenderer.getNextRenderer();
                 cellRenderer = (CellRenderer) renderer;
             } else {
-                Logger logger = LoggerFactory.getLogger(Table.class);
-                logger.error("Invalid renderer for Table: must be inherited from TableRenderer");
+                new LazyLogger(Table.class)
+                        .error(() -> "Invalid renderer for Table: must be inherited from TableRenderer");
             }
         }
         //cellRenderer could be null in case invalid type (see logger message above)

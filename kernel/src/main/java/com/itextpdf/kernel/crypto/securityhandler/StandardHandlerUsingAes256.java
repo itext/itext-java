@@ -22,13 +22,14 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleSecureRandomHolder;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.crypto.AesDecryptor;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.crypto.IDecryptor;
-import com.itextpdf.kernel.crypto.IVGenerator;
 import com.itextpdf.kernel.crypto.OutputStreamAesEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -39,14 +40,15 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfVersion;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
+
+    private static final LazyLogger LOGGER = new LazyLogger(StandardHandlerUsingAes256.class);
+
+    private static final BouncyCastleSecureRandomHolder RNG = new BouncyCastleSecureRandomHolder();
 
     private static final int VALIDATION_SALT_OFFSET = 32;
     private static final int KEY_SALT_OFFSET = 40;
@@ -178,10 +180,13 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             }
 
             // first 8 bytes are validation salt; second 8 bytes are key salt
-            byte[] userValAndKeySalt = IVGenerator.getIV(16);
-            byte[] ownerValAndKeySalt = IVGenerator.getIV(16);
+            byte[] userValAndKeySalt = new byte[16];
+            RNG.getSecureRandom().nextBytes(userValAndKeySalt);
+            byte[] ownerValAndKeySalt = new byte[16];
+            RNG.getSecureRandom().nextBytes(ownerValAndKeySalt);
 
-            nextObjectKey = IVGenerator.getIV(32);
+            nextObjectKey = new byte[32];
+            RNG.getSecureRandom().nextBytes(nextObjectKey);
             nextObjectKeySize = 32;
 
             byte[] hash;
@@ -223,7 +228,8 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
     private byte[] getAes256Perms(int permissions, boolean encryptMetadata) {
         byte[] aes256Perms;
         AESCipherCBCnoPad ac;
-        byte[] permsp = IVGenerator.getIV(16);
+        byte[] permsp = new byte[16];
+        RNG.getSecureRandom().nextBytes(permsp);
         permsp[0] = (byte) permissions;
         permsp[1] = (byte) (permissions >> 8);
         permsp[2] = (byte) (permissions >> 16);
@@ -295,8 +301,8 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             Boolean encryptMetadataEntry = encryptionDictionary.getAsBool(PdfName.EncryptMetadata);
             if (permissionsDecoded != permissions || encryptMetadataEntry != null &&
                     encryptMetadata != encryptMetadataEntry) {
-                Logger logger = LoggerFactory.getLogger(StandardHandlerUsingAes256.class);
-                logger.error(IoLogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY);
+                LOGGER.error(() ->
+                        IoLogMessageConstant.ENCRYPTION_ENTRIES_P_AND_ENCRYPT_METADATA_NOT_CORRESPOND_PERMS_ENTRY);
             }
             this.permissions = permissionsDecoded;
             this.encryptMetadata = encryptMetadata;
@@ -355,8 +361,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
                 // c)
                 MessageDigest md = null;
-                BigInteger i = new BigInteger(1, Arrays.copyOf(e, 16));
-                int remainder = i.remainder(BigInteger.valueOf(3)).intValue();
+                int remainder = sumUnsignedBytes(e, 0, 16) % 3;
                 switch (remainder) {
                     case 0:
                         md = mdSha256;
@@ -402,5 +407,13 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
         byte[] truncated = new byte[48];
         System.arraycopy(byteArray, 0, truncated, 0, 48);
         return truncated;
+    }
+
+    private static int sumUnsignedBytes(byte[] array, int from, int to) {
+        int sum = 0;
+        for (int i = from; i < to; ++i) {
+            sum += (array[i] & 0xFF);
+        }
+        return sum;
     }
 }

@@ -38,31 +38,31 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TimelineChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/TimelineChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/TimelineChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/TimelineChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/TimelineChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void timelineAdvancedChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "timelineAdvancedChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "timelineAdvancedChart");
     }
 
     @Test
     public void timelineChart() throws IOException, InterruptedException, java.io.IOException {
         PageSize pageSize = PageSize.A4;
-        TestUtils.convertSVGtoPDF(destinationFolder + "timelineChart.pdf",
-                sourceFolder + "timelineChart.svg", 1, pageSize);
+        TestUtils.convertSVGtoPDF(DESTINATION_FOLDER + "timelineChart.pdf",
+                SOURCE_FOLDER + "timelineChart.svg", 1, pageSize);
 
-        Assertions.assertNull(new CompareTool().compareByContent(destinationFolder + "timelineChart.pdf",
-                sourceFolder + "cmp_timelineChart.pdf", destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareByContent(DESTINATION_FOLDER + "timelineChart.pdf",
+                SOURCE_FOLDER + "cmp_timelineChart.pdf", DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
     public void timelineLabeledChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "timelineLabeledChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "timelineLabeledChart");
     }
 }

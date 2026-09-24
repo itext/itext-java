@@ -22,16 +22,15 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.utils.ICopyFilter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
 public abstract class PdfPrimitiveObject extends PdfObject {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfPrimitiveObject.class);
 	
     protected byte[] content = null;
     protected boolean directOnly;
@@ -57,8 +56,9 @@ public abstract class PdfPrimitiveObject extends PdfObject {
     }
 
     protected final byte[] getInternalContent() {
-        if (content == null)
+        if (content == null) {
             generateContent();
+        }
         return content;
     }
 
@@ -70,22 +70,20 @@ public abstract class PdfPrimitiveObject extends PdfObject {
 
     @Override
     public PdfObject makeIndirect(PdfDocument document, PdfIndirectReference reference) {
-        if (!directOnly) {
-            return super.makeIndirect(document, reference);
+        if (directOnly) {
+            LOGGER.warn(() -> IoLogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
+            return this;
         } else {
-            Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(IoLogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
+            return super.makeIndirect(document, reference);
         }
-        return this;
     }
 
     @Override
     public PdfObject setIndirectReference(PdfIndirectReference indirectReference) {
-        if (!directOnly) {
-            super.setIndirectReference(indirectReference);
+        if (directOnly) {
+            LOGGER.warn(() -> IoLogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
         } else {
-            Logger logger = LoggerFactory.getLogger(PdfObject.class);
-            logger.warn(IoLogMessageConstant.DIRECTONLY_OBJECT_CANNOT_BE_INDIRECT);
+            super.setIndirectReference(indirectReference);
         }
         return this;
     }
@@ -94,16 +92,18 @@ public abstract class PdfPrimitiveObject extends PdfObject {
     protected void copyContent(PdfObject from, PdfDocument document, ICopyFilter copyFilter) {
         super.copyContent(from, document, copyFilter);
         PdfPrimitiveObject object = (PdfPrimitiveObject) from;
-        if (object.content != null)
+        if (object.content != null) {
             content = Arrays.copyOf(object.content, object.content.length);
+        }
     }
 
     protected int compareContent(PdfPrimitiveObject o) {
         for (int i = 0; i < Math.min(content.length, o.content.length); i++) {
-            if (content[i] > o.content[i])
+            if (content[i] > o.content[i]) {
                 return 1;
-            if (content[i] < o.content[i])
+            } else if (content[i] < o.content[i]) {
                 return -1;
+            }
         }
         return Integer.compare(content.length, o.content.length);
     }

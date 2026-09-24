@@ -695,6 +695,7 @@ public abstract class Node implements Cloneable {
      * @return outer HTML.
      * @see #outerHtml()
      */
+	@Override
 	public String toString() {
         return outerHtml();
     }
@@ -807,6 +808,7 @@ public abstract class Node implements Cloneable {
             out.prepareEncoder();
         }
 
+        @Override
         public void head(Node node, int depth) {
             try {
 				node.outerHtmlHead(accum, depth, out);
@@ -815,6 +817,7 @@ public abstract class Node implements Cloneable {
 			}
         }
 
+        @Override
         public void tail(Node node, int depth) {
             if (!node.nodeName().equals("#text")) { // saves a void hit.
 				try {

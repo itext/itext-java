@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <mask id="m" x="0" y="0" width="800" height="500" maskUnits="userSpaceOnUse">
+      <rect width="800" height="500" fill="black"/>
+      <rect x="100" y="100" width="600" height="300" fill="white"/>
+    </mask>
+  </defs>
+  <rect width="800" height="500" fill="#eee"/>
+  <g transform="translate(50,40) scale(1.2)">
+    <rect x="0" y="0" width="500" height="300" fill="#0044aa" mask="url(#m)"/>
+  </g>
+</svg>

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.element;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
@@ -35,8 +36,6 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.renderer.TableRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +48,8 @@ import java.util.List;
  * to the canvas, in order to reclaim memory that is locked up.
  */
 public class Table extends BlockElement<Table> implements ILargeElement {
+
+    private static final LazyLogger LOGGER = new LazyLogger(Table.class);
 
     protected DefaultAccessibilityProperties tagProperties;
 
@@ -684,8 +685,7 @@ public class Table extends BlockElement<Table> implements ILargeElement {
                 nextRenderer = nextRenderer.getNextRenderer();
                 return renderer;
             } else {
-                Logger logger = LoggerFactory.getLogger(Table.class);
-                logger.error("Invalid renderer for Table: must be inherited from TableRenderer");
+                LOGGER.error(() -> "Invalid renderer for Table: must be inherited from TableRenderer");
             }
         }
         // In case of large tables, we only add to the renderer the cells from complete row groups,

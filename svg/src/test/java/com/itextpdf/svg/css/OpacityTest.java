@@ -34,8 +34,8 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 //TODO DEVSIX-8822: update cmp after supporting
 public class OpacityTest extends SvgIntegrationTest {
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/OpacityTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/OpacityTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/OpacityTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/OpacityTest/";
 
     @BeforeAll
     public static void beforeClass() {

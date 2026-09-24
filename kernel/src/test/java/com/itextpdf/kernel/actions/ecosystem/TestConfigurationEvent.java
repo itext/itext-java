@@ -23,16 +23,14 @@
 package com.itextpdf.kernel.actions.ecosystem;
 
 import com.itextpdf.commons.actions.AbstractITextConfigurationEvent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.commons.logs.LazyLogger;
 
 public class TestConfigurationEvent extends AbstractITextConfigurationEvent {
     public static final String MESSAGE = "Test configuration event was processed";
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestConfigurationEvent.class);
+    private static final LazyLogger LOGGER = new LazyLogger(TestConfigurationEvent.class);
 
     @Override
     protected void doAction() {
-        LOGGER.warn(MESSAGE);
+        LOGGER.warn(() -> MESSAGE);
     }
 }

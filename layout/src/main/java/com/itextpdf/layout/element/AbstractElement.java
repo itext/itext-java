@@ -29,6 +29,7 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.renderer.IRenderer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -121,6 +122,54 @@ public abstract class AbstractElement<T extends IElement>
         }
         styles.add(style);
         return (T) (Object) this;
+    }
+
+    /**
+     * Adds a new style that contains only those properties from the given style
+     * that are not already defined on this element (either directly or via
+     * previously added styles).
+     * <p>
+     * Properties that are already present are ignored. If no properties are added,
+     * this method leaves the element unchanged.
+     *
+     * @param style the source style to copy absent properties from
+     *
+     * @return this element
+     *
+     * @throws IllegalArgumentException if {@code style} is {@code null}
+     *
+     * @see #addStyle(Style)
+     */
+    public T addStyleIfAbsent(Style style) {
+        if (style == null) {
+            throw new IllegalArgumentException("Style can not be null.");
+        }
+        if (styles == null) {
+            styles = new LinkedHashSet<>();
+        }
+        Style newStyle = new Style();
+        boolean hasAbsentProperties = false;
+        for (int property : style.getOwnProperties().keySet()) {
+            if (!hasProperty(property)) {
+                newStyle.setProperty(property, style.<Object>getProperty(property));
+                hasAbsentProperties = true;
+            }
+        }
+        if (hasAbsentProperties) {
+            styles.add(newStyle);
+        }
+        return (T) (Object) this;
+    }
+
+    /**
+     * Gets the styles added to this element.
+     *
+     * @return unmodifiable styles set or an empty set if no styles were added
+     */
+    public Set<Style> getStyles() {
+        return styles == null
+                ? Collections.<Style>emptySet()
+                : Collections.<Style>unmodifiableSet((LinkedHashSet<Style>) styles);
     }
 
     /**

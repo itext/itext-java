@@ -24,13 +24,12 @@ package com.itextpdf.io.resolver.resource;
 
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.InetAddress;
@@ -43,12 +42,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 class DefaultResourceRetrieverTest extends ExtendedITextTest {
+    private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/resolver/resource/";
+
 
     @Test
     // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
@@ -112,35 +112,20 @@ class DefaultResourceRetrieverTest extends ExtendedITextTest {
                     messageTemplate = IoLogMessageConstant.RESOURCE_WITH_GIVEN_URL_WAS_FILTERED_OUT, count = 2)
     })
     public void filterOutFilteredResourcesTest() throws IOException {
+        URL exampleDomainPage = new File(SOURCE_FOLDER + "example-dom-page.html").toURI().toURL();
         DefaultResourceRetriever resourceRetriever = new FilteredResourceRetriever();
-        Assertions.assertFalse(resourceRetriever.urlFilter(new URL("https://example.com/resource")));
+        Assertions.assertFalse(resourceRetriever.urlFilter(exampleDomainPage));
 
-        Assertions.assertNull(resourceRetriever.getInputStreamByUrl(new URL("https://example.com/resource")));
-        Assertions.assertNull(resourceRetriever.get(new URL("https://example.com/resource"), new byte[0],
-                new HashMap<>(0)));
+        Assertions.assertNull(resourceRetriever.getInputStreamByUrl(exampleDomainPage));
+        Assertions.assertNull(resourceRetriever.get(exampleDomainPage, new byte[0], new HashMap<>(0)));
     }
 
     @Test
     // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
     public void loadGetByteArrayByUrl() throws IOException {
+        URL itextBlogPost = new File(SOURCE_FOLDER + "itext-blog-post.html").toURI().toURL();
         DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
-        byte[] data = resourceRetriever.getByteArrayByUrl(new URL("https://itextpdf.com/blog/itext-news-technical-notes/get-excited-itext-8-here"));
-        Assertions.assertNotNull(data);
-        Assertions.assertTrue(data.length > 0);
-    }
-
-    @Test
-    @Disabled("TODO DEVSIX-9938 - Flaky access on ci") // Android-Conversion-Skip-Line
-    // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android
-    public void loadWithRequestAndHeaders() throws IOException {
-        DefaultResourceRetriever resourceRetriever = new DefaultResourceRetriever();
-        Map<String, String> headers = new HashMap<>(1);
-        headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36");
-        InputStream is = resourceRetriever.get(
-                new URL("https://itextpdf.com/blog/itext-news-technical-notes/get-excited-itext-8-here"),
-                new byte[0], headers);
-        byte[] data = StreamUtil.inputStreamToArray(is);
-
+        byte[] data = resourceRetriever.getByteArrayByUrl(itextBlogPost);
         Assertions.assertNotNull(data);
         Assertions.assertTrue(data.length > 0);
     }

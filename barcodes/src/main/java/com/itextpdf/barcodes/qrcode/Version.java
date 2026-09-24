@@ -273,6 +273,7 @@ final class Version {
     /**
      * @return The version number as a string
      */
+    @Override
     public String toString() {
         return Integer.toString(versionNumber);
     }

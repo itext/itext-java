@@ -41,7 +41,6 @@ import com.itextpdf.kernel.pdf.tagutils.DefaultAccessibilityProperties;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.pdfua.UaValidationTestFramework;
-import com.itextpdf.pdfua.checkers.utils.PdfUAValidationContext;
 import com.itextpdf.pdfua.exceptions.PdfUAExceptionMessageConstants;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
@@ -121,7 +120,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
                 // In case of "array" PdfCanvas#showText(PdfArray) is used. In this method we don't have this
                 // check, because
                 // of the complications regarding not symbolic fonts.
-                framework.assertOnlyVeraPdfFail(filename);
+                framework.assertVeraPdfFailITextValid(filename);
             } else {
                 framework.assertBothFail(filename, PdfUAExceptionMessageConstants.PUA_CONTENT_WITHOUT_ALT);
             }
@@ -271,7 +270,7 @@ public class PdfUACanvasTextTest extends ExtendedITextTest {
                 // In case of "array" PdfCanvas#showText(PdfArray) is used. In this method we don't have this
                 // check, because
                 // of the complications regarding not symbolic fonts.
-                framework.assertOnlyVeraPdfFail(filename);
+                framework.assertVeraPdfFailITextValid(filename);
             } else {
                 framework.assertBothFail(filename);
             }

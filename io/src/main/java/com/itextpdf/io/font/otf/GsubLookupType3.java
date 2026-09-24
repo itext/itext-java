@@ -33,6 +33,17 @@ public class GsubLookupType3 extends OpenTableLookup {
 
     private Map<Integer, int[]> substMap;
 
+    /**
+     * Creates a new GSUB Lookup Type 3.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param subTableLocations the sub table locations
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public GsubLookupType3(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
         substMap = new HashMap<>();
@@ -55,7 +66,7 @@ public class GsubLookupType3 extends OpenTableLookup {
                 changed = true;
             }
         }
-        line.setIdx(line.getIdx()+1);
+        line.setIdx(line.getIdx() + 1);
         return changed;
     }
 

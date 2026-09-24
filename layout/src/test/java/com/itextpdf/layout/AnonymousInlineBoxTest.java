@@ -24,7 +24,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.AnonymousInlineBox;
@@ -36,6 +35,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -54,12 +54,17 @@ public class AnonymousInlineBoxTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void relativeHeightTest() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "relativeHeight.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_relativeHeight.pdf";
 
-        try(PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try(PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
 
             Div div = new Div();
@@ -86,7 +91,7 @@ public class AnonymousInlineBoxTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "defaultRole.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_defaultRole.pdf";
 
-        try(PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName))) {
+        try(PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             pdfDocument.setTagged();
             Document doc = new Document(pdfDocument);
 

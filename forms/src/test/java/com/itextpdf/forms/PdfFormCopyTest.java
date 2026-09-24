@@ -38,6 +38,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,11 @@ public class PdfFormCopyTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(destinationFolder);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -67,7 +73,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument doc1 = new PdfDocument(new PdfReader(srcFilename1));
         PdfDocument doc2 = new PdfDocument(new PdfReader(srcFilename2));
         PdfDocument doc3 = new PdfDocument(new PdfReader(srcFilename3));
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         pdfDoc.initializeOutlines();
 
         doc3.copyPagesTo(1, doc3.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
@@ -86,7 +92,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String filename = destinationFolder + "copyFields02.pdf";
 
         PdfDocument doc1 = new PdfDocument(new PdfReader(srcFilename));
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         pdfDoc.initializeOutlines();
 
         doc1.copyPagesTo(1, doc1.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
@@ -103,7 +109,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String filename = destinationFolder + "copyFields03.pdf";
 
         PdfDocument doc1 = new PdfDocument(new PdfReader(srcFilename));
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         pdfDoc.initializeOutlines();
 
         doc1.copyPagesTo(1, doc1.getNumberOfPages(), pdfDoc, new PdfPageFormCopier());
@@ -122,7 +128,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
 
         PdfDocument doc1 = new PdfDocument(new PdfReader(srcFilename1));
         PdfDocument doc2 = new PdfDocument(new PdfReader(srcFilename2));
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         pdfDoc.initializeOutlines();
 
         PdfPageFormCopier formCopier = new PdfPageFormCopier();
@@ -161,7 +167,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String destFilename = destinationFolder + "copyFields05.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
 
         destDoc.addPage(srcDoc.getFirstPage().copyTo(destDoc, new PdfPageFormCopier()));
         destDoc.close();
@@ -179,7 +185,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String destFilename = destinationFolder + "copyMultipleSubfieldsTest01.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
         // copying the same page from the same document twice
@@ -209,7 +215,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String destFilename = destinationFolder + "copyMultipleSubfieldsTest02.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
         // copying the same page from the same document twice
@@ -236,7 +242,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String destFilename = destinationFolder + "copyMultipleSubfieldsTest03.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
         // copying the same page from the same document twice
@@ -264,7 +270,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String destFilename = destinationFolder + "copyMultipleSubfieldsSmartModeTest01.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename).setSmartMode(true));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename).setSmartMode(true));
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
         // copying the same page from the same document twice
@@ -294,7 +300,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String destFilename = destinationFolder + "copyFields06.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
         // copying the same page from the same document twice
@@ -315,7 +321,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String srcFilename = sourceFolder + "datasheet.pdf";
         String destFilename = destinationFolder + "copyFields07.pdf";
 
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
         // copying the same page from reopened document twice
@@ -343,7 +349,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         PdfDocument doc1 = new PdfDocument(new PdfReader(srcFilename1));
         PdfDocument doc2 = new PdfDocument(new PdfReader(srcFilename2));
         PdfDocument doc3 = new PdfDocument(new PdfReader(srcFilename3));
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         pdfDoc.initializeOutlines();
 
         PdfPageFormCopier formCopier = new PdfPageFormCopier();
@@ -443,7 +449,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String destFilename = destinationFolder + "copyFields13.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFilename));
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
 
@@ -467,7 +473,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String sourceFile = sourceFolder + "AnnotationSampleStandard.pdf";
         String destFile = destinationFolder + "AnnotationSampleStandard_copy.pdf";
         PdfDocument source = new PdfDocument(new PdfReader(sourceFile));
-        PdfDocument target = new PdfDocument(new PdfWriter(destFile));
+        PdfDocument target = new PdfDocument(CompareTool.createTestPdfWriter(destFile));
         target.initializeOutlines();
         source.copyPagesTo(1, source.getNumberOfPages(), target, new PdfPageFormCopier());
         target.close();
@@ -479,7 +485,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String srcFilename = sourceFolder + "unnamedFields.pdf";
         String destFilename = destinationFolder + "hierarchyTest.pdf";
         PdfDocument src = new PdfDocument(new PdfReader(srcFilename));
-        PdfDocument merged = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument merged = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
         src.copyPagesTo(1, 1, merged, new PdfPageFormCopier());
         merged.close();
         Assertions.assertNull(new CompareTool().compareByContent(destFilename, sourceFolder + "cmp_unnamedFieldsHierarchyTest.pdf", destinationFolder, "diff_"));
@@ -495,7 +501,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_copyAndEditTextFields.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFileName));
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
         for (int i = 0; i < 4; i++) {
@@ -525,7 +531,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_copyAndEditCheckboxes.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFileName));
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
         for (int i = 0; i < 4; i++) {
@@ -553,7 +559,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_copyAndEditRadioButtons.pdf";
 
         PdfDocument srcDoc = new PdfDocument(new PdfReader(srcFileName));
-        PdfDocument destDoc = new PdfDocument(new PdfWriter(destFilename));
+        PdfDocument destDoc = new PdfDocument(CompareTool.createTestPdfWriter(destFilename));
 
         PdfPageFormCopier pdfPageFormCopier = new PdfPageFormCopier();
         for (int i = 0; i < 4; i++) {
@@ -579,7 +585,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_mergeMergedFieldAndMergedFieldTest.pdf";
 
         try (
-                PdfWriter writer = new PdfWriter(destFilename);
+                PdfWriter writer = CompareTool.createTestPdfWriter(destFilename);
                 PdfDocument resultPdfDocument = new PdfDocument(writer);
                 PdfReader reader1 = new PdfReader(srcFileName1);
                 PdfDocument sourceDoc1 = new PdfDocument(reader1)) {
@@ -604,7 +610,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_mergeMergedFieldAndTwoWidgetsTest.pdf";
 
         try (
-                PdfWriter writer = new PdfWriter(destFilename);
+                PdfWriter writer = CompareTool.createTestPdfWriter(destFilename);
                 PdfDocument resultPdfDocument = new PdfDocument(writer);
                 PdfReader reader1 = new PdfReader(srcFileName1);
                 PdfDocument sourceDoc1 = new PdfDocument(reader1);
@@ -631,7 +637,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_mergeTwoWidgetsAndMergedFieldTest.pdf";
 
         try (
-                PdfWriter writer = new PdfWriter(destFilename);
+                PdfWriter writer = CompareTool.createTestPdfWriter(destFilename);
                 PdfDocument resultPdfDocument = new PdfDocument(writer);
                 PdfReader reader1 = new PdfReader(srcFileName1);
                 PdfDocument sourceDoc1 = new PdfDocument(reader1);
@@ -657,7 +663,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_mergeTwoWidgetsAndTwoWidgetsTest.pdf";
 
         try (
-                PdfWriter writer = new PdfWriter(destFilename);
+                PdfWriter writer = CompareTool.createTestPdfWriter(destFilename);
                 PdfDocument resultPdfDocument = new PdfDocument(writer);
                 PdfReader reader2 = new PdfReader(srcFileName2);
                 PdfDocument sourceDoc2 = new PdfDocument(reader2)) {
@@ -680,7 +686,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String destFilename = destinationFolder + "complexFieldsHierarchyTest.pdf";
         String cmpFileName = sourceFolder + "cmp_complexFieldsHierarchyTest.pdf";
 
-        try (PdfDocument pdfDocMerged = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(destFilename));
+        try (PdfDocument pdfDocMerged = new PdfDocument(new PdfReader(srcFileName), CompareTool.createTestPdfWriter(destFilename));
                 PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcFileName))) {
             pdfDoc.copyPagesTo(1, pdfDoc.getNumberOfPages(), pdfDocMerged, new PdfPageFormCopier());
             pdfDoc.copyPagesTo(1, pdfDoc.getNumberOfPages(), pdfDocMerged, new PdfPageFormCopier());
@@ -695,7 +701,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String destFileName = destinationFolder + "widgetContainsNoTEntryTest.pdf";
         String cmpFileName = sourceFolder + "cmp_widgetContainsNoTEntryTest.pdf";
         PdfDocument sourcePdfDocument = new PdfDocument(new PdfReader(sourceFileName));
-        PdfDocument resultPdfDocument = new PdfDocument(new PdfWriter(destFileName));
+        PdfDocument resultPdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destFileName));
         sourcePdfDocument.copyPagesTo(1, sourcePdfDocument.getNumberOfPages(), resultPdfDocument, new PdfPageFormCopier());
         resultPdfDocument.close();
         Assertions.assertNull(new CompareTool().compareByContent(destFileName, cmpFileName, destinationFolder, "diff_"));
@@ -710,7 +716,7 @@ public class PdfFormCopyTest extends ExtendedITextTest {
         String destFileName = destinationFolder + "copyWithNoSubtypeInAnnotationTest.pdf";
         String cmpFileName = sourceFolder + "cmp_copyWithNoSubtypeInAnnotationTest.pdf";
         PdfDocument sourcePdfDocument = new PdfDocument(new PdfReader(sourceFileName));
-        PdfDocument resultPdfDocument = new PdfDocument(new PdfWriter(destFileName));
+        PdfDocument resultPdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destFileName));
         sourcePdfDocument.copyPagesTo(1, sourcePdfDocument.getNumberOfPages(), resultPdfDocument, new PdfPageFormCopier());
         resultPdfDocument.close();
         Assertions.assertNull(new CompareTool().compareByContent(destFileName, cmpFileName, destinationFolder, "diff_"));

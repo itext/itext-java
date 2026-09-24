@@ -231,7 +231,7 @@ class OpenTypeParser implements Closeable {
      * Instantiates a new {@link OpenTypeParser} instance based on raw font data.
      *
      * @param ttf the raw font data
-     * @param isLenientMode whether font parsing will be in lenient mode (when some tables are allowed to be absent) or not
+     * @param isLenientMode whether font parsing will be in lenient mode (when 'name' and 'OS/2' tables are allowed to be absent) or not
      *
      * @throws java.io.IOException if any input/output issue occurs
      */

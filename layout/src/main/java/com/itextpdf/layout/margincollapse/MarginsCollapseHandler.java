@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.margincollapse;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -40,8 +41,6 @@ import com.itextpdf.layout.renderer.TableRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Rules of the margins collapsing are taken from Mozilla Developer Network:
@@ -50,6 +49,9 @@ import org.slf4j.LoggerFactory;
  * https://www.w3.org/TR/CSS2/box.html#collapsing-margins
  */
 public class MarginsCollapseHandler {
+
+    private static final LazyLogger LOGGER = new LazyLogger(MarginsCollapseHandler.class);
+
     private IRenderer renderer;
     private MarginsCollapseInfo collapseInfo;
 
@@ -587,9 +589,8 @@ public class MarginsCollapseHandler {
     private static float defineMarginValueForCollapse(IRenderer renderer, int property) {
         UnitValue marginUV = renderer.getModelElement().<UnitValue>getProperty(property);
         if (null != marginUV && !marginUV.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                    property));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, property));
         }
         return marginUV != null && !(renderer instanceof CellRenderer) ? marginUV.getValue() : 0;
     }
@@ -601,9 +602,8 @@ public class MarginsCollapseHandler {
     private static boolean hasPadding(IRenderer renderer, int property) {
         UnitValue padding = renderer.getModelElement().<UnitValue>getProperty(property);
         if (null != padding && !padding.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(MarginsCollapseHandler.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
-                    property));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED, property));
         }
         return padding != null && padding.getValue() > 0;
     }

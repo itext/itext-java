@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.Color;
@@ -34,14 +35,11 @@ import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.exceptions.StyledXMLParserException;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Utilities class for CSS dimension parsing operations.
  */
 public final class CssDimensionParsingUtils {
-    private static final Logger logger = LoggerFactory.getLogger(CssDimensionParsingUtils.class);
+    private static final LazyLogger LOGGER = new LazyLogger(CssDimensionParsingUtils.class);
 
     /**
      * Creates a new {@link CssDimensionParsingUtils} instance.
@@ -142,7 +140,7 @@ public final class CssDimensionParsingUtils {
             return floatValue.floatValue();
         }
 
-        logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNKNOWN_METRIC_ANGLE_PARSED,
+        LOGGER.error(() -> MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNKNOWN_METRIC_ANGLE_PARSED,
                 unit.equals("") ? defaultMetric : unit));
         return floatValue.floatValue();
     }
@@ -238,7 +236,8 @@ public final class CssDimensionParsingUtils {
             return (float) (f * 0.75);
         }
 
-        logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED,
+        LOGGER.error(() -> MessageFormatUtil.format(
+                StyledXmlParserLogMessageConstant.UNKNOWN_ABSOLUTE_METRIC_LENGTH_PARSED,
                 unit.equals("") ? defaultMetric : unit));
         return (float) f.doubleValue();
     }
@@ -269,7 +268,7 @@ public final class CssDimensionParsingUtils {
         // Use double type locally to have better precision of the result after applying arithmetic operations
         Double f = parseDouble(relativeValue.substring(0, pos));
         if (f == null) {
-            logger.info(MessageFormatUtil.format(
+            LOGGER.info(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.RELATIVE_VALUE_NOT_PARSED, relativeValue));
             return 0f;
         }
@@ -443,7 +442,7 @@ public final class CssDimensionParsingUtils {
         }
         Double f = parseDouble(resolutionStr.substring(0, pos));
         if (f == null) {
-            logger.info(MessageFormatUtil.format(
+            LOGGER.info(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.RESOLUTION_NOT_PARSED, resolutionStr));
             return 0f;
         }
@@ -500,7 +499,7 @@ public final class CssDimensionParsingUtils {
     public static float[] parseRgbaColor(String colorValue) {
         float[] rgbaColor = WebColors.getRGBAColor(colorValue);
         if (rgbaColor == null) {
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.COLOR_NOT_PARSED, colorValue));
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.COLOR_NOT_PARSED, colorValue));
             rgbaColor = new float[] {0, 0, 0, 1};
         }
         return rgbaColor;

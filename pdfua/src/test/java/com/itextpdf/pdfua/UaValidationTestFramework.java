@@ -157,21 +157,13 @@ public class UaValidationTestFramework {
         this.afterGeneratorHook.add(action);
     }
 
-    public void assertOnlyVeraPdfFail(String filename) throws IOException {
+    public void assertVeraPdfFailITextValid(String filename) throws IOException {
         veraPdfResult("vera_" + filename + pathSafeConformance() + ".pdf", true);
         Exception e = checkErrorLayout("itext_" + filename + pathSafeConformance() + ".pdf");
         Assertions.assertNull(e);
     }
 
-    public void assertVeraPdfValid(String filename) throws IOException {
-        String veraPdf = veraPdfResult("vera_" + filename + pathSafeConformance() + ".pdf", false);
-        if (veraPdf == null) {
-            return;
-        }
-        Assertions.fail("Expected no vera pdf message but was: \n" + veraPdf + "\n");
-    }
-
-    public void assertOnlyITextFail(String filename, String expectedMsg) throws IOException {
+    public void assertITextFailVeraPdfValid(String filename, String expectedMsg) throws IOException {
         checkError(checkErrorLayout("itext_" + filename + pathSafeConformance() + ".pdf"), expectedMsg);
         assertVeraPdfValid(filename);
     }
@@ -221,6 +213,14 @@ public class UaValidationTestFramework {
 
     public PdfDocument createPdfDocument(String outputFile) throws IOException {
         return createPdfDocument(null, outputFile, "English pangram", "en-US");
+    }
+
+    private void assertVeraPdfValid(String filename) throws IOException {
+        String veraPdf = veraPdfResult("vera_" + filename + pathSafeConformance() + ".pdf", false);
+        if (veraPdf == null) {
+            return;
+        }
+        Assertions.fail("Expected no vera pdf message but was: \n" + veraPdf + "\n");
     }
 
     private String veraPdfResult(String filename, boolean failureExpected) throws IOException {

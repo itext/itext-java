@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Class representing json object value.
+ * Class representing JSON object value.
  */
 public final class JsonObject extends JsonValue {
     private final Map<String, JsonValue> fields;
@@ -43,7 +43,7 @@ public final class JsonObject extends JsonValue {
     /**
      * Creates a new {@link JsonObject} with provided fields.
      *
-     * @param fields fields to put into json object
+     * @param fields fields to put into JSON object
      */
     public JsonObject(Map<String, JsonValue> fields) {
         super();
@@ -51,16 +51,16 @@ public final class JsonObject extends JsonValue {
     }
 
     /**
-     * Gets a copy of the json object fields.
+     * Gets a copy of the JSON object fields.
      *
-     * @return json object fields
+     * @return JSON object fields
      */
     public Map<String, JsonValue> getFields() {
         return new LinkedHashMap<>(fields);
     }
 
     /**
-     * Gets particular json object field.
+     * Gets particular JSON object field.
      *
      * @param fieldName {@link String} name of the field
      *
@@ -71,13 +71,22 @@ public final class JsonObject extends JsonValue {
     }
 
     /**
-     * Adds a new field into json object.
+     * Adds a new field into JSON object.
      *
-     * @param key a key to add into json object fields
-     * @param value a value to add into json object fields under the {@code key}
+     * @param key a key to add into JSON object fields
+     * @param value a value to add into JSON object fields under the {@code key}
      */
     public void add(String key, JsonValue value) {
         fields.put(key, value);
+    }
+
+    /**
+     * Removes a field from JSON object.
+     *
+     * @param key a key to remove a value for
+     */
+    public void remove(String key) {
+        fields.remove(key);
     }
 
     /**

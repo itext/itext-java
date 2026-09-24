@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="400" height="900">
+  <defs>
+    <radialGradient id="leftLargeSecondCircle" gradientUnits="userSpaceOnUse" spreadMethod="repeat"
+                    fx="250" fy="550" fr="30" cx="150" cy="550" r="140">
+      <stop offset="0" stop-color="red"/>
+      <stop offset="1" stop-color="blue"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="50" y="450" width="300" height="300" fill="url(#leftLargeSecondCircle)" stroke="black"/>
+</svg>

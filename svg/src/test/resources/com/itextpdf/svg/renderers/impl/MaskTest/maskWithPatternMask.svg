@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="140">
+  <defs>
+    <mask id="patternMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+      <path d="M 0.5 0 A 0.5 0.5 0 0 1 0.5 1 L 0.5 0 Z" fill="#808080"/>
+    </mask>
+    <pattern id="pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="red"/>
+      <rect width="10" height="10" fill="white"/>
+      <rect x="10" y="10" width="10" height="10" fill="white"/>
+    </pattern>
+    <pattern id="maskedPattern" width="20" height="20" patternUnits="userSpaceOnUse" mask="url(#patternMask)">
+      <rect width="20" height="20" fill="red"/>
+      <rect width="10" height="10" fill="white"/>
+      <rect x="10" y="10" width="10" height="10" fill="white"/>
+    </pattern>
+  </defs>
+  <rect x="10" y="10" width="100" height="100" fill="url(#pattern)"/>
+  <rect x="130" y="10" width="100" height="100" fill="url(#maskedPattern)"/>
+  <rect x="250" y="10" width="100" height="100" fill="red" mask="url(#patternMask)"/>
+  <text x="60" y="130" text-anchor="middle">pattern</text>
+  <text x="180" y="130" text-anchor="middle">mask on pattern</text>
+  <text x="300" y="130" text-anchor="middle">rectangle with mask</text>
+</svg>

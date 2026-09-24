@@ -34,9 +34,9 @@ import java.util.StringTokenizer;
 
 public class CidFont extends FontProgram {
 
-    private String fontName;
+    private final String fontName;
 	private int pdfFontFlags;
-    private Set<String> compatibleCmaps;
+    private final Set<String> compatibleCmaps;
 
     CidFont(String fontName, String cmap, Set<String> compatibleCmaps) {
         this.fontName = fontName;
@@ -50,6 +50,13 @@ public class CidFont extends FontProgram {
         initializeCidFontProperties(fontDesc, cmap);
     }
 
+    /**
+     * Tests whether this font supports a CMap.
+     *
+     * @param cmap the CMap name
+     *
+     * @return {@code true} for a compatible CMap
+     */
     public boolean compatibleWith(String cmap) {
         if (cmap.equals(PdfEncodings.IDENTITY_H) || cmap.equals(PdfEncodings.IDENTITY_V)) {
             return true;

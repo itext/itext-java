@@ -72,6 +72,7 @@ public class SubjectPublicKeyInfoBC extends ASN1EncodableBC implements ISubjectP
     /**
      * {@inheritDoc}
      */
+    @Override
     public IASN1BitString getPublicKeyData() {
         return new ASN1BitStringBC(getSubjectPublicKeyInfo().getPublicKeyData());
     }

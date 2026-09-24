@@ -65,6 +65,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -78,6 +79,11 @@ public class CheckBoxTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -178,7 +184,7 @@ public class CheckBoxTest extends ExtendedITextTest {
     public void basicCheckBoxDrawingTestHtmlMode() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicCheckBoxHtml.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicCheckBoxHtml.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             CheckBox checkBoxUnset = new CheckBox("test");
             checkBoxUnset.setBorder(new SolidBorder(ColorConstants.RED, 1));
             checkBoxUnset.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);
@@ -210,7 +216,7 @@ public class CheckBoxTest extends ExtendedITextTest {
     public void basicCheckBoxDrawingTestPdfMode() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicCheckBoxPdf.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicCheckBoxPdf.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             //should be invisble because there is no default border
             CheckBox checkBoxUnset = new CheckBox("test");
             checkBoxUnset.setBorder(new SolidBorder(ColorConstants.RED, 1));
@@ -240,7 +246,7 @@ public class CheckBoxTest extends ExtendedITextTest {
     public void basicCheckBoxDrawingTestPdfAMode() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicCheckBoxPdfA.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicCheckBoxPdfA.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             //should be invisble because there is no default border
             CheckBox checkBoxUnset = new CheckBox("test").setPdfConformance(PdfConformance.PDF_A_1B);
             document.add(checkBoxUnset);
@@ -269,7 +275,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "checkBoxSetSize.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBoxSetSize.pdf";
         final int scaleFactor = 5;
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             for (int i = 1; i < 5; i++) {
                 final int size = i * i * scaleFactor;
                 counter = generateCheckBoxesForAllRenderingModes(document, counter, checkBox -> {
@@ -287,7 +293,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         int counter = 0;
         String outPdf = DESTINATION_FOLDER + "checkBoxSetSizeBadSize.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBoxSetSizeBadSize.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             counter = generateCheckBoxes(document, counter, checkBox -> {
                 checkBox.setSize(0);
             });
@@ -304,7 +310,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "checkBox_setBorder.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_setBorder.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             counter = generateCheckBoxesForAllRenderingModes(document, counter, checkBox -> {
                 checkBox.setBorder(new SolidBorder(ColorConstants.GREEN, .5f));
             });
@@ -325,7 +331,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "checkBox_setBackground.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBox_setBackground.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             generateCheckBoxesForAllRenderingModes(document, counter, checkBox -> {
                 checkBox.setBackgroundColor(ColorConstants.MAGENTA);
             });
@@ -337,7 +343,7 @@ public class CheckBoxTest extends ExtendedITextTest {
     public void setBorderTestSmallDefaultsToMinValue() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "checkBox_setSmallBorder.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBox_setSmallBorder.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             final Float[] i = {.1f};
             document.add(new Paragraph("Non interactive"));
             for (int j = 0; j < 30; j++) {
@@ -365,7 +371,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "checkBox_setCheckType.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBox_setCheckType.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             for (CheckBoxType enumConstant : EnumUtil.getAllValuesOfEnum(CheckBoxType.class)) {
                 counter = generateCheckBoxes(document, counter, checkBox -> {
                     checkBox.setCheckBoxType(enumConstant);
@@ -386,7 +392,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "checkBox_setConformanceLevel.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBox_setConformanceLevel.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             for (CheckBoxType enumConstant : EnumUtil.getAllValuesOfEnum(CheckBoxType.class)) {
                 counter = generateCheckBoxes(document, counter, checkBox -> {
                     checkBox.setSize(20);
@@ -412,7 +418,7 @@ public class CheckBoxTest extends ExtendedITextTest {
             });
         }
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        PdfDocument pdfDocument = new PdfDocument(new PdfReader(bais), new PdfWriter(outPdf));
+        PdfDocument pdfDocument = new PdfDocument(new PdfReader(bais), CompareTool.createTestPdfWriter(outPdf));
         PdfAcroForm acroForm = PdfFormCreator.getAcroForm(pdfDocument, true);
         for (Entry<String, PdfFormField> entry : acroForm.getAllFormFields().entrySet()) {
             String key = entry.getKey();
@@ -428,7 +434,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "checkBoxWithMargins.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBoxWithMargins.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Div div = new Div().setBackgroundColor(ColorConstants.PINK);
             CheckBox checkBox = new CheckBox("check");
             checkBox.setInteractive(true);
@@ -452,7 +458,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "borderBoxes.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_borderBoxes.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             // BORDER_BOX
             CheckBox interactiveCheckBox1 = new CheckBox("checkBox1")
                     .setBorder(new SolidBorder(ColorConstants.PINK, 10))
@@ -498,7 +504,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "fieldWithTwoWidgets.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_fieldWithTwoWidgets.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             // Create checkboxes using html element.
             CheckBox checkBox1 = new CheckBox("checkbox");
             checkBox1.setInteractive(true);
@@ -530,7 +536,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "multiPageCheckboxField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_multiPageCheckBoxField.pdf";
 
-        try (PdfDocument document = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument document = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm form = PdfAcroForm.getAcroForm(document, true);
             for (int i = 0; i < 10; i++) {
                 document.addNewPage();
@@ -575,7 +581,7 @@ public class CheckBoxTest extends ExtendedITextTest {
         int counter = 0;
         String outPdf = DESTINATION_FOLDER + "basicCheckboxTagged.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicCheckboxTagged.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             document.getPdfDocument().setTagged();
             counter = generateCheckBoxes(document, counter, checkBox -> {
             });
@@ -589,7 +595,7 @@ public class CheckBoxTest extends ExtendedITextTest {
     public void setBordersTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "checkBoxSetBorders.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_checkBoxSetBorders.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             final Float[] i = {.1f, .2f, .3f, .4f};
             document.add(new Paragraph("Test different borders"));
             for (int j = 0; j < 30; j++) {

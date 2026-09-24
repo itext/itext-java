@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="220">
+  <defs>
+    <radialGradient id="originalGrad"
+                    gradientUnits="userSpaceOnUse"
+                    cx="140" cy="110" r="130"
+                    fx="300" fy="30"
+                    gradientTransform="rotate(35 140 110) scale(1.55 0.65)">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#00bfff;stop-opacity:1" />
+      <stop offset="65%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </radialGradient>
+
+    <radialGradient id="hrefGrad" href="#originalGrad" />
+  </defs>
+
+  <rect x="10" y="10" width="400" height="200" fill="url(#hrefGrad)" />
+</svg>
+
+

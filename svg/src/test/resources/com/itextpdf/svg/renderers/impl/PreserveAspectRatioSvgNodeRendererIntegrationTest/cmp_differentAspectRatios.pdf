@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250203165846+03'00')/ModDate(D:20250203165846+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
+<</CreationDate(D:20260817150056+03'00')/ModDate(D:20260817150056+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -34,13 +34,14 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 337.5 225]/Length 3682/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm13 13 0 R/Fm14 14 0 R/Fm2 15 0 R/Fm3 16 0 R/Fm4 17 0 R/Fm5 18 0 R/Fm6 19 0 R/Fm7 20 0 R/Fm8 21 0 R/Fm9 22 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 337.5 225]/Length 3750/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm10 10 0 R/Fm11 11 0 R/Fm12 12 0 R/Fm13 13 0 R/Fm14 14 0 R/Fm2 15 0 R/Fm3 16 0 R/Fm4 17 0 R/Fm5 18 0 R/Fm6 19 0 R/Fm7 20 0 R/Fm8 21 0 R/Fm9 22 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 337.5 225 re
 W
 n
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.75 0.75 336 223.5 re
 S
@@ -62,6 +63,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -97,6 +99,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -120,6 +123,7 @@ q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 36.75 21.75 re
 S
@@ -147,6 +151,7 @@ q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 44.25 re
 S
@@ -183,6 +188,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 36.75 21.75 re
 S
@@ -208,6 +214,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 36.75 21.75 re
 S
@@ -234,6 +241,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 36.75 21.75 re
 S
@@ -272,6 +280,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 44.25 re
 S
@@ -296,6 +305,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 44.25 re
 S
@@ -321,6 +331,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 44.25 re
 S
@@ -358,6 +369,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 44.25 re
 S
@@ -383,6 +395,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 44.25 re
 S
@@ -409,6 +422,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 44.25 re
 S
@@ -447,6 +461,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 36.75 21.75 re
 S
@@ -472,6 +487,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 36.75 21.75 re
 S
@@ -498,6 +514,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 36.75 21.75 re
 S
@@ -515,7 +532,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 22.5 30]/Length 673/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 22.5 30]/Length 681/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 22.5 30 re
 W
 n
@@ -524,6 +541,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -559,6 +577,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -569,7 +588,7 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[3.75 0 18.75 30]/Length 674/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[3.75 0 18.75 30]/Length 682/Resources<<>>/Subtype/Form/Type/XObject>>stream
 3.75 0 15 30 re
 W
 n
@@ -578,6 +597,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -613,6 +633,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -623,7 +644,7 @@ Q
 endstream
 endobj
 11 0 obj
-<</BBox[7.5 0 22.5 30]/Length 673/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[7.5 0 22.5 30]/Length 681/Resources<<>>/Subtype/Form/Type/XObject>>stream
 7.5 0 15 30 re
 W
 n
@@ -632,6 +653,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -667,6 +689,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -677,7 +700,7 @@ Q
 endstream
 endobj
 12 0 obj
-<</BBox[0 0 22.5 13.5]/Length 675/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 22.5 13.5]/Length 683/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 22.5 13.5 re
 W
 n
@@ -686,6 +709,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -721,6 +745,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -731,7 +756,7 @@ Q
 endstream
 endobj
 13 0 obj
-<</BBox[0 8.25 22.5 21.75]/Length 678/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 8.25 22.5 21.75]/Length 686/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 8.25 22.5 13.5 re
 W
 n
@@ -740,6 +765,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -775,6 +801,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -785,7 +812,7 @@ Q
 endstream
 endobj
 14 0 obj
-<</BBox[0 16.5 22.5 30]/Length 678/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 16.5 22.5 30]/Length 686/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 16.5 22.5 13.5 re
 W
 n
@@ -794,6 +821,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -829,6 +857,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -839,7 +868,7 @@ Q
 endstream
 endobj
 15 0 obj
-<</BBox[0 0 22.5 30]/Length 673/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 22.5 30]/Length 681/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 22.5 30 re
 W
 n
@@ -848,6 +877,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -883,6 +913,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -893,7 +924,7 @@ Q
 endstream
 endobj
 16 0 obj
-<</BBox[0 0 50 30]/Length 671/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 50 30]/Length 679/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 50 30 re
 W
 n
@@ -902,6 +933,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -937,6 +969,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -947,7 +980,7 @@ Q
 endstream
 endobj
 17 0 obj
-<</BBox[-13.75 0 36.25 30]/Length 676/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-13.75 0 36.25 30]/Length 684/Resources<<>>/Subtype/Form/Type/XObject>>stream
 -13.75 0 50 30 re
 W
 n
@@ -956,6 +989,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -991,6 +1025,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -1001,7 +1036,7 @@ Q
 endstream
 endobj
 18 0 obj
-<</BBox[-27.5 0 22.5 30]/Length 675/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[-27.5 0 22.5 30]/Length 683/Resources<<>>/Subtype/Form/Type/XObject>>stream
 -27.5 0 50 30 re
 W
 n
@@ -1010,6 +1045,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -1045,6 +1081,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -1055,7 +1092,7 @@ Q
 endstream
 endobj
 19 0 obj
-<</BBox[0 0 22.5 45]/Length 673/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 22.5 45]/Length 681/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 22.5 45 re
 W
 n
@@ -1064,6 +1101,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -1099,6 +1137,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -1109,7 +1148,7 @@ Q
 endstream
 endobj
 20 0 obj
-<</BBox[0 -7.5 22.5 37.5]/Length 676/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 -7.5 22.5 37.5]/Length 684/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 -7.5 22.5 45 re
 W
 n
@@ -1118,6 +1157,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -1153,6 +1193,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -1163,7 +1204,7 @@ Q
 endstream
 endobj
 21 0 obj
-<</BBox[0 -15 22.5 30]/Length 675/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 -15 22.5 30]/Length 683/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 -15 22.5 45 re
 W
 n
@@ -1172,6 +1213,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -1207,6 +1249,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -1217,7 +1260,7 @@ Q
 endstream
 endobj
 22 0 obj
-<</BBox[0 0 15 30]/Length 671/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 15 30]/Length 679/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 15 30 re
 W
 n
@@ -1226,6 +1269,7 @@ q
 q
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0.375 0.375 21.75 29.25 re
 B
@@ -1261,6 +1305,7 @@ Q
 q
 0 0 0 RG
 1.5 w
+4 M
 % path
 7.5 18 m
 9.69 19.76 12.81 19.76 15 18 c
@@ -1281,23 +1326,23 @@ xref
 0000000428 00000 n 
 0000000569 00000 n 
 0000000739 00000 n 
-0000004718 00000 n 
-0000005497 00000 n 
-0000006282 00000 n 
-0000007064 00000 n 
-0000007848 00000 n 
-0000008639 00000 n 
-0000009427 00000 n 
-0000010207 00000 n 
-0000010983 00000 n 
-0000011772 00000 n 
-0000012558 00000 n 
-0000013338 00000 n 
-0000014126 00000 n 
-0000014910 00000 n 
+0000004786 00000 n 
+0000005573 00000 n 
+0000006366 00000 n 
+0000007156 00000 n 
+0000007948 00000 n 
+0000008747 00000 n 
+0000009543 00000 n 
+0000010331 00000 n 
+0000011115 00000 n 
+0000011912 00000 n 
+0000012706 00000 n 
+0000013494 00000 n 
+0000014290 00000 n 
+0000015082 00000 n 
 trailer
-<</ID [<a570deb726c3c0d2d1e9bb31d4214f2b3e738ffa9ab2a6dc28aa1aa69f76f333463591e3053c1118fae824ca09015a02c410fb362b326ff152e408e2f8534084><a570deb726c3c0d2d1e9bb31d4214f2b3e738ffa9ab2a6dc28aa1aa69f76f333463591e3053c1118fae824ca09015a02c410fb362b326ff152e408e2f8534084>]/Info 3 0 R/Root 1 0 R/Size 23>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<9fa4aabbf63e56140cfa76639026f3e4e49278d513d541f3700023f4a80bb8beaf3ea56612cbdfeab2bd95c98d838d042915dd4160abac9a7a5298988b1d9884><9fa4aabbf63e56140cfa76639026f3e4e49278d513d541f3700023f4a80bb8beaf3ea56612cbdfeab2bd95c98d838d042915dd4160abac9a7a5298988b1d9884>]/Info 3 0 R/Root 1 0 R/Size 23>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-15686
+15866
 %%EOF

@@ -22,7 +22,10 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.logs.IoLogMessageConstant;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.layout.element.Link;
@@ -30,6 +33,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Tag;
@@ -48,5 +52,28 @@ public class LinkRendererUnitTest extends ExtendedITextTest {
         };
 
         Assertions.assertEquals(LinkRenderer.class, linkRenderer.getNextRenderer().getClass());
+    }
+
+    @Test
+    public void createCopyOfLinkRendererTest() throws IOException {
+        LinkRenderer linkRenderer =
+                new LinkRenderer(new Link("test", new PdfLinkAnnotation(new Rectangle(0 ,0))));
+
+        IRenderer copy = linkRenderer.createCopy(new GlyphLine(), PdfFontFactory.createFont(StandardFonts.HELVETICA));
+        Assertions.assertEquals(LinkRenderer.class, copy.getClass());
+    }
+
+    @Test
+    @LogMessages(messages = {
+            @LogMessage(messageTemplate = IoLogMessageConstant.CREATE_COPY_SHOULD_BE_OVERRIDDEN)
+    })
+    public void createCopyOfLinkRendererShouldBeOverriddenTest() throws IOException {
+        LinkRenderer linkRenderer =
+                new LinkRenderer(new Link("test", new PdfLinkAnnotation(new Rectangle(0 ,0)))) {
+                    // Nothing is overridden
+                };
+
+        IRenderer copy = linkRenderer.createCopy(new GlyphLine(), PdfFontFactory.createFont(StandardFonts.HELVETICA));
+        Assertions.assertEquals(LinkRenderer.class, copy.getClass());
     }
 }

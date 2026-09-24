@@ -23,7 +23,7 @@
 package com.itextpdf.commons.json;
 
 /**
- * Class representing json boolean value.
+ * Class representing JSON boolean value.
  */
 public final class JsonBoolean extends JsonValue {
     private final boolean value;

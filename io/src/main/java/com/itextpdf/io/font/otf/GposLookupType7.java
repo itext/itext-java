@@ -22,16 +22,15 @@
  */
 package com.itextpdf.io.font.otf;
 
-import com.itextpdf.io.logs.IoLogMessageConstant;
-import com.itextpdf.io.font.otf.lookuptype7.PosTableLookup7Format2;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.io.font.otf.lookuptype7.PosTableLookup7Format2;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Lookup Type 7:
@@ -39,10 +38,24 @@ import org.slf4j.LoggerFactory;
  */
 public class GposLookupType7 extends OpenTableLookup {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GposLookupType7.class);
+    private static final LazyLogger LOGGER = new LazyLogger(GposLookupType7.class);
 
+    /**
+     * Stores sub tables.
+     */
     protected List<ContextualTable<ContextualPositionRule>> subTables;
 
+    /**
+     * Creates a new GPOS Lookup Type 7.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param subTableLocations the sub table locations
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     public GposLookupType7(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)
             throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
@@ -101,14 +114,21 @@ public class GposLookupType7 extends OpenTableLookup {
                 break;
             case 1:
             case 3:
-                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.GPOS_LOOKUP_SUBTABLE_FORMAT_NOT_SUPPORTED,
-                        substFormat, 7));
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.GPOS_LOOKUP_SUBTABLE_FORMAT_NOT_SUPPORTED, substFormat, 7));
                 break;
             default:
                 throw new IllegalArgumentException("Bad subtable format identifier: " + substFormat);
         }
     }
 
+    /**
+     * Reads the sub table format2 from OpenType data.
+     *
+     * @param subTableLocation the sub table location offset
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected void readSubTableFormat2(int subTableLocation) throws java.io.IOException {
         int coverageOffset = openReader.rf.readUnsignedShort();
         int classDefOffset = openReader.rf.readUnsignedShort();

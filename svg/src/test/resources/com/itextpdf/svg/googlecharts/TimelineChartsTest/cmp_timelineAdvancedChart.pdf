@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250103180957+03'00')/ModDate(D:20250103180957+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20260817145935+03'00')/ModDate(D:20260817145935+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -34,7 +34,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 600 150]/Length 3617/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 600 150]/Length 3677/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 600 150 re
 W
 n
@@ -49,6 +49,7 @@ Q
 q
 0.90196 0.90196 0.90196 RG
 0.75 w
+4 M
 % path
 97.5 0 m
 97.5 30.74 l
@@ -57,6 +58,7 @@ Q
 q
 0.90196 0.90196 0.90196 RG
 0.75 w
+4 M
 % path
 112.76 0 m
 112.76 30.74 l
@@ -65,6 +67,7 @@ Q
 q
 0.90196 0.90196 0.90196 RG
 0.75 w
+4 M
 % path
 331.25 0 m
 331.25 30.74 l
@@ -73,6 +76,7 @@ Q
 q
 0.90196 0.90196 0.90196 RG
 0.75 w
+4 M
 % path
 549.75 0 m
 549.75 30.74 l
@@ -87,6 +91,7 @@ Q
 q
 1 1 1 RG
 0.75 w
+4 M
 % path
 97.5 30.74 m
 97.5 61.49 l
@@ -95,6 +100,7 @@ Q
 q
 1 1 1 RG
 0.75 w
+4 M
 % path
 112.76 30.74 m
 112.76 61.49 l
@@ -103,6 +109,7 @@ Q
 q
 1 1 1 RG
 0.75 w
+4 M
 % path
 331.25 30.74 m
 331.25 61.49 l
@@ -111,6 +118,7 @@ Q
 q
 1 1 1 RG
 0.75 w
+4 M
 % path
 549.75 30.74 m
 549.75 61.49 l
@@ -125,6 +133,7 @@ Q
 q
 0.90196 0.90196 0.90196 RG
 0.75 w
+4 M
 % path
 97.5 61.49 m
 97.5 92.23 l
@@ -133,6 +142,7 @@ Q
 q
 0.90196 0.90196 0.90196 RG
 0.75 w
+4 M
 % path
 112.76 61.49 m
 112.76 92.23 l
@@ -141,6 +151,7 @@ Q
 q
 0.90196 0.90196 0.90196 RG
 0.75 w
+4 M
 % path
 331.25 61.49 m
 331.25 92.23 l
@@ -149,6 +160,7 @@ Q
 q
 0.90196 0.90196 0.90196 RG
 0.75 w
+4 M
 % path
 549.75 61.49 m
 549.75 92.23 l
@@ -157,6 +169,7 @@ Q
 q
 0.71765 0.71765 0.71765 RG
 0.75 w
+4 M
 % path
 0 30.74 m
 600 30.74 l
@@ -165,6 +178,7 @@ Q
 q
 0.71765 0.71765 0.71765 RG
 0.75 w
+4 M
 % path
 0 61.49 m
 600 61.49 l
@@ -203,6 +217,7 @@ Q
 q
 0.60392 0.60392 0.60392 RG
 0.75 w
+4 M
 % rect
 0 0 600 92.23 re
 S
@@ -471,8 +486,8 @@ xref
 0000000569 00000 n 
 0000000737 00000 n 
 trailer
-<</ID [<6e8778a286d00e36ae5f504fb2cb2ab550cb45a101651a5e73a5d892900f2719aa53053da92e4fb6931055002755889898ad8acd7846a70884537b51426c8c34><6e8778a286d00e36ae5f504fb2cb2ab550cb45a101651a5e73a5d892900f2719aa53053da92e4fb6931055002755889898ad8acd7846a70884537b51426c8c34>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<ccde8aa686019ba21602ffdad1b485c42f0c4fcde5fdc839a10518459c0da1d881a7e4a8a715a10d8eeb65a504fcbd0a4fe0497c0ed304bd4612c7bc73b6cce8><ccde8aa686019ba21602ffdad1b485c42f0c4fcde5fdc839a10518459c0da1d881a7e4a8a715a10d8eeb65a504fcbd0a4fe0497c0ed304bd4612c7bc73b6cce8>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-4479
+4539
 %%EOF

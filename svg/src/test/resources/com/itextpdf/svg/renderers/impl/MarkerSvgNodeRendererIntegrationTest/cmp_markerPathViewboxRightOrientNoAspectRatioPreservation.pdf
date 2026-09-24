@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250124014620+03'00')/ModDate(D:20250124014620+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
+<</CreationDate(D:20260817150141+03'00')/ModDate(D:20260817150141+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -34,7 +34,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 1200 600]/Length 10193/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1200 600]/Length 10257/Resources<</Font<</F1 6 0 R>>/XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1200 600 re
 W
 n
@@ -63,6 +63,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 S
@@ -72,6 +73,7 @@ q
 q
 0 0.50196 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -370,6 +372,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % rect
 0 0 15 11.25 re
 S
@@ -378,6 +381,7 @@ Q
 q
 0 0 0 RG
 3.75 w
+4 M
 % path
 37.5 75 m
 112.5 75 l
@@ -420,6 +424,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 S
@@ -429,6 +434,7 @@ q
 q
 0 0.50196 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -727,6 +733,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % rect
 0 0 15 11.25 re
 S
@@ -735,6 +742,7 @@ Q
 q
 0 0 0 RG
 3.75 w
+4 M
 % path
 37.5 75 m
 112.5 75 l
@@ -777,6 +785,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 S
@@ -786,6 +795,7 @@ q
 q
 0 0.50196 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -1084,6 +1094,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % rect
 0 0 15 11.25 re
 S
@@ -1092,6 +1103,7 @@ Q
 q
 0 0 0 RG
 3.75 w
+4 M
 % path
 37.5 75 m
 112.5 75 l
@@ -1134,6 +1146,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 S
@@ -1143,6 +1156,7 @@ q
 q
 0 0.50196 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -1441,6 +1455,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % rect
 0 0 15 11.25 re
 S
@@ -1449,6 +1464,7 @@ Q
 q
 0 0 0 RG
 3.75 w
+4 M
 % path
 37.5 75 m
 112.5 75 l
@@ -1471,7 +1487,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 15 11.25]/Length 988/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 15 11.25]/Length 1004/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 15 11.25 re
 W
 n
@@ -1480,6 +1496,7 @@ q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 3.75 0 m
 3.75 2.07 2.07 3.75 0 3.75 c
@@ -1491,6 +1508,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 7.5 0 m
 7.5 4.14 4.14 7.5 0 7.5 c
@@ -1502,6 +1520,7 @@ Q
 q
 1 0 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -1582,6 +1601,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % path
 0 0 m
 7.5 3.75 l
@@ -1594,7 +1614,7 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[0 0 15 7.5]/Length 986/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 15 7.5]/Length 1002/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 15 7.5 re
 W
 n
@@ -1603,6 +1623,7 @@ q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 3.75 0 m
 3.75 2.07 2.07 3.75 0 3.75 c
@@ -1614,6 +1635,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 7.5 0 m
 7.5 4.14 4.14 7.5 0 7.5 c
@@ -1625,6 +1647,7 @@ Q
 q
 1 0 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -1705,6 +1728,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % path
 0 0 m
 7.5 3.75 l
@@ -1717,7 +1741,7 @@ Q
 endstream
 endobj
 11 0 obj
-<</BBox[0 0 7.5 7.5]/Length 987/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 7.5 7.5]/Length 1003/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 7.5 7.5 re
 W
 n
@@ -1726,6 +1750,7 @@ q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 3.75 0 m
 3.75 2.07 2.07 3.75 0 3.75 c
@@ -1737,6 +1762,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 7.5 0 m
 7.5 4.14 4.14 7.5 0 7.5 c
@@ -1748,6 +1774,7 @@ Q
 q
 1 0 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -1828,6 +1855,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % path
 0 0 m
 7.5 3.75 l
@@ -1840,7 +1868,7 @@ Q
 endstream
 endobj
 12 0 obj
-<</BBox[0 0 7.5 11.25]/Length 989/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 7.5 11.25]/Length 1005/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 7.5 11.25 re
 W
 n
@@ -1849,6 +1877,7 @@ q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 3.75 0 m
 3.75 2.07 2.07 3.75 0 3.75 c
@@ -1860,6 +1889,7 @@ Q
 q
 0 0 0 RG
 0.75 w
+4 M
 % ellipse
 7.5 0 m
 7.5 4.14 4.14 7.5 0 7.5 c
@@ -1871,6 +1901,7 @@ Q
 q
 1 0 0 RG
 0.75 w
+4 M
 q
 0.15 w
 % ellipse
@@ -1951,6 +1982,7 @@ Q
 q
 0 0 1 RG
 0.75 w
+4 M
 % path
 0 0 m
 7.5 3.75 l
@@ -1973,13 +2005,13 @@ xref
 0000000428 00000 n 
 0000000569 00000 n 
 0000000738 00000 n 
-0000011113 00000 n 
-0000012208 00000 n 
-0000013300 00000 n 
-0000014394 00000 n 
+0000011177 00000 n 
+0000012289 00000 n 
+0000013398 00000 n 
+0000014509 00000 n 
 trailer
-<</ID [<ae81c56ee90353471088d202fe6e85cffabdb0286c479714e146730e75349cf5e8132354962c59b4493855b4bd1f3b729207a8e77df18949d0580e7a792af310><ae81c56ee90353471088d202fe6e85cffabdb0286c479714e146730e75349cf5e8132354962c59b4493855b4bd1f3b729207a8e77df18949d0580e7a792af310>]/Info 3 0 R/Root 1 0 R/Size 13>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<51f0b0df072e4ee1a77f82d0340583b6f95c1ca06c065130f955eb40f932570cd8b1ff467c00d1aecf628a892a1b5bd59a217754ae0280fddbe9ff808b55e255><51f0b0df072e4ee1a77f82d0340583b6f95c1ca06c065130f955eb40f932570cd8b1ff467c00d1aecf628a892a1b5bd59a217754ae0280fddbe9ff808b55e255>]/Info 3 0 R/Root 1 0 R/Size 13>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-15492
+15624
 %%EOF

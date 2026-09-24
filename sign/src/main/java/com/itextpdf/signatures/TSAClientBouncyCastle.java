@@ -31,6 +31,7 @@ import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampTokenInfo;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.commons.utils.SystemUtil;
@@ -44,8 +45,6 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Time Stamp Authority Client interface implementation using Bouncy Castle
@@ -69,7 +68,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
     /**
      * The Logger instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TSAClientBouncyCastle.class);
+    private static final LazyLogger LOGGER = new LazyLogger(TSAClientBouncyCastle.class);
     /**
      * URL of the Time Stamp Authority
      */
@@ -244,7 +243,7 @@ public class TSAClientBouncyCastle implements ITSAClient {
         ITimeStampTokenInfo tsTokenInfo = tsToken.getTimeStampInfo(); // to view details
         byte[] encoded = tsToken.getEncoded();
 
-        LOGGER.info("Timestamp generated: " + tsTokenInfo.getGenTime());
+        LOGGER.info(() -> "Timestamp generated: " + tsTokenInfo.getGenTime());
         if (tsaInfo != null) {
             tsaInfo.inspectTimeStampTokenInfo(tsTokenInfo);
         }

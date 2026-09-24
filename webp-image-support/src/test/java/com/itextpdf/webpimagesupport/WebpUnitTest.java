@@ -32,13 +32,11 @@ import com.itextpdf.test.ExtendedITextTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 @Tag("UnitTest")
-@DisabledInNativeImage
 public class WebpUnitTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/webpimagesupport/image/";

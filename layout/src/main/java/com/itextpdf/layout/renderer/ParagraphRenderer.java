@@ -22,11 +22,13 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.VerticalParagraph;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
@@ -48,29 +50,54 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalTextOrientation;
+import com.itextpdf.layout.properties.WritingMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * This class represents the {@link IRenderer renderer} object for a {@link Paragraph}
+ * This class represents the {@link IRenderer renderer} object for a {@link Paragraph} or a {@link VerticalParagraph}
  * object. It will draw the glyphs of the textual content on the {@link DrawContext}.
  */
 public class ParagraphRenderer extends BlockRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ParagraphRenderer.class);
+
+    private static final Map<Integer, String> UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING = new HashMap<>();
+
+    static {
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.FLOAT, "Float");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.TAB_STOPS, "Tab stops");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.TAB_LEADER, "Tab leader");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.TAB_DEFAULT, "Tab default");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.TAB_ANCHOR, "Tab anchor");
+        UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.put(Property.TEXT_ANCHOR, "Text anchor");
+    }
 
     protected List<LineRenderer> lines = null;
 
     /**
      * Creates a ParagraphRenderer from its corresponding layout object.
      *
-     * @param modelElement the {@link com.itextpdf.layout.element.Paragraph} which this object should manage
+     * @param modelElement the {@link Paragraph} which this object should manage
      */
     public ParagraphRenderer(Paragraph modelElement) {
+        super(modelElement);
+    }
+
+    /**
+     * Creates a ParagraphRenderer from its corresponding layout object.
+     *
+     * @param modelElement the {@link VerticalParagraph} which this object should manage
+     */
+    public ParagraphRenderer(VerticalParagraph modelElement) {
         super(modelElement);
     }
 
@@ -85,7 +112,7 @@ public class ParagraphRenderer extends BlockRenderer {
             return OrphansWidowsLayoutHelper.orphansWidowsAwareLayout(this, layoutContext, orphansControl, widowsControl);
         }
         if (RenderingMode.SVG_MODE == this.<RenderingMode>getProperty(Property.RENDERING_MODE) &&
-                !TypographyUtils.isPdfCalligraphAvailable()) {
+                (!TypographyUtils.isPdfCalligraphAvailable() || isVerticalWriting())) {
             // BASE_DIRECTION property is always set to the SVG text since we can't easily check whether typography is
             // available at svg module level, but it makes no sense without typography, so it is removed here.
             this.deleteProperty(Property.BASE_DIRECTION);
@@ -96,12 +123,24 @@ public class ParagraphRenderer extends BlockRenderer {
         return layoutResult;
     }
 
+    @Override
+    public IRenderer setParent(IRenderer parent) {
+        if (super.getParent() == parent) {
+            return this;
+        }
+        super.setParent(parent);
+        isVerticalMode = null;
+        checkProperties();
+        return this;
+    }
+
     protected LayoutResult directLayout(LayoutContext layoutContext) {
         boolean wasHeightClipped = false;
         boolean wasParentsHeightClipped = layoutContext.isClippedHeight();
         int pageNumber = layoutContext.getArea().getPageNumber();
         boolean anythingPlaced = false;
         boolean firstLineInBox = true;
+        boolean isVerticalWriting = isVerticalWriting();
         LineRenderer currentRenderer = (LineRenderer) new LineRenderer().setParent(this);
         Rectangle parentBBox = layoutContext.getArea().getBBox().clone();
 
@@ -147,12 +186,14 @@ public class ParagraphRenderer extends BlockRenderer {
                 ? OverflowPropertyValue.FIT
                 : this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
 
+        if (rotation != null && !FloatingHelper.isRendererFloating(this)) {
+            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), parentBBox.getHeight(), this);
+        }
+
         if (rotation != null || isFixedLayout()) {
             parentBBox.moveDown(AbstractRenderer.INF - parentBBox.getHeight()).setHeight(AbstractRenderer.INF);
         }
-        if (rotation != null && !FloatingHelper.isRendererFloating(this)) {
-            blockWidth = RotationUtils.retrieveRotatedLayoutWidth(parentBBox.getWidth(), this);
-        }
+        float parentHeight = parentBBox.getHeight();
 
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.startMarginsCollapse(parentBBox);
@@ -169,11 +210,16 @@ public class ParagraphRenderer extends BlockRenderer {
         }
         applyPaddings(parentBBox, paddings, false);
         float additionalWidth = parentWidth - parentBBox.getWidth();
-        applyWidth(parentBBox, blockWidth, overflowX);
+        boolean widthSet = applyWidth(parentBBox, blockWidth, overflowX);
         wasHeightClipped = applyMaxHeight(parentBBox, blockMaxHeight, marginsCollapseHandler, false, overflowY);
 
         MinMaxWidth minMaxWidth = new MinMaxWidth(additionalWidth);
-        AbstractWidthHandler widthHandler = new MaxMaxWidthHandler(minMaxWidth);
+        AbstractWidthHandler widthHandler;
+        if (isVerticalWriting) {
+            widthHandler = new SumSumWidthHandler(minMaxWidth);
+        } else {
+            widthHandler = new MaxMaxWidthHandler(minMaxWidth);
+        }
 
         List<Rectangle> areas;
         if (isPositioned) {
@@ -182,7 +228,13 @@ public class ParagraphRenderer extends BlockRenderer {
             areas = initElementAreas(new LayoutArea(pageNumber, parentBBox));
         }
 
-        occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(), parentBBox.getY() + parentBBox.getHeight(), parentBBox.getWidth(), 0));
+        float occupiedAreaInitialWidth = parentBBox.getWidth();
+        if (isVerticalWriting && !widthSet) {
+            occupiedAreaInitialWidth = 0F;
+        }
+        occupiedArea = new LayoutArea(pageNumber, new Rectangle(parentBBox.getX(),
+                parentBBox.getY() + parentBBox.getHeight(), occupiedAreaInitialWidth, 0));
+
         shrinkOccupiedAreaForAbsolutePosition();
 
         TargetCounterHandler.addPageByID(this);
@@ -202,6 +254,8 @@ public class ParagraphRenderer extends BlockRenderer {
         boolean onlyOverflowedFloatsLeft = false;
         List<IRenderer> inlineFloatsOverflowedToNextPage = new ArrayList<>();
         boolean floatOverflowedToNextPageWithNothing = false;
+        TextAlignment textAlignment = (TextAlignment) this.<TextAlignment>getProperty(
+                Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
 
         // rectangles are compared by instances
         Set<Rectangle> nonChildFloatingRendererAreas = new HashSet<>(floatRendererAreas);
@@ -211,6 +265,23 @@ public class ParagraphRenderer extends BlockRenderer {
             marginsCollapseHandler.startChildMarginsHandling(null, layoutBox);
         }
         boolean includeFloatsInOccupiedArea = BlockFormattingContextUtil.isRendererCreateBfc(this);
+        Rectangle originalLayoutBox = layoutBox.clone();
+        Map<LineRenderer, LineLayoutResult> lineLayoutResults = new LinkedHashMap<>();
+
+        // A workaround, to identify min-max width calculations, needed for vertical text layout.
+        // The value is still big enough so that no reasonable layout can pass the check.
+        if (layoutBox.getHeight() > AbstractRenderer.INF - 1000F) {
+            if (isVerticalWriting || this.getChildRenderers().stream().anyMatch(
+                    child -> child instanceof AbstractRenderer && ((AbstractRenderer) child).isVerticalWriting())) {
+                Float parentRecursiveHeight = getParentHeightRecursively(this);
+                if (parentRecursiveHeight != null) {
+                    float heightDifference = layoutBox.getHeight() - (float) parentRecursiveHeight;
+                    layoutBox.setHeight((float) parentRecursiveHeight);
+                    layoutBox.setY(layoutBox.getY() + heightDifference);
+                    overflowY = this.<OverflowPropertyValue>getProperty(Property.OVERFLOW_Y);
+                }
+            }
+        }
 
         while (currentRenderer != null) {
             currentRenderer.setProperty(Property.TAB_DEFAULT, this.getPropertyAsFloat(Property.TAB_DEFAULT));
@@ -225,7 +296,7 @@ public class ParagraphRenderer extends BlockRenderer {
                     new LayoutArea(pageNumber, childLayoutBox), null, floatRendererAreas, wasHeightClipped || wasParentsHeightClipped)
                     .setTextIndent(lineIndent)
                     .setFloatOverflowedToNextPageWithNothing(floatOverflowedToNextPageWithNothing);
-            LineLayoutResult result = (LineLayoutResult)((LineRenderer) currentRenderer.setParent(this)).layout(lineLayoutContext);
+            LineLayoutResult result = (LineLayoutResult) ((LineRenderer) currentRenderer.setParent(this)).layout(lineLayoutContext);
             boolean isLastLineReLaidOut = false;
 
             if (result.getStatus() == LayoutResult.NOTHING) {
@@ -281,8 +352,12 @@ public class ParagraphRenderer extends BlockRenderer {
                 processedRenderer = null;
             }
 
-            TextAlignment textAlignment = (TextAlignment) this.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT, TextAlignment.LEFT);
-            applyTextAlignment(textAlignment, result, processedRenderer, layoutBox, floatRendererAreas, onlyOverflowedFloatsLeft, lineIndent);
+            if (isVerticalWriting && processedRenderer != null) {
+                lineLayoutResults.put(processedRenderer, result);
+            } else {
+                applyTextAlignment(textAlignment, result, processedRenderer, layoutBox, floatRendererAreas,
+                        onlyOverflowedFloatsLeft, lineIndent, false);
+            }
 
             Leading leading =
                     RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE)) ? null
@@ -291,9 +366,12 @@ public class ParagraphRenderer extends BlockRenderer {
             boolean lineHasContent = processedRenderer != null && processedRenderer.getOccupiedArea().getBBox().getHeight() > 0;
             boolean isFit = processedRenderer != null;
             float deltaY = 0;
-            if (isFit && !RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
+            if (isFit && this.<RenderingMode>getProperty(Property.RENDERING_MODE) != RenderingMode.HTML_MODE
+                    && !isVerticalWriting) {
                 if (lineHasContent) {
-                    float indentFromLastLine = previousDescent - lastLineBottomLeadingIndent - (leading != null ? processedRenderer.getTopLeadingIndent(leading) : 0) - processedRenderer.getMaxAscent();
+                    float indentFromLastLine = previousDescent - lastLineBottomLeadingIndent -
+                            (leading != null ? processedRenderer.getTopLeadingIndent(leading) : 0) -
+                            processedRenderer.getMaxAscent();
                     if (processedRenderer.containsImage()) {
                         indentFromLastLine += previousDescent;
                     }
@@ -310,9 +388,12 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
 
                 if (isLastLineReLaidOut) {
-                    isFit = leading == null || processedRenderer.getOccupiedArea().getBBox().getY() + deltaY - lastLineBottomLeadingIndent >= layoutBox.getY();
+                    isFit = leading == null ||
+                            processedRenderer.getOccupiedArea().getBBox().getY() + deltaY - lastLineBottomLeadingIndent
+                                    >= layoutBox.getY();
                 } else {
-                    isFit = leading == null || processedRenderer.getOccupiedArea().getBBox().getY() + deltaY >= layoutBox.getY();
+                    isFit = leading == null ||
+                            processedRenderer.getOccupiedArea().getBBox().getY() + deltaY >= layoutBox.getY();
                 }
             }
 
@@ -339,8 +420,10 @@ public class ParagraphRenderer extends BlockRenderer {
                         boolean includeFloatsInOccupiedAreaOnSplit = !onlyOverflowedFloatsLeft || includeFloatsInOccupiedArea;
                         if (includeFloatsInOccupiedAreaOnSplit) {
                             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
-                            fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
+                            fixOccupiedAreaIfOverflowedX(isVerticalWriting, overflowX, layoutBox);
                         }
+                        // Correct lines for split renderer in case of paragraph split.
+                        correctLinesForRtlMode();
 
                         if (marginsCollapsingEnabled) {
                             marginsCollapseHandler.endMarginsCollapse(layoutBox);
@@ -392,8 +475,11 @@ public class ParagraphRenderer extends BlockRenderer {
                             return new MinMaxWidthLayoutResult(LayoutResult.PARTIAL, editedArea, split[0], split[1]).setMinMaxWidth(minMaxWidth);
                         } else {
                             if (Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
-                                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), currentRenderer.getOccupiedArea().getBBox()));
-                                fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
+                                occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(),
+                                        currentRenderer.getOccupiedArea().getBBox()));
+                                if (!isVerticalWriting || widthSet) {
+                                    fixOccupiedAreaIfOverflowedX(isVerticalWriting, overflowX, layoutBox);
+                                }
                                 parent.setProperty(Property.FULL, true);
                                 lines.add(currentRenderer);
                                 // Force placement of children we have and do not force placement of the others
@@ -426,12 +512,22 @@ public class ParagraphRenderer extends BlockRenderer {
                     }
                 }
                 if (lineHasContent) {
-                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(), processedRenderer.getOccupiedArea().getBBox()));
-                    fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
+                    occupiedArea.setBBox(Rectangle.getCommonRectangle(occupiedArea.getBBox(),
+                            processedRenderer.getOccupiedArea().getBBox()));
+                    if (!isVerticalWriting || widthSet) {
+                        fixOccupiedAreaIfOverflowedX(isVerticalWriting, overflowX, layoutBox);
+                    }
                 }
                 firstLineInBox = false;
 
-                layoutBox.setHeight(processedRenderer.getOccupiedArea().getBBox().getY() - layoutBox.getY());
+                if (isVerticalWriting) {
+                    // No distance between lines.
+                    float lineWidth = processedRenderer.getOccupiedArea().getBBox().getWidth();
+                    layoutBox.setX(processedRenderer.getOccupiedArea().getBBox().getX() + lineWidth);
+                    layoutBox.setWidth(layoutBox.getWidth() - lineWidth);
+                } else {
+                    layoutBox.setHeight(processedRenderer.getOccupiedArea().getBBox().getY() - layoutBox.getY());
+                }
                 lines.add(processedRenderer);
 
                 anythingPlaced = true;
@@ -447,7 +543,7 @@ public class ParagraphRenderer extends BlockRenderer {
                 }
             }
         }
-        if (!RenderingMode.HTML_MODE.equals(this.<RenderingMode>getProperty(Property.RENDERING_MODE))) {
+        if (this.<RenderingMode>getProperty(Property.RENDERING_MODE) != RenderingMode.HTML_MODE) {
             float moveDown = lastLineBottomLeadingIndent;
             if (isOverflowFit(overflowY) && moveDown > occupiedArea.getBBox().getY() - layoutBox.getY()) {
                 moveDown = occupiedArea.getBBox().getY() - layoutBox.getY();
@@ -462,12 +558,18 @@ public class ParagraphRenderer extends BlockRenderer {
 
         if (includeFloatsInOccupiedArea) {
             FloatingHelper.includeChildFloatsInOccupiedArea(floatRendererAreas, this, nonChildFloatingRendererAreas);
-            fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
+            fixOccupiedAreaIfOverflowedX(isVerticalWriting, overflowX, originalLayoutBox);
         }
 
-        if (wasHeightClipped) {
+        if (blockMaxHeight != null && blockMaxHeight < parentHeight + EPS) {
             fixOccupiedAreaIfOverflowedY(overflowY, layoutBox);
         }
+        if (isVerticalWriting && widthSet) {
+            // Adjust occupied area width for vertical text after lines layout.
+            fixOccupiedAreaIfOverflowedX(true, overflowX, layoutBox);
+        }
+        // Adjust lines for vertical-rl text after lines layout.
+        correctLinesForRtlMode();
 
         if (marginsCollapsingEnabled) {
             marginsCollapseHandler.endMarginsCollapse(layoutBox);
@@ -499,9 +601,8 @@ public class ParagraphRenderer extends BlockRenderer {
             applyRotationLayout(layoutContext.getArea().getBBox().clone());
             if (isNotFittingLayoutArea(layoutContext.getArea())) {
                 if (isNotFittingWidth(layoutContext.getArea()) && !isNotFittingHeight(layoutContext.getArea())) {
-                    LoggerFactory.getLogger(getClass())
-                            .warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
-                                    "It fits by height so it will be forced placed"));
+                    LOGGER.warn(() -> MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                            "It fits by height so it will be forced placed"));
                 } else if (!Boolean.TRUE.equals(getPropertyAsBoolean(Property.FORCED_PLACEMENT))) {
                     floatRendererAreas.retainAll(nonChildFloatingRendererAreas);
                     return new MinMaxWidthLayoutResult(LayoutResult.NOTHING, null, null, this, this);
@@ -509,6 +610,15 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
 
+        float lineIndent = (float) this.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+        if (isVerticalWriting) {
+            for (Map.Entry<LineRenderer, LineLayoutResult> lineResult : lineLayoutResults.entrySet()) {
+                applyTextAlignment(textAlignment, lineResult.getValue(), lineResult.getKey(), getInnerAreaBBox(),
+                        floatRendererAreas, false, lineIndent, true);
+                // FIRST_LINE_INDENT is only relevant for first LineRenderer.
+                lineIndent = 0;
+            }
+        }
         applyVerticalAlignment();
 
         FloatingHelper.removeFloatsAboveRendererBottom(floatRendererAreas, this);
@@ -535,11 +645,15 @@ public class ParagraphRenderer extends BlockRenderer {
      * for the overflow part. So if one wants to extend {@link ParagraphRenderer}, one should override
      * this method: otherwise the default method will be used and thus the default rather than the custom
      * renderer will be created.
+     *
      * @return new renderer instance
      */
     @Override
     public IRenderer getNextRenderer() {
         logWarningIfGetNextRendererNotOverridden(ParagraphRenderer.class, this.getClass());
+        if (modelElement instanceof VerticalParagraph) {
+            return new ParagraphRenderer((VerticalParagraph) modelElement);
+        }
         return new ParagraphRenderer((Paragraph) modelElement);
     }
 
@@ -592,9 +706,8 @@ public class ParagraphRenderer extends BlockRenderer {
      */
     @Override
     public void move(float dxRight, float dyUp) {
-        Logger logger = LoggerFactory.getLogger(ParagraphRenderer.class);
         if (occupiedArea == null) {
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED,
                     "Moving won't be performed."));
             return;
         }
@@ -609,6 +722,7 @@ public class ParagraphRenderer extends BlockRenderer {
 
     /**
      * Gets the lines which are the result of the {@link #layout(LayoutContext)}.
+     *
      * @return paragraph lines, or <code>null</code> if layout hasn't been called yet
      */
     public List<LineRenderer> getLines() {
@@ -638,6 +752,17 @@ public class ParagraphRenderer extends BlockRenderer {
             }
         }
         return null;
+    }
+
+    private void checkProperties() {
+        if (isVerticalWriting()) {
+            for (Map.Entry<Integer, String> entry : UNSUPPORTED_PROPERTIES_FOR_VERTICAL_WRITING.entrySet()) {
+                if (this.hasProperty(entry.getKey())) {
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            LayoutLogMessageConstant.UNSUPPORTED_PROPERTY, "vertical text", entry.getValue()));
+                }
+            }
+        }
     }
 
     private ParagraphRenderer createOverflowRenderer() {
@@ -701,7 +826,7 @@ public class ParagraphRenderer extends BlockRenderer {
             minMaxWidth.setAdditionalWidth(calculateAdditionalWidth(this));
         }
 
-        return rotation != null ? RotationUtils.countRotationMinMaxWidth(minMaxWidth, this) : minMaxWidth;
+        return rotation != null ? RotationUtils.calculateRotationMinMaxWidth(minMaxWidth, this) : minMaxWidth;
     }
 
     protected ParagraphRenderer[] split() {
@@ -711,52 +836,40 @@ public class ParagraphRenderer extends BlockRenderer {
 
         ParagraphRenderer overflowRenderer = createOverflowRenderer(parent);
 
-        return new ParagraphRenderer[] {splitRenderer, overflowRenderer};
+        return new ParagraphRenderer[]{splitRenderer, overflowRenderer};
     }
 
-    private void fixOverflowRenderer(ParagraphRenderer overflowRenderer) {
-        // Reset first line indent in case of overflow.
-        float firstLineIndent = (float) overflowRenderer.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
-        if (firstLineIndent != 0) {
-            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0f);
+    private static Float getParentHeightRecursively(IRenderer renderer) {
+        if (renderer == null) {
+            return null;
+        }
+        // If the height is a percentage value, we ignore it and look for a point value.
+        if (renderer.<UnitValue>getProperty(Property.HEIGHT) != null &&
+                renderer.<UnitValue>getProperty(Property.HEIGHT).isPointValue()) {
+            return renderer.<UnitValue>getProperty(Property.HEIGHT).getValue();
+        } else if (renderer.getModelElement() != null &&
+                renderer.getModelElement().<UnitValue>getProperty(Property.HEIGHT) != null &&
+                renderer.getModelElement().<UnitValue>getProperty(Property.HEIGHT).isPointValue()) {
+            return renderer.getModelElement().<UnitValue>getProperty(Property.HEIGHT).getValue();
+        } else {
+            return getParentHeightRecursively(renderer.getParent());
         }
     }
 
-    private void alignStaticKids(LineRenderer renderer, float dxRight) {
-        renderer.getOccupiedArea().getBBox().moveRight(dxRight);
+    private static void alignStaticKids(LineRenderer renderer, float shift, boolean isVerticalWriting) {
+        if (isVerticalWriting) {
+            renderer.getOccupiedArea().getBBox().moveDown(shift);
+        } else {
+            renderer.getOccupiedArea().getBBox().moveRight(shift);
+        }
         for (IRenderer childRenderer : renderer.getChildRenderers()) {
             if (FloatingHelper.isRendererFloating(childRenderer)) {
                 continue;
             }
-            childRenderer.move(dxRight, 0);
-        }
-    }
-
-    private void applyTextAlignment(TextAlignment textAlignment, LineLayoutResult result, LineRenderer processedRenderer,
-            Rectangle layoutBox, List<Rectangle> floatRendererAreas, boolean onlyOverflowedFloatsLeft, float lineIndent) {
-        if (textAlignment == TextAlignment.JUSTIFIED && result.getStatus() == LayoutResult.PARTIAL && !result.isSplitForcedByNewline() && !onlyOverflowedFloatsLeft ||
-                textAlignment == TextAlignment.JUSTIFIED_ALL) {
-            if (processedRenderer != null) {
-                Rectangle actualLineLayoutBox = layoutBox.clone();
-                FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
-                processedRenderer.justify(actualLineLayoutBox.getWidth() - lineIndent);
-            }
-        } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
-            Rectangle actualLineLayoutBox = layoutBox.clone();
-            FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
-            float deltaX = Math.max(0, actualLineLayoutBox.getWidth() - lineIndent - processedRenderer.getOccupiedArea().getBBox().getWidth());
-            switch (textAlignment) {
-                case RIGHT:
-                    alignStaticKids(processedRenderer, deltaX);
-                    break;
-                case CENTER:
-                    alignStaticKids(processedRenderer, deltaX / 2);
-                    break;
-                case JUSTIFIED:
-                    if (BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
-                        alignStaticKids(processedRenderer, deltaX);
-                    }
-                    break;
+            if (isVerticalWriting) {
+                childRenderer.move(0, -shift);
+            } else {
+                childRenderer.move(shift, 0);
             }
         }
     }
@@ -772,6 +885,86 @@ public class ParagraphRenderer extends BlockRenderer {
             final IRenderer line = childRenderer.getParent();
             if (!(line instanceof LineRenderer && re.lines.contains((LineRenderer) line))) {
                 childRenderer.setParent(null);
+            }
+        }
+    }
+
+    private void fixOverflowRenderer(ParagraphRenderer overflowRenderer) {
+        // Reset first line indent in case of overflow.
+        float firstLineIndent = (float) overflowRenderer.getPropertyAsFloat(Property.FIRST_LINE_INDENT);
+        if (firstLineIndent != 0) {
+            overflowRenderer.setProperty(Property.FIRST_LINE_INDENT, 0f);
+        }
+    }
+
+    private void fixOccupiedAreaIfOverflowedX(boolean isVerticalWriting, OverflowPropertyValue overflowX,
+                                              Rectangle layoutBox) {
+        if (isVerticalWriting && !isOverflowFit(overflowX)) {
+            if (layoutBox.getWidth() < 0 && occupiedArea.getBBox().getRight() > layoutBox.getRight()) {
+                float difference = occupiedArea.getBBox().getRight() - layoutBox.getRight();
+                occupiedArea.getBBox().decreaseWidth(difference);
+            }
+        } else {
+            fixOccupiedAreaIfOverflowedX(overflowX, layoutBox);
+        }
+    }
+
+    private void correctLinesForRtlMode() {
+        if (this.<WritingMode>getProperty(Property.WRITING_MODE) == WritingMode.VERTICAL_RL
+                && this.<VerticalTextOrientation>getProperty(Property.TEXT_ORIENTATION)
+                == VerticalTextOrientation.UPRIGHT) {
+            // Correct the lines for vertical-rl writing mode
+            // by mirroring them relative to the center of the occupied area.
+            float middleX = occupiedArea.getBBox().getX() + occupiedArea.getBBox().getWidth() / 2;
+            for (LineRenderer line : lines) {
+                float middleLineX = line.occupiedArea.getBBox().getX() + line.occupiedArea.getBBox().getWidth() / 2;
+                line.move(2 * (middleX - middleLineX), 0);
+            }
+        }
+    }
+
+    private void applyTextAlignment(TextAlignment textAlignment, LineLayoutResult result,
+                                    LineRenderer processedRenderer, Rectangle layoutBox,
+                                    List<Rectangle> floatRendererAreas, boolean onlyOverflowedFloatsLeft,
+                                    float lineIndent, boolean isVerticalWriting) {
+        if (textAlignment == TextAlignment.JUSTIFIED && result != null && result.getStatus() == LayoutResult.PARTIAL
+                && !result.isSplitForcedByNewline() && !onlyOverflowedFloatsLeft ||
+                textAlignment == TextAlignment.JUSTIFIED_ALL) {
+            if (processedRenderer != null) {
+                Rectangle actualLineLayoutBox = layoutBox.clone();
+                FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
+                if (isVerticalWriting) {
+                    processedRenderer.justify(actualLineLayoutBox.getHeight() - lineIndent);
+                } else {
+                    processedRenderer.justify(actualLineLayoutBox.getWidth() - lineIndent);
+                }
+            }
+        } else if (textAlignment != TextAlignment.LEFT && processedRenderer != null) {
+            Rectangle actualLineLayoutBox = layoutBox.clone();
+            FloatingHelper.adjustLineAreaAccordingToFloats(floatRendererAreas, actualLineLayoutBox);
+            float extraSpace;
+            if (isVerticalWriting) {
+                extraSpace = Math.max(0,
+                        actualLineLayoutBox.getHeight() - lineIndent -
+                                processedRenderer.getOccupiedArea().getBBox().getHeight());
+            } else {
+                extraSpace = Math.max(
+                        0,
+                        actualLineLayoutBox.getWidth() - lineIndent -
+                                processedRenderer.getOccupiedArea().getBBox().getWidth());
+            }
+            switch (textAlignment) {
+                case RIGHT:
+                    alignStaticKids(processedRenderer, extraSpace, isVerticalWriting);
+                    break;
+                case CENTER:
+                    alignStaticKids(processedRenderer, extraSpace / 2, isVerticalWriting);
+                    break;
+                case JUSTIFIED:
+                    if (BaseDirection.RIGHT_TO_LEFT.equals(this.<BaseDirection>getProperty(Property.BASE_DIRECTION))) {
+                        alignStaticKids(processedRenderer, extraSpace, isVerticalWriting);
+                    }
+                    break;
             }
         }
     }

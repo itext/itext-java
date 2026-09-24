@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.xfdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.PdfFormCreator;
@@ -44,8 +45,6 @@ import com.itextpdf.kernel.pdf.annot.PdfTextAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfTextMarkupAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfFreeTextAnnotation;
 import com.itextpdf.kernel.pdf.annot.PdfStampAnnotation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +52,7 @@ import java.util.Map;
 
 class XfdfReader {
 
-    private static final Logger logger = LoggerFactory.getLogger(XfdfReader.class);
+    private static final LazyLogger LOGGER = new LazyLogger(XfdfReader.class);
 
     private final Map<AnnotObject, PdfTextAnnotation> annotationsWithInReplyTo = new HashMap<>();
 
@@ -67,12 +66,12 @@ class XfdfReader {
     void mergeXfdfIntoPdf(XfdfObject xfdfObject, PdfDocument pdfDocument, String pdfDocumentName) {
         if (xfdfObject.getF() != null && xfdfObject.getF().getHref() != null) {
             if (pdfDocumentName.equalsIgnoreCase(xfdfObject.getF().getHref())) {
-                logger.info("Xfdf href and pdf name are equal. Continue merge");
+                LOGGER.info(() -> "Xfdf href and pdf name are equal. Continue merge");
             } else {
-                logger.warn(IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT);
+                LOGGER.warn(() -> IoLogMessageConstant.XFDF_HREF_ATTRIBUTE_AND_PDF_DOCUMENT_NAME_ARE_DIFFERENT);
             }
         } else {
-            logger.warn(IoLogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE);
+            LOGGER.warn(() -> IoLogMessageConstant.XFDF_NO_F_OBJECT_TO_COMPARE);
         }
         //TODO DEVSIX-4026 check for ids original/modified compatability with those in pdf document
 
@@ -101,7 +100,7 @@ class XfdfReader {
                 if (formFields.get(name) != null && xfdfField.getValue() != null) {
                     formFields.get(name).setValue(xfdfField.getValue());
                 } else {
-                    logger.error(IoLogMessageConstant.XFDF_NO_SUCH_FIELD_IN_PDF_DOCUMENT);
+                    LOGGER.error(() -> IoLogMessageConstant.XFDF_NO_SUCH_FIELD_IN_PDF_DOCUMENT);
                 }
             }
         }
@@ -454,8 +453,8 @@ class XfdfReader {
                 //XfdfConstants.REDACT
                 //XfdfConstants.PROJECTION
                 default:
-                    logger.warn(
-                            MessageFormatUtil.format(IoLogMessageConstant.XFDF_ANNOTATION_IS_NOT_SUPPORTED, annotName));
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            IoLogMessageConstant.XFDF_ANNOTATION_IS_NOT_SUPPORTED, annotName));
                     break;
             }
 

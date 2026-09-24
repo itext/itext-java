@@ -66,8 +66,8 @@ public class SharpenConfigCustomMembers {
                         "                        }\n" +
                         "                    }\n" +
                         "                    if (type == null && fileLoadExceptionMessage != null) {\n" +
-                        "                        ILogger logger = ITextLogManager.GetLogger(typeof(ImageDataFactory));\n" +
-                        "                        logger.LogError(fileLoadExceptionMessage);\n" +
+                        "                        LazyLogger logger = new LazyLogger(typeof(ImageDataFactory));\n" +
+                        "                        logger.Error(() => fileLoadExceptionMessage);\n" +
                         "                    }\n" +
                         "                }\n" +
                         "            }\n" +

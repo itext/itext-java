@@ -145,6 +145,7 @@ public class XMPIteratorImpl implements XMPIterator
 	/**
 	 * @see XMPIterator#skipSubtree()
 	 */
+	@Override
 	public void skipSubtree()
 	{
 		this.skipSubtree = true;
@@ -154,6 +155,7 @@ public class XMPIteratorImpl implements XMPIterator
 	/**
 	 * @see XMPIterator#skipSiblings()
 	 */
+	@Override
 	public void skipSiblings()
 	{
 		skipSubtree();
@@ -164,6 +166,7 @@ public class XMPIteratorImpl implements XMPIterator
 	/**
 	 * @see java.util.Iterator#hasNext()
 	 */
+	@Override
 	public boolean hasNext()
 	{
 		return nodeIterator.hasNext();
@@ -173,6 +176,7 @@ public class XMPIteratorImpl implements XMPIterator
 	/**
 	 * @see java.util.Iterator#next()
 	 */
+	@Override
 	public Object next()
 	{
 		return nodeIterator.next();
@@ -182,6 +186,7 @@ public class XMPIteratorImpl implements XMPIterator
 	/**
 	 * @see java.util.Iterator#remove()
 	 */
+	@Override
 	public void remove()
 	{
 		throw new UnsupportedOperationException("The XMPIterator does not support remove().");
@@ -284,6 +289,7 @@ public class XMPIteratorImpl implements XMPIterator
 		 * 
 		 * @see java.util.Iterator#hasNext()
 		 */
+		@Override
 		public boolean hasNext()
 		{
 			if (returnProperty != null)
@@ -388,6 +394,7 @@ public class XMPIteratorImpl implements XMPIterator
 		 *
 		 * @see java.util.Iterator#next()
 		 */
+		@Override
 		public Object next()
 		{
 			if (hasNext())
@@ -407,6 +414,7 @@ public class XMPIteratorImpl implements XMPIterator
 		 * Not supported.
 		 * @see java.util.Iterator#remove()
 		 */
+		@Override
 		public void remove()
 		{
 			throw new UnsupportedOperationException();
@@ -470,6 +478,7 @@ public class XMPIteratorImpl implements XMPIterator
 
 			return new XMPPropertyInfo()
 			{
+				@Override
 				public String getNamespace()
 				{
 					if (!node.getOptions().isSchemaNode())
@@ -484,21 +493,25 @@ public class XMPIteratorImpl implements XMPIterator
 					}
 				}
 
+				@Override
 				public String getPath()
 				{
 					return path;
 				}
 
+				@Override
 				public String getValue()
 				{
 					return value;
 				}
 
+				@Override
 				public PropertyOptions getOptions()
 				{
 					return node.getOptions();
 				}
 
+				@Override
 				public String getLanguage()
 				{
 					// the language is not reported
@@ -583,6 +596,7 @@ public class XMPIteratorImpl implements XMPIterator
 		 *
 		 * @see java.util.Iterator#hasNext()
 		 */
+		@Override
 		public boolean hasNext()
 		{
 			if (getReturnProperty() != null)

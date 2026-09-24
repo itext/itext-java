@@ -22,12 +22,13 @@
  */
 package com.itextpdf.commons.utils;
 
+import com.itextpdf.commons.logs.LazyLogger;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,7 +49,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.slf4j.LoggerFactory;
 
 /**
  * This file is a helper class for internal usage only.
@@ -70,8 +70,9 @@ public final class FileUtil {
             String fileSeparator = System.getProperty("file.separator");
             return winDir + fileSeparator + "fonts";
         } catch (SecurityException e) {
-            LoggerFactory.getLogger(FileUtil.class).warn("Can't access System.getenv(\"windir\") to load fonts. " +
-                    "Please, add RuntimePermission for getenv.windir.");
+            new LazyLogger(FileUtil.class)
+                    .warn(() -> "Can't access System.getenv(\"windir\") to load fonts. " +
+                            "Please, add RuntimePermission for getenv.windir.");
             return null;
         }
     }

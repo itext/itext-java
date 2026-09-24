@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.action;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.UrlUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -43,7 +44,6 @@ import com.itextpdf.kernel.pdf.navigation.PdfExplicitDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfExplicitRemoteGoToDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStringDestination;
 import com.itextpdf.kernel.pdf.navigation.PdfStructureDestination;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.List;
@@ -54,6 +54,7 @@ import java.util.List;
  */
 public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfAction.class);
 
     /**
      * A possible submit value
@@ -269,7 +270,7 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
             validateRemoteDestination(destination);
             action.put(PdfName.D, destination.getPdfObject());
         } else {
-            LoggerFactory.getLogger(PdfAction.class).warn(IoLogMessageConstant.EMBEDDED_GO_TO_DESTINATION_NOT_SPECIFIED);
+            LOGGER.warn(() -> IoLogMessageConstant.EMBEDDED_GO_TO_DESTINATION_NOT_SPECIFIED);
         }
         if (targetDictionary != null) {
             action.put(PdfName.T, targetDictionary.getPdfObject());
@@ -691,8 +692,8 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
                 if (id == null) {
                     throw new IllegalArgumentException("Structure destinations shall specify structure element ID in remote go-to actions. Structure element that has no ID is specified instead");
                 } else {
-                    LoggerFactory.getLogger(PdfAction.class)
-                            .warn(IoLogMessageConstant.STRUCTURE_ELEMENT_REPLACED_BY_ITS_ID_IN_STRUCTURE_DESTINATION);
+                    LOGGER.warn(() ->
+                            IoLogMessageConstant.STRUCTURE_ELEMENT_REPLACED_BY_ITS_ID_IN_STRUCTURE_DESTINATION);
                     ((PdfArray)destination.getPdfObject()).set(0, id);
                     destination.getPdfObject().setModified();
                 }
@@ -708,13 +709,13 @@ public class PdfAction extends PdfObjectWrapper<PdfDictionary> {
      */
     private static void validateNotRemoteDestination(PdfDestination destination) {
         if (destination instanceof PdfExplicitRemoteGoToDestination) {
-            LoggerFactory.getLogger(PdfAction.class).warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
+            LOGGER.warn(() -> IoLogMessageConstant.INVALID_DESTINATION_TYPE);
         } else if (destination instanceof PdfExplicitDestination) {
             // No page number can be specified for a destination associated with a not remote go-to action because the
             // destination page is in a current PDF document. See section 12.3.2.2 of ISO 32000-1.
             PdfObject firstObj = ((PdfArray)destination.getPdfObject()).get(0);
             if (firstObj.isNumber()) {
-                LoggerFactory.getLogger(PdfAction.class).warn(IoLogMessageConstant.INVALID_DESTINATION_TYPE);
+                LOGGER.warn(() -> IoLogMessageConstant.INVALID_DESTINATION_TYPE);
             }
         }
     }

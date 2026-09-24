@@ -40,13 +40,13 @@ public class ValidationContainerTest extends ExtendedITextTest {
     @Test
     public void validateObjectTest() {
         ValidationContainer container = new ValidationContainer();
-        container.validate(new FontValidationContext(null, null));
+        container.validate(new FontValidationContext((String) null, null));
         final CustomValidationChecker checker = new CustomValidationChecker();
         container.addChecker(checker);
         Assertions.assertTrue(container.containsChecker(checker));
 
         Assertions.assertFalse(checker.objectValidationPerformed);
-        container.validate(new FontValidationContext(null, null));
+        container.validate(new FontValidationContext((String) null, null));
         Assertions.assertTrue(checker.objectValidationPerformed);
     }
 

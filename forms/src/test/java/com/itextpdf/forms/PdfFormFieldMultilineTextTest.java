@@ -61,13 +61,14 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
 
     @AfterAll
     public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
 
     @Test
     public void multilineFormFieldTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "multilineFormFieldTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
@@ -99,7 +100,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "multilineTextFieldWithAlignment.pdf";
         String cmpPdf = sourceFolder + "cmp_multilineTextFieldWithAlignment.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
@@ -126,7 +127,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
         String srcPdf = sourceFolder + testName + ".pdf";
 
-        PdfWriter writer = new PdfWriter(outPdf);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outPdf);
         PdfReader reader = new PdfReader(srcPdf);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
@@ -152,7 +153,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
         String cmpPdf = sourceFolder + "cmp_" + testName + ".pdf";
         String srcPdf = sourceFolder + testName + ".pdf";
 
-        PdfWriter writer = new PdfWriter(outPdf);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outPdf);
         PdfReader reader = new PdfReader(srcPdf);
         PdfDocument pdfDoc = new PdfDocument(reader, writer);
 
@@ -171,7 +172,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
     @Test
     public void notFittingByHeightTest() throws IOException, InterruptedException {
         String filename = "notFittingByHeightTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + filename));
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
         for (int i = 15; i <= 50; i += 15) {
@@ -200,7 +201,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
     @Test
     public void borderWidthIndentMultilineTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "borderWidthIndentMultilineTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
@@ -235,7 +236,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
     public void formFieldFilledWithStringTest() throws IOException, InterruptedException {
         String value = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "formFieldWithStringTest.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "formFieldWithStringTest.pdf"));
 
         PdfFont font = PdfFontFactory.createFont(
                 FONT_FOLDER + "NotoSansCJKtc-Light.otf", PdfEncodings.IDENTITY_H);
@@ -258,7 +259,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
     @Test
     public void multilineTextFieldLeadingSpacesAreNotTrimmedTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "multilineTextFieldLeadingSpacesAreNotTrimmed.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         pdfDoc.addNewPage();
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
@@ -284,7 +285,7 @@ public class PdfFormFieldMultilineTextTest extends ExtendedITextTest {
     @Test
     public void multilineTextFieldRedundantSpacesAreTrimmedTest() throws IOException, InterruptedException {
         String filename = destinationFolder + "multilineTextFieldRedundantSpacesAreTrimmedTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(filename));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(filename));
         pdfDoc.addNewPage();
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);

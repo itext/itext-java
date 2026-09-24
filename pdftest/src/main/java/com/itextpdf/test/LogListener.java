@@ -240,6 +240,7 @@ public class LogListener implements BeforeTestExecutionCallback, AfterTestExecut
             }
         }
 
+        @Override
         protected void append(ILoggingEvent e) {
             String threadId = getThreadId();
 

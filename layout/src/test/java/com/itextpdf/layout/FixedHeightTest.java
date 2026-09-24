@@ -25,7 +25,6 @@ package com.itextpdf.layout;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Div;
@@ -39,6 +38,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -55,16 +55,21 @@ public class FixedHeightTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 1),
             // TODO DEVSIX-1977 partial layout result due to fixed height should not contain not layouted kids
             @LogMessage(messageTemplate = IoLogMessageConstant.OCCUPIED_AREA_HAS_NOT_BEEN_INITIALIZED, count = 6)
     })
-    @Test
     public void divWithParagraphsAndFixedPositionTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "blockWithLimitedHeightAndFixedPositionTest.pdf";
         String cmpFileName = sourceFolder + "cmp_blockWithLimitedHeightAndFixedPositionTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 
@@ -97,7 +102,7 @@ public class FixedHeightTest extends ExtendedITextTest {
     public void listWithFixedPositionTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "listWithFixedPositionTest.pdf";
         String cmpFileName = sourceFolder + "cmp_listWithFixedPositionTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document doc = new Document(pdfDocument);
 

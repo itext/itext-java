@@ -23,7 +23,6 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Cell;
@@ -32,6 +31,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -50,6 +50,11 @@ public class EmptyNestedTableTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     //TODO DEVSIX-6255 Implementation of the application border attributes for cells
     public void buildEmptyTable() throws IOException, InterruptedException {
@@ -58,7 +63,7 @@ public class EmptyNestedTableTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_emptyNestedTableTest.pdf";
 
         // setup document
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDocument.setTagged();
         Document layoutDocument = new Document(pdfDocument);
 

@@ -23,6 +23,8 @@
 package com.itextpdf.pdfa.checker;
 
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfTrueTypeFont;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -48,9 +50,11 @@ import com.itextpdf.kernel.pdf.colorspace.PdfColorSpace;
 import com.itextpdf.pdfa.PdfADocument;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,6 +111,53 @@ public class PdfACheckerTest extends ExtendedITextTest {
         testChecker.setFullCheckMode(true);
         Assertions.assertThrows(NullPointerException.class, () -> testChecker.checkContentStream(firstContentStream),
                 "NullPointer was not thrown on inline image.");
+    }
+
+    @Test
+    public void checkMalformedModifiedPageContentStreamWhenFullCheckModeIsDisabledTest() throws IOException {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                PdfWriter writer = new PdfWriter(bos);
+                PdfDocument document = new PdfDocument(writer)) {
+            PdfPage page = document.addNewPage();
+            setPageContentStreams(document, page, new String[] {"<<"});
+
+            PdfAChecker checker = new PageContentOnlyPdfAChecker();
+            checker.setFullCheckMode(false);
+
+            PdfCatalog catalog = document.getCatalog();
+            Exception e = Assertions.assertThrows(PdfException.class, () -> checker.checkDocument(catalog));
+            Assertions.assertEquals(KernelExceptionMessageConstant.UNEXPECTED_END_OF_FILE, e.getMessage());
+        }
+    }
+
+    @Test
+    public void checkUnmodifiedPageContentStreamsAreSkippedWhenFullCheckModeIsDisabledTest() throws IOException {
+        byte[] pdfBytes = createDocumentWithContentStreams(new String[] {"<<"});
+
+        try (PdfDocument document = new PdfDocument(new PdfReader(new ByteArrayInputStream(pdfBytes)))) {
+            PdfAChecker checker = new PageContentOnlyPdfAChecker();
+            checker.setFullCheckMode(false);
+
+            Assertions.assertDoesNotThrow(() -> checker.checkDocument(document.getCatalog()));
+            Assertions.assertFalse(document.getPage(1).getContentStream(0).isModified());
+        }
+    }
+
+    private static byte[] createDocumentWithContentStreams(String[] contentStreams) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (PdfWriter writer = new PdfWriter(bos);
+                PdfDocument document = new PdfDocument(writer)) {
+            setPageContentStreams(document, document.addNewPage(), contentStreams);
+        }
+        return bos.toByteArray();
+    }
+
+    private static void setPageContentStreams(PdfDocument document, PdfPage page, String[] contentStreams) {
+        PdfArray contents = new PdfArray();
+        for (String contentStream : contentStreams) {
+            contents.add(new PdfStream(contentStream.getBytes(StandardCharsets.ISO_8859_1)).makeIndirect(document));
+        }
+        page.getPdfObject().put(PdfName.Contents, contents);
     }
 
     private static class EmptyPdfAChecker extends PdfAChecker {
@@ -329,6 +380,19 @@ public class PdfACheckerTest extends ExtendedITextTest {
         @Override
         protected void checkPageTransparency(PdfDictionary pageDict, PdfDictionary pageResources) {
 
+        }
+    }
+
+    private static class PageContentOnlyPdfAChecker extends EmptyPdfAChecker {
+
+        protected PageContentOnlyPdfAChecker() {
+            super();
+        }
+
+        @Override
+        protected void checkContentStream(byte[] streamContent, PdfResources resources) {
+            PdfAChecker checker = new PdfA1Checker(PdfAConformance.PDF_A_1A);
+            checker.checkContentStream(streamContent, resources);
         }
     }
 }

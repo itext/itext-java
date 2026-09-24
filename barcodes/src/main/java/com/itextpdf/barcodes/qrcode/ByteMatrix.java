@@ -109,6 +109,7 @@ public final class ByteMatrix {
     /**
      * @return String representation
      */
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder(2 * width * height + 2);
         for (int y = 0; y < height; ++y) {

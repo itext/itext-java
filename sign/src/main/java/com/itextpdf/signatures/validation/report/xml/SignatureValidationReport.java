@@ -41,6 +41,7 @@ class SignatureValidationReport extends AbstractIdentifiableObject implements Su
         return signatureIdentifier;
     }
 
+    @Override
     public void setSignatureValidationStatus(SignatureValidationStatus status) {
         this.status = status;
     }

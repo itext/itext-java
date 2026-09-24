@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -61,10 +62,11 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfPage.class);
+
     private static final List<PdfName> PAGE_EXCLUDED_KEYS = new ArrayList<>(Arrays.asList(
             PdfName.Parent,
             PdfName.Annots,
@@ -130,7 +132,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
     /**
      * Gets page size, considering page rotation.
      *
-     * @return {@link Rectangle} that specify size of rotated page.
+     * <p>
+     * Rotation is applied as successive 90-degree clockwise quarter-turns using
+     * {@link PageSize#rotate()}. The resulting rectangle is anchored at the rotated
+     * origin point (its lower-left corner is rotated together with the page), rather
+     * than being rebased to the lower-left corner of an enclosing axis-aligned
+     * bounding box.
+     *
+     * @return {@link Rectangle} that specifies size and position of the rotated page
      */
     public Rectangle getPageSizeWithRotation() {
         PageSize rect = new PageSize(getPageSize());
@@ -595,12 +604,9 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         int mediaBoxSize;
         if ((mediaBoxSize = mediaBox.size()) != 4) {
             if (mediaBoxSize > 4) {
-                Logger logger = LoggerFactory.getLogger(PdfPage.class);
-                if (logger.isErrorEnabled()) {
-                    logger.error(MessageFormatUtil.format(IoLogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS,
-                            mediaBoxSize));
+                LOGGER.error(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.WRONG_MEDIABOX_SIZE_TOO_MANY_ARGUMENTS, mediaBoxSize));
 
-                }
             }
             if (mediaBoxSize < 4) {
                 throw new PdfException(KernelExceptionMessageConstant.WRONG_MEDIA_BOX_SIZE_TOO_FEW_ARGUMENTS)
@@ -1225,8 +1231,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
      */
     public void addAssociatedFile(String description, PdfFileSpec fs) {
         if (null == ((PdfDictionary) fs.getPdfObject()).get(PdfName.AFRelationship)) {
-            Logger logger = LoggerFactory.getLogger(PdfPage.class);
-            logger.error(IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
+            LOGGER.error(() -> IoLogMessageConstant.ASSOCIATED_FILE_SPEC_SHALL_INCLUDE_AFRELATIONSHIP);
         }
         if (null != description) {
             PdfString key = new PdfString(description);
@@ -1368,12 +1373,14 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
         if (annotation instanceof PdfLinkAnnotation) {
             // "Link" and "Reference" tags were added starting from PDF 1.4
             if (PdfVersion.PDF_1_3.compareTo(getDocument().getPdfVersion()) < 0) {
-                if (StandardRoles.REFERENCE.equals(tagPointer.getRole()) ||
-                        StandardRoles.LINK.equals(tagPointer.getRole())) {
+                if (StandardRoles.LINK.equals(tagPointer.getRole())) {
                     return false;
                 }
                 String linkRole = ((PdfLinkAnnotation) annotation).getRoleBasedOnDestination(getDocument());
                 if (StandardRoles.REFERENCE.equals(linkRole) && isReferenceAllowed(tagPointer.getRole())) {
+                    if (StandardRoles.REFERENCE.equals(tagPointer.getRole())) {
+                        return false;
+                    }
                     PdfNamespace currentNamespace = tagPointer.getNamespaceForNewTags();
                     if (PdfVersion.PDF_2_0.compareTo(getDocument().getPdfVersion()) <= 0) {
                         tagPointer.setNamespaceForNewTags(PdfNamespace.getDefault(getDocument()));
@@ -1416,8 +1423,7 @@ public class PdfPage extends PdfObjectWrapper<PdfDictionary> {
             copier.copy(this, page);
         } else {
             if (!toDocument.getWriter().isUserWarnedAboutAcroFormCopying && getDocument().hasAcroForm()) {
-                Logger logger = LoggerFactory.getLogger(PdfPage.class);
-                logger.warn(IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
+                LOGGER.warn(() -> IoLogMessageConstant.SOURCE_DOCUMENT_HAS_ACROFORM_DICTIONARY);
                 toDocument.getWriter().isUserWarnedAboutAcroFormCopying = true;
             }
         }

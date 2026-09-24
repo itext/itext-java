@@ -25,12 +25,22 @@ package com.itextpdf.io.font.otf;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class storing OpenType feature records.
+ */
 public class OpenTypeFeature {
-    private OpenTypeFontTableReader openTypeReader;
-    private List<FeatureRecord> records;
-    
-    public OpenTypeFeature(OpenTypeFontTableReader openTypeReader, int locationFeatureTable) throws java.io.IOException {
-        this.openTypeReader = openTypeReader;
+    private final List<FeatureRecord> records;
+
+    /**
+     * Creates a new OpenType feature records.
+     *
+     * @param openTypeReader the open type reader
+     * @param locationFeatureTable the location feature table
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
+    public OpenTypeFeature(OpenTypeFontTableReader openTypeReader, int locationFeatureTable)
+            throws java.io.IOException {
         records = new ArrayList<>();
         openTypeReader.rf.seek(locationFeatureTable);
         TagAndLocation[] tagsLocs = openTypeReader.readTagAndLocations(locationFeatureTable);
@@ -44,11 +54,23 @@ public class OpenTypeFeature {
             records.add(rec);
         }
     }
-    
+
+    /**
+     * Returns the records.
+     *
+     * @return the requested result
+     */
     public List<FeatureRecord> getRecords() {
         return records;
     }
-    
+
+    /**
+     * Returns the record.
+     *
+     * @param idx the record index
+     *
+     * @return the requested result
+     */
     public FeatureRecord getRecord(int idx) {
         if (idx < 0 || idx >= records.size())
             return null;

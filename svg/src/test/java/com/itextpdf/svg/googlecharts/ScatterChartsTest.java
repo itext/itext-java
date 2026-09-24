@@ -34,36 +34,36 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class ScatterChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/ScatterChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/ScatterChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/ScatterChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/ScatterChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void scatterCharts() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "scatterCharts");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "scatterCharts");
     }
 
     @Test
     public void scatterDualYChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "scatterDualYChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "scatterDualYChart");
     }
 
     @Test
     public void scatterMaterialChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "scatterMaterialChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "scatterMaterialChart");
     }
 
     @Test
     public void scatterStarsChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "scatterStarsChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "scatterStarsChart");
     }
 
     @Test
     public void scatterTopXChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "scatterTopXChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "scatterTopXChart");
     }
 }

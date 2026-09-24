@@ -24,6 +24,8 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
@@ -40,8 +42,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the CrlClient that fetches the CRL bytes
@@ -53,7 +53,7 @@ public class CrlClientOnline implements ICrlClient {
     /**
      * The Logger instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CrlClientOnline.class);
+    private static final LazyLogger LOGGER = new LazyLogger(CrlClientOnline.class);
 
     /**
      * The URLs of the CRLs.
@@ -100,7 +100,7 @@ public class CrlClientOnline implements ICrlClient {
     public CrlClientOnline(Certificate[] chain) {
         for (Certificate certificate : chain) {
             X509Certificate cert = (X509Certificate) certificate;
-            LOGGER.info("Checking certificate: " + cert.getSubjectDN());
+            LOGGER.info(() -> "Checking certificate: " + cert.getSubjectDN());
             List<String> urls = CertificateUtil.getCRLURLs(cert);
             for (String url : urls) {
                 addUrl(url);
@@ -125,8 +125,8 @@ public class CrlClientOnline implements ICrlClient {
         }
         List<URL> urlList = new ArrayList<>(urls);
         if (urlList.isEmpty()) {
-            LOGGER.info(MessageFormatUtil.format(
-                    "Looking for CRL for certificate {0}", BOUNCY_CASTLE_FACTORY.createX500Name(checkCert)));
+            IX500Name x500Name = BOUNCY_CASTLE_FACTORY.createX500Name(checkCert);
+            LOGGER.info(() -> MessageFormatUtil.format("Looking for CRL for certificate {0}", x500Name));
             try {
                 List<String> urlsList = new ArrayList<>();
                 if (url == null) {
@@ -139,16 +139,16 @@ public class CrlClientOnline implements ICrlClient {
                 }
                 for (String urlString : urlsList) {
                     urlList.add(new URL(urlString));
-                    LOGGER.info("Found CRL url: " + urlString);
+                    LOGGER.info(() -> "Found CRL url: " + urlString);
                 }
             } catch (Exception e) {
-                LOGGER.info("Skipped CRL url: " + e.getMessage());
+                LOGGER.info(() -> "Skipped CRL url: " + e.getMessage());
             }
         }
         List<byte[]> ar = new ArrayList<>();
         for (URL urlt : urlList) {
             try {
-                LOGGER.info("Checking CRL: " + urlt);
+                LOGGER.info(() -> "Checking CRL: " + urlt);
                 InputStream inp = getCrlResponse(checkCert, urlt);
                 byte[] buf = new byte[1024];
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -161,9 +161,9 @@ public class CrlClientOnline implements ICrlClient {
                 }
                 inp.close();
                 ar.add(bout.toByteArray());
-                LOGGER.info("Added CRL found at: " + urlt);
+                LOGGER.info(() -> "Added CRL found at: " + urlt);
             } catch (Exception e) {
-                LOGGER.info(MessageFormatUtil.format(IoLogMessageConstant.INVALID_DISTRIBUTION_POINT,
+                LOGGER.info(() -> MessageFormatUtil.format(IoLogMessageConstant.INVALID_DISTRIBUTION_POINT,
                         e.getMessage()));
             }
         }
@@ -233,7 +233,7 @@ public class CrlClientOnline implements ICrlClient {
         try {
             addUrl(new URL(url));
         } catch (MalformedURLException e) {
-            LOGGER.info("Skipped CRL url (malformed): " + url);
+            LOGGER.info(() -> "Skipped CRL url (malformed): " + url);
         }
     }
 
@@ -244,11 +244,11 @@ public class CrlClientOnline implements ICrlClient {
      */
     protected void addUrl(URL url) {
         if (urls.contains(url)) {
-            LOGGER.info("Skipped CRL url (duplicate): " + url);
+            LOGGER.info(() -> "Skipped CRL url (duplicate): " + url);
             return;
         }
         urls.add(url);
-        LOGGER.info("Added CRL url: " + url);
+        LOGGER.info(() -> "Added CRL url: " + url);
     }
 
     /**

@@ -22,11 +22,9 @@
  */
 package com.itextpdf.layout.properties;
 
-import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.GradientColorStop;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder;
 import com.itextpdf.kernel.colors.gradients.StrategyBasedLinearGradientBuilder.GradientStrategy;
@@ -34,7 +32,6 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
@@ -56,6 +53,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -70,6 +68,11 @@ public class BackgroundImageTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -133,57 +136,77 @@ public class BackgroundImageTest extends ExtendedITextTest {
 
     @Test
     public void backgroundImageWithLinearGradientTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder).build();
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder()
+                .setGradientBuilder(gradientBuilder)
+                .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradient", backgroundImage);
     }
 
     @Test
     public void backgroundImageWithLinearGradientAndPositionTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder)
-                .setBackgroundPosition(new BackgroundPosition().setYShift(UnitValue.createPointValue(30)).setXShift(UnitValue.createPointValue(50))).build();
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder().setGradientBuilder(gradientBuilder)
+                .setBackgroundPosition(new BackgroundPosition()
+                        .setYShift(UnitValue.createPointValue(30))
+                        .setXShift(UnitValue.createPointValue(50)))
+                .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndPosition", backgroundImage);
     }
 
     @Test
     public void backgroundImageWithLinearGradientAndRepeatTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage backgroundImage = new BackgroundImage.Builder()
-                .setLinearGradientBuilder(gradientBuilder).setBackgroundRepeat(new BackgroundRepeat()).build();
+                .setGradientBuilder(gradientBuilder)
+                .setBackgroundRepeat(new BackgroundRepeat())
+                .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndRepeat", backgroundImage);
     }
 
     @Test
     public void backgroundImageWithLinearGradientAndPositionAndRepeatTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder).setBackgroundRepeat(new BackgroundRepeat())
-                .setBackgroundPosition(new BackgroundPosition().setYShift(UnitValue.createPointValue(30)).setXShift(UnitValue.createPointValue(50))).build();
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder()
+                .setGradientBuilder(gradientBuilder)
+                .setBackgroundRepeat(new BackgroundRepeat())
+                .setBackgroundPosition(new BackgroundPosition()
+                        .setYShift(UnitValue.createPointValue(30))
+                        .setXShift(UnitValue.createPointValue(50)))
+                .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndPositionAndRepeat", backgroundImage);
     }
 
     @Test
     @LogMessages(messages = {
-            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel = LogLevelConstants.WARN)
+            @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, logLevel =
+                    LogLevelConstants.WARN)
     })
     public void backgroundImageWithLinearGradientAndTransformTest() throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder).build();
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder()
+                .setGradientBuilder(gradientBuilder)
+                .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndTransform", backgroundImage, Math.PI / 4);
     }
 
@@ -200,7 +223,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageForText.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageForText.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
 
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
@@ -223,7 +246,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPercentWidth.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPercentWidth.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -244,7 +267,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPercentHeight.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPercentHeight.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -265,7 +288,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPercentHeightAndWidth.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPercentHeightAndWidth.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -287,7 +310,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPointWidth.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPointWidth.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -308,7 +331,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPointHeight.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPointHeight.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -329,7 +352,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithPointHeightAndWidth.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithPointHeightAndWidth.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -351,7 +374,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "backgroundImageWithLowWidthAndHeight.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_backgroundImageWithLowWidthAndHeight.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDocument);
             Text textElement = new Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                     "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
@@ -429,7 +452,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String fileName = filename + ".pdf";
         String outFileName = DESTINATION_FOLDER + fileName;
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             BackgroundImage backgroundImage = new BackgroundImage.Builder().setImage(createFormXObject(pdfDocument, "itis.jpg")).build();
 
             Assertions.assertEquals(BackgroundRepeatValue.REPEAT, backgroundImage.getRepeat().getXAxisRepeat());
@@ -446,7 +469,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String fileName = filename + ".pdf";
         String outFileName = DESTINATION_FOLDER + fileName;
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             BackgroundImage backgroundImage = new BackgroundImage.Builder()
                     .setImage(createFormXObject(pdfDocument, "itis.jpg"))
                     .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT, BackgroundRepeatValue.REPEAT)).build();
@@ -465,7 +488,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String fileName = filename + ".pdf";
         String outFileName = DESTINATION_FOLDER + fileName;
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             BackgroundImage backgroundImage = new BackgroundImage
                     .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg"))
                     .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.REPEAT, BackgroundRepeatValue.NO_REPEAT)).build();
@@ -484,7 +507,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String fileName = filename + ".pdf";
         String outFileName = DESTINATION_FOLDER + fileName;
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             BackgroundImage backgroundImage = new BackgroundImage
                     .Builder().setImage(createFormXObject(pdfDocument, "itis.jpg"))
                     .setBackgroundRepeat(new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT)).build();
@@ -504,7 +527,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
 
             Document doc = new Document(pdfDocument);
 
@@ -546,7 +569,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName;
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
 
             Document doc = new Document(pdfDocument);
 
@@ -717,17 +740,24 @@ public class BackgroundImageTest extends ExtendedITextTest {
     }
 
     private void blendModeTest(BlendMode blendMode) throws IOException, InterruptedException {
-        AbstractLinearGradientBuilder gradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .addColorStop(new GradientColorStop(ColorConstants.BLACK.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.WHITE.getColorValue()));
-        BackgroundImage backgroundImage = new BackgroundImage.Builder().setLinearGradientBuilder(gradientBuilder).build();
-        AbstractLinearGradientBuilder topGradientBuilder = new StrategyBasedLinearGradientBuilder()
-                .setGradientDirectionAsStrategy(GradientStrategy.TO_RIGHT)
-                .addColorStop(new GradientColorStop(ColorConstants.RED.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
-                .addColorStop(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
+        StrategyBasedLinearGradientBuilder gradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .addStopColor(new GradientColorStop(ColorConstants.BLACK.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.WHITE.getColorValue()));
+        BackgroundImage backgroundImage = new BackgroundImage.Builder()
+                .setGradientBuilder(gradientBuilder)
+                .build();
+        StrategyBasedLinearGradientBuilder topGradientBuilder =
+                (StrategyBasedLinearGradientBuilder) new StrategyBasedLinearGradientBuilder()
+                        .setGradientDirectionAsStrategy(GradientStrategy.TO_RIGHT)
+                        .addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.GREEN.getColorValue()))
+                        .addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue()));
         BackgroundImage topBackgroundImage =
-                new BackgroundImage.Builder().setLinearGradientBuilder(topGradientBuilder).setBackgroundBlendMode(blendMode).build();
+                new BackgroundImage.Builder()
+                        .setGradientBuilder(topGradientBuilder)
+                        .setBackgroundBlendMode(blendMode)
+                        .build();
         backgroundImageGenericTest("backgroundImageWithLinearGradientAndBlendMode_"
                 + blendMode.getPdfRepresentation().getValue(), Arrays.asList(topBackgroundImage, backgroundImage));
     }
@@ -760,7 +790,7 @@ public class BackgroundImageTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + filename + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + filename + ".pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         String text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +

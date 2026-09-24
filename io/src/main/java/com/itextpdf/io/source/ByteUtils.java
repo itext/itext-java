@@ -22,14 +22,18 @@
  */
 package com.itextpdf.io.source;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.DecimalFormatUtil;
 
 import java.nio.charset.StandardCharsets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/**
+ * Converts strings and numbers to ISO-8859-1 compatible byte representations.
+ */
 public final class ByteUtils {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ByteUtils.class);
 
     static boolean HighPrecision = false;
 
@@ -38,6 +42,13 @@ public final class ByteUtils {
     private static final byte[] one = new byte[]{49};
     private static final byte[] negOne = new byte[]{(byte) '-', 49};
 
+    /**
+     * Converts each character in a string to its low byte.
+     *
+     * @param text the text to convert
+     *
+     * @return a new byte array, or {@code null} when {@code text} is {@code null}
+     */
     public static byte[] getIsoBytes(String text) {
         if (text == null)
             return null;
@@ -48,10 +59,27 @@ public final class ByteUtils {
         return b;
     }
 
+    /**
+     * Converts a string to bytes and optionally prefixes it with a byte.
+     *
+     * @param pre  the prefix byte; zero omits the prefix
+     * @param text the text to convert
+     *
+     * @return a new byte array, or {@code null} when {@code text} is {@code null}
+     */
     public static byte[] getIsoBytes(byte pre, String text) {
         return getIsoBytes(pre, text, (byte) 0);
     }
 
+    /**
+     * Converts a string to bytes and optionally surrounds it with bytes.
+     *
+     * @param pre  the prefix byte; zero omits the prefix
+     * @param text the text to convert
+     * @param post the suffix byte; zero omits the suffix
+     *
+     * @return a new byte array, or {@code null} when {@code text} is {@code null}
+     */
     public static byte[] getIsoBytes(byte pre, String text, byte post) {
         if (text == null)
             return null;
@@ -76,10 +104,24 @@ public final class ByteUtils {
         return b;
     }
 
+    /**
+     * Formats an integer as ISO-8859-1 compatible decimal bytes.
+     *
+     * @param n the integer to format
+     *
+     * @return the decimal representation
+     */
     public static byte[] getIsoBytes(int n) {
         return getIsoBytes(n, null);
     }
 
+    /**
+     * Formats a floating-point value as ISO-8859-1 compatible decimal bytes.
+     *
+     * @param d the value to format
+     *
+     * @return the decimal representation using the current global precision setting
+     */
     public static byte[] getIsoBytes(double d) {
         return getIsoBytes(d, null);
     }
@@ -117,8 +159,7 @@ public final class ByteUtils {
                 }
             }
             if (Double.isNaN(d)) {
-                Logger logger = LoggerFactory.getLogger(ByteUtils.class);
-                logger.error(IoLogMessageConstant.ATTEMPT_PROCESS_NAN);
+                LOGGER.error(() -> IoLogMessageConstant.ATTEMPT_PROCESS_NAN);
                 d = 0;
             }
             byte[] result = DecimalFormatUtil.formatNumber(d, "0.######").getBytes(StandardCharsets.ISO_8859_1);
@@ -225,8 +266,7 @@ public final class ByteUtils {
                 v = Long.MAX_VALUE;
             } else {
                 if (Double.isNaN(d)) {
-                    Logger logger = LoggerFactory.getLogger(ByteUtils.class);
-                    logger.error(IoLogMessageConstant.ATTEMPT_PROCESS_NAN);
+                    LOGGER.error(() -> IoLogMessageConstant.ATTEMPT_PROCESS_NAN);
                     // in java NaN casted to long results in 0, but in .NET it results in long.MIN_VALUE
                     d = 0;
                 }

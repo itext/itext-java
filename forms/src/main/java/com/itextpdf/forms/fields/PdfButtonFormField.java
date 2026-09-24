@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.EncodingUtil;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
@@ -34,15 +35,13 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An interactive control on the screen that raises events and/or can retain data.
  */
 public class PdfButtonFormField extends PdfFormField {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfButtonFormField.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PdfButtonFormField.class);
     /**
      * If true, clicking the selected button deselects it, leaving no button selected.
      * If false, exactly one radio button shall be selected at all times.
@@ -245,7 +244,7 @@ public class PdfButtonFormField extends PdfFormField {
                 annotation.setAppearanceState(new PdfName(PdfFormAnnotation.OFF_STATE_VALUE));
             }
             if (annotation.getRectangle() == null) {
-                LOGGER.warn(FormsLogMessageConstants.RADIO_HAS_NO_RECTANGLE);
+                LOGGER.warn(() -> FormsLogMessageConstants.RADIO_HAS_NO_RECTANGLE);
                 return super.addKid(kid);
             }
             kidAsFormAnnotation.drawRadioButtonAndSaveAppearance(appearanceState.getValue());

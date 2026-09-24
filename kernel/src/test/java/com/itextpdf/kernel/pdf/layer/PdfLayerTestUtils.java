@@ -77,7 +77,7 @@ class PdfLayerTestUtils {
             try (PdfDocument cmpDoc = new PdfDocument(CompareTool.createOutputReader(cmpPdf))) {
                 PdfDictionary outOCP = outDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
                 PdfDictionary cmpOCP = cmpDoc.getCatalog().getPdfObject().getAsDictionary(PdfName.OCProperties);
-                Assertions.assertNull(new CompareTool().compareDictionariesStructure(outOCP, cmpOCP));
+                Assertions.assertNull(new CompareTool().compareDictionariesByStructure(outOCP, cmpOCP));
             }
         }
     }

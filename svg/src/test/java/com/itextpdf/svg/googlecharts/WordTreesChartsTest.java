@@ -35,34 +35,34 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class WordTreesChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/WordTreesChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/WordTreesChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/WordTreesChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/WordTreesChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void wordTreesChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "wordTreesChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "wordTreesChart");
     }
 
     @Test
     //TODO update cmp file after DEVSIX-4136 will be fixed (opacity gradient)
     public void wordTrees2Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "wordTrees2Chart", PageSize.A1);
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "wordTrees2Chart", PageSize.A1);
     }
 
     @Test
     //TODO update cmp file after DEVSIX-4136 will be fixed (opacity gradient)
     public void wordTrees3Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "wordTrees3Chart", PageSize.A1);
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "wordTrees3Chart", PageSize.A1);
     }
 
     @Test
     //TODO update cmp file after DEVSIX-4136 will be fixed (opacity gradient)
     public void wordTrees4Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "wordTrees4Chart", PageSize.A1);
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "wordTrees4Chart", PageSize.A1);
     }
 }

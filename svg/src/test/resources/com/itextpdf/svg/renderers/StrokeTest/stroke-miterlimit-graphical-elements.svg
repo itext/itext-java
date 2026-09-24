@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="900">
+  <style>
+    .case { fill: none; stroke: black; stroke-width: 10; stroke-linejoin: miter; }
+    .highlight { fill: none; stroke: red; stroke-width: 1; }
+  </style>
+
+  <text x="10" y="25">stroke-miterlimit: 1 on path</text>
+  <path class="case" stroke-miterlimit="1" d="M105,65 L125,35 L145,65"/>
+  <text x="10" y="100">stroke-miterlimit: 1 on polygon</text>
+  <polygon class="case" stroke-miterlimit="1" points="105,140 125,110 145,140"/>
+  <text x="10" y="175">stroke-miterlimit: 1 on polyline</text>
+  <polyline class="case" stroke-miterlimit="1" points="105,215 125,185 145,215"/>
+  <text x="10" y="250">stroke-miterlimit: 1 on rect</text>
+  <rect class="case" stroke-miterlimit="1" x="65" y="270" width="120" height="35"/>
+
+  <text x="10" y="325">stroke-miterlimit: 4 on path</text>
+  <path class="case" stroke-miterlimit="4" d="M105,365 L125,335 L145,365"/>
+  <text x="10" y="400">stroke-miterlimit: 4 on polygon</text>
+  <polygon class="case" stroke-miterlimit="4" points="105,440 125,410 145,440"/>
+  <text x="10" y="475">stroke-miterlimit: 4 on polyline</text>
+  <polyline class="case" stroke-miterlimit="4" points="105,515 125,485 145,515"/>
+  <text x="10" y="550">stroke-miterlimit: 4 on rect</text>
+  <rect class="case" stroke-miterlimit="4" x="65" y="570" width="120" height="35"/>
+
+  <text x="10" y="625">stroke-miterlimit: 10 on path</text>
+  <path class="case" stroke-miterlimit="10" d="M105,665 L125,635 L145,665"/>
+  <text x="10" y="700">stroke-miterlimit: 10 on polygon</text>
+  <polygon class="case" stroke-miterlimit="10" points="105,740 125,710 145,740"/>
+  <text x="10" y="775">stroke-miterlimit: 10 on polyline</text>
+  <polyline class="case" stroke-miterlimit="10" points="105,815 125,785 145,815"/>
+  <text x="10" y="850">stroke-miterlimit: 10 on rect</text>
+  <rect class="case" stroke-miterlimit="10" x="65" y="870" width="120" height="25"/>
+
+  <path class="highlight" d="M105,65 L125,35 L145,65
+      M105,140 L125,110 L145,140 Z M105,215 L125,185 L145,215 M65,270 H185 V305 H65 Z
+      M105,365 L125,335 L145,365
+      M105,440 L125,410 L145,440 Z M105,515 L125,485 L145,515 M65,570 H185 V605 H65 Z
+      M105,665 L125,635 L145,665
+      M105,740 L125,710 L145,740 Z M105,815 L125,785 L145,815 M65,870 H185 V895 H65 Z"/>
+</svg>

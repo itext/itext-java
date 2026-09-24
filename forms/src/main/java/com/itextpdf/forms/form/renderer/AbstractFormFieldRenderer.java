@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.forms.fields.PdfFormField;
 import com.itextpdf.forms.form.FormProperty;
 import com.itextpdf.forms.form.element.IFormField;
@@ -46,7 +47,6 @@ import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -136,7 +136,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
         LayoutResult result = super.layout(layoutContext);
 
         if (childRenderers.isEmpty()) {
-            LoggerFactory.getLogger(getClass()).error(FormsLogMessageConstants.ERROR_WHILE_LAYOUT_OF_FORM_FIELD);
+            new LazyLogger(getClass()).error(() -> FormsLogMessageConstants.ERROR_WHILE_LAYOUT_OF_FORM_FIELD);
             occupiedArea.getBBox().setWidth(0).setHeight(0);
         } else {
             flatRenderer = childRenderers.get(0);
@@ -166,7 +166,7 @@ public abstract class AbstractFormFieldRenderer extends BlockRenderer {
                     .setMinMaxWidth(new MinMaxWidth());
         }
         if (result.getStatus() != LayoutResult.FULL || !isRendererFit(parentWidth, parentHeight)) {
-            LoggerFactory.getLogger(getClass()).warn(FormsLogMessageConstants.INPUT_FIELD_DOES_NOT_FIT);
+            new LazyLogger(getClass()).warn(() -> FormsLogMessageConstants.INPUT_FIELD_DOES_NOT_FIT);
         }
         return new MinMaxWidthLayoutResult(LayoutResult.FULL, occupiedArea, this, null)
                 .setMinMaxWidth(

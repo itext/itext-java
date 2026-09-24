@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.commons.utils.MessageFormatUtil;
@@ -36,14 +37,14 @@ import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 /**
  * An AcroForm field type representing any type of choice field. Choice fields
  * are to be represented by a viewer as a list box or a combo box.
  */
 public class PdfChoiceFormField extends PdfFormField {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfChoiceFormField.class);
 
     /**
      * If true, the field is a combo box.
@@ -176,8 +177,7 @@ public class PdfChoiceFormField extends PdfFormField {
      */
     public PdfChoiceFormField setListSelected(String[] optionValues, boolean generateAppearance) {
         if (optionValues.length > 1 && !isMultiSelect()) {
-            Logger logger = LoggerFactory.getLogger(this.getClass());
-            logger.warn(IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD);
+            LOGGER.warn(() -> IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD);
         }
         PdfArray options = getOptions();
         PdfArray indices = new PdfArray();
@@ -194,9 +194,8 @@ public class PdfChoiceFormField extends PdfFormField {
                 values.add(optByIndex.isString() ? (PdfString) optByIndex : (PdfString) ((PdfArray) optByIndex).get(1));
             } else {
                 if (!(this.isCombo() && this.isEdit())) {
-                    Logger logger = LoggerFactory.getLogger(this.getClass());
-                    logger.warn(MessageFormatUtil
-                            .format(IoLogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY, element,
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            IoLogMessageConstant.FIELD_VALUE_IS_NOT_CONTAINED_IN_OPT_ARRAY, element,
                                     this.getFieldName()));
                 }
                 values.add(new PdfString(element, PdfEncodings.UNICODE_BIG));
@@ -229,8 +228,7 @@ public class PdfChoiceFormField extends PdfFormField {
      */
     public PdfChoiceFormField setListSelected(int[] optionNumbers) {
         if (optionNumbers.length > 1 && !isMultiSelect()) {
-            Logger logger = LoggerFactory.getLogger(this.getClass());
-            logger.warn(IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD);
+            LOGGER.warn(() -> IoLogMessageConstant.MULTIPLE_VALUES_ON_A_NON_MULTISELECT_FIELD);
         }
         PdfArray indices = new PdfArray();
         PdfArray values = new PdfArray();

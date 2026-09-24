@@ -24,6 +24,9 @@ package com.itextpdf.io.image;
 
 import java.net.URL;
 
+/**
+ * Image data encoded as raw samples or CCITT-compressed bilevel samples.
+ */
 public class RawImageData extends ImageData {
 
     /**
@@ -67,26 +70,54 @@ public class RawImageData extends ImageData {
     public static final int CCITT_ENDOFBLOCK = 8;
 
     //NOTE in itext5 instead of typeCcitt bpc property was using for both bpc and type CCITT.
+    /** CCITT compression type when the image uses CCITT encoding. */
     protected int typeCcitt;
 
 
+    /**
+     * Creates raw image data whose bytes are available from a URL.
+     *
+     * @param url  source URL, not {@code null}
+     * @param type declared source image type
+     */
     protected RawImageData(URL url, ImageType type) {
         super(url, type);
     }
 
+    /**
+     * Creates raw image data from encoded bytes.
+     *
+     * @param bytes encoded image bytes; the array is retained
+     * @param type  declared source image type
+     */
     protected RawImageData(byte[] bytes, ImageType type) {
         super(bytes, type);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@code true}
+     */
     @Override
     public boolean isRawImage(){
         return true;
     }
 
+    /**
+     * Gets the CCITT compression type.
+     *
+     * @return CCITT compression type
+     */
     public int getTypeCcitt() {
         return typeCcitt;
     }
 
+    /**
+     * Sets the CCITT compression type.
+     *
+     * @param typeCcitt one of the CCITT type constants
+     */
     public void setTypeCcitt(int typeCcitt) {
         this.typeCcitt = typeCcitt;
     }

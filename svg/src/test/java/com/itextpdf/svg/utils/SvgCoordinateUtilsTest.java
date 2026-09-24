@@ -77,7 +77,6 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
         Assertions.assertEquals(expected, actual, DELTA);
     }
 
-
     @Test
     public void calculateAngleBetweenTwoVectors90degTest() {
         Vector vectorA = new Vector(1, 0, 0);
@@ -396,7 +395,6 @@ public class SvgCoordinateUtilsTest extends ExtendedITextTest {
                 .applyViewBox(VIEW_BOX, VIEW_PORT_VERTICAL, Values.XMIN_YMID, Values.SLICE);
         Assertions.assertTrue(new Rectangle(-100F, -200F, 100F, 100F).equalsWithEpsilon(appliedViewBox));
     }
-
 
     @Test
     public void applyViewBoxXMinYMaxMeetHorizontalTest() {

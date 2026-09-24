@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
@@ -49,12 +50,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FlexContainerRenderer extends DivRenderer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FlexContainerRenderer.class);
+    private static final LazyLogger LOGGER = new LazyLogger(FlexContainerRenderer.class);
 
     /**
      * Used for caching purposes in FlexUtil
@@ -247,7 +246,7 @@ public class FlexContainerRenderer extends DivRenderer {
         }
 
         if (this.getPropertyAsFloat(Property.ROTATION_ANGLE) != null) {
-            return RotationUtils.countRotationMinMaxWidth(minMaxWidth, this);
+            return RotationUtils.calculateRotationMinMaxWidth(minMaxWidth, this);
         }
 
         return minMaxWidth;
@@ -408,8 +407,13 @@ public class FlexContainerRenderer extends DivRenderer {
         final Rectangle oldBBox = occupiedArea.getBBox().clone();
         final Rectangle recalculatedRectangle = Rectangle.getCommonRectangle(occupiedArea.getBBox(),
                 resultBBox);
-        occupiedArea.getBBox().setY(recalculatedRectangle.getY());
-        occupiedArea.getBBox().setHeight(recalculatedRectangle.getHeight());
+        if (isVerticalWriting()) {
+            occupiedArea.setBBox(recalculatedRectangle);
+        } else {
+            occupiedArea.getBBox().setY(recalculatedRectangle.getY());
+            occupiedArea.getBBox().setHeight(recalculatedRectangle.getHeight());
+        }
+
         if (oldBBox.getTop() < occupiedArea.getBBox().getTop()) {
             occupiedArea.getBBox().decreaseHeight(occupiedArea.getBBox().getTop() - oldBBox.getTop());
         }
@@ -564,8 +568,7 @@ public class FlexContainerRenderer extends DivRenderer {
     @Override
     public void addChild(IRenderer renderer) {
         if (renderer instanceof AreaBreakRenderer || renderer instanceof SectionBreakRenderer) {
-            LOGGER.warn(
-                    LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK);
+            LOGGER.warn(() -> LayoutLogMessageConstant.FLEX_CONTAINER_SHOULD_NOT_CONTAIN_AREA_OR_SECTION_BREAK);
             return;
         }
 

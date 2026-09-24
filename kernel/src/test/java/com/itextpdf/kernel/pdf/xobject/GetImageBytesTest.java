@@ -1370,6 +1370,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
         public final java.util.List<Tuple2<String, byte[]>> images = new ArrayList<>();
 
 
+        @Override
         public void eventOccurred(IEventData data, EventType type) {
             switch (type) {
                 case RENDER_IMAGE:
@@ -1382,6 +1383,7 @@ public class GetImageBytesTest extends ExtendedITextTest {
             }
         }
 
+        @Override
         public Set<EventType> getSupportedEvents() {
             return null;
         }

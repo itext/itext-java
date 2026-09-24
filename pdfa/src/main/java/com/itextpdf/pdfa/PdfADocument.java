@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfa;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.pdf.DocumentProperties;
 import com.itextpdf.kernel.pdf.PdfAConformance;
@@ -43,8 +44,6 @@ import com.itextpdf.pdfa.exceptions.PdfAConformanceException;
 import com.itextpdf.pdfa.exceptions.PdfaExceptionMessageConstant;
 import com.itextpdf.pdfa.logs.PdfALogMessageConstant;
 
-import org.slf4j.LoggerFactory;
-
 /**
  * This class extends {@link PdfDocument} and is in charge of creating files
  * that comply with the PDF/A standard.
@@ -60,6 +59,9 @@ import org.slf4j.LoggerFactory;
  * adhere to the PDF/A guidelines specified by the {@link PdfConformance}.
  */
 public class PdfADocument extends PdfDocument {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfADocument.class);
+
     /**
      * Constructs a new PdfADocument for writing purposes, i.e. from scratch. A
      * PDF/A file has a conformance, and must have an explicit output
@@ -184,7 +186,7 @@ public class PdfADocument extends PdfDocument {
         writer.getProperties().addPdfAXmpMetadata(aConformance);
         final PdfVersion aConformancePdfVersion = getPdfVersionAccordingToConformance(aConformance);
         if (writer.getPdfVersion() != null && !writer.getPdfVersion().equals(aConformancePdfVersion)) {
-            LoggerFactory.getLogger(PdfADocument.class).warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     PdfALogMessageConstant.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, aConformancePdfVersion));
         }
         writer.getProperties().setPdfVersion(aConformancePdfVersion);

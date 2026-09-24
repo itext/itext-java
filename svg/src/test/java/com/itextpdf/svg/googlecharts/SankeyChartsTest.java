@@ -34,41 +34,41 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class SankeyChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/SankeyChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/SankeyChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/SankeyChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/SankeyChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void sankeyBordersChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "sankeyBordersChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "sankeyBordersChart");
     }
 
     @Test
     public void sankeyChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "sankeyChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "sankeyChart");
     }
 
     @Test
     public void sankeyColoredChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "sankeyColoredChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "sankeyColoredChart");
     }
 
     @Test
     public void sankeyFontsChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "sankeyFontsChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "sankeyFontsChart");
     }
 
     @Test
     public void sankeyMultilevelChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "sankeyMultilevelChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "sankeyMultilevelChart");
     }
 
     @Test
     public void sankeyNodesChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "sankeyNodesChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "sankeyNodesChart");
     }
 }

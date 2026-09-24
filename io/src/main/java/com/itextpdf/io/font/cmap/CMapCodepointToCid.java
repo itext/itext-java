@@ -34,10 +34,18 @@ public class CMapCodepointToCid extends AbstractCMap {
 
     private final IntHashtable map;
 
+    /**
+     * Creates an empty character code to CID map.
+     */
     public CMapCodepointToCid() {
         map = new IntHashtable();
     }
 
+    /**
+     * Creates a map by reversing a CID to code mapping.
+     *
+     * @param reverseMap the CID to code mapping to reverse
+     */
     public CMapCodepointToCid(CMapCidToCodepoint reverseMap) {
         map = reverseMap.getReversMap();
     }
@@ -55,6 +63,13 @@ public class CMapCodepointToCid extends AbstractCMap {
         }
     }
 
+    /**
+     * Looks up the CID assigned to a character code.
+     *
+     * @param codepoint the integer representation of the encoded character code
+     *
+     * @return the mapped CID, or {@code 0} when absent
+     */
     public int lookup(int codepoint) {
         return this.map.get(codepoint);
     }

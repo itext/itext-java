@@ -144,6 +144,7 @@ public final class IteratorOptions extends Options
 	/**
 	 * @see Options#defineOptionName(int)
 	 */
+	@Override
 	protected String defineOptionName(int option)
 	{
 		switch (option)
@@ -160,6 +161,7 @@ public final class IteratorOptions extends Options
 	/**
 	 * @see Options#getValidOptions()
 	 */
+	@Override
 	protected int getValidOptions()
 	{
 		return 

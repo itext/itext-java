@@ -318,6 +318,7 @@ public class PdfIndirectReference extends PdfObject implements Comparable<PdfInd
      *
      * @param state special flag of current object
      */
+    @Override
     protected PdfObject setState(short state) {
         return super.setState(state);
     }

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250103181050+03'00')/ModDate(D:20250103181050+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20260817150021+03'00')/ModDate(D:20260817150021+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -37,7 +37,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 824.25 300]/Length 10362/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 824.25 300]/Length 10414/Resources<</Font<</F1 6 0 R/F2 7 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 824.25 300 re
 W
 n
@@ -127,6 +127,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % rect
 0 0 824.25 270 re
 S
@@ -134,6 +135,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 22.5 m
 824.25 22.5 l
@@ -142,6 +144,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 45 m
 824.25 45 l
@@ -150,6 +153,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 67.5 m
 824.25 67.5 l
@@ -158,6 +162,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 90 m
 824.25 90 l
@@ -166,6 +171,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 112.5 m
 824.25 112.5 l
@@ -174,6 +180,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 135 m
 824.25 135 l
@@ -182,6 +189,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 157.5 m
 824.25 157.5 l
@@ -190,6 +198,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 180 m
 824.25 180 l
@@ -198,6 +207,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 202.5 m
 824.25 202.5 l
@@ -206,6 +216,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 225 m
 824.25 225 l
@@ -214,6 +225,7 @@ Q
 q
 0.87843 0.87843 0.87843 RG
 0.75 w
+4 M
 % line
 0 247.5 m
 824.25 247.5 l
@@ -776,6 +788,7 @@ q
 1 1 1 rg
 0.75686 0.75686 0.75686 RG
 0.825 w
+4 M
 % rect
 % ellipse rounded rect
 563.06 164.25 m
@@ -890,8 +903,8 @@ xref
 0000000658 00000 n 
 0000000829 00000 n 
 trailer
-<</ID [<2125e41adcfa8e1c1949413e39b3935830cbe7886d819692ec47723c307efdf68b770d2e81f9c4a034275b098209b211fe7b1b4973d053324aed0f07491aaee1><2125e41adcfa8e1c1949413e39b3935830cbe7886d819692ec47723c307efdf68b770d2e81f9c4a034275b098209b211fe7b1b4973d053324aed0f07491aaee1>]/Info 3 0 R/Root 1 0 R/Size 10>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<ee63ccf3f8190c16c05d581caf75b3e8ebf50e8cea272db64eb17ca897d31999e4ffc8f106071e6acfad4f89c34835c0290d50540200bc454697af8c754d58ea><ee63ccf3f8190c16c05d581caf75b3e8ebf50e8cea272db64eb17ca897d31999e4ffc8f106071e6acfad4f89c34835c0290d50540200bc454697af8c754d58ea>]/Info 3 0 R/Root 1 0 R/Size 10>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-11329
+11381
 %%EOF

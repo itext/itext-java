@@ -34,71 +34,71 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class IntervalsChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/IntervalsChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/IntervalsChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/IntervalsChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/IntervalsChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void intervalsAreaChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsAreaChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsAreaChart");
     }
 
     @Test
     public void intervalsBackgroundBoxChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsBackgroundBoxChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsBackgroundBoxChart");
     }
 
     @Test
     public void intervalsBoxChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsBoxChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsBoxChart");
     }
 
     @Test
     public void intervalsBoxPlotChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsBoxPlotChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsBoxPlotChart");
     }
 
     @Test
     public void intervalsBoxThickChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsBoxThickChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsBoxThickChart");
     }
 
     @Test
     public void intervalsCombiningChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsCombiningChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsCombiningChart");
     }
 
     @Test
     public void intervalsLineChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsLineChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsLineChart");
     }
 
     @Test
     public void intervalsPointsChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsPointsChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsPointsChart");
     }
 
     @Test
     public void intervalsPointsWhiskersChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsPointsWhiskersChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsPointsWhiskersChart");
     }
 
     @Test
     public void intervalsStickChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsStickChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsStickChart");
     }
 
     @Test
     public void intervalsSticksHorizontalChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsSticksHorizontalChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsSticksHorizontalChart");
     }
 
     @Test
     public void intervalsTailoredChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "intervalsTailoredChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "intervalsTailoredChart");
     }
 }

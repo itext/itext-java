@@ -60,6 +60,7 @@ public final class CountOutputStream extends OutputStream
 	 * Counts the written bytes.
 	 * @see java.io.OutputStream#write(byte[], int, int)
 	 */
+	@Override
 	public void write(byte[] buf, int off, int len) throws IOException
 	{
 		output.write(buf, off, len);
@@ -70,6 +71,7 @@ public final class CountOutputStream extends OutputStream
 	 * Counts the written bytes.
 	 * @see java.io.OutputStream#write(byte[])
 	 */
+	@Override
 	public void write(byte[] buf) throws IOException
 	{
 		output.write(buf);
@@ -80,6 +82,7 @@ public final class CountOutputStream extends OutputStream
 	 * Counts the written bytes.
 	 * @see java.io.OutputStream#write(int)
 	 */
+	@Override
 	public void write(int b) throws IOException
 	{
 		output.write(b);

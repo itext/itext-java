@@ -42,6 +42,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -57,11 +58,16 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void getFieldsForFlatteningTest() throws IOException {
         String outPdfName = destinationFolder + "flattenedFormField.pdf";
         PdfDocument pdfDoc = new PdfDocument(new PdfReader(sourceFolder + "formFieldFile.pdf"),
-                new PdfWriter(outPdfName));
+                CompareTool.createTestPdfWriter(outPdfName));
 
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, false);
 
@@ -80,7 +86,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         form.flattenFields();
         pdfDoc.close();
 
-        PdfDocument outPdfDoc = new PdfDocument(new PdfReader(outPdfName));
+        PdfDocument outPdfDoc = new PdfDocument(CompareTool.createOutputReader(outPdfName));
         PdfAcroForm outPdfForm = PdfFormCreator.getAcroForm(outPdfDoc, false);
 
         Assertions.assertEquals(2, outPdfForm.getAllFormFields().size());
@@ -110,7 +116,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         String dest = destinationFolder + "multiLineFormFieldClippingTest_flattened.pdf";
         String cmp = sourceFolder + "cmp_multiLineFormFieldClippingTest_flattened.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfDocument doc = new PdfDocument(new PdfReader(src), CompareTool.createTestPdfWriter(dest));
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         form.getField("Text1").setValue("Tall letters: T I J L R E F");
         form.flattenFields();
@@ -162,7 +168,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
     private static void flattenFieldsAndCompare(String srcFile, String outFile)
             throws IOException, InterruptedException {
         PdfReader reader = new PdfReader(sourceFolder + srcFile);
-        PdfWriter writer = new PdfWriter(destinationFolder + outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + outFile);
         PdfDocument document = new PdfDocument(reader, writer);
         PdfFormCreator.getAcroForm(document, false).flattenFields();
 
@@ -196,7 +202,7 @@ public class FormFieldFlatteningTest extends ExtendedITextTest {
         String dest = destinationFolder + testName + ".pdf";
         String cmp = sourceFolder + "cmp_" + testName + ".pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfReader(src), new PdfWriter(dest));
+        PdfDocument doc = new PdfDocument(new PdfReader(src), CompareTool.createTestPdfWriter(dest));
         PdfAcroForm form = PdfFormCreator.getAcroForm(doc, true);
         for (PdfFormField field : form.getAllFormFields().values()) {
             if (field instanceof PdfTextFormField) {

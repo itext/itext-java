@@ -22,19 +22,21 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The class defines a default font strategy for {@link PdfDocument}
  * which is used in the scope of {@link PdfDocument#getDefaultFont()}.
  */
 public class DefaultFontStrategy {
+
+    private static final LazyLogger LOGGER = new LazyLogger(DefaultFontStrategy.class);
+
     private final PdfDocument pdfDocument;
     private PdfFont defaultFont = null;
 
@@ -61,8 +63,7 @@ public class DefaultFontStrategy {
                     defaultFont.makeIndirect(pdfDocument);
                 }
             } catch (IOException e) {
-                Logger logger = LoggerFactory.getLogger(DefaultFontStrategy.class);
-                logger.error(IoLogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
+                LOGGER.error(() -> IoLogMessageConstant.EXCEPTION_WHILE_CREATING_DEFAULT_FONT, e);
                 defaultFont = null;
             }
         }

@@ -66,6 +66,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -82,12 +83,17 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void trimFirstJapaneseCharactersTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "trimFirstJapaneseCharacters.pdf";
         String cmpFileName = sourceFolder + "cmp_trimFirstJapaneseCharacters.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         // UTF-8 encoding table and Unicode characters
@@ -111,7 +117,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordSplitAcrossTwoTextRenderers.pdf";
         String cmpFileName = sourceFolder + "cmp_wordSplitAcrossTwoTextRenderers.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -149,7 +155,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordSplitAcrossMultipleRenderers.pdf";
         String cmpFileName = sourceFolder + "cmp_wordSplitAcrossMultipleRenderers.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -195,7 +201,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordEndsAndFollowingTextRendererStartsWithWhitespaces01.pdf";
         String cmpFileName = sourceFolder + "cmp_wordEndsAndFollowingTextRendererStartsWithWhitespaces01.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -229,7 +235,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordEndsAndFollowingTextRendererStartsWithWhitespaces02.pdf";
         String cmpFileName = sourceFolder + "cmp_wordEndsAndFollowingTextRendererStartsWithWhitespaces02.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -259,7 +265,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "forcedWordSplit.pdf";
         String cmpFileName = sourceFolder + "cmp_forcedWordSplit.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -298,7 +304,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder
                 + "cmp_wordSplitAcrossMultipleRenderersOverflowXVisibleWithPrecedingPlaceholder.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -340,7 +346,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordSplitAcrossMultipleRenderersOverflowXVisible.pdf";
         String cmpFileName = sourceFolder + "cmp_wordSplitAcrossMultipleRenderersOverflowXVisible.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -378,7 +384,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordSplitRenderersWithFittingFloatingElementInBetween.pdf";
         String cmpFileName = sourceFolder + "cmp_wordSplitRenderersWithFittingFloatingElementInBetween.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -419,7 +425,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordSplitRenderersWithNotFittingFloatingElementInBetween.pdf";
         String cmpFileName = sourceFolder + "cmp_wordSplitRenderersWithNotFittingFloatingElementInBetween.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -456,7 +462,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordSplitRenderersWithFittingFloatingInBetweenInSecondWord.pdf";
         String cmpFileName = sourceFolder + "cmp_wordSplitRenderersWithFittingFloatingInBetweenInSecondWord.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -500,7 +506,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordSplitRenderersWithOverflowedFloatingElementInBetween.pdf";
         String cmpFileName = sourceFolder + "cmp_wordSplitRenderersWithOverflowedFloatingElementInBetween.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -541,7 +547,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordSplitAcrossMutipleTextRenderersWithinFloatingContainer.pdf";
         String cmpFileName = sourceFolder + "cmp_wordSplitAcrossMutipleTextRenderersWithinFloatingContainer.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -589,7 +595,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "wordSplitAcrossRenderersWithPrecedingImageRenderer.pdf";
         String cmpFileName = sourceFolder + "cmp_wordSplitAcrossRenderersWithPrecedingImageRenderer.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -635,7 +641,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "minMaxWidthWordSplitAcrossMultipleTextRenderers.pdf";
         String cmpFileName = sourceFolder + "cmp_minMaxWidthWordSplitAcrossMultipleTextRenderers.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -674,7 +680,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
     public void minWidthForWordInMultipleTextRenderersFollowedByFloatTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "minWidthForSpanningWordFollowedByFloat.pdf";
         String cmpFileName = sourceFolder + "cmp_minWidthForSpanningWordFollowedByFloat.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
         doc.setFontSize(40);
 
@@ -711,7 +717,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
     public void overflowWrapBreakWordWithOverflowXTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "overflowWrapBreakWordWithOverflowXTest.pdf";
         String cmpFileName = sourceFolder + "cmp_overflowWrapBreakWordWithOverflowXTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
         doc.setFontSize(40);
         Text text = new Text("wow");
@@ -736,7 +742,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "customTextRendererShouldOverrideGetNextRendererTest.pdf";
         String cmpFileName = sourceFolder + "cmp_customTextRendererShouldOverrideGetNextRendererTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Text text = new Text("If getNextRenderer() is not overridden and text overflows to the next line,"
@@ -785,7 +791,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheOnlySymbolTest.pdf";
         String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndIsTheOnlySymbolTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         // No place for any symbol (page width is fully occupied by margins)
         Document doc = new Document(pdfDocument, new PageSize(72, 1000));
 
@@ -808,7 +814,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "nbspCannotBeFitAndMakesTheFirstChunkTest.pdf";
         String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndMakesTheFirstChunkTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         // No place for any symbol (page width is fully occupied by margins)
         Document doc = new Document(pdfDocument, new PageSize(72, 1000));
 
@@ -832,7 +838,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest.pdf";
         String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndIsTheFirstSymbolOfChunkTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         // No place for any symbol (page width is fully occupied by margins)
         Document doc = new Document(pdfDocument, new PageSize(72, 1000));
 
@@ -852,7 +858,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "nbspCannotBeFitAndIsTheLastSymbolOfFirstChunkTest.pdf";
         String cmpFileName = sourceFolder + "cmp_nbspCannotBeFitAndIsTheLastSymbolOfFirstChunkTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         // No place for the second symbol
         Document doc = new Document(pdfDocument, new PageSize(81, 1000));
 
@@ -876,7 +882,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "customTextRendererShouldOverrideCreateCopyTest.pdf";
         String cmpFileName = sourceFolder + "cmp_customTextRendererShouldOverrideCreateCopyTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         FontProvider fontProvider = new FontProvider();
@@ -1033,7 +1039,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "simpleClippedTextTest.pdf";
         String cmpFileName = sourceFolder + "cmp_simpleClippedTextTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
 
         doc.setFontSize(20);
@@ -1082,7 +1088,7 @@ public class TextRendererIntegrationTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "clippedTextWithoutDrawerTest.pdf";
         String cmpFileName = sourceFolder + "cmp_clippedTextWithoutDrawerTest.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDocument);
         doc.setFontSize(20);
 

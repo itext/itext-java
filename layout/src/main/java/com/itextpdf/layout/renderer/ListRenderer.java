@@ -23,6 +23,7 @@
 package com.itextpdf.layout.renderer;
 
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.logs.IoLogMessageConstant;
@@ -49,14 +50,14 @@ import com.itextpdf.layout.properties.ListSymbolPosition;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListRenderer extends BlockRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ListRenderer.class);
 
     /**
      * Creates a ListRenderer from its corresponding layout object.
@@ -367,8 +368,7 @@ public class ListRenderer extends BlockRenderer {
                 UnitValue marginToSetUV =
                         childRenderer.<UnitValue>getProperty(marginToSet, UnitValue.createPointValue(0f));
                 if (!marginToSetUV.isPointValue()) {
-                    Logger logger = LoggerFactory.getLogger(ListRenderer.class);
-                    logger.error(MessageFormatUtil.format(
+                    LOGGER.error(() -> MessageFormatUtil.format(
                             IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                             marginToSet));
                 }

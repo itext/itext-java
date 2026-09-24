@@ -30,7 +30,6 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.ElementPropertyContainer;
@@ -53,6 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -72,12 +72,17 @@ public class FixedPositionTest extends ExtendedITextTest {
         createDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
 
     @Test
     public void nonInteractive() throws IOException, InterruptedException {
         final String outputFileName = DESTINATION_FOLDER + "ni_setFixedPosition.pdf";
         final String cmpFileName = SOURCE_FOLDER + "cmp_ni_setFixedPosition.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName))) {
             Document document = new Document(pdfDocument);
 
             int left = 100;
@@ -103,7 +108,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public void nonInteractiveOnSpecificPage() throws IOException, InterruptedException {
         final String outputFileName = DESTINATION_FOLDER + "ni_setFixedPositionOnPage.pdf";
         final String cmpFileName = SOURCE_FOLDER + "cmp_ni_setFixedPositionOnPage.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName))) {
             Document document = new Document(pdfDocument);
 
             int left = 100;
@@ -130,7 +135,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public void interactive() throws IOException, InterruptedException {
         final String outputFileName = DESTINATION_FOLDER + "interactive_fixed_pos.pdf";
         final String cmpFileName = SOURCE_FOLDER + "cmp_interactive_fixed_pos.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName))) {
             Document document = new Document(pdfDocument);
             int left = 100;
             int bottom = 700;
@@ -156,7 +161,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public void interactiveOnPage() throws IOException, InterruptedException {
         final String outputFileName = DESTINATION_FOLDER + "interactive_fixed_pos_on_page.pdf";
         final String cmpFileName = SOURCE_FOLDER + "cmp_interactive_fixed_pos_on_page.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName))) {
             Document document = new Document(pdfDocument);
             int left = 100;
             int bottom = 700;
@@ -184,7 +189,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public void interactiveWidthOutOfBounds() throws IOException, InterruptedException {
         final String outputFileName = DESTINATION_FOLDER + "interactiveOutOfBounds.pdf";
         final String cmpFileName = SOURCE_FOLDER + "cmp_interactiveOutOfBounds.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName))) {
             Document document = new Document(pdfDocument);
             int left = 100;
             int bottom = 10000;
@@ -209,7 +214,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public void interactiveMarginLeft() throws IOException, InterruptedException {
         final String outputFileName = DESTINATION_FOLDER + "interactiveMarginLeft.pdf";
         final String cmpFileName = SOURCE_FOLDER + "cmp_interactiveMarginLeft.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName))) {
             Document document = new Document(pdfDocument);
             for (Supplier<IFormField> iFormFieldSupplier : getDataToTest()) {
                 IFormField field = iFormFieldSupplier.get();
@@ -241,7 +246,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public void interactiveMarginTop() throws IOException, InterruptedException {
         final String outputFileName = DESTINATION_FOLDER + "marginTop.pdf";
         final String cmpFileName = SOURCE_FOLDER + "cmp_marginTop.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName))) {
             Document document = new Document(pdfDocument, PageSize.A4, false);
 
             for (Supplier<IFormField> iFormFieldSupplier : getDataToTest()) {
@@ -273,7 +278,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public void width() throws IOException, InterruptedException {
         final String outputFileName = DESTINATION_FOLDER + "width.pdf";
         final String cmpFileName = SOURCE_FOLDER + "cmp_width.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName))) {
             Document document = new Document(pdfDocument, PageSize.A4, false);
 
             for (Supplier<IFormField> iFormFieldSupplier : getDataToTest()) {
@@ -302,7 +307,7 @@ public class FixedPositionTest extends ExtendedITextTest {
     public void padding() throws IOException, InterruptedException {
         final String outputFileName = DESTINATION_FOLDER + "padding.pdf";
         final String cmpFileName = SOURCE_FOLDER + "cmp_padding.pdf";
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outputFileName))) {
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outputFileName))) {
             Document document = new Document(pdfDocument, PageSize.A4, false);
 
             for (Supplier<IFormField> iFormFieldSupplier : getDataToTest()) {

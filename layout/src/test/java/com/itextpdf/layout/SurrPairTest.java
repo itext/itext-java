@@ -27,7 +27,6 @@ import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
@@ -36,6 +35,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -53,12 +53,17 @@ public class SurrPairTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void surrogatePairFrom2Chars() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "surrogatePairFrom2Chars.pdf";
         String cmpFileName = sourceFolder + "cmp_" + "surrogatePairFrom2Chars.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDocument);
 
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoEmoji-Regular.ttf", PdfEncodings.IDENTITY_H);
@@ -80,7 +85,7 @@ public class SurrPairTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "surrogatePair2Pairs.pdf";
         String cmpFileName = sourceFolder + "cmp_" + "surrogatePair2Pairs.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDocument);
 
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoEmoji-Regular.ttf", PdfEncodings.IDENTITY_H);
@@ -102,7 +107,7 @@ public class SurrPairTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "surrogatePairFullCharacter.pdf";
         String cmpFileName = sourceFolder + "cmp_" + "surrogatePairFullCharacter.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDocument);
 
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoEmoji-Regular.ttf", PdfEncodings.IDENTITY_H);
@@ -126,7 +131,7 @@ public class SurrPairTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "surrogatePairCombingFullSurrs.pdf";
         String cmpFileName = sourceFolder + "cmp_" + "surrogatePairCombingFullSurrs.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDocument);
 
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoColorEmoji.ttf", PdfEncodings.IDENTITY_H);
@@ -157,7 +162,7 @@ public class SurrPairTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "surrogatePairCombingFullSurrsWithNoSurrs.pdf";
         String cmpFileName = sourceFolder + "cmp_" + "surrogatePairCombingFullSurrsWithNoSurrs.pdf";
 
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document document = new Document(pdfDocument);
 
         PdfFont font = PdfFontFactory.createFont(fontsFolder + "NotoColorEmoji.ttf", PdfEncodings.IDENTITY_H);

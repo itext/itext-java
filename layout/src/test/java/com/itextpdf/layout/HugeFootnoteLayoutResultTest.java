@@ -82,7 +82,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             document.add(new SectionBreak(PageMarginsTestUtil.getFootnoteMarginBoxes(A4_HEIGHT)));
@@ -124,7 +124,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             document.add(new SectionBreak(PageMarginsTestUtil.getFootnoteMarginBoxes(A4_HEIGHT + 50f)));
@@ -186,7 +186,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             applyFootnoteMarginBoxes(document, A4_HEIGHT + 50f);
@@ -213,7 +213,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
             pdfDoc.setTagged();
 
@@ -241,7 +241,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -264,7 +264,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -286,7 +286,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
             pdfDoc.setTagged();
             for (int i = 1; i <= 2; i++) {
@@ -316,7 +316,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
             pdfDoc.setTagged();
             for (int i = 1; i <= 4; i++) {
@@ -346,7 +346,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
             for (int i = 1; i <= 4; i++) {
                 Footnote footnote = new Footnote("Footnote " + i + ": " + TestResourceUtil.getByronStanza());
@@ -374,7 +374,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 4));
@@ -403,7 +403,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote("Footnote for the large image anchor.\n" + TestResourceUtil.getByronStanza());
@@ -436,7 +436,7 @@ public class HugeFootnoteLayoutResultTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 8));

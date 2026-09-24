@@ -26,6 +26,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Defines standard PDF Type 1 font names.
+ */
 public final class StandardFonts {
 
     private StandardFonts() {
@@ -53,6 +56,13 @@ public final class StandardFonts {
         BUILTIN_FONTS = Collections.unmodifiableSet(tempSet);
     }
 
+    /**
+     * Checks whether a font name identifies one of the standard PDF fonts.
+     *
+     * @param fontName the font name to check
+     *
+     * @return {@code true} when the name is a standard PDF font name
+     */
     public static boolean isStandardFont(String fontName) {
         return BUILTIN_FONTS.contains(fontName);
     }

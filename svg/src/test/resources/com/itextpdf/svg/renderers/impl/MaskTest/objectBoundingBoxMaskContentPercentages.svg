@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="140">
+  <defs>
+    <mask id="percentages" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox"
+          x="0" y="0" width="1" height="1">
+      <rect x="25%" y="25%" width="50%" height="50%" fill="white"/>
+    </mask>
+    <mask id="unitless" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox"
+          x="0" y="0" width="1" height="1">
+      <rect x="0.25" y="0.25" width="0.5" height="0.5" fill="white"/>
+    </mask>
+  </defs>
+  <rect width="300" height="140" fill="#eeeeee"/>
+  <rect x="20" y="20" width="100" height="80" fill="red" mask="url(#percentages)"/>
+  <rect x="180" y="20" width="100" height="80" fill="red" mask="url(#unitless)"/>
+</svg>
+

@@ -24,6 +24,7 @@ package com.itextpdf.signatures;
 
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampToken;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.DateTimeUtil;
 import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -39,8 +40,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class consists of some methods that allow you to verify certificates.
@@ -56,7 +55,7 @@ public class CertificateVerification {
     /**
      * The Logger instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateVerification.class);
+    private static final LazyLogger LOGGER = new LazyLogger(CertificateVerification.class);
 
     /**
      * Verifies a single certificate for the current date.
@@ -293,7 +292,7 @@ public class CertificateVerification {
 
     private static void logExceptionMessages(List<Exception> exceptionsThrown) {
         for (Exception ex : exceptionsThrown) {
-            LOGGER.error(ex.getMessage() == null
+            LOGGER.error(() -> ex.getMessage() == null
                         ? SignLogMessageConstant.EXCEPTION_WITHOUT_MESSAGE
                         : ex.getMessage(),
                     ex);

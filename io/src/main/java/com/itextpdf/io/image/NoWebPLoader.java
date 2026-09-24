@@ -22,8 +22,7 @@
  */
 package com.itextpdf.io.image;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.commons.logs.LazyLogger;
 
 import java.net.URL;
 
@@ -32,7 +31,7 @@ import java.net.URL;
  */
 public final class NoWebPLoader extends AbstractWebPLoader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NoWebPLoader.class);
+    private static final LazyLogger LOGGER = new LazyLogger(NoWebPLoader.class);
 
     /**
      * Standard constructor.
@@ -45,7 +44,7 @@ public final class NoWebPLoader extends AbstractWebPLoader {
      */
     @Override
     protected ImageData getImageData(byte[] bytes) {
-        LOGGER.warn(WebPLogMessageConstant.WEBP_NOT_FOUND);
+        LOGGER.warn(() -> WebPLogMessageConstant.WEBP_NOT_FOUND);
         return null;
     }
 
@@ -54,7 +53,7 @@ public final class NoWebPLoader extends AbstractWebPLoader {
      */
     @Override
     protected ImageData getImageData(URL url) {
-        LOGGER.warn(WebPLogMessageConstant.WEBP_NOT_FOUND);
+        LOGGER.warn(() -> WebPLogMessageConstant.WEBP_NOT_FOUND);
         return null;
     }
 
@@ -63,7 +62,7 @@ public final class NoWebPLoader extends AbstractWebPLoader {
      */
     @Override
     protected boolean isWebPSupported() {
-        LOGGER.warn(WebPLogMessageConstant.WEBP_NOT_FOUND);
+        LOGGER.warn(() -> WebPLogMessageConstant.WEBP_NOT_FOUND);
         return false;
     }
 }

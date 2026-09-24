@@ -37,85 +37,85 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/RectangleSvgNodeRendererTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/RectangleSvgNodeRendererTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/RectangleSvgNodeRendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/RectangleSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void basicRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicRectangle");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicRectangle");
     }
 
     @Test
     public void basicRectangleRxRyZeroTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicRectangleRxRyZero");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicRectangleRxRyZero");
     }
 
     @Test
     public void basicCircularRoundedRectangleRyZeroTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRectangleRyZero");}
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicCircularRoundedRectangleRyZero");}
 
     @Test
     public void basicCircularRoundedRectangleRxZeroTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRectangleRxZero");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicCircularRoundedRectangleRxZero");
     }
 
     @Test
     public void basicCircularRoundedRxRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRxRectangle");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicCircularRoundedRxRectangle");
     }
 
     @Test
     public void basicCircularRoundedRyRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicCircularRoundedRyRectangle");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicCircularRoundedRyRectangle");
     }
 
     @Test
     public void basicEllipticalRoundedRectangleXTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalRoundedRectangleX");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicEllipticalRoundedRectangleX");
     }
 
     @Test
     public void basicEllipticalRoundedRectangleYTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalRoundedRectangleY");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicEllipticalRoundedRectangleY");
     }
 
     @Test
     public void basicEllipticalWidthCappedRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalWidthCappedRoundedRectangle");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicEllipticalWidthCappedRoundedRectangle");
     }
 
     @Test
     public void basicEllipticalHeightCappedRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalHeightCappedRoundedRectangle");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicEllipticalHeightCappedRoundedRectangle");
     }
 
     @Test
     public void basicEllipticalNegativeWidthRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalNegativeWidthRoundedRectangle");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicEllipticalNegativeWidthRoundedRectangle");
     }
 
     @Test
     public void basicEllipticalNegativeHeightRoundedRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "basicEllipticalNegativeHeightRoundedRectangle");}
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "basicEllipticalNegativeHeightRoundedRectangle");}
 
     @Test
     public void complexRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "complexRectangle");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "complexRectangle");
     }
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate = StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, count = 1))
     public void noFillRectangleTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder,destinationFolder,"noFillRectangle");
+        convertAndCompare(SOURCE_FOLDER,DESTINATION_FOLDER,"noFillRectangle");
     }
 
     @Test
     public void rectangleNoWidthNoHeightTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "rectangleNoWidthNoHeight");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectangleNoWidthNoHeight");
     }
 }

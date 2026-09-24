@@ -23,6 +23,7 @@ public class TextNode extends LeafNode {
         value = text;
     }
 
+	@Override
 	public String nodeName() {
         return "#text";
     }
@@ -83,6 +84,7 @@ public class TextNode extends LeafNode {
         return tailNode;
     }
 
+	@Override
 	void outerHtmlHead(Appendable accum, int depth, Document.OutputSettings out) throws IOException {
         final boolean prettyPrint = out.prettyPrint();
         if (prettyPrint && ((siblingIndex() == 0 && parentNode instanceof Element && ((Element) parentNode).tag().formatAsBlock() && !isBlank()) || (out.outline() && siblingNodes().size()>0 && !isBlank()) ))
@@ -93,6 +95,7 @@ public class TextNode extends LeafNode {
         Entities.escape(accum, coreValue(), out, false, normaliseWhite, stripWhite);
     }
 
+	@Override
 	void outerHtmlTail(Appendable accum, int depth, Document.OutputSettings out) {}
 
     @Override

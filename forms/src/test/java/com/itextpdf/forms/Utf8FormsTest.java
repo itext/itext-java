@@ -40,6 +40,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.util.Map;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,11 @@ public class Utf8FormsTest extends ExtendedITextTest {
     @BeforeEach
     public void before() {
         createDestinationFolder(destinationFolder);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -86,7 +92,7 @@ public class Utf8FormsTest extends ExtendedITextTest {
     @Test
     //TODO DEVSIX-2798
     public void writeUtf8FieldNameAndValue() throws java.io.IOException, InterruptedException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(destinationFolder + "writeUtf8FieldNameAndValue.pdf"));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "writeUtf8FieldNameAndValue.pdf"));
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfTextFormField field = new TextFormFieldBuilder(pdfDoc, "")
                 .setWidgetRectangle(new Rectangle(99, 753, 425, 15)).createText();

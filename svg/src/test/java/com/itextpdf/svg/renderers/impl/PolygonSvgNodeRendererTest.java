@@ -48,18 +48,18 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolygonSvgNoderendererTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/PolygonSvgNoderendererTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolygonSvgNoderendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/PolygonSvgNoderendererTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void polygonLineRendererTest() throws IOException, InterruptedException {
         String filename = "polygonLineRendererTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         ISvgNodeRenderer root = new PolygonSvgNodeRenderer();
@@ -72,7 +72,7 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
 
         root.draw(context);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareVisually(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -134,7 +134,7 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void polygonEmptyPointCheckerTest() throws IOException, InterruptedException {
         String filename = "polygonEmptyPointCheckerTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         ISvgNodeRenderer root = new PolygonSvgNodeRenderer();
@@ -149,9 +149,8 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
 
         int numPoints = ((PolygonSvgNodeRenderer) root).getPoints().size();
         Assertions.assertEquals(numPoints, 0);
-        Assertions.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareVisually(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_"));
     }
-
 
     @Test
     public void connectPointsWithSameYCoordinateTest() {
@@ -185,11 +184,11 @@ public class PolygonSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void polygonIsNotCutTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "polygonIsNotCutTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "polygonIsNotCutTest");
     }
 
     @Test
     public void polygonIsNotCutEvenOddTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "polygonIsNotCutEvenOddTest");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "polygonIsNotCutEvenOddTest");
     }
 }

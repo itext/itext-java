@@ -37,6 +37,15 @@ import java.util.Set;
 public class SubTableLookup6Format3 extends ChainingContextualTable<ContextualSubstRule> {
     ContextualSubstRule substitutionRule;
 
+    /**
+     * Creates a new Chaining Contextual Substitution Subtable.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param rule the rule
+     */
     public SubTableLookup6Format3(OpenTypeFontTableReader openReader, int lookupFlag, SubstRuleFormat3 rule) {
         super(openReader, lookupFlag);
         this.substitutionRule = rule;
@@ -51,12 +60,23 @@ public class SubTableLookup6Format3 extends ChainingContextualTable<ContextualSu
         return Collections.<ContextualSubstRule>emptyList();
     }
 
+    /**
+     * Represents the substitution rule format3 of an OpenType font.
+     */
     public static class SubstRuleFormat3 extends ContextualSubstRule {
         List<Set<Integer>> backtrackCoverages;
         List<Set<Integer>> inputCoverages;
         List<Set<Integer>> lookaheadCoverages;
         SubstLookupRecord[] substLookupRecords;
 
+        /**
+         * Creates a new substitution rule format3.
+         *
+         * @param backtrackCoverages the backtrack coverages
+         * @param inputCoverages the input coverages
+         * @param lookaheadCoverages the lookahead coverages
+         * @param substLookupRecords the substitution lookup records
+         */
         public SubstRuleFormat3(List<Set<Integer>> backtrackCoverages, List<Set<Integer>> inputCoverages,
                                 List<Set<Integer>> lookaheadCoverages, SubstLookupRecord[] substLookupRecords) {
             this.backtrackCoverages = backtrackCoverages;
@@ -69,10 +89,12 @@ public class SubTableLookup6Format3 extends ChainingContextualTable<ContextualSu
         public int getContextLength() {
             return inputCoverages.size();
         }
+
         @Override
         public int getLookaheadContextLength() {
             return lookaheadCoverages.size();
         }
+
         @Override
         public int getBacktrackContextLength() {
             return backtrackCoverages.size();
@@ -87,10 +109,12 @@ public class SubTableLookup6Format3 extends ChainingContextualTable<ContextualSu
         public boolean isGlyphMatchesInput(int glyphId, int atIdx) {
             return inputCoverages.get(atIdx).contains(glyphId);
         }
+
         @Override
         public boolean isGlyphMatchesLookahead(int glyphId, int atIdx) {
             return lookaheadCoverages.get(atIdx).contains(glyphId);
         }
+
         @Override
         public boolean isGlyphMatchesBacktrack(int glyphId, int atIdx) {
             return backtrackCoverages.get(atIdx).contains(glyphId);

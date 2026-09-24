@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <defs>
+    <radialGradient id="originalGrad" cx="50%" cy="100%" fy="0%" r="50%" fx="0%">
+      <stop offset="0%" style="stop-color:blue;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:red;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="secondaryGrad" href="#originalGrad" cx="50%" cy="100%" fy="0%" r="50%" fx="0%">
+      <stop offset="-0%" style="stop-color:yellow;stop-opacity:1" />
+      <stop offset="-50%" style="stop-color:green;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="hrefGrad" href="#secondaryGrad" cx="50%" cy="50%" r="50%" />
+  </defs>
+  <rect x="0" y="0" width="200" height="200" fill="url(#hrefGrad)" />
+</svg>

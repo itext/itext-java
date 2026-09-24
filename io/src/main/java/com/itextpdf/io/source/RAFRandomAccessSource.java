@@ -53,6 +53,7 @@ class RAFRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position) throws java.io.IOException {
         if (position > length)
             return -1;
@@ -68,6 +69,7 @@ class RAFRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         if (position > length)
             return -1;
@@ -85,6 +87,7 @@ class RAFRandomAccessSource implements IRandomAccessSource {
      * Note: the length is determined when the {@link RAFRandomAccessSource} is constructed.  If the file length changes
      * after construction, that change will not be reflected in this call.
      */
+    @Override
     public long length() {
         return length;
     }
@@ -92,6 +95,7 @@ class RAFRandomAccessSource implements IRandomAccessSource {
     /**
      * Closes the underlying RandomAccessFile
      */
+    @Override
     public void close() throws java.io.IOException {
         raf.close();
     }

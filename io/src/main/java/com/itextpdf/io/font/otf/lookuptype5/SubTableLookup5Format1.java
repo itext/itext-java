@@ -35,9 +35,19 @@ import java.util.Map;
  * Contextual Substitution Subtable: Simple context glyph substitution
  */
 public class SubTableLookup5Format1 extends ContextualTable<ContextualSubstRule> {
-    private Map<Integer, List<ContextualSubstRule>> substMap;
+    private final Map<Integer, List<ContextualSubstRule>> substMap;
 
-    public SubTableLookup5Format1(OpenTypeFontTableReader openReader, int lookupFlag, Map<Integer, List<ContextualSubstRule>> substMap) {
+    /**
+     * Creates a new Contextual Substitution Subtable.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param substMap the substitution map
+     */
+    public SubTableLookup5Format1(OpenTypeFontTableReader openReader, int lookupFlag,
+                                  Map<Integer, List<ContextualSubstRule>> substMap) {
         super(openReader, lookupFlag);
         this.substMap = substMap;
     }
@@ -50,12 +60,21 @@ public class SubTableLookup5Format1 extends ContextualTable<ContextualSubstRule>
         return Collections.<ContextualSubstRule>emptyList();
     }
 
+    /**
+     * Represents the substitution rule format1 of an OpenType font.
+     */
     public static class SubstRuleFormat1 extends ContextualSubstRule {
         // inputGlyphIds array omits the first glyph in the sequence,
         // the first glyph is defined by corresponding coverage glyph
-        private int[] inputGlyphIds;
-        private SubstLookupRecord[] substLookupRecords;
+        private final int[] inputGlyphIds;
+        private final SubstLookupRecord[] substLookupRecords;
 
+        /**
+         * Creates a new substitution rule format1.
+         *
+         * @param inputGlyphIds the input glyph ids
+         * @param substLookupRecords the substitution lookup records
+         */
         public SubstRuleFormat1(int[] inputGlyphIds, SubstLookupRecord[] substLookupRecords) {
             this.inputGlyphIds = inputGlyphIds;
             this.substLookupRecords = substLookupRecords;

@@ -23,6 +23,7 @@
 package com.itextpdf.layout.renderer;
 
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
@@ -31,8 +32,6 @@ import com.itextpdf.layout.properties.Property;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 abstract class TableBorders {
     /**
@@ -197,8 +196,8 @@ abstract class TableBorders {
                         rows.remove(row - numOfRowsToRemove);
                         setFinishRow(finishRow - 1);
 
-                        Logger logger = LoggerFactory.getLogger(TableRenderer.class);
-                        logger.warn(IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
+                        LazyLogger logger = new LazyLogger(TableRenderer.class);
+                        logger.warn(() -> IoLogMessageConstant.LAST_ROW_IS_NOT_COMPLETE);
                     } else {
                         numOfRowsToRemove++;
                     }

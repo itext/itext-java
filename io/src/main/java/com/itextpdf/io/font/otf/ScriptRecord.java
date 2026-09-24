@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font.otf;
 
+/**
+ * Represents the script record of an OpenType font.
+ */
 public class ScriptRecord {
     private String tag;
     private LanguageRecord defaultLanguage;

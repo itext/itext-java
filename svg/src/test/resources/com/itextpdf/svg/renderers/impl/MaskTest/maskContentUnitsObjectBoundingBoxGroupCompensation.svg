@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="120" viewBox="0 0 160 120">
+  <defs>
+    <mask id="groupMask" x="20" y="20" width="120" height="80"
+          maskUnits="userSpaceOnUse" maskContentUnits="objectBoundingBox">
+      <rect x="0" y="0" width="1" height="1" fill="white"/>
+    </mask>
+  </defs>
+  <g mask="url(#groupMask)">
+    <rect x="20" y="20" width="120" height="80" fill="#0066cc"/>
+  </g>
+</svg>

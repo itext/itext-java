@@ -32,8 +32,20 @@ import com.itextpdf.io.util.ResourceUtil;
 
 import java.io.InputStream;
 
+/**
+ * Locates CMap programs in the bundled font resources.
+ */
 public class CMapLocationResource implements ICMapLocation {
 
+    /**
+     * Opens a tokenizer for a bundled CMap resource.
+     *
+     * @param location the CMap resource name relative to {@link #getLocationPath()}
+     *
+     * @return a tokenizer for the requested resource
+     *
+     * @throws java.io.IOException if the resource cannot be found or opened
+     */
     @Override
     public PdfTokenizer getLocation(String location) throws java.io.IOException {
         String fullName = getLocationPath() + location;

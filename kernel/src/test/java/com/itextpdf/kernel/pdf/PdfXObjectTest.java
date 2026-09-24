@@ -353,7 +353,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         if (appendMode) {
             props.useAppendMode();
         }
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
@@ -380,7 +380,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         if (appendMode) {
             props.useAppendMode();
         }
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
@@ -408,7 +408,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         if (appendMode) {
             props.useAppendMode();
         }
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
@@ -434,7 +434,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         if (appendMode) {
             props.useAppendMode();
         }
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
@@ -459,7 +459,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         if (appendMode) {
             props.useAppendMode();
         }
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);
@@ -485,7 +485,7 @@ public class PdfXObjectTest extends ExtendedITextTest{
         if (appendMode) {
             props.useAppendMode();
         }
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(destPdf), props)) {
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(destPdf), props)) {
             PdfPage firstPage = pdfDocument.getFirstPage();
             PdfResources pageResources = firstPage.getResources();
             PdfDictionary xObjectDict = pageResources.getResource(PdfName.XObject);

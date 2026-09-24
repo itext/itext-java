@@ -56,11 +56,13 @@ public interface XMPPropertyInfo extends XMPProperty
 	/**
 	 * @return Returns the value of the property.
 	 */
+	@Override
 	String getValue();
 	
 	
 	/**
 	 * @return Returns the options of the property.
 	 */
+	@Override
 	PropertyOptions getOptions();
 }

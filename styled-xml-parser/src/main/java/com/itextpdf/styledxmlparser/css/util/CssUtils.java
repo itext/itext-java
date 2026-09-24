@@ -34,16 +34,12 @@ import com.itextpdf.styledxmlparser.node.IElementNode;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utilities class for CSS operations.
  */
 public class CssUtils {
     private static final float EPSILON = 1e-6f;
-
-    private static final  Logger logger = LoggerFactory.getLogger(CssUtils.class);
 
     private static final int QUANTITY_OF_PARAMS_WITH_FALLBACK_OR_TYPE = 2;
 

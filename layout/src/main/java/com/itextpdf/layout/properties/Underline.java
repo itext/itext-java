@@ -25,7 +25,7 @@ package com.itextpdf.layout.properties;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 
-import static com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.*;
+import static com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineCapStyle;
 
 /**
  * A POJO that describes the underline of a layout element.
@@ -46,6 +46,8 @@ public class Underline {
     private float strokeWidth = 0f;
     private float[] dashArray = null;
     private float dashPhase = 0f;
+    private Float xPosition;
+    private float xPositionMul;
 
     /**
      * Creates an Underline. Both thickness and vertical positioning under
@@ -55,12 +57,12 @@ public class Underline {
      * if you want a thickness solely dependent on the font size, set
      * <code>thickness</code> to 0.
      * Mutatis mutandis for the y-position.
-     * 
+     *
      * @param color the {@link Color} of the underline
-     * @param thickness  a float defining the minimum thickness in points of the underline
-     * @param thicknessMul  a float defining the font size dependent component of the thickness of the underline
+     * @param thickness a float defining the minimum thickness in points of the underline
+     * @param thicknessMul a float defining the font size dependent component of the thickness of the underline
      * @param yPosition a float defining the default absolute vertical distance in points from the text's base line
-     * @param yPositionMul  a float defining the font size dependent component of the vertical positioning of the underline
+     * @param yPositionMul a float defining the font size dependent component of the vertical positioning of the underline
      * @param lineCapStyle the way the underline finishes at its edges. {@link LineCapStyle}
      */
     public Underline(Color color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
@@ -75,13 +77,13 @@ public class Underline {
      * if you want a thickness solely dependent on the font size, set
      * <code>thickness</code> to 0.
      * Mutatis mutandis for the y-position.
-     * 
+     *
      * @param color the {@link Color} of the underline
-     * @param opacity  a float defining the opacity of the underline; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
-     * @param thickness  a float defining the minimum thickness in points of the underline
-     * @param thicknessMul  a float defining the font size dependent component of the thickness of the underline
+     * @param opacity a float defining the opacity of the underline; a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
+     * @param thickness a float defining the minimum thickness in points of the underline
+     * @param thicknessMul a float defining the font size dependent component of the thickness of the underline
      * @param yPosition a float defining the default absolute vertical distance in points from the text's base line
-     * @param yPositionMul  a float defining the font size dependent component of the vertical positioning of the underline
+     * @param yPositionMul a float defining the font size dependent component of the vertical positioning of the underline
      * @param lineCapStyle the way the underline finishes at its edges. {@link LineCapStyle}
      */
     public Underline(Color color, float opacity, float thickness, float thicknessMul, float yPosition, float yPositionMul, int lineCapStyle) {
@@ -95,6 +97,7 @@ public class Underline {
 
     /**
      * Gets the color of the underline.
+     *
      * @return a {@link Color}
      */
     public Color getColor() {
@@ -103,6 +106,7 @@ public class Underline {
 
     /**
      * Gets the opacity of the underline color.
+     *
      * @return a float between 0 and 1, where 1 stands for fully opaque color and 0 - for fully transparent
      */
     public float getOpacity() {
@@ -111,7 +115,9 @@ public class Underline {
 
     /**
      * Gets the total thickness of the underline (fixed + variable part).
+     *
      * @param fontSize the font size for which to calculate the variable thickness
+     *
      * @return the total thickness, as a <code>float</code>, in points
      */
     public float getThickness(float fontSize) {
@@ -120,7 +126,9 @@ public class Underline {
 
     /**
      * Gets the vertical position of the underline (fixed + variable part).
+     *
      * @param fontSize the font size for which to calculate the variable position
+     *
      * @return the y-position, as a <code>float</code>, in points
      */
     public float getYPosition(float fontSize) {
@@ -128,15 +136,44 @@ public class Underline {
     }
 
     /**
+     * Gets the horizontal position of the decoration for vertical writing.
+     * Unless explicitly set, the position uses the same fixed and variable components as {@link #getYPosition(float)}.
+     *
+     * @param textWidth the width of the text area used to calculate the variable position
+     *
+     * @return the distance in points from the left edge of the text area
+     */
+    public float getXPosition(float textWidth) {
+        return xPosition == null ? getYPosition(textWidth) : (float) xPosition + xPositionMul * textWidth;
+    }
+
+    /**
+     * Sets the horizontal position of the decoration for vertical writing without changing its horizontal-writing
+     * position.
+     *
+     * @param xPosition the fixed component of the position in points
+     * @param xPositionMul the position multiplier relative to the width of the text area
+     *
+     * @return this {@link Underline} instance
+     */
+    public Underline setXPosition(float xPosition, float xPositionMul) {
+        this.xPosition = xPosition;
+        this.xPositionMul = xPositionMul;
+        return this;
+    }
+
+    /**
      * Gets the multiplier for the vertical positioning of the text underline.
+     *
      * @return the Y-position multiplier, as a <code>float</code>
      */
     public float getYPositionMul() {
         return yPositionMul;
     }
-    
+
     /**
      * Gets the {@link LineCapStyle} of the text underline.
+     *
      * @return the line cap style, as an <code>int</code> referring to
      * the values of {@link LineCapStyle}
      */

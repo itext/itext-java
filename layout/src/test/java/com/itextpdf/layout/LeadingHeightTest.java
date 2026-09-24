@@ -27,7 +27,6 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Cell;
@@ -47,6 +46,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -68,14 +68,19 @@ public class LeadingHeightTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
+    @Test
     @LogMessages(messages = {
             @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT, count = 2)
     })
-    @Test
     public void clippedHeightParagraphTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "leadingTestHeight.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_leadingTestHeight.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         Document doc = new Document(pdfDoc, new PageSize(700, 700));
         addDescription(doc, 600, "This is how table looks like if no height property is set");
         addTable(doc, 504, "RETIREMENT PLANNING: BECAUSE YOU CAN’T BE A FINANCIAL PLANNER FOREVER.", HEIGHT_IS_NOT_SET);
@@ -94,7 +99,7 @@ public class LeadingHeightTest extends ExtendedITextTest {
     public void paragraphTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "pageHeightParagraphTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_pageHeightParagraphTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         //Document height = 176 = 104 + 36 + 36, where 104 - is exact size of paragraph after layout and 34 + 34 - page margins
         Document doc = new Document(pdfDoc, new PageSize(700, 176));
         Paragraph ph = new Paragraph();
@@ -117,7 +122,7 @@ public class LeadingHeightTest extends ExtendedITextTest {
     public void pageHeightDivWithNestedParagraphTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "pageHeightParagraphWorkAroundTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_pageHeightParagraphWorkAroundTest.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         //Document height = 176 = 104 + 36 + 36, where 104 - is exact size of paragraph after layout and 34 + 34 - page margins
         Document doc = new Document(pdfDoc, new PageSize(700, 176));
         Paragraph ph = new Paragraph();

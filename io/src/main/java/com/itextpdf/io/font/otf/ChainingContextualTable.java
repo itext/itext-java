@@ -24,12 +24,32 @@ package com.itextpdf.io.font.otf;
 
 import java.util.List;
 
+/**
+ * Represents the chaining contextual table component of an OpenType font.
+ *
+ * @param <T> the contextual rule type stored by this table
+ */
 public abstract class ChainingContextualTable<T extends ContextualRule> extends ContextualTable<T> {
 
+    /**
+     * Creates a new chaining contextual table.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     */
     protected ChainingContextualTable(OpenTypeFontTableReader openReader, int lookupFlag) {
         super(openReader, lookupFlag);
     }
 
+    /**
+     * Returns the matching context rule.
+     *
+     * @param line the glyph line
+     *
+     * @return the matching context rule
+     */
     @Override
     public T getMatchingContextRule(GlyphLine line) {
         if (line.getIdx() >= line.getEnd()) {

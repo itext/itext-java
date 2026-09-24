@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 @Tag("UnitTest")
 public class SvgTextUtilTest extends ExtendedITextTest {
 
-    public static float EPS = 0.0001f;
+    private static float EPS = 0.0001f;
 
     //Trim leading tests
     @Test

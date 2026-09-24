@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.image;
 
+/**
+ * PDF attribute names and rendering intents used while processing PNG images.
+ */
 public class PngImageHelperConstants {
     public static final String ABSOLUTE_COLORMETRIC = "/AbsoluteColormetric";
     public static final String BITS_PER_COMPONENT = "BitsPerComponent";

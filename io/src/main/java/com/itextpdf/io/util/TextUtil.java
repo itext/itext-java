@@ -71,11 +71,25 @@ public final class TextUtil {
         return c >= '\udc00' && c <= '\udfff';
     }
 
+    /**
+     * Returns the high surrogate for a supplementary Unicode code point.
+     *
+     * @param codePoint the Unicode code point
+     *
+     * @return the corresponding high surrogate
+     */
     public static char highSurrogate(int codePoint) {
         return (char) ((codePoint >>> 10)
                 + ('\uD800' - (0x010000 >>> 10)));
     }
 
+    /**
+     * Returns the low surrogate for a supplementary Unicode code point.
+     *
+     * @param codePoint the Unicode code point
+     *
+     * @return the corresponding low surrogate
+     */
     public static char lowSurrogate(int codePoint) {
         return (char) ((codePoint & 0x3ff) + '\uDC00');
     }
@@ -144,6 +158,13 @@ public final class TextUtil {
         return (text.charAt(idx) - 0xd800) * 0x400 + text.charAt(idx + 1) - 0xdc00 + 0x10000;
     }
 
+    /**
+     * Converts a string to Unicode code points, preserving unpaired surrogate values.
+     *
+     * @param text the string to convert, or {@code null}
+     *
+     * @return the code points, or {@code null} when {@code text} is {@code null}
+     */
     public static int[] convertToUtf32(String text) {
         if (text == null) {
             return null;
@@ -207,6 +228,13 @@ public final class TextUtil {
         return new char[]{(char) (codePoint / 0x400 + 0xd800), (char) (codePoint % 0x400 + 0xdc00)};
     }
 
+    /**
+     * Converts a character to a one-character string.
+     *
+     * @param ch the character to convert
+     *
+     * @return a string containing {@code ch}
+     */
     public static String charToString(char ch) {
         return String.valueOf(ch);
     }
@@ -243,6 +271,14 @@ public final class TextUtil {
         return unicode == '\n' || unicode == '\r';
     }
 
+    /**
+     * Determines whether a glyph line contains a CRLF pair at a position.
+     *
+     * @param glyphLine              the glyph line to inspect
+     * @param carriageReturnPosition the position expected to contain a carriage return
+     *
+     * @return {@code true} when the position begins a CRLF pair
+     */
     public static boolean isCarriageReturnFollowedByLineFeed(GlyphLine glyphLine, int carriageReturnPosition) {
         return glyphLine.size() > 1
                 && carriageReturnPosition <= glyphLine.size() - 2
@@ -250,40 +286,103 @@ public final class TextUtil {
                 && glyphLine.get(carriageReturnPosition + 1).getUnicode() == '\n';
     }
 
+    /**
+     * Determines whether a glyph represents a Unicode space character or whitespace.
+     *
+     * @param glyph the glyph to inspect
+     *
+     * @return {@code true} if the glyph represents a space character or whitespace
+     */
     public static boolean isSpaceOrWhitespace(Glyph glyph) {
         //\r, \n, and \t are whitespaces, but not space chars.
         //\u00a0 is SpaceChar, but not whitespace.
         return Character.isSpaceChar((char) glyph.getUnicode()) || Character.isWhitespace((char) glyph.getUnicode());
     }
 
+    /**
+     * Determines whether a glyph represents Unicode whitespace.
+     *
+     * @param glyph the glyph to inspect
+     *
+     * @return {@code true} if the glyph represents whitespace
+     */
     public static boolean isWhitespace(Glyph glyph) {
         return Character.isWhitespace(glyph.getUnicode());
     }
 
+    /**
+     * Determines whether a glyph represents a non-breaking hyphen.
+     *
+     * @param glyph the glyph to inspect
+     *
+     * @return {@code true} if the glyph represents U+2011
+     */
     public static boolean isNonBreakingHyphen(Glyph glyph) {
         return '\u2011' == glyph.getUnicode();
     }
 
+    /**
+     * Determines whether a glyph represents a Unicode space character.
+     *
+     * @param glyph the glyph to inspect
+     *
+     * @return {@code true} if the glyph represents a space character
+     */
     public static boolean isSpace(Glyph glyph) {
         return Character.isSpaceChar((char) glyph.getUnicode());
     }
 
+    /**
+     * Determines whether a glyph represents the regular space character.
+     *
+     * @param g the glyph to inspect
+     *
+     * @return {@code true} if the glyph represents U+0020
+     */
     public static boolean isUni0020(Glyph g) {
         return g.getUnicode() == ' ';
     }
 
+    /**
+     * Determines whether a code point is ignorable or a soft hyphen.
+     *
+     * @param c the Unicode code point
+     *
+     * @return {@code true} if the code point is non-printable for text processing
+     */
     public static boolean isNonPrintable(int c) {
         return Character.isIdentifierIgnorable(c) || c == '\u00AD';
     }
 
+    /**
+     * Determines whether a code point is whitespace or non-printable.
+     *
+     * @param code the Unicode code point
+     *
+     * @return {@code true} if the code point is whitespace or non-printable
+     */
     public static boolean isWhitespaceOrNonPrintable(int code) {
         return Character.isWhitespace(code) || isNonPrintable(code);
     }
 
+    /**
+     * Determines whether a glyph represents a Unicode letter or digit.
+     *
+     * @param glyph the glyph to inspect
+     *
+     * @return {@code true} if the glyph represents a letter or digit
+     */
     public static boolean isLetterOrDigit(Glyph glyph) {
         return Character.isLetterOrDigit(glyph.getUnicode());
     }
 
+    /**
+     * Determines whether a glyph represents a Unicode mark character.
+     *
+     * @param glyph the glyph to inspect
+     *
+     * @return {@code true} if the glyph's Unicode category is a mark category
+     */
     public static boolean isMark(Glyph glyph) {
         int unicode = glyph.getUnicode();
         return ((((1 << Character.NON_SPACING_MARK) |
@@ -291,6 +390,13 @@ public final class TextUtil {
                 (1 << Character.ENCLOSING_MARK)) >> Character.getType(unicode)) & 1) != 0;
     }
 
+    /**
+     * Determines whether a character set name is supported by the current runtime.
+     *
+     * @param charsetName the character set name
+     *
+     * @return {@code true} if the character set is supported
+     */
     public static boolean charsetIsSupported(String charsetName) {
         try {
             return Charset.isSupported(charsetName);

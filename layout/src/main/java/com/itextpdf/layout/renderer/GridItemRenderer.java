@@ -25,19 +25,13 @@ package com.itextpdf.layout.renderer;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.Div;
-import com.itextpdf.layout.logs.LayoutLogMessageConstant;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper renderer around grid item. It's expected there is always exactly 1 child renderer.
  */
 class GridItemRenderer extends BlockRenderer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GridItemRenderer.class);
 
     /**
      * A renderer to wrap.

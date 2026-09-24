@@ -36,6 +36,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -52,12 +53,17 @@ public class FontSelectorLayoutTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void nonBreakingHyphenDifferentFonts() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "nonBreakingHyphenDifferentFonts.pdf";
         String cmpFileName = sourceFolder + "cmp_nonBreakingHyphenDifferentFonts.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
 
         FontProvider sel = new FontProvider();
         sel.setFontSelectorStrategyFactory(new BestMatchFontSelectorStrategyFactory());

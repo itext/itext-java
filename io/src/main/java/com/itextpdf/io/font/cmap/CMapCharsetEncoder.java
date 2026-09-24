@@ -32,22 +32,45 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 
+/**
+ * Encodes Unicode code points for a standard CMap charset.
+ */
 public final class CMapCharsetEncoder {
     private final CharsetEncoder encoder;
     private final CharBuffer charBuf = CharBuffer.allocate(2);
     private final boolean bmpOnly;
     private final Charset targetCharset;
 
+    /**
+     * Creates an encoder that accepts all Unicode code points supported by the charset.
+     *
+     * @param targetCharset the charset used to encode code points
+     */
     public CMapCharsetEncoder(Charset targetCharset) {
         this(targetCharset, false);
     }
 
+    /**
+     * Creates an encoder with an optional Basic Multilingual Plane restriction.
+     *
+     * @param targetCharset the charset used to encode code points
+     * @param bmpOnly       {@code true} to reject supplementary code points
+     */
     public CMapCharsetEncoder(Charset targetCharset, boolean bmpOnly) {
         this.bmpOnly = bmpOnly;
         this.targetCharset = targetCharset;
         this.encoder = targetCharset.newEncoder();
     }
 
+    /**
+     * Encodes one Unicode code point.
+     *
+     * @param cp the Unicode code point to encode
+     *
+     * @return a newly allocated encoded byte sequence
+     *
+     * @throws ITextException if the code point cannot be encoded or is supplementary when BMP-only encoding is used
+     */
     public byte[] encodeUnicodeCodePoint(int cp) {
         if (!Character.isBmpCodePoint(cp) && bmpOnly) {
             throw new ITextException(IoExceptionMessageConstant.ONLY_BMP_ENCODING);

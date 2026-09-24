@@ -44,6 +44,7 @@ public class IndependentRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position) throws java.io.IOException {
         return source.get(position);
     }
@@ -51,6 +52,7 @@ public class IndependentRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public int get(long position, byte[] bytes, int off, int len) throws java.io.IOException {
         return source.get(position, bytes, off, len);
     }
@@ -58,6 +60,7 @@ public class IndependentRandomAccessSource implements IRandomAccessSource {
     /**
      * {@inheritDoc}
      */
+    @Override
     public long length() {
         return source.length();
     }
@@ -65,6 +68,7 @@ public class IndependentRandomAccessSource implements IRandomAccessSource {
     /**
      * Does nothing - the underlying source is not closed
      */
+    @Override
     public void close() throws java.io.IOException {
         // do not close the source
     }

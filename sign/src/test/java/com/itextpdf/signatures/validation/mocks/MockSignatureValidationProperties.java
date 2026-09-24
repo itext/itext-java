@@ -61,6 +61,7 @@ public class MockSignatureValidationProperties extends SignatureValidationProper
         this.wrappedProperties = properties;
     }
 
+    @Override
     public boolean getContinueAfterFailure(ValidationContext validationContext) {
         continueAfterFailureCalls.add(validationContext);
         if (continueAfterFailureResponsesIndex < continueAfterFailureResponses.size()) {
@@ -69,6 +70,7 @@ public class MockSignatureValidationProperties extends SignatureValidationProper
         return wrappedProperties.getContinueAfterFailure(validationContext);
     }
 
+    @Override
     public Duration getFreshness(ValidationContext validationContext) {
         freshnessCalls.add(validationContext);
         if (freshnessResponsesIndex < freshnessResponses.size()) {
@@ -77,6 +79,7 @@ public class MockSignatureValidationProperties extends SignatureValidationProper
         return wrappedProperties.getFreshness(validationContext);
     }
 
+    @Override
     public List<CertificateExtension> getRequiredExtensions(ValidationContext validationContext) {
         requiredExtensionsCalls.add(validationContext);
         if (requiredExtensionsResponsesIndex < requiredExtensionsResponses.size()) {
@@ -85,6 +88,7 @@ public class MockSignatureValidationProperties extends SignatureValidationProper
         return wrappedProperties.getRequiredExtensions(validationContext);
     }
 
+    @Override
     public OnlineFetching getRevocationOnlineFetching(ValidationContext validationContext) {
         revocationOnlineFetchingCalls.add(validationContext);
         if (revocationOnlineFetchingResponsesIndex < revocationOnlineFetchingResponses.size()) {

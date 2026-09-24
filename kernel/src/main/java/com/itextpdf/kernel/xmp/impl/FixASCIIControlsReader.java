@@ -72,6 +72,7 @@ public class FixASCIIControlsReader extends Reader
 	/**
 	 * @see java.io.Reader#read(char[], int, int)
 	 */
+	@Override
 	public int read(char[] cbuf, int off, int len) throws IOException
 	{
 		int read = 0;
@@ -109,6 +110,7 @@ public class FixASCIIControlsReader extends Reader
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close() throws IOException {
         in.close();
     }

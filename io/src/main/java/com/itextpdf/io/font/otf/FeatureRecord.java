@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font.otf;
 
+/**
+ * Represents the feature record of an OpenType font.
+ */
 public class FeatureRecord {
     private String tag;
     private int[] lookups;

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120" viewBox="0 0 200 120">
+  <defs>
+    <mask id="unused">
+      <rect width="200" height="120" fill="white"/>
+      <circle cx="100" cy="60" r="40" fill="black"/>
+    </mask>
+  </defs>
+  <rect x="20" y="20" width="160" height="80" fill="#4444ff"/>
+</svg>
+

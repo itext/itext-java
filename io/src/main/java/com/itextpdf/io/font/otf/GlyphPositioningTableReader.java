@@ -29,8 +29,10 @@ import java.util.Map;
 /**
  * Parses an OpenTypeFont file and reads the Glyph Substitution Table. This table governs how two or more Glyphs should be merged
  * to a single Glyph. This is especially useful for Asian languages like Bangla, Hindi, etc.
+ *
  * <p>
- * This has been written according to the OPenTypeFont specifications. This may be found <a href="http://www.microsoft.com/typography/otspec/gsub.htm">here</a>.
+ * This has been written according to the OpenTypeFont specifications.
+ * See the OpenType <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/gpos">GPOS table</a>.
  */
 public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
 
@@ -51,8 +53,22 @@ public class GlyphPositioningTableReader extends OpenTypeFontTableReader {
         startReadingTable();
     }
 
+    /**
+     * Reads the lookup table from OpenType data.
+     *
+     * @param lookupType the lookup type
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param subTableLocations the sub table locations
+     *
+     * @return the lookup table
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     @Override
-    protected OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
+    protected OpenTableLookup readLookupTable(int lookupType, int lookupFlag, int[] subTableLocations)
+            throws java.io.IOException {
         if (lookupType == 9) {
             for (int k = 0; k < subTableLocations.length; ++k) {
                 int location = subTableLocations[k];

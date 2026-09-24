@@ -24,6 +24,7 @@ package com.itextpdf.commons.utils;
 
 import com.itextpdf.commons.exceptions.CommonsExceptionMessageConstant;
 import com.itextpdf.commons.logs.CommonsLogMessageConstant;
+import com.itextpdf.commons.logs.LazyLogger;
 
 import java.io.BufferedInputStream;
 import java.io.Closeable;
@@ -35,14 +36,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Allows reading entries from a zip file.
  */
 public class ZipFileReader implements Closeable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZipFileReader.class);
+    private static final LazyLogger LOGGER = new LazyLogger(ZipFileReader.class);
 
     private final ZipFile zipFile;
 
@@ -96,18 +95,18 @@ public class ZipFileReader implements Closeable {
                     }
                 }
                 if (zipBombSuspicious) {
-                    LOGGER.warn(MessageFormatUtil.format(CommonsLogMessageConstant.RATIO_IS_HIGHLY_SUSPICIOUS,
-                            thresholdRatio));
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            CommonsLogMessageConstant.RATIO_IS_HIGHLY_SUSPICIOUS, thresholdRatio));
                     break;
                 }
                 if (totalSizeArchive > thresholdSize) {
-                    LOGGER.warn(MessageFormatUtil.format(CommonsLogMessageConstant.UNCOMPRESSED_DATA_SIZE_IS_TOO_MUCH,
-                            thresholdSize));
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            CommonsLogMessageConstant.UNCOMPRESSED_DATA_SIZE_IS_TOO_MUCH, thresholdSize));
                     break;
                 }
                 if (totalEntryArchive > thresholdEntries) {
-                    LOGGER.warn(MessageFormatUtil.format(CommonsLogMessageConstant.TOO_MUCH_ENTRIES_IN_ARCHIVE,
-                            thresholdEntries));
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            CommonsLogMessageConstant.TOO_MUCH_ENTRIES_IN_ARCHIVE, thresholdEntries));
                     break;
                 }
             }

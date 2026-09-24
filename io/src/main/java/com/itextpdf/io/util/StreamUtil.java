@@ -59,6 +59,7 @@ public final class StreamUtil {
      *
      * @param stream   the {@code InputStream}
      * @param size the number of bytes to skip
+     *
      * @throws java.io.IOException if an I/O error occurs.
      */
     public static void skip(InputStream stream, long size) throws java.io.IOException {
@@ -85,8 +86,8 @@ public final class StreamUtil {
     /**
      * Escapes a {@code byte} array according to the PDF conventions.
      *
-     * @param outputStream the {@code OutputStream} an escaped {@code byte} array write to.
-     * @param bytes the {@code byte} array to escape.
+     * @param outputStream the {@code OutputStream} an escaped {@code byte} array write to
+     * @param bytes the {@code byte} array to escape
      */
     public static void writeEscapedString(OutputStream outputStream, byte[] bytes) {
         ByteBuffer buf = createBufferedEscapedString(bytes);
@@ -97,6 +98,14 @@ public final class StreamUtil {
         }
     }
 
+    /**
+     * Writes PDF hexadecimal-string syntax for the supplied bytes.
+     *
+     * @param outputStream the stream to receive the encoded string
+     * @param bytes        the bytes to encode
+     *
+     * @throws com.itextpdf.io.exceptions.IOException if the bytes cannot be written
+     */
     public static void writeHexedString(OutputStream outputStream, byte[] bytes) {
         ByteBuffer buf = createBufferedHexedString(bytes);
         try {
@@ -106,6 +115,13 @@ public final class StreamUtil {
         }
     }
 
+    /**
+     * Creates a buffer containing PDF literal-string syntax for the supplied bytes.
+     *
+     * @param bytes the bytes to escape
+     *
+     * @return a buffer containing the escaped string, including parentheses
+     */
     public static ByteBuffer createBufferedEscapedString(byte[] bytes) {
         ByteBuffer buf = new ByteBuffer(bytes.length * 2 + 2);
         buf.append('(');
@@ -145,6 +161,13 @@ public final class StreamUtil {
         return buf;
     }
 
+    /**
+     * Creates a buffer containing PDF hexadecimal-string syntax for the supplied bytes.
+     *
+     * @param bytes the bytes to encode
+     *
+     * @return a buffer containing the encoded string, including angle brackets
+     */
     public static ByteBuffer createBufferedHexedString(byte[] bytes) {
         ByteBuffer buf = new ByteBuffer(bytes.length * 2 + 2);
         buf.append('<');
@@ -155,6 +178,14 @@ public final class StreamUtil {
         return buf;
     }
 
+    /**
+     * Copies all remaining bytes from an input stream to an output stream.
+     *
+     * @param input  the source stream
+     * @param output the destination stream
+     *
+     * @throws java.io.IOException if reading or writing fails
+     */
     public static void transferBytes(InputStream input, java.io.OutputStream output) throws java.io.IOException {
         byte[] buffer = new byte[TRANSFER_SIZE];
         for (; ; ) {
@@ -167,6 +198,14 @@ public final class StreamUtil {
         }
     }
 
+    /**
+     * Copies all remaining bytes from a random-access source to an output stream.
+     *
+     * @param input  the source to read
+     * @param output the destination stream
+     *
+     * @throws java.io.IOException if reading or writing fails
+     */
     public static void transferBytes(RandomAccessFileOrArray input, java.io.OutputStream output) throws java.io.IOException {
         byte[] buffer = new byte[TRANSFER_SIZE];
         for (; ; ) {

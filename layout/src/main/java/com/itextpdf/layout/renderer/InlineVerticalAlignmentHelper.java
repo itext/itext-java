@@ -23,6 +23,7 @@
 package com.itextpdf.layout.renderer;
 
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.InlineVerticalAlignment;
 import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
 import com.itextpdf.layout.properties.LineHeight;
@@ -61,14 +62,55 @@ final class InlineVerticalAlignmentHelper {
                 alignment -> true);
     }
 
+    static void adjustChildrenXLineVerticalText(LineRenderer lineRenderer, MinMaxWidth minMaxWidth) {
+        float baseline = lineRenderer.occupiedArea.getBBox().getX() +
+                lineRenderer.occupiedArea.getBBox().getWidth() / 2;
+        float[] fontInfo = LineHeightHelper.getActualFontInfo(lineRenderer);
+        float fontWidth = fontInfo[LineHeightHelper.ASCENDER_INDEX] - fontInfo[LineHeightHelper.DESCENDER_INDEX] -
+                fontInfo[LineHeightHelper.LEADING_INDEX];
+        float textLeft = baseline - fontWidth / 2;
+        float textRight = baseline + fontWidth / 2;
+        float maxRight = baseline + fontWidth / 2;
+        float minLeft = baseline - fontWidth / 2;
+        for (final IRenderer renderer : lineRenderer.getChildRenderers()) {
+            if (FloatingHelper.isRendererFloating(renderer)) {
+                continue;
+            }
+            InlineVerticalAlignment alignment =
+                    renderer.<InlineVerticalAlignment>getProperty(Property.INLINE_VERTICAL_ALIGNMENT);
+            if (alignment == null) {
+                alignment = new InlineVerticalAlignment();
+            }
+
+            Rectangle childBBox = getAdjustedArea(renderer);
+            Rectangle parentBBox = lineRenderer.occupiedArea.getBBox().clone();
+            float offset = calculateOffsetVerticalText(childBBox, alignment, parentBBox, textLeft, textRight);
+            IRenderer unwrappedRenderer = renderer instanceof FootnoteAnchorRenderer
+                    ? ((FootnoteAnchorRenderer) renderer).footnoteAnchor : renderer;
+            Float textRise = unwrappedRenderer.<Float>getProperty(Property.TEXT_RISE);
+            if (textRise == null) {
+                textRise = 0F;
+            }
+            offset += (float) textRise;
+
+            if (Math.abs(offset) > ADJUSTMENT_THRESHOLD) {
+                renderer.move(offset, 0);
+            }
+            Rectangle cBbox = getAdjustedArea(renderer);
+            maxRight = Math.max(maxRight, cBbox.getRight());
+            minLeft = Math.min(minLeft, cBbox.getLeft());
+        }
+        adjustBBoxVertical(lineRenderer, maxRight, minLeft, minMaxWidth);
+    }
+
     private static boolean isBoxOrientedVerticalAlignment(InlineVerticalAlignment alignment) {
         return alignment.getType() == InlineVerticalAlignmentType.TOP ||
                 alignment.getType() == InlineVerticalAlignmentType.BOTTOM;
     }
 
     private static void processRenderers(LineRenderer lineRenderer, List<IRenderer> renderers, float actualYLine,
-            Predicate<InlineVerticalAlignment> needProcess,
-            Predicate<InlineVerticalAlignment> needRecalculateSizes) {
+                                         Predicate<InlineVerticalAlignment> needProcess,
+                                         Predicate<InlineVerticalAlignment> needRecalculateSizes) {
         float[] fontInfo = LineHeightHelper.getActualFontInfo(lineRenderer);
         float textTop = actualYLine + fontInfo[LineHeightHelper.ASCENDER_INDEX] -
                 fontInfo[LineHeightHelper.LEADING_INDEX] / 2;
@@ -85,9 +127,7 @@ final class InlineVerticalAlignmentHelper {
             if (FloatingHelper.isRendererFloating(renderer)) {
                 continue;
             }
-            InlineVerticalAlignment alignment = renderer.<InlineVerticalAlignment>getProperty(
-
-                    Property.INLINE_VERTICAL_ALIGNMENT);
+            InlineVerticalAlignment alignment = renderer.<InlineVerticalAlignment>getProperty(Property.INLINE_VERTICAL_ALIGNMENT);
             if (alignment == null) {
                 alignment = new InlineVerticalAlignment();
             }
@@ -122,7 +162,12 @@ final class InlineVerticalAlignmentHelper {
 
     private static Rectangle getAdjustedArea(IRenderer renderer) {
         Rectangle rect = renderer.getOccupiedArea().getBBox().clone();
+        // Vertical writing uses the full occupied width, including borders and padding, to size the line.
+        // Stripping them here would underestimate its left/right extents after an x-axis shift (e.g. text rise),
+        // leaving part of the child's box outside the line even with the default baseline alignment.
+        // See textRiseWithBorderAndPaddingTest.
         if (renderer instanceof AbstractRenderer && !(renderer instanceof BlockRenderer) &&
+                !((AbstractRenderer) renderer).isVerticalWriting() &&
                 !renderer.hasProperty(Property.INLINE_VERTICAL_ALIGNMENT)) {
             AbstractRenderer ar = (AbstractRenderer) renderer;
             ar.applyBorderBox(rect, false);
@@ -132,6 +177,54 @@ final class InlineVerticalAlignmentHelper {
         return rect;
     }
 
+    private static float calculateOffsetVerticalText(Rectangle cBBox, InlineVerticalAlignment alignment,
+                                                     Rectangle pBBox, float textLeft, float textRight) {
+        switch (alignment.getType()) {
+            case TEXT_TOP:
+                return textRight - cBBox.getRight();
+            case TEXT_BOTTOM:
+                return textLeft - cBBox.getLeft();
+            case FIXED:
+                return alignment.getValue();
+            case SUPER:
+            case SUB:
+            case FRACTION:
+                float offsetFraction = 0;
+                if (alignment.getType() == InlineVerticalAlignmentType.SUPER) {
+                    offsetFraction = SUPER_OFFSET;
+                } else if (alignment.getType() == InlineVerticalAlignmentType.SUB) {
+                    offsetFraction = SUB_OFFSET;
+                } else {
+                    offsetFraction = alignment.getValue();
+                }
+                return pBBox.getWidth() * offsetFraction;
+            case BOTTOM:
+                return pBBox.getLeft() - cBBox.getLeft();
+            case TOP:
+                return pBBox.getRight() - cBBox.getRight();
+            case BASELINE:
+            case MIDDLE:
+            default:
+                return 0;
+        }
+    }
+
+    private static void adjustBBoxVertical(LineRenderer lineRenderer, float maxRight, float minLeft,
+                                           MinMaxWidth minMaxWidth) {
+        float originalLeft = lineRenderer.occupiedArea.getBBox().getLeft();
+        float originalWidth = lineRenderer.occupiedArea.getBBox().getWidth();
+
+        float maxWidth = maxRight - minLeft;
+        if (maxWidth > originalWidth) {
+            lineRenderer.occupiedArea.getBBox().setWidth(maxWidth);
+            minMaxWidth.setChildrenMaxWidth(maxWidth);
+        }
+
+        float offset = originalLeft - minLeft + (originalWidth > maxWidth ? (originalWidth - maxWidth) / 2 : 0);
+        for (final IRenderer renderer : lineRenderer.getChildRenderers()) {
+            renderer.move(offset, 0);
+        }
+    }
 
     private static void adjustBBox(LineRenderer lineRenderer, float maxHeight, float maxTop, float minBottom) {
         LineHeight lineHeight = lineRenderer.<LineHeight>getProperty(Property.LINE_HEIGHT);
@@ -157,7 +250,8 @@ final class InlineVerticalAlignmentHelper {
     }
 
     private static float calculateOffset(IRenderer renderer, Rectangle cBBox, InlineVerticalAlignment alignment,
-            float baseline, float textTop, float textBottom, float leading, float xHeight, Rectangle pBBox) {
+                                         float baseline, float textTop, float textBottom, float leading, float xHeight,
+                                         Rectangle pBBox) {
         switch (alignment.getType()) {
             case BASELINE:
                 return baseline - getChildBaseline(renderer, leading);

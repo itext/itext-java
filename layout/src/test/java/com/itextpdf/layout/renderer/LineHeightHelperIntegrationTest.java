@@ -26,7 +26,6 @@ import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
@@ -36,6 +35,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -56,6 +56,11 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
     @BeforeAll
     public static void createDestFolder() {
         createDestinationFolder(DESTINATION);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION);
     }
 
     @Test
@@ -96,7 +101,7 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
     }
 
     private void testFont(PdfFont font, String outPdf) throws IOException {
-        Document document = new Document(new PdfDocument(new PdfWriter(outPdf)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)));
         document.setFont(font);
         Paragraph paragraph = new Paragraph(TEXT_SAMPLE);
         paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.HTML_MODE);

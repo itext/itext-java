@@ -24,9 +24,9 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.IMarkerCapable;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.SvgDrawContext;
 import com.itextpdf.svg.utils.DrawUtils;
 
 /**
@@ -59,6 +59,9 @@ public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer implements I
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ISvgNodeRenderer createDeepCopy() {
         PolygonSvgNodeRenderer copy = new PolygonSvgNodeRenderer();
@@ -66,8 +69,23 @@ public class PolygonSvgNodeRenderer extends PolylineSvgNodeRenderer implements I
         return copy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     void doStrokeOrFill(String fillRuleRawValue, PdfCanvas currentCanvas) {
         DrawUtils.doStrokeOrFillForClosedFigure(fillRuleRawValue, currentCanvas, doStroke);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doDraw(SvgDrawContext context) {
+        super.doDraw(context);
+        if (points.size() > 1) {
+            PdfCanvas canvas = context.getCurrentCanvas();
+            canvas.closePath();
+        }
     }
 }

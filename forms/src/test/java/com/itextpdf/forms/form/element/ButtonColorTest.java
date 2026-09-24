@@ -22,11 +22,9 @@
  */
 package com.itextpdf.forms.form.element;
 
-import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
@@ -38,6 +36,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -53,6 +52,11 @@ public class ButtonColorTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -72,7 +76,7 @@ public class ButtonColorTest extends ExtendedITextTest {
     }
 
     private static void drawButtons(String outPdf, String cmpPdf, Color color) throws IOException, InterruptedException {
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outPdf)));
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
              Document document = new Document(pdfDocument)) {
 
             Button button = new Button("button");

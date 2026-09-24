@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.FontEncoding;
@@ -36,10 +37,9 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfStream;
 import com.itextpdf.kernel.pdf.PdfString;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 class DocType1Font extends Type1Font implements IDocFontProgram {
+
+    private static final LazyLogger LOGGER = new LazyLogger(DocType1Font.class);
 
 
     private PdfStream fontFile;
@@ -55,12 +55,13 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
             CMapToUnicode toUnicode) {
         final String baseFont = getBaseFont(fontDictionary);
         if (!fontDictionary.containsKey(PdfName.FontDescriptor)) {
-            final Type1Font type1StdFont = getType1Font(baseFont);
+            final Type1Font type1StdFont = getType1Font(baseFont, fontEncoding);
             if (type1StdFont != null) {
-                type1StdFont.initializeGlyphs(fontEncoding);
                 return type1StdFont;
             }
         }
+
+        // Here we don't cache font program on kernel level
         DocType1Font fontProgram = new DocType1Font(baseFont);
         PdfDictionary fontDesc = fontDictionary.getAsDictionary(PdfName.FontDescriptor);
         fontProgram.subtype = fontDesc != null ? fontDesc.getAsName(PdfName.Subtype) : null;
@@ -107,16 +108,13 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         return baseFontName.getValue();
     }
 
-    static Type1Font getType1Font(String baseFont) {
+    static Type1Font getType1Font(String baseFont, FontEncoding fontEncoding) {
         try {
-            //if there are no font modifiers, cached font could be used,
-            //otherwise a new instance should be created.
-            return (Type1Font) FontProgramFactory.createFont(baseFont, false);
-        } catch (Exception e ) {
+            return (Type1Font) FontProgramFactory.createType1Font(baseFont, fontEncoding, true);
+        } catch (Exception e) {
             return null;
         }
     }
-
 
     @Override
     public PdfStream getFontFile() {
@@ -151,8 +149,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
 
     static void fillFontDescriptor(DocType1Font font, PdfDictionary fontDesc) {
         if (fontDesc == null) {
-            Logger logger = LoggerFactory.getLogger(FontUtil.class);
-            logger.warn(IoLogMessageConstant.FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR);
+            LOGGER.warn(() -> IoLogMessageConstant.FONT_DICTIONARY_WITH_NO_FONT_DESCRIPTOR);
             return;
         }
         PdfNumber v = fontDesc.getAsNumber(PdfName.Ascent);

@@ -24,6 +24,18 @@ package com.itextpdf.io.font.cmap;
 
 import com.itextpdf.io.source.PdfTokenizer;
 
+/**
+ * Locates CMap source data by name.
+ */
 public interface ICMapLocation {
+    /**
+     * Opens a tokenizer for a named CMap source.
+     *
+     * @param location the CMap source name
+     *
+     * @return a tokenizer positioned at the source start
+     *
+     * @throws java.io.IOException if the source cannot be opened
+     */
     PdfTokenizer getLocation(String location) throws java.io.IOException;
 }

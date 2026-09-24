@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.annot;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -29,8 +30,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is a super class for the annotations which are defined as markup annotations
@@ -41,6 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class PdfMarkupAnnotation extends PdfAnnotation {
 
+    private static final LazyLogger LOGGER = new LazyLogger(PdfMarkupAnnotation.class);
 
     protected PdfAnnotation inReplyTo = null;
     protected PdfPopupAnnotation popup = null;
@@ -216,8 +216,7 @@ public abstract class PdfMarkupAnnotation extends PdfAnnotation {
             if ( popupObject != null ) {
                 PdfAnnotation annotation = makeAnnotation(popupObject);
                 if (!(annotation instanceof PdfPopupAnnotation)) {
-                    Logger logger = LoggerFactory.getLogger(PdfMarkupAnnotation.class);
-                    logger.warn(IoLogMessageConstant.POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION);
+                    LOGGER.warn(() -> IoLogMessageConstant.POPUP_ENTRY_IS_NOT_POPUP_ANNOTATION);
                     return null;
                 }
                 popup = (PdfPopupAnnotation) annotation;

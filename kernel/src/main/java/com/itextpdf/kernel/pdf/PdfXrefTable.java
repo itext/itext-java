@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.actions.EventManager;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.kernel.actions.events.AddFingerPrintEvent;
@@ -37,13 +38,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A representation of a cross-referenced table of a PDF document.
  */
 public class PdfXrefTable {
+
+    private static final LazyLogger LOGGER = new LazyLogger(PdfXrefTable.class);
+
     public static final int MAX_GENERATION = 65535;
 
     private static final int INITIAL_CAPACITY = 32;
@@ -204,13 +206,11 @@ public class PdfXrefTable {
             return;
         }
         if (reference.checkState(PdfObject.MUST_BE_FLUSHED)) {
-            Logger logger = LoggerFactory.getLogger(PdfXrefTable.class);
-            logger.error(IoLogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE);
+            LOGGER.error(() -> IoLogMessageConstant.INDIRECT_REFERENCE_USED_IN_FLUSHED_OBJECT_MADE_FREE);
             return;
         }
         if (reference.checkState(PdfObject.FLUSHED)) {
-            Logger logger = LoggerFactory.getLogger(PdfXrefTable.class);
-            logger.error(IoLogMessageConstant.ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE);
+            LOGGER.error(() -> IoLogMessageConstant.ALREADY_FLUSHED_INDIRECT_OBJECT_MADE_FREE);
             return;
         }
 
@@ -221,7 +221,6 @@ public class PdfXrefTable {
         if (reference.getGenNumber() < MAX_GENERATION) {
             reference.genNr++;
         }
-
     }
 
     /**

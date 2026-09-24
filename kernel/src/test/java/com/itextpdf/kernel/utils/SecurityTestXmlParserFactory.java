@@ -46,6 +46,7 @@ public class SecurityTestXmlParserFactory extends DefaultSafeXmlParserFactory {
     }
 
     private static class TestEntityResolver implements EntityResolver {
+        @Override
         public InputSource resolveEntity(String publicId, String systemId) {
             throw new PdfException("Test message");
         }

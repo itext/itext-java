@@ -158,6 +158,7 @@ final class BitArray {
         return new int[arraySize];
     }
 
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder(size);
         for (int i = 0; i < size; i++) {

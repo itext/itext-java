@@ -34,6 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Parses PDF syntax objects and commands used by CMap programs.
+ */
 public class CMapContentParser {
 
     /**
@@ -202,6 +205,13 @@ public class CMapContentParser {
         return "[<" + toHex4(high) + toHex4(low) + ">]";
     }
 
+    /**
+     * Decodes a CMap string object to a Java string.
+     *
+     * @param cMapObject the CMap object containing a string value
+     *
+     * @return the decoded string value
+     */
     public static String decodeCMapObject(CMapObject cMapObject) {
         if (cMapObject.isHexString()) {
             return PdfEncodings.convertToString(((String) cMapObject.getValue()).getBytes(), PdfEncodings.UNICODE_BIG_UNMARKED);

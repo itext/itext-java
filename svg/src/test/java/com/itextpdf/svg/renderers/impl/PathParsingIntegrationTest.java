@@ -39,81 +39,81 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PathParsingIntegrationTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathParsingIntegrationTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/PathParsingIntegrationTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/PathParsingIntegrationTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/PathParsingIntegrationTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void normalTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "normal");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "normal");
     }
 
     @Test
     public void mixTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "mix");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "mix");
     }
 
     @Test
     public void noWhitespace() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "noWhitespace");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noWhitespace");
     }
 
     @Test
     public void zOperator() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "zOperator");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "zOperator");
     }
 
     @Test
     public void missingOperandArgument() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "missingOperandArgument");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "missingOperandArgument");
     }
 
     @Test
     public void decimalPointHandlingTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "decimalPointHandling");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "decimalPointHandling");
     }
 
     @Test
     public void invalidOperatorTest() throws IOException, InterruptedException {
         Assertions.assertThrows(SvgProcessingException.class,
-                () -> convertAndCompare(sourceFolder, destinationFolder, "invalidOperator")
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidOperator")
         );
     }
 
     @Test
     public void invalidOperatorCSensTest() throws IOException, InterruptedException {
         Assertions.assertThrows(SvgProcessingException.class,
-                () -> convertAndCompare(sourceFolder, destinationFolder, "invalidOperatorCSens")
+                () -> convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidOperatorCSens")
         );
     }
 
     @Test
     public void moreThanOneHParam() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "moreThanOneHParam");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "moreThanOneHParam");
     }
 
     @Test
     public void negativeAfterPositiveHandlingTest01() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "negativeAfterPositiveHandling");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "negativeAfterPositiveHandling");
     }
 
     @Test
     public void negativeAfterPositiveHandlingTest02() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "negativeAfterPositiveHandlingExtendedViewbox");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "negativeAfterPositiveHandlingExtendedViewbox");
     }
 
     @Test
     public void insignificantSpacesTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "insignificantSpaces");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "insignificantSpaces");
     }
 
     @Test
     public void precedingSpacesTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "precedingSpaces");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "precedingSpaces");
     }
 
     @Test
@@ -122,7 +122,7 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     })
     //TODO: update cmp-file after DEVSIX-2255
     public void textPathTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "textpath");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textpath");
     }
 
     @Test
@@ -131,7 +131,7 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     })
     public void textPathExample() throws IOException, InterruptedException {
         //TODO: update when DEVSIX-2255 implemented
-        convertAndCompare(sourceFolder, destinationFolder, "textPathExample");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textPathExample");
     }
 
     @Test
@@ -140,27 +140,27 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     })
     public void tspanInTextPathTest() throws IOException, InterruptedException {
         //TODO: update when DEVSIX-2255 implemented
-        convertAndCompare(sourceFolder, destinationFolder, "tspanInTextPath");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanInTextPath");
     }
 
     @Test
     public void pathH() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathH");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathH");
     }
 
     @Test
     public void pathV() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder,  "pathV");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER,  "pathV");
     }
 
     @Test
     public void pathHV() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathHV");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathHV");
     }
 
     @Test
     public void pathRelativeAbsoluteCombinedTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "pathRelativeAbsoluteCombined");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathRelativeAbsoluteCombined");
     }
 
     @Test
@@ -169,40 +169,40 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
         // and simply print them to the output PDF. Not all the viewers are able to process such large numbers
         // and hence different results in different viewers. Acrobat is not able to process the numbers
         // and the result is garbled visual representation. GhostScript, however, renders the PDF just fine
-        convertAndCompare(sourceFolder, destinationFolder, "pathHVExponential");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pathHVExponential");
     }
 
     @Test
     public void pathABasic() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "pathABasic");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "pathABasic");
     }
 
     @Test
     public void pathAFlags() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "pathAFlags");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "pathAFlags");
     }
 
     @Test
     public void pathAAxisRotation() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "pathAAxisRotation");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "pathAAxisRotation");
     }
 
     @Test
     //TODO: update cmp when DEVSIX-3010 and DEVSIX-3011 fixed
     public void pathAOutOfRange() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "pathAOutOfRange");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "pathAOutOfRange");
     }
 
     @Test
     //TODO: update cmp when DEVSIX-3010 fixed
     public void arcs_end_point() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "arcsEndPoint");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "arcsEndPoint");
     }
 
     @Test
     //TODO: update cmp when DEVSIX-3011 fixed
     public void flags_out_of_range() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "flags_out_of_range");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "flags_out_of_range");
     }
 }
 

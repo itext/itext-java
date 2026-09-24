@@ -155,6 +155,7 @@ public abstract class Options
 	/**
 	 * @see Object#equals(Object)
 	 */
+	@Override
 	public boolean equals(Object obj)
 	{
 		return getOptions() == ((Options) obj).getOptions();
@@ -164,6 +165,7 @@ public abstract class Options
 	/**
 	 * @see Object#hashCode()
 	 */
+	@Override
 	public int hashCode()
 	{
 		return getOptions();
@@ -206,6 +208,7 @@ public abstract class Options
 	/**
 	 * @return Returns the options as hex bitmask.
 	 */
+	@Override
 	public String toString()
 	{
 		return "0x" + Integer.toHexString(options);

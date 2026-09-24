@@ -49,6 +49,7 @@ import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.ICertificateID;
 import com.itextpdf.commons.bouncycastle.openssl.IPEMParser;
 import com.itextpdf.commons.bouncycastle.operator.AbstractOperatorCreationException;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.kernel.crypto.OID;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -74,8 +75,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class contains a series of static methods that
@@ -84,7 +83,7 @@ import org.slf4j.LoggerFactory;
 public class CertificateUtil {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-    private static final Logger LOGGER = LoggerFactory.getLogger(CertificateUtil.class);
+    private static final LazyLogger LOGGER = new LazyLogger(CertificateUtil.class);
 
     // Certificate Revocation Lists
 
@@ -385,7 +384,7 @@ public class CertificateUtil {
                 try {
                     crls.addAll(SignUtils.readAllCRLs(s.getEncoded()));
                 } catch (CRLException ignored) {
-                    LOGGER.warn(SignLogMessageConstant.UNABLE_TO_PARSE_REV_INFO);
+                    LOGGER.warn(() -> SignLogMessageConstant.UNABLE_TO_PARSE_REV_INFO);
                     otherRevocationInfoFormats.add(s);
                 }
             }

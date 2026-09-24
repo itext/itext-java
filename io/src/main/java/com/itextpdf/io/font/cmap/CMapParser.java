@@ -22,15 +22,19 @@
  */
 package com.itextpdf.io.font.cmap;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.PdfTokenizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Populates CMap objects from PDF CMap programs.
+ */
 public class CMapParser {
+
+    private static final LazyLogger LOGGER = new LazyLogger(CMapParser.class);
 
     private static final String def = "def";
     private static final String endcidrange = "endcidrange";
@@ -47,6 +51,15 @@ public class CMapParser {
 
     private static final int MAX_LEVEL = 10;
 
+    /**
+     * Parses a named CMap and its referenced CMaps into a destination map.
+     *
+     * @param cmapName the CMap name to load
+     * @param cmap     the destination map to populate
+     * @param location the source used to locate named CMaps
+     *
+     * @throws java.io.IOException if a CMap source cannot be opened
+     */
     public static void parseCid(String cmapName, AbstractCMap cmap, ICMapLocation location) throws java.io.IOException {
         parseCid(cmapName, cmap, location, 0);
     }
@@ -111,8 +124,7 @@ public class CMapParser {
                 }
             }
         } catch (Exception ex) {
-            Logger logger = LoggerFactory.getLogger(CMapParser.class);
-            logger.error(IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
+            LOGGER.error(() -> IoLogMessageConstant.UNKNOWN_ERROR_WHILE_PROCESSING_CMAP);
         } finally {
             inp.close();
         }

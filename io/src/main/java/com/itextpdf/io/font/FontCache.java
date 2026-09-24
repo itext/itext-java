@@ -25,6 +25,9 @@ package com.itextpdf.io.font;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Caches font programs by their source identifiers.
+ */
 public class FontCache {
 
     private static final Map<FontCacheKey, FontProgram> fontCache = new ConcurrentHashMap<>();
@@ -39,6 +42,13 @@ public class FontCache {
         fontCache.clear();
     }
 
+    /**
+     * Retrieves a cached font by its source name.
+     *
+     * @param fontName the font source name
+     *
+     * @return the cached font, or {@code null} when absent
+     */
     public static FontProgram getFont(String fontName) {
         return fontCache.get(FontCacheKey.create(fontName));
     }
@@ -47,6 +57,14 @@ public class FontCache {
         return fontCache.get(key);
     }
 
+    /**
+     * Caches a font unless an entry for the source name already exists.
+     *
+     * @param font     the font to cache
+     * @param fontName the font source name
+     *
+     * @return the cached font, which may be an existing entry
+     */
     public static FontProgram saveFont(FontProgram font, String fontName) {
         return saveFont(font, FontCacheKey.create(fontName));
     }

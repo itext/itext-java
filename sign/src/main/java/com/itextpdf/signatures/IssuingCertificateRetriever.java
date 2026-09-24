@@ -27,6 +27,7 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.bouncycastle.asn1.x500.IX500Name;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.cert.ocsp.IBasicOCSPResp;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.resolver.resource.DefaultResourceRetriever;
 import com.itextpdf.io.resolver.resource.IAdvancedResourceRetriever;
 import com.itextpdf.kernel.crypto.DigestAlgorithms;
@@ -40,8 +41,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,7 +63,7 @@ import java.util.stream.Collectors;
 public class IssuingCertificateRetriever implements IIssuingCertificateRetriever {
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
-    private static final Logger LOGGER = LoggerFactory.getLogger(IssuingCertificateRetriever.class);
+    private static final LazyLogger LOGGER = new LazyLogger(IssuingCertificateRetriever.class);
 
     private final TrustedCertificatesStore trustedCertificatesStore = new TrustedCertificatesStore();
     private final Map<String, List<Certificate>> knownCertificates = new HashMap<>();
@@ -548,7 +547,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
         try (InputStream missingCertsData = getIssuerCertByURI(url)) {
             return parseCertificates(missingCertsData);
         } catch (Exception e) {
-            LOGGER.warn(SignLogMessageConstant.UNABLE_TO_PARSE_AIA_CERT);
+            LOGGER.warn(() -> SignLogMessageConstant.UNABLE_TO_PARSE_AIA_CERT);
             return null;
         }
     }

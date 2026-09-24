@@ -37,6 +37,14 @@ public final class DecimalFormatUtil {
     private DecimalFormatUtil() {
     }
 
+    /**
+     * Formats a number with the supplied pattern.
+     *
+     * @param d       the number to format
+     * @param pattern the {@link DecimalFormat} pattern
+     *
+     * @return the formatted number
+     */
     public static String formatNumber(double d, String pattern) {
         DecimalFormat dn = new DecimalFormat(pattern, dfs);
         return dn.format(d);

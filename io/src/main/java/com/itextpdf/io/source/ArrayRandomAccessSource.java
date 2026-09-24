@@ -33,6 +33,11 @@ class ArrayRandomAccessSource implements IRandomAccessSource {
 
     private byte[] array;
 
+    /**
+     * Creates a source backed directly by the specified byte array.
+     *
+     * @param array the non-null array to read; subsequent mutations are visible to this source
+     */
     public ArrayRandomAccessSource(byte[] array) {
         if(array == null) {
             throw new IllegalArgumentException("Passed byte array can not be null.");
@@ -40,6 +45,10 @@ class ArrayRandomAccessSource implements IRandomAccessSource {
         this.array = array;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int get(long offset) {
         if (array == null) {
             throw new IllegalStateException(IoExceptionMessageConstant.ALREADY_CLOSED);
@@ -50,6 +59,10 @@ class ArrayRandomAccessSource implements IRandomAccessSource {
         return 0xff & array[(int)offset];
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int get(long offset, byte[] bytes, int off, int len) {
         if (array == null) {
             throw new IllegalStateException(IoExceptionMessageConstant.ALREADY_CLOSED);
@@ -65,6 +78,10 @@ class ArrayRandomAccessSource implements IRandomAccessSource {
         return len;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public long length() {
         if (array == null) {
             throw new IllegalStateException(IoExceptionMessageConstant.ALREADY_CLOSED);
@@ -72,6 +89,10 @@ class ArrayRandomAccessSource implements IRandomAccessSource {
         return array.length;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void close() throws java.io.IOException {
         array = null;
     }

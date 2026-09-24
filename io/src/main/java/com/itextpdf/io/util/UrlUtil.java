@@ -107,6 +107,15 @@ public final class UrlUtil {
         return uri.toString();
     }
 
+    /**
+     * Opens a stream for a URL.
+     *
+     * @param url the URL to open
+     *
+     * @return a stream for the URL's content
+     *
+     * @throws IOException if the URL cannot be opened
+     */
     public static InputStream openStream(URL url) throws IOException {
         return url.openStream();
     }

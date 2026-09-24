@@ -22,13 +22,12 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.ShorthandResolverFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +36,8 @@ import java.util.List;
  * {@link AbstractBorderShorthandResolver} implementation for borders.
  */
 public class BorderShorthandResolver extends AbstractBorderShorthandResolver {
+
+    private static final LazyLogger LOGGER = new LazyLogger(BorderShorthandResolver.class);
 
     /* (non-Javadoc)
      * @see com.itextpdf.styledxmlparser.css.resolve.shorthand.impl.AbstractBorderShorthandResolver#getPrefix()
@@ -58,8 +59,8 @@ public class BorderShorthandResolver extends AbstractBorderShorthandResolver {
             if (shorthandResolver != null) {
                 resolvedProps.addAll(shorthandResolver.resolveShorthand(prop.getExpression()));
             } else {
-                Logger logger = LoggerFactory.getLogger(BorderShorthandResolver.class);
-                logger.error(MessageFormatUtil.format("Cannot find a shorthand resolver for the \"{0}\" property. " +
+                LOGGER.error(() -> MessageFormatUtil.format(
+                        "Cannot find a shorthand resolver for the \"{0}\" property. " +
                         "Expected border-width, border-style or border-color properties.", prop.getProperty()));
             }
         }

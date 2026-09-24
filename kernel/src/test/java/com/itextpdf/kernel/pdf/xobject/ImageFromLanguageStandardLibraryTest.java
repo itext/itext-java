@@ -88,7 +88,7 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
         PdfStream outStream = firstPage.getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
         PdfStream cmpStream = cmpDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
-        Assertions.assertNull(new CompareTool().compareStreamsStructure(outStream, cmpStream));
+        Assertions.assertNull(new CompareTool().compareStreamsByStructure(outStream, cmpStream));
 
         cmpDoc.close();
         pdfDocument.close();
@@ -126,7 +126,7 @@ public class ImageFromLanguageStandardLibraryTest extends ExtendedITextTest {
         PdfStream outStream = firstPage.getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
         PdfStream cmpStream = cmpDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
-        Assertions.assertNull(new CompareTool().compareStreamsStructure(outStream, cmpStream));
+        Assertions.assertNull(new CompareTool().compareStreamsByStructure(outStream, cmpStream));
 
         cmpDoc.close();
         pdfDocument.close();

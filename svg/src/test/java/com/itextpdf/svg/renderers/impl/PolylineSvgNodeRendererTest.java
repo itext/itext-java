@@ -49,18 +49,18 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
-    private static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolylineSvgNodeRendererTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/PolylineSvgNodeRendererTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/PolylineSvgNodeRendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/PolylineSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void polylineRendererTest() throws IOException, InterruptedException {
         String filename = "polylineRendererTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
@@ -73,7 +73,7 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
 
         root.draw(context);
         doc.close();
-        Assertions.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareVisually(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void polyLineEmptyPointsListTest() throws IOException, InterruptedException {
         String filename = "polyLineEmptyPointsListTest.pdf";
-        PdfDocument doc = new PdfDocument(new PdfWriter(destinationFolder + filename));
+        PdfDocument doc = new PdfDocument(new PdfWriter(DESTINATION_FOLDER + filename));
         doc.addNewPage();
 
         ISvgNodeRenderer root = new PolylineSvgNodeRenderer();
@@ -124,7 +124,7 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
 
         int numPoints = ((PolylineSvgNodeRenderer) root).getPoints().size();
         Assertions.assertEquals(numPoints, 0);
-        Assertions.assertNull(new CompareTool().compareVisually(destinationFolder + filename, sourceFolder + "cmp_" + filename, destinationFolder, "diff_"));
+        Assertions.assertNull(new CompareTool().compareVisually(DESTINATION_FOLDER + filename, SOURCE_FOLDER + "cmp_" + filename, DESTINATION_FOLDER, "diff_"));
     }
 
     @Test
@@ -156,6 +156,6 @@ public class PolylineSvgNodeRendererTest extends SvgIntegrationTest {
 
     @Test
     public void elementDimensionExceedsViewboxBoundaryTest() throws IOException, InterruptedException {
-        convertAndCompare(sourceFolder, destinationFolder, "elementDimensionExceedsViewboxBoundary");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "elementDimensionExceedsViewboxBoundary");
     }
 }

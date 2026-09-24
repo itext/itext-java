@@ -61,6 +61,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -79,11 +80,16 @@ public class AlignmentTest extends ExtendedITextTest {
     }
 
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void justifyAlignmentTest01() throws IOException,  InterruptedException {
         String outFileName = DESTINATION_FOLDER + "justifyAlignmentTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_justifyAlignmentTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -103,7 +109,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAlignmentTest02() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "justifyAlignmentTest02.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_justifyAlignmentTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -120,7 +126,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAlignmentTest03() throws IOException,  InterruptedException {
         String outFileName = DESTINATION_FOLDER + "justifyAlignmentTest03.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_justifyAlignmentTest03.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -140,7 +146,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAlignmentTest04() throws IOException,  InterruptedException {
         String outFileName = DESTINATION_FOLDER + "justifyAlignmentTest04.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_justifyAlignmentTest04.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -160,7 +166,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAlignmentForcedNewlinesTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "justifyAlignmentForcedNewlinesTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_justifyAlignmentForcedNewlinesTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -181,7 +187,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAllTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "justifyAllTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_justifyAllTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -202,7 +208,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void justifyAllTest02() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "justifyAllTest02.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_justifyAllTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
         PdfFont type0 = PdfFontFactory.createFont(SOURCE_FOLDER + "/../fonts/NotoSans-Regular.ttf", PdfEncodings.IDENTITY_H);
@@ -225,7 +231,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void blockAlignmentTest01() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "blockAlignmentTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_blockAlignmentTest01.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -251,7 +257,7 @@ public class AlignmentTest extends ExtendedITextTest {
     public void blockAlignmentTest02() throws IOException, InterruptedException {
         String outFileName = DESTINATION_FOLDER + "blockAlignmentTest02.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_blockAlignmentTest02.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
 
         Document document = new Document(pdfDocument);
 
@@ -276,7 +282,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "imageAlignmentTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_imageAlignmentTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -297,7 +303,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "emptyLineJustification01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_emptyLineJustification01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
 
@@ -317,7 +323,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "floatAlignmentTest01.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_floatAlignmentTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.setDefaultPageSize(new PageSize(350, 450));
         Document doc = new Document(pdfDoc);
@@ -360,7 +366,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "floatAlignmentTest02.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_floatAlignmentTest02.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.setDefaultPageSize(new PageSize(350, 450));
         Document doc = new Document(pdfDoc);
@@ -496,7 +502,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_inlineVerticalAlignmentMixed.pdf";
 
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
 
         Document doc = new Document(pdfDoc,  PageSize.A4.rotate());
 
@@ -578,7 +584,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "floatAlignmentTest03.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_floatAlignmentTest03.pdf";
 
-        PdfWriter writer = new PdfWriter(outFileName);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFileName);
         PdfDocument pdfDoc = new PdfDocument(writer);
         pdfDoc.setDefaultPageSize(new PageSize(350, 450));
         Document doc = new Document(pdfDoc);
@@ -605,7 +611,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "flexItemHorizontalAlignmentTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_flexItemHorizontalAlignmentTest.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document doc = new Document(pdfDoc);
             DocumentRenderer documentRenderer = new DocumentRenderer(doc);
 
@@ -633,7 +639,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "justifiedAlignmentWithZeroFreeSpaceTest.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_justifiedAlignmentWithZeroFreeSpaceTest.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDoc);
 
             PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSansCJKjp-Regular.otf");
@@ -660,7 +666,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "middleAlignmentWithTtfOS2Version3Test.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_middleAlignmentWithTtfOS2Version3Test.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDoc);
 
             PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "OpenSans-Bold.ttf");
@@ -693,7 +699,7 @@ public class AlignmentTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "middleAlignmentWithTtfOS2Version1Test.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_middleAlignmentWithTtfOS2Version1Test.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             Document document = new Document(pdfDoc);
 
             PdfFont font = PdfFontFactory.createFont(FONTS_FOLDER + "FreeSans.ttf");
@@ -731,7 +737,7 @@ public class AlignmentTest extends ExtendedITextTest {
     private static void createDocumentWithInlineAlignment(String outPdf, String cmpPdf,
             InlineVerticalAlignmentType verticalAlignment1, IInlineTestObjectModifier adjustTestObjects)
             throws IOException, InterruptedException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         Document doc = new Document(pdfDoc);
         Paragraph p = new Paragraph();
         p.setBackgroundColor(new DeviceRgb(189, 239, 73));
@@ -769,7 +775,7 @@ public class AlignmentTest extends ExtendedITextTest {
 
     private static void createDocumentWithAlignment(String outPdf, String cmpPdf, VerticalAlignment verticalAlignment)
             throws IOException, InterruptedException {
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         Document doc = new Document(pdfDoc);
         Paragraph p = new Paragraph();
         p.setBackgroundColor(new DeviceRgb(189, 239, 73));

@@ -147,6 +147,7 @@ public class XMPPathSegment
 	/**
 	 * @see Object#toString()
 	 */
+	@Override
 	public String toString()
 	{
 		switch (kind)

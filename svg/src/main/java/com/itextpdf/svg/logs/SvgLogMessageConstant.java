@@ -39,6 +39,12 @@ public final class SvgLogMessageConstant {
     public static final String GRADIENT_INVALID_SPREAD_METHOD_LOG =
             "Could not recognize gradient spread method value {0}";
 
+    public static final String INVALID_MASK_REFERENCE =
+            "Mask reference shall resolve to an existing <mask> element. Mask will not be applied. Found: {0}";
+
+    public static final String MASK_WIDTH_OR_HEIGHT_IS_NEGATIVE =
+            "Mask width or height is negative. Masked element will not be rendered.";
+
     public static final String MARKER_HEIGHT_IS_NEGATIVE_VALUE =
             "markerHeight has negative value. Marker will not be rendered.";
 

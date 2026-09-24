@@ -42,6 +42,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,11 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -70,7 +76,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_formWithSameFieldReferences.pdf";
         String outFileName = DESTINATION_FOLDER + "formWithSameFieldReferences.pdf";
 
-        try (PdfDocument sourceDoc = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
+        try (PdfDocument sourceDoc = new PdfDocument(new PdfReader(srcFileName), CompareTool.createTestPdfWriter(outFileName))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(sourceDoc, true);
 
             Assertions.assertEquals(1, acroForm.getFields().size());
@@ -86,7 +92,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
         String cmpFileName = SOURCE_FOLDER + "cmp_mergeMergedFieldsWithTheSameNames.pdf";
         String outFileName = DESTINATION_FOLDER + "mergeMergedFieldsWithTheSameNames.pdf";
 
-        try (PdfDocument sourceDoc = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
+        try (PdfDocument sourceDoc = new PdfDocument(new PdfReader(srcFileName), CompareTool.createTestPdfWriter(outFileName))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(sourceDoc, true);
 
             Assertions.assertEquals(1, acroForm.getFields().size());
@@ -108,7 +114,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
     public void allowAddingFieldsWithTheSameNamesButDifferentValuesTest() throws IOException, InterruptedException {
         String cmpFileName = SOURCE_FOLDER + "cmp_fieldsWithTheSameNamesButDifferentValues.pdf";
         String outFileName = DESTINATION_FOLDER + "fieldsWithTheSameNamesButDifferentValues.pdf";
-        try (PdfDocument outputDoc = new PdfDocument(new PdfWriter(outFileName))) {
+        try (PdfDocument outputDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName))) {
             outputDoc.addNewPage();
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(outputDoc, true);
 
@@ -151,7 +157,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
     public void processFieldsWithTheSameNamesInWritingModeTest() throws IOException {
         String srcFileName = SOURCE_FOLDER + "cmp_fieldsWithTheSameNamesButDifferentValues.pdf";
         String outFileName = DESTINATION_FOLDER + "processFieldsWithTheSameNamesInWritingMode.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName), CompareTool.createTestPdfWriter(outFileName))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
             Assertions.assertEquals(1, acroForm.getFields().size());
 
@@ -172,7 +178,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
         String cmpFileName2 = SOURCE_FOLDER + "cmp_disableFieldRegenerationUpdated.pdf";
         String outFileName = DESTINATION_FOLDER + "disableFieldRegeneration.pdf";
         String outFileName2 = DESTINATION_FOLDER + "disableFieldRegenerationUpdated.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName), CompareTool.createTestPdfWriter(outFileName))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
             acroForm.disableRegenerationForAllFields();
             for (PdfFormField field : acroForm.getRootFormFields().values()) {
@@ -182,7 +188,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
             }
         }
         Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER, "diff_"));
-        try (PdfDocument document = new PdfDocument(new PdfReader(cmpFileName), new PdfWriter(outFileName2))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(cmpFileName), CompareTool.createTestPdfWriter(outFileName2))) {
             PdfFormCreator.getAcroForm(document, true).enableRegenerationForAllFields();
         }
         Assertions.assertNull(new CompareTool().compareByContent(outFileName2, cmpFileName2, DESTINATION_FOLDER, "diff_"));
@@ -193,7 +199,7 @@ public class PdfAcroFormIntegrationTest extends ExtendedITextTest {
         String srcFileName = SOURCE_FOLDER + "cmp_disableFieldRegeneration.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_enableFieldRegeneration.pdf";
         String outFileName = DESTINATION_FOLDER + "enableFieldRegeneration.pdf";
-        try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName), new PdfWriter(outFileName))) {
+        try (PdfDocument document = new PdfDocument(new PdfReader(srcFileName), CompareTool.createTestPdfWriter(outFileName))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(document, true);
             acroForm.disableRegenerationForAllFields();
             for (PdfFormField field : acroForm.getRootFormFields().values()) {

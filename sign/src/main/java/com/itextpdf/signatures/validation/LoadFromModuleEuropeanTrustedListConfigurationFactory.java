@@ -44,14 +44,17 @@ class LoadFromModuleEuropeanTrustedListConfigurationFactory extends EuropeanTrus
         config = new EuropeanTrustedListConfiguration();
     }
 
+    @Override
     public String getTrustedListUri() {
         return config.getTrustedListUri();
     }
 
+    @Override
     public String getCurrentlySupportedPublication() {
         return config.getCurrentlySupportedPublication();
     }
 
+    @Override
     public List<Certificate> getCertificates() {
         EuropeanTrustedCertificatesResourceLoader loader = new EuropeanTrustedCertificatesResourceLoader(config);
         return loader.loadCertificates();

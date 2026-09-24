@@ -54,6 +54,7 @@ public class AesGcmDecryptor implements IDecryptor {
      *
      * @return decrypted bytes array
      */
+    @Override
     public byte[] update(byte[] b, int off, int len) {
         if (!initiated) {
             int left = Math.min(iv.length - ivptr, len);
@@ -77,6 +78,7 @@ public class AesGcmDecryptor implements IDecryptor {
      *
      * @return input data that may have been buffered during a previous update operation
      */
+    @Override
     public byte[] finish() {
         if (cipher != null) {
             return cipher.doFinal();

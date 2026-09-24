@@ -22,6 +22,9 @@
  */
 package com.itextpdf.io.font.cmap;
 
+/**
+ * Represents a typed object parsed from CMap content.
+ */
 public class CMapObject {
 
     protected static final int STRING = 1;
@@ -36,51 +39,112 @@ public class CMapObject {
     private int type;
     private Object value;
 
+    /**
+     * Creates a typed CMap object.
+     *
+     * @param objectType one of this class's object-type constants
+     * @param value      the value associated with the type
+     */
     public CMapObject(int objectType, Object value) {
         this.type = objectType;
         this.value = value;
     }
 
+    /**
+     * Returns the value represented by this object.
+     *
+     * @return the stored value
+     */
     public Object getValue() {
         return value;
     }
 
+    /**
+     * Returns this object's type code.
+     *
+     * @return one of this class's object type constants
+     */
     public int getType() {
         return type;
     }
 
+    /**
+     * Replaces this object's stored value.
+     *
+     * @param value the new value
+     */
     public void setValue(Object value) {
         this.value = value;
     }
 
+    /**
+     * Tests whether this object is a literal or hexadecimal string.
+     *
+     * @return {@code true} for either string type
+     */
     public boolean isString() {
         return type == STRING || type == HEX_STRING;
     }
 
+    /**
+     * Tests whether this object is a hexadecimal string.
+     *
+     * @return {@code true} when this object's type is hexadecimal string
+     */
     public boolean isHexString() {
         return type == HEX_STRING;
     }
 
+    /**
+     * Tests whether this object is a PDF name.
+     *
+     * @return {@code true} when this object's type is name
+     */
     public boolean isName() {
         return type == NAME;
     }
 
+    /**
+     * Tests whether this object is a number.
+     *
+     * @return {@code true} when this object's type is number
+     */
     public boolean isNumber() {
         return type == NUMBER;
     }
 
+    /**
+     * Tests whether this object is a command literal.
+     *
+     * @return {@code true} when this object's type is literal
+     */
     public boolean isLiteral() {
         return type == LITERAL;
     }
 
+    /**
+     * Tests whether this object is an array.
+     *
+     * @return {@code true} when this object's type is array
+     */
     public boolean isArray() {
         return type == ARRAY;
     }
 
+    /**
+     * Tests whether this object is a dictionary.
+     *
+     * @return {@code true} when this object's type is dictionary
+     */
     public boolean isDictionary() {
         return type == DICTIONARY;
     }
 
+    /**
+     * Tests whether this object is a structural token.
+     *
+     * @return {@code true} when this object's type is token
+     */
     public boolean isToken() {
         return type == TOKEN;
     }
@@ -101,6 +165,11 @@ public class CMapObject {
         return value.toString();
     }
 
+    /**
+     * Returns the byte array of a hexadecimal string object.
+     *
+     * @return the retained byte array, or {@code null} when this is not a hexadecimal string
+     */
     public byte[] toHexByteArray() {
         if (type == HEX_STRING) {
             return (byte[])value;

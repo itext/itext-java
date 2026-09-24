@@ -48,6 +48,7 @@ public class PdfPrinterMarkAnnotation extends PdfAnnotation {
         super(pdfObject);
     }
 
+    @Override
     public PdfName getSubtype() {
         return PdfName.PrinterMark;
     }

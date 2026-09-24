@@ -30,6 +30,12 @@ import com.itextpdf.io.font.otf.Glyph;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Base representation of a font program and its glyph, naming, and metric data.
+ *
+ * <p>
+ * Glyph metrics exposed by this abstraction use the normalized 1000-unit PDF glyph space.
+ */
 public abstract class FontProgram {
 
     public static final int HORIZONTAL_SCALING_FACTOR = 100;
@@ -37,18 +43,46 @@ public abstract class FontProgram {
     public static final int UNITS_NORMALIZATION = 1000;
 
 
+    /**
+     * Converts a PDF text-space value to normalized glyph space.
+     *
+     * @param value value in text space
+     *
+     * @return value divided by {@link #UNITS_NORMALIZATION}
+     */
     public static float convertTextSpaceToGlyphSpace(float value) {
         return value / UNITS_NORMALIZATION;
     }
 
+    /**
+     * Converts a normalized glyph-space value to PDF text space.
+     *
+     * @param value value in normalized glyph space
+     *
+     * @return value multiplied by {@link #UNITS_NORMALIZATION}
+     */
     public static float convertGlyphSpaceToTextSpace(float value) {
         return value * UNITS_NORMALIZATION;
     }
 
+    /**
+     * Converts a normalized glyph-space value to PDF text space without losing double precision.
+     *
+     * @param value value in normalized glyph space
+     *
+     * @return value multiplied by {@link #UNITS_NORMALIZATION}
+     */
     public static double convertGlyphSpaceToTextSpace(double value) {
         return value * UNITS_NORMALIZATION;
     }
 
+    /**
+     * Converts an integral normalized glyph-space value to PDF text space.
+     *
+     * @param value value in normalized glyph space
+     *
+     * @return value multiplied by {@link #UNITS_NORMALIZATION}
+     */
     public static int convertGlyphSpaceToTextSpace(int value) {
         return value * UNITS_NORMALIZATION;
     }
@@ -57,12 +91,25 @@ public abstract class FontProgram {
     // In case TrueType: glyph index to glyph.
     protected Map<Integer, Glyph> codeToGlyph = new HashMap<>();
     protected Map<Integer, Glyph> unicodeToGlyph = new HashMap<>();
+    /**
+     * Indicates that character codes are interpreted using the font's built-in encoding rather than a
+     * Unicode-oriented encoding.
+     */
     protected boolean isFontSpecific;
 
+    /**
+     * Naming data extracted from the font program.
+     */
     protected FontNames fontNames;
+    /**
+     * Metrics extracted from the font program.
+     */
     protected FontMetrics fontMetrics = new FontMetrics();
     protected FontIdentification fontIdentification = new FontIdentification();
 
+    /**
+     * Average glyph width in normalized glyph units.
+     */
     protected int avgWidth;
 
     /**
@@ -72,30 +119,68 @@ public abstract class FontProgram {
      */
     protected String encodingScheme = FontEncoding.FONT_SPECIFIC;
 
+    /**
+     * CID registry name associated with this font, or {@code null} for fonts without a CID registry.
+     */
     protected String registry;
 
+    /**
+     * Gets the amount of glyphs in this font program.
+     *
+     * @return the amount of glyphs in this font program
+     */
     public int countOfGlyphs() {
         return Math.max(codeToGlyph.size(), unicodeToGlyph.size());
     }
 
+    /**
+     * Gets the parsed font naming data.
+     *
+     * @return naming data owned by this program
+     */
     public FontNames getFontNames() {
         return fontNames;
     }
 
+    /**
+     * Gets the parsed font metric data.
+     *
+     * @return metric data owned by this program
+     */
     public FontMetrics getFontMetrics() {
         return fontMetrics;
     }
 
+    /**
+     * Gets the parsed font identification data.
+     *
+     * @return identification data owned by this program
+     */
     public FontIdentification getFontIdentification() {
         return fontIdentification;
     }
 
+    /**
+     * Gets the CID registry name.
+     *
+     * @return CID registry, or {@code null} when none was supplied
+     */
     public String getRegistry() {
         return registry;
     }
 
+    /**
+     * Computes the PDF font descriptor flags for this program.
+     *
+     * @return bit set defined by the PDF font descriptor specification
+     */
     public abstract int getPdfFontFlags();
 
+    /**
+     * Checks whether this program uses its built-in character encoding.
+     *
+     * @return {@code true} when character codes are font-specific
+     */
     public boolean isFontSpecific() {
         return isFontSpecific;
     }
@@ -112,6 +197,11 @@ public abstract class FontProgram {
         return glyph != null ? glyph.getWidth() : 0;
     }
 
+    /**
+     * Gets the average glyph width.
+     *
+     * @return average width in normalized glyph units
+     */
     public int getAvgWidth() {
         return avgWidth;
     }
@@ -128,15 +218,33 @@ public abstract class FontProgram {
         return glyph != null ? glyph.getBbox() : null;
     }
 
+    /**
+     * Looks up a glyph by Unicode value.
+     *
+     * @param unicode Unicode scalar value
+     *
+     * @return matching glyph, or {@code null} when unmapped
+     */
     public Glyph getGlyph(int unicode) {
         return unicodeToGlyph.get(unicode);
     }
 
-    // char code in case Type1 or index in case OpenType
+    /**
+     * Looks up a glyph by its format-specific code.
+     *
+     * @param charCode Type 1 character code or OpenType glyph index
+     *
+     * @return matching glyph, or {@code null} when absent
+     */
     public Glyph getGlyphByCode(int charCode) {
         return codeToGlyph.get(charCode);
     }
 
+    /**
+     * Checks whether this program supplies kerning pairs.
+     *
+     * @return {@code true} if supplies, {@code false} otherwise
+     */
     public boolean hasKernPairs() {
         return false;
     }
@@ -175,6 +283,11 @@ public abstract class FontProgram {
         return false;
     }
 
+    /**
+     * Sets the CID registry associated with this font program.
+     *
+     * @param registry CID registry name, or {@code null} when unavailable
+     */
     protected void setRegistry(String registry) {
         this.registry = registry;
     }
@@ -228,6 +341,11 @@ public abstract class FontProgram {
         fontMetrics.setCapHeight(capHeight);
     }
 
+    /**
+     * Sets the x-height in source font units.
+     *
+     * @param xHeight height of lowercase flat characters above the baseline
+     */
     protected void setXHeight(int xHeight) {
         fontMetrics.setXHeight(xHeight);
     }
@@ -236,19 +354,29 @@ public abstract class FontProgram {
      * Sets the PostScript italic angle.
      *
      * <p>
-     * Italic angle in counter-clockwise degrees from the vertical. Zero for upright text, negative for text that leans
+     * Italic angle in counterclockwise degrees from the vertical. Zero for upright text, negative for text that leans
      * to the right (forward).
      *
-     * @param italicAngle in counter-clockwise degrees from the vertical
+     * @param italicAngle in counterclockwise degrees from the vertical
      */
     protected void setItalicAngle(int italicAngle) {
         fontMetrics.setItalicAngle(italicAngle);
     }
 
+    /**
+     * Sets the dominant vertical stem width.
+     *
+     * @param stemV Type 1/CFF {@code StdVW} value in glyph units
+     */
     protected void setStemV(int stemV) {
         fontMetrics.setStemV(stemV);
     }
 
+    /**
+     * Sets the dominant horizontal stem width.
+     *
+     * @param stemH Type 1/CFF {@code StdHW} value in glyph units
+     */
     protected void setStemH(int stemH) {
         fontMetrics.setStemH(stemH);
     }
@@ -271,6 +399,11 @@ public abstract class FontProgram {
         fontNames.setFontStretch(fontWidth);
     }
 
+    /**
+     * Sets whether the font declares a fixed width.
+     *
+     * @param isFixedPitch {@code true} for a monospaced font
+     */
     protected void setFixedPitch(boolean isFixedPitch) {
         fontMetrics.setIsFixedPitch(isFixedPitch);
     }
@@ -283,6 +416,11 @@ public abstract class FontProgram {
         }
     }
 
+    /**
+     * Sets the normalized font bounding box from a four-element coordinate array.
+     *
+     * @param bbox lower-left x/y and upper-right x/y coordinates
+     */
     protected void setBbox(int[] bbox) {
         fontMetrics.setBbox(bbox[0], bbox[1], bbox[2], bbox[3]);
     }
@@ -310,6 +448,9 @@ public abstract class FontProgram {
         }
     }
 
+    /**
+     * Ensures that an existing Unicode space glyph is also addressable through its font code.
+     */
     protected void fixSpaceIssue() {
         Glyph space = unicodeToGlyph.get(32);
         if (space != null) {

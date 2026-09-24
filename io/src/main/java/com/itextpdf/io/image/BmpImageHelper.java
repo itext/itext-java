@@ -34,6 +34,11 @@ import java.util.Map;
 final class BmpImageHelper {
 
     private static class BmpParameters {
+        /**
+         * Creates a parsing context for a BMP image.
+         *
+         * @param image image being decoded
+         */
         public BmpParameters(BmpImageData image) {
             this.image = image;
         }

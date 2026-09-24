@@ -24,6 +24,7 @@ package com.itextpdf.layout.renderer;
 
 import com.itextpdf.commons.actions.EventManager;
 import com.itextpdf.commons.actions.sequence.AbstractIdentifiableElement;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.actions.events.LinkDocumentIdEvent;
@@ -44,6 +45,7 @@ import com.itextpdf.layout.margincollapse.MarginsCollapseHandler;
 import com.itextpdf.layout.margincollapse.MarginsCollapseInfo;
 import com.itextpdf.layout.properties.ClearPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.margins.Footnote;
 import com.itextpdf.layout.properties.margins.FootnoteNumberingConfig;
 import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.properties.margins.FootnotesUtil;
@@ -51,8 +53,6 @@ import com.itextpdf.layout.properties.margins.PageMarginBoxes;
 import com.itextpdf.layout.properties.margins.PageMarginContent;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 import com.itextpdf.layout.utils.LayoutInfiniteLoopResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +67,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     /**
      * The Logger instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RootRenderer.class);
+    private static final LazyLogger LOGGER = new LazyLogger(RootRenderer.class);
 
     private static final int MAX_AMOUNT_OF_ELEMENT_LAYOUTS = 1_000_000;
 
@@ -83,6 +83,7 @@ public abstract class RootRenderer extends AbstractRenderer {
     private LayoutArea initialCurrentArea;
     private boolean floatOverflowedCompletely = false;
 
+    @Override
     public void addChild(IRenderer renderer) {
         LayoutTaggingHelper taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
         if (taggingHelper != null) {
@@ -170,8 +171,8 @@ public abstract class RootRenderer extends AbstractRenderer {
                         } else {
                             ((ImageRenderer) result.getOverflowRenderer()).autoScale(currentArea);
                             result.getOverflowRenderer().setProperty(Property.FORCED_PLACEMENT, true);
-                            LOGGER.warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
-                                    ""));
+                            LOGGER.warn(() -> MessageFormatUtil.format(
+                                    LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
                         }
                     } else {
                         if (currentArea.isEmptyArea() && result.getAreaBreak() == null &&
@@ -236,7 +237,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             if (renderer != null && result != null) {
                 if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.KEEP_WITH_NEXT))) {
                     if (Boolean.TRUE.equals(renderer.<Boolean>getProperty(Property.FORCED_PLACEMENT))) {
-                        LOGGER.warn(IoLogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
+                        LOGGER.warn(() -> IoLogMessageConstant.ELEMENT_WAS_FORCE_PLACED_KEEP_WITH_NEXT_WILL_BE_IGNORED);
                         shrinkCurrentAreaAndProcessRenderer(renderer, resultRenderers, result);
                     } else {
                         keepWithNextHangingRenderer = renderer;
@@ -312,9 +313,9 @@ public abstract class RootRenderer extends AbstractRenderer {
             return layoutResult;
         }
 
+        List<FootnoteAnchorRenderer> footnoteAnchors  = new ArrayList<>();
         // Process footnotes that were collected during renderer layout.
-        Map<FootnoteRenderer, Float> footnotes = footnotesCounterHandler.collectFootnotes(
-                layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
+        Map<Footnote, FootnoteRenderer> footnotes = footnotesCounterHandler.collectFootnotes(renderer, footnoteAnchors);
         int footnoteAnchorsNum = footnotes.size();
         if (footnoteAnchorsNum == 0) {
             return layoutResult;
@@ -340,8 +341,10 @@ public abstract class RootRenderer extends AbstractRenderer {
         boolean footnotesPlaced = false;
         float decreasedHeight = 0;
         boolean footnotesNumDefined = false;
+        // We need to run the layout once again for table footers containing footnotes.
+        boolean extraRun = false;
         int footnotesNum = 0;
-        while (!footnotesPlaced) {
+        while (!footnotesPlaced || extraRun) {
             if (footnotesNumDefined) {
                 decreasedHeight = 0;
             } else {
@@ -350,14 +353,14 @@ public abstract class RootRenderer extends AbstractRenderer {
                 // Decrease current area from the bottom to the height of footnotes.
                 footnotesNum = footnoteAnchorsNum;
                 decreasedHeight = 0;
-                for (Float footnoteHeight : footnotes.values()) {
+                for (FootnoteRenderer footnoteRenderer : footnotes.values()) {
+                    float footnoteHeight = footnoteRenderer.getOccupiedArea().getBBox().getHeight();
                     currentArea.getBBox().moveUp((float) footnoteHeight).decreaseHeight((float) footnoteHeight);
                     decreasedHeight += (float) footnoteHeight;
                 }
             }
-
             footnotesCounterHandler.updateFootnoteNumberingAndStyles(footnotesProperties,
-                    (int) latestFootnoteNumber.getOrDefault(pageNum, 0));
+                    (int) latestFootnoteNumber.getOrDefault(pageNum, 0), footnoteAnchors);
 
             footnotesCounterHandler.reset();
             if (isForcedPlacement) {
@@ -370,27 +373,33 @@ public abstract class RootRenderer extends AbstractRenderer {
                 footnotesCounterHandler.reset();
             } else {
                 footnotes = footnotesCounterHandler.collectFootnotes(
-                        layoutResult.getOccupiedArea() == null ? currentArea : layoutResult.getOccupiedArea());
+                        layoutResult.getStatus() == LayoutResult.PARTIAL? layoutResult.getSplitRenderer(): renderer,
+                        footnoteAnchors);
             }
-            footnoteAnchorsNum = footnotes.size();
+            if (extraRun) {
+                extraRun = false;
+            } else {
+                footnoteAnchorsNum = footnotes.size();
 
-            // Number of the placed anchors == number of footnotes we reserved the space for before the layout
-            footnotesPlaced = footnoteAnchorsNum == footnotesNum;
-            if (footnoteAnchorsNum > footnotesNum) {
-                footnotesNumDefined = true;
-                // Decrease current area from the bottom until extra anchor will be moved to the next page.
-                // This logic can be improved in the future.
-                currentArea.getBBox().moveUp(1).decreaseHeight(1);
+                // Number of the placed anchors == number of footnotes we reserved the space for before the layout
+                footnotesPlaced = footnoteAnchorsNum == footnotesNum;
+                extraRun = footnotesPlaced;
+                if (footnoteAnchorsNum > footnotesNum) {
+                    footnotesNumDefined = true;
+                    // Decrease current area from the bottom until extra anchor will be moved to the next page.
+                    // This logic can be improved in the future.
+                    currentArea.getBBox().moveUp(1).decreaseHeight(1);
+                }
             }
             rendererAdditionalLayoutCounter = getRendererLayoutCounter(rendererAdditionalLayoutCounter);
-        }
 
+        }
         if (pageMarginBoxes == null) {
             pageMarginBoxes = new PageMarginBoxes(Collections.<PageMarginContent>emptyList());
             document.setPageMargins(currentArea.getPageNumber(), pageMarginBoxes);
         }
         FootnotesUtil.addFootnotesToPage(pageNum,
-                new ArrayList<>(footnotes.keySet()), pageMarginBoxes, footnotesProperties);
+                new ArrayList<>(footnotes.values()), pageMarginBoxes, footnotesProperties);
         latestFootnoteNumber.put(pageNum, latestFootnoteNumber.containsKey(pageNum) ?
                 (latestFootnoteNumber.get(pageNum) + footnotes.size()) : footnotes.size());
 
@@ -591,7 +600,7 @@ public abstract class RootRenderer extends AbstractRenderer {
                 }
             }
             if (!ableToProcessKeepWithNext) {
-                LOGGER.warn(IoLogMessageConstant.RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT);
+                LOGGER.warn(() -> IoLogMessageConstant.RENDERER_WAS_NOT_ABLE_TO_PROCESS_KEEP_WITH_NEXT);
                 keepWithNextHangingRendererLayoutResult = keepWithNextHangingRenderer.layout(new LayoutContext(currentArea.clone()));
                 shrinkCurrentAreaAndProcessRenderer(keepWithNextHangingRenderer, new ArrayList<IRenderer>(), keepWithNextHangingRendererLayoutResult);
             }
@@ -644,9 +653,7 @@ public abstract class RootRenderer extends AbstractRenderer {
             return false;
         } else {
             overflowRenderer.setProperty(Property.FORCED_PLACEMENT, true);
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn(MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
-            }
+            LOGGER.warn(() -> MessageFormatUtil.format(LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, ""));
             return true;
         }
     }
@@ -672,11 +679,9 @@ public abstract class RootRenderer extends AbstractRenderer {
         }
 
         toDisableKeepTogether.setProperty(Property.KEEP_TOGETHER, false);
-        if (LOGGER.isWarnEnabled()) {
-            LOGGER.warn(MessageFormatUtil.format(
-                    LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
-                    "KeepTogether property will be ignored."));
-        }
+        LOGGER.warn(() -> MessageFormatUtil.format(
+                LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA,
+                "KeepTogether property will be ignored."));
         if (!rendererIsFloat) {
             rootRendererStateHandler.attemptGoBackToStoredPreviousStateAndStoreNextState(this);
         }

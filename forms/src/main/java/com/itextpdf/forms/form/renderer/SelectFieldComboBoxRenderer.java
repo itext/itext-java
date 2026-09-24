@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.form.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.fields.ChoiceFormFieldBuilder;
 import com.itextpdf.forms.fields.PdfChoiceFormField;
@@ -55,8 +56,6 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.renderer.DrawContext;
 import com.itextpdf.layout.renderer.IRenderer;
 import com.itextpdf.layout.tagging.IAccessibleElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +65,9 @@ import java.util.Map;
  * The {@link SelectFieldComboBoxRenderer} implementation for select field renderer.
  */
 public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(SelectFieldComboBoxRenderer.class);
+
     private final IRenderer minMaxWidthRenderer;
 
     /**
@@ -170,8 +172,7 @@ public class SelectFieldComboBoxRenderer extends AbstractSelectFieldRenderer {
         }
         UnitValue fontSize = (UnitValue) this.getPropertyAsUnitValue(Property.FONT_SIZE);
         if (!fontSize.isPointValue()) {
-            Logger logger = LoggerFactory.getLogger(SelectFieldComboBoxRenderer.class);
-            logger.error(MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
+            LOGGER.error(() -> MessageFormatUtil.format(IoLogMessageConstant.PROPERTY_IN_PERCENTS_NOT_SUPPORTED,
                     Property.FONT_SIZE));
         }
         return fontSize;

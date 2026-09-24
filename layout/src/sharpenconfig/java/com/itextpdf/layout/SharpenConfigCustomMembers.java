@@ -71,8 +71,8 @@ public class SharpenConfigCustomMembers {
                         "                        }\n" +
                         "                    }\n" +
                         "                    if (type == null && fileLoadExceptionMessage != null) {\n" +
-                        "                        ILogger logger = ITextLogManager.GetLogger(typeof(TypographyUtils));\n" +
-                        "                        logger.LogError(fileLoadExceptionMessage);\n" +
+                        "                        LazyLogger logger = new LazyLogger(typeof(TypographyUtils));\n"+
+                        "                        logger.Error(() => fileLoadExceptionMessage);\n" +
                         "                    }\n" +
                         "                }\n" +
                         "            }\n" +

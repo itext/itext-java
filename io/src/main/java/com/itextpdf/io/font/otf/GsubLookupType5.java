@@ -38,8 +38,22 @@ import java.util.Set;
  */
 public class GsubLookupType5 extends OpenTableLookup {
 
+    /**
+     * Stores sub tables.
+     */
     protected List<ContextualTable<ContextualSubstRule>> subTables;
 
+    /**
+     * Creates a new GSUB Lookup Type 5.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param subTableLocations the sub table locations
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected GsubLookupType5(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
         subTables = new ArrayList<>();
@@ -83,7 +97,7 @@ public class GsubLookupType5 extends OpenTableLookup {
             return changed;
         }
 
-        line.setIdx(line.getIdx()+1);
+        line.setIdx(line.getIdx() + 1);
         return changed;
     }
 
@@ -93,7 +107,7 @@ public class GsubLookupType5 extends OpenTableLookup {
         int substFormat = openReader.rf.readShort();
         if (substFormat == 1) {
             readSubTableFormat1(subTableLocation);
-        } else if (substFormat == 2){
+        } else if (substFormat == 2) {
             readSubTableFormat2(subTableLocation);
         } else if (substFormat == 3) {
             readSubTableFormat3(subTableLocation);
@@ -102,6 +116,13 @@ public class GsubLookupType5 extends OpenTableLookup {
         }
     }
 
+    /**
+     * Reads the sub table format1 from OpenType data.
+     *
+     * @param subTableLocation the sub table location
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected void readSubTableFormat1(int subTableLocation) throws java.io.IOException {
         Map<Integer, List<ContextualSubstRule>> substMap = new HashMap<>();
 
@@ -120,7 +141,7 @@ public class GsubLookupType5 extends OpenTableLookup {
                 openReader.rf.seek(subRuleOffsets[j]);
                 int glyphCount = openReader.rf.readUnsignedShort();
                 int substCount = openReader.rf.readUnsignedShort();
-                int[] inputGlyphIds = openReader.readUShortArray(glyphCount-1);
+                int[] inputGlyphIds = openReader.readUShortArray(glyphCount - 1);
                 SubstLookupRecord[] substLookupRecords = openReader.readSubstLookupRecords(substCount);
 
                 subRuleSet.add(new SubTableLookup5Format1.SubstRuleFormat1(inputGlyphIds, substLookupRecords));
@@ -131,6 +152,13 @@ public class GsubLookupType5 extends OpenTableLookup {
         subTables.add(new SubTableLookup5Format1(openReader, lookupFlag, substMap));
     }
 
+    /**
+     * Reads the sub table format2 from OpenType data.
+     *
+     * @param subTableLocation the sub table location
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected void readSubTableFormat2(int subTableLocation) throws java.io.IOException {
         int coverageOffset = openReader.rf.readUnsignedShort();
         int classDefOffset = openReader.rf.readUnsignedShort();
@@ -172,6 +200,13 @@ public class GsubLookupType5 extends OpenTableLookup {
 
     }
 
+    /**
+     * Reads the sub table format3 from OpenType data.
+     *
+     * @param subTableLocation the sub table location
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
     protected void readSubTableFormat3(int subTableLocation) throws java.io.IOException {
         int glyphCount = openReader.rf.readUnsignedShort();
         int substCount = openReader.rf.readUnsignedShort();

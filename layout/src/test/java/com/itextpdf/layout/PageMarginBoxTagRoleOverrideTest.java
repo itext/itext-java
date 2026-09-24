@@ -24,7 +24,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Div;
@@ -39,15 +38,15 @@ import com.itextpdf.layout.testutil.TestResourceUtil;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
+import java.io.IOException;
+import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.util.List;
 
 @Tag("IntegrationTest")
 public class PageMarginBoxTagRoleOverrideTest extends ExtendedITextTest {
@@ -60,6 +59,11 @@ public class PageMarginBoxTagRoleOverrideTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -90,9 +94,9 @@ public class PageMarginBoxTagRoleOverrideTest extends ExtendedITextTest {
         }
 
         CompareTool ct = new CompareTool();
+        Assertions.assertNull(ct.compareTagStructures(outFileName, cmpFileName));
         Assertions.assertNull(ct.compareByContent(outFileName, cmpFileName,
                 DESTINATION_FOLDER, "diff_" + fileName));
-        Assertions.assertNull(ct.compareTagStructures(outFileName, cmpFileName));
     }
 
     private static class ParagraphRolePageMarginBoxes extends PageMarginBoxes {

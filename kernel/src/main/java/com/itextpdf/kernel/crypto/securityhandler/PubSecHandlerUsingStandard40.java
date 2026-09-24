@@ -58,15 +58,18 @@ public class PubSecHandlerUsingStandard40 extends PubKeySecurityHandler {
         return new StandardDecryptor(nextObjectKey, 0, nextObjectKeySize);
     }
 
+    @Override
     protected String getDigestAlgorithm() {
         return "SHA-1";
     }
 
+    @Override
     protected void initKey(byte[] globalKey, int keyLength) {
         mkey = new byte[keyLength / 8];
         System.arraycopy(globalKey, 0, mkey, 0, mkey.length);
     }
 
+    @Override
     protected void setPubSecSpecificHandlerDicEntries(PdfDictionary encryptionDictionary, boolean encryptMetadata, boolean embeddedFilesOnly) {
         encryptionDictionary.put(PdfName.Filter, PdfName.Adobe_PubSec);
 

@@ -25,8 +25,10 @@ package com.itextpdf.pdfa;
 import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.font.FontEncoding;
+import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.font.PdfFont;
@@ -279,7 +281,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test01.pdf", "iTextSymbolicFont.ttf", "", PdfAConformance.PDF_A_1B)
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, 'e'),
                 e.getMessage());
     }
 
@@ -289,7 +292,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test02.pdf", "iTextSymbolicFont.ttf", PdfEncodings.MACROMAN, PdfAConformance.PDF_A_1B)
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, 'e'),
                 e.getMessage());
     }
 
@@ -299,7 +303,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test03.pdf", "iTextSymbolicFont.ttf", "ISO-8859-1", PdfAConformance.PDF_A_1B)
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, 'e'),
                 e.getMessage());
     }
 
@@ -308,7 +313,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test04.pdf", "iTextSymbolicFont.ttf", PdfEncodings.WINANSI, PdfAConformance.PDF_A_1B)
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, 'e'),
                 e.getMessage());
     }
 
@@ -320,7 +326,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> createDocumentWithFont("symbolicTtfCharEncodingsPdfA1Test05.pdf", "iTextSymbolicFont.ttf", PdfEncodings.IDENTITY_H, PdfAConformance.PDF_A_1B)
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, 'e'),
                 e.getMessage());
     }
 
@@ -343,9 +350,8 @@ public class PdfAFontTest extends ExtendedITextTest {
 
     @Test
     public void notdefInTrueTypeFontTest() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "notdefInTrueTypeFont.pdf";
-
-        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -361,15 +367,15 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> canvas.showText("\u00C5 \u1987")
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, "\u1987"),
                 e.getMessage());
     }
 
     @Test
     public void notdefFontTest2() throws IOException {
-        String outPdf = DESTINATION_FOLDER + "notdefFontTest2.pdf";
-
-        PdfWriter writer = new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
+        PdfWriter writer = new PdfWriter(new ByteArrayOutputStream(),
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0));
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
@@ -385,17 +391,16 @@ public class PdfAFontTest extends ExtendedITextTest {
         Exception e = Assertions.assertThrows(PdfAConformanceException.class,
                 () -> canvas.showText("\u898B\u7A4D\u3082\u308A")
         );
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, "\u898B"),
                 e.getMessage());
     }
 
     @Test
     public void glyphLineWithUndefinedGlyphsTest() throws Exception {
-        String outPdf = DESTINATION_FOLDER + "glyphLineWithUndefinedGlyphs.pdf";
-
         InputStream icm = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         Document document = new Document(new PdfADocument(
-                new PdfWriter(outPdf, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
+                new PdfWriter(new ByteArrayOutputStream(), new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)),
                 PdfAConformance.PDF_A_4,
                 new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB ICC preference", icm)));
 
@@ -405,7 +410,8 @@ public class PdfAFontTest extends ExtendedITextTest {
         p.setFont(font);
 
         Exception e = Assertions.assertThrows(PdfAConformanceException.class, () -> document.add(p));
-        Assertions.assertEquals(PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS,
+        Assertions.assertEquals(MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, "\u898B"),
                 e.getMessage());
     }
 
@@ -705,16 +711,16 @@ public class PdfAFontTest extends ExtendedITextTest {
     }
 
     @Test
-    public void checkPdfA4UmingTtcTest() throws IOException, InterruptedException {
-        String outPdf = DESTINATION_FOLDER + "pdfA4UmingTtcTest.pdf";
-        String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_pdfA4UmingTtcTest.pdf";
+    public void checkPdfA4NNotoCJKTtcTest() throws IOException, InterruptedException {
+        String outPdf = DESTINATION_FOLDER + "pdfA4NotoCJKTtcTest.pdf";
+        String cmpPdf = SOURCE_FOLDER + "cmp/PdfAFontTest/cmp_pdfA4NotoCJKTtcTest.pdf";
         WriterProperties writerProperties = new WriterProperties();
         writerProperties.setPdfVersion(PdfVersion.PDF_2_0);
         PdfWriter writer = new PdfWriter(outPdf, writerProperties);
         InputStream is = FileUtil.getInputStreamForFile(SOURCE_FOLDER + "sRGB Color Space Profile.icm");
         PdfDocument doc = new PdfADocument(writer, PdfAConformance.PDF_A_4, new PdfOutputIntent("Custom", "", "http://www.color.org", "sRGB IEC61966-2.1", is));
         PdfPage page = doc.addNewPage();
-        PdfFont font = PdfFontFactory.createTtcFont(SOURCE_FOLDER + "uming.ttc", 0, "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED, false);
+        PdfFont font = PdfFontFactory.createTtcFont(SOURCE_FOLDER + "fonts/NotoSerifCJK-VF.ttf.ttc", 0, "Identity-H", EmbeddingStrategy.FORCE_EMBEDDED, false);
 
         PdfCanvas canvas = new PdfCanvas(page);
         canvas.saveState()
@@ -780,6 +786,162 @@ public class PdfAFontTest extends ExtendedITextTest {
 
         doc.close();
         compareResult(outPdf, cmpPdf, null);
+    }
+
+    @Test
+    public void notdefGlyphTest() throws IOException {
+        AValidationTestFramework framework = new AValidationTestFramework(DESTINATION_FOLDER, false, PdfAConformance.PDF_A_4);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoNaskhArabic-Regular.ttf");
+            } catch (IOException e) {
+                // ignore
+            }
+            GlyphLine glyphLine = new GlyphLine();
+            final FontProgram fontProgram = font.getFontProgram();
+            // zero glyph in the font is .notdef glyph without Unicode
+            glyphLine.add(fontProgram.getGlyphByCode(0));
+            glyphLine.setEnd(glyphLine.size());
+
+
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.
+                    saveState().
+                    beginText().
+                    moveText(36, 786).
+                    setFontAndSize(font, 10).
+                    showText(glyphLine).
+                    endText().
+                    restoreState();
+        });
+        framework.assertBothFail("notdefGlyph", MessageFormatUtil.format(
+                PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, "�"));
+    }
+
+    @Test
+    public void zeroUnicodeGlyphTest() throws IOException {
+        AValidationTestFramework framework = new AValidationTestFramework(DESTINATION_FOLDER, false, PdfAConformance.PDF_A_4);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoNaskhArabic-Regular.ttf");
+            } catch (IOException e) {
+                // ignore
+            }
+            GlyphLine glyphLine = new GlyphLine();
+            final FontProgram fontProgram = font.getFontProgram();
+            // 1 index glyph in the font is .null glyph with Unicode U+0000
+            glyphLine.add(fontProgram.getGlyphByCode(1));
+            glyphLine.setEnd(glyphLine.size());
+
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.
+                    saveState().
+                    beginText().
+                    moveText(36, 786).
+                    setFontAndSize(font, 10).
+                    showText(glyphLine).
+                    endText().
+                    restoreState();
+        });
+        // TODO DEVSIX-10209 missing check on iText side for ToUnicode mapping to 0, fffe and feff
+        framework.assertVeraPdfFailITextValid("zeroUnicodeGlyph");
+    }
+
+    @Test
+    public void glyphsWithoutUnicodeTest() throws IOException {
+        AValidationTestFramework framework = new AValidationTestFramework(DESTINATION_FOLDER, false, PdfAConformance.PDF_A_4);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoNaskhArabic-Regular.ttf");
+            } catch (IOException e) {
+                // ignore
+            }
+            GlyphLine glyphLine = new GlyphLine();
+            final FontProgram fontProgram = font.getFontProgram();
+            // 0 index glyph is .notdef without Unicode
+            // 1 index glyph is .null with Unicode U+0000
+            for (int i = 2; i < fontProgram.countOfGlyphs(); i++) {
+                glyphLine.add(fontProgram.getGlyphByCode(i));
+            }
+            glyphLine.setEnd(glyphLine.size());
+
+
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.
+                    saveState().
+                    beginText().
+                    moveText(36, 786).
+                    setFontAndSize(font, 10).
+                    showText(glyphLine).
+                    endText().
+                    restoreState();
+        });
+        framework.assertBothValid("glyphsWithoutUnicode");
+    }
+
+    @Test
+    public void fontWithReplacementCharTest() throws IOException {
+        AValidationTestFramework framework = new AValidationTestFramework(DESTINATION_FOLDER, false, PdfAConformance.PDF_A_4);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfFont font = null;
+            try {
+                font = PdfFontFactory.createFont(FONTS_FOLDER + "NotoSans-Regular.ttf");
+            } catch (IOException e) {
+                // ignore
+            }
+            GlyphLine glyphLine = new GlyphLine();
+            final FontProgram fontProgram = font.getFontProgram();
+            // font contain replacement char U+FFFD
+            for (int i = 0; i < fontProgram.countOfGlyphs(); i++) {
+                glyphLine.add(fontProgram.getGlyphByCode(i));
+            }
+            glyphLine.setEnd(glyphLine.size());
+
+
+            PdfCanvas canvas = new PdfCanvas(pdfDoc.addNewPage());
+            canvas.
+                    saveState().
+                    beginText().
+                    moveText(36, 786).
+                    setFontAndSize(font, 10).
+                    showText(glyphLine).
+                    endText().
+                    restoreState();
+        });
+        // TODO DEVSIX-10209 missing check on iText side for ToUnicode mapping to 0, fffe and feff
+        framework.assertBothFail("fontWithReplacementChar",
+                MessageFormatUtil.format(
+                        PdfaExceptionMessageConstant.EMBEDDED_FONTS_SHALL_DEFINE_ALL_REFERENCED_GLYPHS, "�"));
+    }
+
+    @Test
+    public void notdefGlyphType3FontTest() throws IOException {
+        AValidationTestFramework framework = new AValidationTestFramework(DESTINATION_FOLDER, false, PdfAConformance.PDF_A_4);
+        framework.addBeforeGenerationHook(pdfDoc -> {
+            PdfType3Font font = PdfFontFactory.createType3Font(pdfDoc, false);
+            Type3Glyph a = font.addGlyph('A', 600, 0, 0, 600, 700);
+            a.setLineWidth(100);
+            a.moveTo(5, 5);
+            a.lineTo(300, 695);
+            a.lineTo(595, 5);
+            a.closePathFillStroke();
+
+            // Need to populate CharProcs, because it's done only on font flushing,
+            // but iText check that field before document closing
+            PdfDictionary charProcs = new PdfDictionary();
+            charProcs.put(new PdfName("A"), a.getContentStream());
+            font.getPdfObject().put(PdfName.CharProcs, charProcs);
+
+            Document doc = new Document(pdfDoc);
+            doc.setFont(font);
+            // In simple fonts (which is Type3) we just ignore not defined glyphs, see PdfSimpleFont.createGlyphLine
+            Paragraph p = new Paragraph("AB");
+            doc.add(p);
+        });
+        framework.assertBothValid("notdefGlyphType3Font");
     }
 
     private void createDocumentWithFont(String outFileName, String fontFileName, String encoding, PdfAConformance conformance) throws IOException, InterruptedException {

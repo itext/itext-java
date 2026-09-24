@@ -213,8 +213,7 @@ class LotlCacheDataV1 implements IJsonSerializable {
         if (JsonNull.JSON_NULL != timestampsJson) {
             JsonObject timestampsJsonObject = (JsonObject) timestampsJson;
             for (Map.Entry<String, JsonValue> timestampJson : timestampsJsonObject.getFields().entrySet()) {
-                timestampsFromJson.put(timestampJson.getKey(),
-                        (long) ((JsonNumber) timestampJson.getValue()).getValue());
+                timestampsFromJson.put(timestampJson.getKey(), ((JsonNumber) timestampJson.getValue()).getLongValue());
             }
         }
         lotlCacheDataFromJson.timeStamps = timestampsFromJson;

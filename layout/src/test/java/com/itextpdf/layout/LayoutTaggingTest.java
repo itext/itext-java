@@ -79,6 +79,7 @@ import com.itextpdf.test.annotations.LogMessages;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.ParserConfigurationException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -99,9 +100,14 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void textInParagraphTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "textInParagraphTest01.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "textInParagraphTest01.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -120,7 +126,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void textInParagraphTestWithIds() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "textInParagraphTestWithIds.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "textInParagraphTestWithIds.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -147,7 +153,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
             @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA)
     })
     public void imageTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "imageTest01.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "imageTest01.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -162,7 +168,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void imageTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "imageTest02.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "imageTest02.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -184,7 +190,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void divTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "divTest01.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "divTest01.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -208,7 +214,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest01.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "tableTest01.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -237,7 +243,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest02.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "tableTest02.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -260,7 +266,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest03.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "tableTest03.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -300,7 +306,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest04.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "tableTest04.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -331,7 +337,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest05() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest05.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "tableTest05.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -364,7 +370,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest06() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest06.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "tableTest06.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -401,7 +407,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest07() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest07.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "tableTest07.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -430,7 +436,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void linkInsideTable() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdf = new PdfDocument(new PdfWriter(destinationFolder + "linkInsideTable.pdf"));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "linkInsideTable.pdf"));
         pdf.setTagged();
         Document doc = new Document(pdf);
 
@@ -449,7 +455,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableTest08() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "tableTest08.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "tableTest08.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -482,7 +488,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void listTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest01.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "listTest01.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -500,7 +506,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void listTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest02.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "listTest02.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -572,7 +578,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void listTest03() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest03.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "listTest03.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -597,7 +603,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void listTest04() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "listTest04.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "listTest04.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -617,7 +623,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void linkTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "linkTest01.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "linkTest01.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -635,7 +641,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void artifactTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "artifactTest01.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "artifactTest01.pdf"));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -657,7 +663,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void artifactTest02() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "artifactTest02.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "artifactTest02.pdf"));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -681,7 +687,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
      */
     @Test
     public void flushingTest01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "flushingTest01.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "flushingTest01.pdf"));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -708,7 +714,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
      */
     @Test
     public void flushingTest02() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "flushingTest02.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "flushingTest02.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -745,7 +751,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
      */
     @Test
     public void flushingTest03() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "flushingTest03.pdf"));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "flushingTest03.pdf"));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -779,8 +785,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     @Test
     public void wordBreaksLineEndingsTest01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest01.pdf",
-                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+                CompareTool.createTestPdfWriter(destinationFolder + "wordBreaksLineEndingsTest01.pdf", new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -802,8 +807,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     @Test
     public void wordBreaksLineEndingsTest02() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest02.pdf",
-                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+                CompareTool.createTestPdfWriter(destinationFolder + "wordBreaksLineEndingsTest02.pdf", new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -820,8 +824,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     @Test
     public void wordBreaksLineEndingsTest03() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest03.pdf",
-                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+                CompareTool.createTestPdfWriter(destinationFolder + "wordBreaksLineEndingsTest03.pdf", new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -851,8 +854,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     @Test
     public void wordBreaksLineEndingsTest04() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest04.pdf",
-                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+                CompareTool.createTestPdfWriter(destinationFolder + "wordBreaksLineEndingsTest04.pdf", new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -876,8 +878,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     @Test
     public void wordBreaksLineEndingsTest05() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfWriter(destinationFolder + "wordBreaksLineEndingsTest05.pdf",
-                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+                CompareTool.createTestPdfWriter(destinationFolder + "wordBreaksLineEndingsTest05.pdf", new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -900,8 +901,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     @Test
     public void imageAndTextNoRole01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
         PdfDocument pdfDocument = new PdfDocument(
-                new PdfWriter(destinationFolder + "imageAndTextNoRole01.pdf",
-                        new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
+                CompareTool.createTestPdfWriter(destinationFolder + "imageAndTextNoRole01.pdf", new WriterProperties().setCompressionLevel(CompressionConstants.NO_COMPRESSION)));
         pdfDocument.setTagged();
 
         Document doc = new Document(pdfDocument);
@@ -934,7 +934,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void tableWithCaption01() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        PdfWriter writer = new PdfWriter(destinationFolder + "tableWithCaption01.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "tableWithCaption01.pdf");
         PdfDocument pdf = new PdfDocument(writer);
 
         Document document = new Document(pdf);
@@ -962,7 +962,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void emptyDivTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        PdfWriter writer = new PdfWriter(destinationFolder + "emptyDivTest.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "emptyDivTest.pdf");
         PdfDocument pdf = new PdfDocument(writer);
 
         Document document = new Document(pdf);
@@ -979,7 +979,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void floatListItemTest() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        PdfWriter writer = new PdfWriter(destinationFolder + "floatListItemTest.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "floatListItemTest.pdf");
         PdfDocument pdf = new PdfDocument(writer);
 
         Document document = new Document(pdf);
@@ -996,7 +996,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void notAsciiCharTest() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
-        PdfWriter writer = new PdfWriter(destinationFolder + "notAsciiCharTest.pdf");
+        PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + "notAsciiCharTest.pdf");
         PdfDocument pdf = new PdfDocument(writer);
 
         Document document = new Document(pdf);
@@ -1023,7 +1023,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "checkParentTreeIfFormXObjectTaggedTest.pdf";
         String cmpPdf = sourceFolder + "cmp_checkParentTreeIfFormXObjectTaggedTest.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         pdfDoc.setTagged();
 
         PdfPage page1 = pdfDoc.addNewPage();
@@ -1045,7 +1045,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
 
     @Test
     public void createTaggedVersionOneDotFourTest01() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + "createTaggedVersionOneDotFourTest01.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_1_4)));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + "createTaggedVersionOneDotFourTest01.pdf", new WriterProperties().setPdfVersion(PdfVersion.PDF_1_4)));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -1086,7 +1086,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     @Test
     public void neutralRoleTaggingTest() throws Exception {
         String outFile = "neutralRoleTaggingTest.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + outFile));
         pdfDocument.setTagged();
 
         Document document = new Document(pdfDocument);
@@ -1131,7 +1131,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         String outFile = "unexpectedTableHintChildTest.pdf";
 
-        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile))){
+        try (PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + outFile))){
             Document document = new Document(pdfDocument);
             pdfDocument.setTagged();
 
@@ -1155,7 +1155,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     public void tableAppendsScopeToCell()
             throws IOException, ParserConfigurationException, InterruptedException, SAXException {
         String outFile = "tableAppendsScopeToCell.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + outFile));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -1182,7 +1182,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     @Test
     public void tableAppendsScopeNoneToCell() throws Exception {
         String outFile = "tableAppendsScopeNoneToCell.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + outFile));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -1213,7 +1213,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     @Test
     public void tableAddsScopeRegardlessOfHeaderId() throws Exception {
         String outFile = "tableAddsScopeRegardlessOfHeaderId.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + outFile));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -1254,7 +1254,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     public void emptyTaggedDocumentStillAddsDocumentTag()
             throws IOException, ParserConfigurationException, InterruptedException, SAXException {
         String outFile = "emptyTaggedDocumentStillAddsDocumentTag.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + outFile));
         pdfDocument.setTagged();
         Document document = new Document(pdfDocument);
 
@@ -1267,7 +1267,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     public void emptyTaggedCanvasStillAddsDocumentTag1()
             throws IOException, ParserConfigurationException, InterruptedException, SAXException {
         String outFile = "emptyTaggedCanvasStillAddsDocumentTag1.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + outFile));
         pdfDocument.setTagged();
         PdfPage page = pdfDocument.addNewPage();
         Canvas canvas = new Canvas(page,page.getMediaBox());
@@ -1281,7 +1281,7 @@ public class LayoutTaggingTest extends ExtendedITextTest {
     public void emptyTaggedCanvasStillAddsDocumentTag2()
             throws IOException, ParserConfigurationException, InterruptedException, SAXException {
         String outFile = "emptyTaggedCanvasStillAddsDocumentTag2.pdf";
-        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(destinationFolder + outFile));
+        PdfDocument pdfDocument = new PdfDocument(CompareTool.createTestPdfWriter(destinationFolder + outFile));
         pdfDocument.setTagged();
         PdfPage page = pdfDocument.addNewPage();
         Canvas canvas = new Canvas(new PdfFormXObject(page),pdfDocument);
@@ -1354,9 +1354,9 @@ public class LayoutTaggingTest extends ExtendedITextTest {
         String outPdf = destinationFolder + outFileName;
         String cmpPdf = sourceFolder + cmpFileName;
 
+        String taggedStructureDifferences = compareTool.compareTagStructures(outPdf, cmpPdf);
         String contentDifferences = compareTool.compareByContent(outPdf,
                 cmpPdf, destinationFolder, "diff");
-        String taggedStructureDifferences = compareTool.compareTagStructures(outPdf, cmpPdf);
 
         String errorMessage = "";
         errorMessage += taggedStructureDifferences == null ? "" : taggedStructureDifferences + "\n";

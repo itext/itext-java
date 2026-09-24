@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.parse;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.CssRuleSet;
@@ -32,8 +33,6 @@ import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utilities class to parse CSS rule sets.
@@ -43,7 +42,7 @@ public final class CssRuleSetParser {
     /**
      * The logger.
      */
-    private static final Logger logger = LoggerFactory.getLogger(CssRuleSetParser.class);
+    private static final LazyLogger LOGGER = new LazyLogger(CssRuleSetParser.class);
 
     /**
      * Creates a new {@link CssRuleSetParser} instance.
@@ -116,8 +115,8 @@ public final class CssRuleSetParser {
             try {
                 ruleSets.add(new CssRuleSet(new CssSelector(currentSelectorStr), declarations));
             } catch (Exception exc) {
-                logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.ERROR_PARSING_CSS_SELECTOR,
-                        currentSelectorStr), exc);
+                LOGGER.error(() -> MessageFormatUtil.format(
+                        StyledXmlParserLogMessageConstant.ERROR_PARSING_CSS_SELECTOR, currentSelectorStr), exc);
                 //if any separated selector has errors, all others become invalid.
                 //in this case we just clear map, it is the easies way to support this.
                 declarations.clear();
@@ -175,8 +174,8 @@ public final class CssRuleSetParser {
         String[] result = new String[2];
         int position = property.indexOf(":");
         if (position < 0) {
-            logger.error(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION,
-                    property.trim()));
+            LOGGER.error(() -> MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, property.trim()));
             return null;
         }
         result[0] = property.substring(0, position);

@@ -34,31 +34,31 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class DefsSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/renderers/impl/DefsSvgNodeRendererTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/renderers/impl/DefsSvgNodeRendererTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/DefsSvgNodeRendererTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/DefsSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void defsWithNoChildrenTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "onlyDefsWithNoChildren");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "onlyDefsWithNoChildren");
     }
 
     @Test
     public void defsWithOneChildTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "onlyDefsWithOneChild");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "onlyDefsWithOneChild");
     }
 
     @Test
     public void defsWithMultipleChildrenTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "onlyDefsWithMultipleChildren");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "onlyDefsWithMultipleChildren");
     }
 
     @Test
     public void defsWithOneChildAndNonDefsBeingDrawnTest() throws IOException, InterruptedException {
-        convertAndCompareSinglePage(sourceFolder, destinationFolder, "defsWithOneChildAndNonDefsBeingDrawn");
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "defsWithOneChildAndNonDefsBeingDrawn");
     }
 }

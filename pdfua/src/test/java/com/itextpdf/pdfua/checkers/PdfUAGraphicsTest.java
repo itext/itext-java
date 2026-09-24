@@ -119,7 +119,7 @@ public class PdfUAGraphicsTest extends ExtendedITextTest {
             framework.assertBothFail("imageWithEmptyAltDescription",
                     PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
         } else if (pdfConformance.getUAConformance() == PdfUAConformance.PDF_UA_2) {
-            framework.assertOnlyITextFail("imageWithEmptyAltDescription",
+            framework.assertITextFailVeraPdfValid("imageWithEmptyAltDescription",
                     PdfUAExceptionMessageConstants.IMAGE_SHALL_HAVE_ALT);
         }
     }

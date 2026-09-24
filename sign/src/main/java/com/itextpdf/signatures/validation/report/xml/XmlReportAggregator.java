@@ -24,6 +24,7 @@ package com.itextpdf.signatures.validation.report.xml;
 
 import com.itextpdf.commons.actions.IEvent;
 import com.itextpdf.commons.actions.IEventHandler;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.signatures.cms.CMSContainer;
 import com.itextpdf.signatures.validation.events.IValidationEvent;
 import com.itextpdf.signatures.validation.events.ProofOfExistenceFoundEvent;
@@ -34,15 +35,13 @@ import com.itextpdf.signatures.validation.report.xml.SignatureValidationStatus.M
 
 import java.util.Date;
 import java.util.Stack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Use this implementation when an xml report has to be created.
  */
 public class XmlReportAggregator implements IEventHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XmlReportAggregator.class);
+    private static final LazyLogger LOGGER = new LazyLogger(XmlReportAggregator.class);
 
     private final ValidationObjects validationObjects = new ValidationObjects();
     private final PadesValidationReport report = new PadesValidationReport(validationObjects);
@@ -118,7 +117,7 @@ public class XmlReportAggregator implements IEventHandler {
             validationReportStack.push(currentSignatureValidationReport);
             report.addSignatureValidationReport(currentSignatureValidationReport);
         } catch (Exception e) { // catching generic Exception here for portability
-            LOGGER.error("Unable to parse signature container.", e);
+            LOGGER.error(() -> "Unable to parse signature container.", e);
             throw new IllegalArgumentException("Signature is not parsable", e);
         }
     }
@@ -130,7 +129,7 @@ public class XmlReportAggregator implements IEventHandler {
             validationReportStack.push(currentValidationReport);
             validationObjects.addObject(currentValidationReport);
         } catch (Exception e) { // catching generic Exception here for portability
-            LOGGER.error("Unable to parse timestamp signature container.", e);
+            LOGGER.error(() -> "Unable to parse timestamp signature container.", e);
             throw new IllegalArgumentException("Timestamp signature is not parsable", e);
         }
     }

@@ -1,9 +1,7 @@
 package com.itextpdf.commons.utils;
 
 import com.itextpdf.commons.logs.CommonsLogMessageConstant;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.itextpdf.commons.logs.LazyLogger;
 
 /**
  * Encodes and decodes to and from Base64 notation.
@@ -129,7 +127,7 @@ public class Base64 {
     /**
      * The Logger instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Base64.class);
+    private static final LazyLogger LOGGER = new LazyLogger(Base64.class);
 
     /**
      * Maximum line length (76) of Base64 output.
@@ -591,7 +589,7 @@ public class Base64 {
             oos.writeObject(serializableObject);
         }   // end try
         catch (java.io.IOException e) {
-            LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , e);
+            LOGGER.debug(() -> CommonsLogMessageConstant.BASE_64_EXCEPTION, e);
             return null;
         }   // end catch
         finally {
@@ -722,7 +720,7 @@ public class Base64 {
                 gzos.close();
             }   // end try
             catch (java.io.IOException e) {
-                LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , e);
+                LOGGER.debug(() -> CommonsLogMessageConstant.BASE_64_EXCEPTION, e);
                 return null;
             }   // end catch
             finally {
@@ -1048,10 +1046,10 @@ public class Base64 {
             obj = ois.readObject();
         }   // end try
         catch (java.io.IOException e) {
-            LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , e);
+            LOGGER.debug(() -> CommonsLogMessageConstant.BASE_64_EXCEPTION, e);
         }   // end catch
         catch (java.lang.ClassNotFoundException e) {
-            LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , e);
+            LOGGER.debug(() -> CommonsLogMessageConstant.BASE_64_EXCEPTION, e);
         }   // end catch
         finally {
             try {
@@ -1246,7 +1244,7 @@ public class Base64 {
             out.write(encoded.getBytes("US-ASCII")); // Strict, 7-bit output.
         }   // end try
         catch (java.io.IOException ex) {
-            LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , ex);
+            LOGGER.debug(() -> CommonsLogMessageConstant.BASE_64_EXCEPTION, ex);
         }   // end catch
         finally {
             try {
@@ -1273,7 +1271,7 @@ public class Base64 {
             out.write(decoded);
         }   // end try
         catch (java.io.IOException ex) {
-            LOGGER.debug(CommonsLogMessageConstant.BASE_64_EXCEPTION , ex);
+            LOGGER.debug(() -> CommonsLogMessageConstant.BASE_64_EXCEPTION, ex);
         }   // end catch
         finally {
             try {
@@ -1359,6 +1357,7 @@ public class Base64 {
          * @return next byte
          * @since 1.3
          */
+        @Override
         public int read() throws java.io.IOException {
             // Do we need to get data?
             if (position < 0) {
@@ -1464,6 +1463,7 @@ public class Base64 {
          * @return bytes read into array or -1 if end of stream is encountered.
          * @since 1.3
          */
+        @Override
         public int read(byte[] dest, int off, int len) throws java.io.IOException {
             int i;
             int b;
@@ -1573,6 +1573,7 @@ public class Base64 {
          * @param theByte the byte to write
          * @since 1.3
          */
+        @Override
         public void write(int theByte) throws java.io.IOException {
             // Encoding suspended?
             if (suspendEncoding) {
@@ -1626,6 +1627,7 @@ public class Base64 {
          * @param len      max number of bytes to read into array
          * @since 1.3
          */
+        @Override
         public void write(byte[] theBytes, int off, int len) throws java.io.IOException {
             // Encoding suspended?
             if (suspendEncoding) {
@@ -1664,6 +1666,7 @@ public class Base64 {
          *
          * @since 1.3
          */
+        @Override
         public void close() throws java.io.IOException {
             // 1. Ensure that pending characters are written
             flushBase64();

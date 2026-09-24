@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="720">
+  <style>
+    .case { fill: none; stroke: black; stroke-width: 3; stroke-dasharray: 6 4;
+        stroke-linejoin: miter; font-size: 26px; }
+    .context { fill: black; font-size: 26px; }
+    .styled { fill: gray; stroke: black; stroke-width: 3; stroke-dasharray: 6 4; stroke-linejoin: miter; }
+    .highlight { fill: none; stroke: red; stroke-width: 0.5; font-size: 26px; }
+  </style>
+  <defs>
+    <path id="one-text-path" d="M40,135 Q160,95 320,135"/>
+    <path id="four-text-path" d="M40,375 Q160,335 320,375"/>
+    <path id="ten-text-path" d="M40,615 Q160,575 320,615"/>
+  </defs>
+
+  <text x="10" y="25">stroke-miterlimit: 1 on dashed text</text>
+  <text class="case" stroke-miterlimit="1" x="40" y="60">Hello World</text>
+  <text x="10" y="90">stroke-miterlimit: 1 on dashed textPath</text>
+  <text class="case"><textPath stroke-miterlimit="1" href="#one-text-path">Hello World</textPath></text>
+  <text x="10" y="170">stroke-miterlimit: 1 on dashed tspan</text>
+  <text class="context" x="40" y="215">Hello <tspan class="styled" stroke-miterlimit="1">styled</tspan> World</text>
+
+  <text x="10" y="265">stroke-miterlimit: 4 on dashed text</text>
+  <text class="case" stroke-miterlimit="4" x="40" y="300">Hello World</text>
+  <text x="10" y="330">stroke-miterlimit: 4 on dashed textPath</text>
+  <text class="case"><textPath stroke-miterlimit="4" href="#four-text-path">Hello World</textPath></text>
+  <text x="10" y="410">stroke-miterlimit: 4 on dashed tspan</text>
+  <text class="context" x="40" y="455">Hello <tspan class="styled" stroke-miterlimit="4">styled</tspan> World</text>
+
+  <text x="10" y="505">stroke-miterlimit: 10 on dashed text</text>
+  <text class="case" stroke-miterlimit="10" x="40" y="540">Hello World</text>
+  <text x="10" y="570">stroke-miterlimit: 10 on dashed textPath</text>
+  <text class="case"><textPath stroke-miterlimit="10" href="#ten-text-path">Hello World</textPath></text>
+  <text x="10" y="650">stroke-miterlimit: 10 on dashed tspan</text>
+  <text class="context" x="40" y="695">Hello <tspan class="styled" stroke-miterlimit="10">styled</tspan> World</text>
+
+  <text class="highlight" x="40" y="60">Hello World</text>
+  <path class="highlight" d="M40,135 Q160,95 320,135"/>
+  <text class="highlight" x="40" y="215">Hello styled World</text>
+  <text class="highlight" x="40" y="300">Hello World</text>
+  <path class="highlight" d="M40,375 Q160,335 320,375"/>
+  <text class="highlight" x="40" y="455">Hello styled World</text>
+  <text class="highlight" x="40" y="540">Hello World</text>
+  <path class="highlight" d="M40,615 Q160,575 320,615"/>
+  <text class="highlight" x="40" y="695">Hello styled World</text>
+</svg>

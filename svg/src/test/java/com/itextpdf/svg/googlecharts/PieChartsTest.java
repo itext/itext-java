@@ -34,36 +34,36 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PieChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/PieChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/PieChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/PieChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/PieChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void pieChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "pieChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pieChart");
     }
 
     @Test
     public void pie3DChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "pie3DChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pie3DChart");
     }
 
     @Test
     public void pieHoleChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "pieHoleChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pieHoleChart");
     }
 
     @Test
     public void rotatingPieChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "rotatingPieChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rotatingPieChart");
     }
 
     @Test
     public void pie1Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "pie1Chart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "pie1Chart");
     }
 }

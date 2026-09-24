@@ -22,24 +22,45 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.datastructures.Tuple2;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation;
 import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.layout.IPropertyContainer;
+import com.itextpdf.layout.Style;
+import com.itextpdf.layout.element.AbstractElement;
+import com.itextpdf.layout.element.IAbstractElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutArea;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.layout.LayoutResult;
 import com.itextpdf.layout.minmaxwidth.MinMaxWidth;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.margins.Footnote;
 import com.itextpdf.layout.properties.margins.FootnoteAnchor;
+import com.itextpdf.layout.properties.margins.FootnotesProperties;
 import com.itextpdf.layout.properties.margins.FootnotesUtil;
 import com.itextpdf.layout.tagging.FootnoteTaggingHelper;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Renderer for {@link FootnoteAnchor} instance representing an anchor for a footnote.
@@ -82,6 +103,8 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
             }
         }
 
+        handleFootnoteAnchorStyles();
+
         int pageNumber = layoutContext.getArea().getPageNumber();
         Rectangle pageRectangle = this.getPdfDocument().getPage(pageNumber).getPageSize();
         IRenderer parentRenderer = getParent();
@@ -102,7 +125,7 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
 
         this.footnoteRenderer.layout(new LayoutContext(new LayoutArea(pageNumber, pageRectangle)));
 
-        LayoutResult layoutResult = footnoteAnchor.layout(layoutContext);
+        LayoutResult layoutResult = footnoteAnchor.setParent(this).layout(layoutContext);
         this.occupiedArea = layoutResult.getOccupiedArea();
 
         if (LayoutResult.NOTHING == layoutResult.getStatus()) {
@@ -112,7 +135,7 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
             if (Float.isNaN(this.yPos)) {
                 this.yPos = this.occupiedArea.getBBox().getTop();
             }
-            FootnotesCounterHandler.addFootnoteAnchor(this);
+            FootnotesCounterHandler.anchorLaidOut(this);
         }
         if (layoutResult.getSplitRenderer() != null) {
             FootnoteAnchorRenderer splitRenderer = createSplitRenderer(layoutResult);
@@ -139,16 +162,23 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         FootnoteTaggingHelper.repairFootnoteAnchorTagIfNeeded(this, taggingHelper);
 
         boolean isTagged = drawContext.isTaggingEnabled();
+        boolean tagCreated = false;
         if (isTagged) {
             taggingHelper = this.<LayoutTaggingHelper>getProperty(Property.TAGGING_HELPER);
             if (taggingHelper == null) {
                 isTagged = false;
             } else {
                 TagTreePointer tagPointer = taggingHelper.useAutoTaggingPointerAndRememberItsPosition(this);
-                taggingHelper.createTag(this, tagPointer);
+                tagCreated = taggingHelper.createTag(this, tagPointer);
             }
         }
 
+        if (tagCreated || !isTagged) {
+            // We only don't set up links if tagging is enabled, but tag was not created,
+            // meaning this content is in fact an artifact. This happens because links contain annotations,
+            // and annotations need to be tagged. But since this content is an artifact, we can't properly tag it.
+            setUpLinks(drawContext);
+        }
         footnoteAnchor.draw(drawContext);
 
         if (isTagged) {
@@ -190,6 +220,24 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
     }
 
     /**
+     * Resolve {@link Property#FONT} String[] value.
+     *
+     * @param newChildRenderers all processed renderers are added to this list.
+     */
+    void resolveFonts(Collection<IRenderer> newChildRenderers) {
+        if (footnoteAnchor != null) {
+            List<IRenderer> addedRenderers = new ArrayList<IRenderer>();
+            if (footnoteAnchor instanceof TextRenderer) {
+                ((TextRenderer) footnoteAnchor).resolveFonts(addedRenderers);
+                if (addedRenderers.size() > 1) {
+                    throw new PdfException(LayoutExceptionMessageConstant.FOOTNOTE_ANCHOR_LAYOUT_CONSISTENCY);
+                }
+                newChildRenderers.add( this);
+            }
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -228,6 +276,46 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         }
     }
 
+    private static void setUpLinks(IPropertyContainer from, IPropertyContainer to, String name,
+                                   String altDescription, PdfDocument document) {
+        int amountOfNamedDestinations = 0;
+        if (document.getCatalog().getNameTree(PdfName.Dests).getNames() != null) {
+            amountOfNamedDestinations = document.getCatalog().getNameTree(PdfName.Dests).getNames().size();
+        }
+        PdfLinkAnnotation footnoteAnnotation = (PdfLinkAnnotation) new PdfLinkAnnotation(new Rectangle(0, 0))
+                .setAction(PdfAction.createGoTo(name + amountOfNamedDestinations))
+                .setFlags(PdfAnnotation.PRINT);
+        footnoteAnnotation.setBorder(new PdfArray(new float[]{0, 0, 0}));
+        footnoteAnnotation.setContents(altDescription);
+
+        from.setProperty(Property.LINK_ANNOTATION, footnoteAnnotation);
+
+        Set<Object> footnoteDestinations = to.<Set<Object>>getProperty(Property.DESTINATION);
+        if (footnoteDestinations == null) {
+            footnoteDestinations = new HashSet<>();
+        }
+        footnoteDestinations.add(
+                new Tuple2<String, PdfDictionary>(name + amountOfNamedDestinations, footnoteAnnotation.getAction()));
+        to.setProperty(Property.DESTINATION, footnoteDestinations);
+    }
+
+    private void setUpLinks(DrawContext drawContext) {
+        IPropertyContainer footnoteLabel =
+                FootnotesUtil.getInjectedFootnoteAnchor((Footnote)footnoteRenderer.getModelElement());
+        if (footnoteLabel == null) {
+            // Footnote label is not supposed to be null. If it is, something is broken, and we don't add links.
+            return;
+        }
+        // We don't want to override existing link annotations, if any.
+        if (footnoteAnchor.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION) == null &&
+                footnoteLabel.<PdfLinkAnnotation>getProperty(Property.LINK_ANNOTATION) == null) {
+            setUpLinks(footnoteAnchor, footnoteLabel, "footnoteAnchor", "Go to footnote.",
+                    drawContext.getDocument());
+            setUpLinks(footnoteLabel, footnoteAnchor, "footnoteContent", "Go to footnote anchor.",
+                    drawContext.getDocument());
+        }
+    }
+
     private IRenderer createFootnoteAnchorRenderer() {
         IElement footnoteAnchorSymbol = ((FootnoteAnchor) this.modelElement).getFootnoteAnchor();
         if (footnoteAnchorSymbol instanceof Text) {
@@ -250,5 +338,67 @@ public class FootnoteAnchorRenderer extends AbstractRenderer {
         splitRenderer.footnoteAnchor = layoutResult.getSplitRenderer().setParent(splitRenderer);
 
         return splitRenderer;
+    }
+
+    private void handleFootnoteAnchorStyles() {
+        if (!(footnoteAnchor.getModelElement() instanceof IAbstractElement)) {
+            return;
+        }
+
+        IPropertyContainer footnoteAnchorModelElement = footnoteAnchor.getModelElement();
+        FootnoteAnchor modelElement = ((FootnoteAnchor) this.getModelElement());
+        FootnotesProperties footnotesProperties = this.<FootnotesProperties>getProperty(Property.FOOTNOTES_PROPERTIES);
+        Style customStyle = footnotesProperties.getFootnoteAnchorStyle();
+
+        if (footnoteAnchorModelElement instanceof Text) {
+            handleFootnoteAnchorStyles(modelElement, (Text) footnoteAnchorModelElement, customStyle);
+        } else if (footnoteAnchorModelElement instanceof Image) {
+            handleFootnoteAnchorStyles(modelElement, (Image) footnoteAnchorModelElement, customStyle);
+        }
+    }
+
+    private <T extends IElement> void handleFootnoteAnchorStyles(FootnoteAnchor modelElement,
+            AbstractElement<T> footnoteAnchorModelElement, Style customStyle) {
+        copyPropertiesAndStyles(modelElement, footnoteAnchorModelElement);
+
+        if (customStyle != null) {
+            footnoteAnchorModelElement.addStyleIfAbsent(customStyle);
+        }
+
+        if (FootnotesUtil.isDefaultStyleNeeded(modelElement)) {
+            UnitValue parentFontSize = getParent().<UnitValue>getProperty(Property.FONT_SIZE);
+            Style defaultStyle = FootnotesUtil.createDefaultFootnoteAnchorStyle(parentFontSize);
+            if (!footnoteAnchorModelElement.getOwnProperties().containsKey(Property.FONT_SIZE)
+                    && !hasStyleWithOwnProperty(footnoteAnchorModelElement, Property.FONT_SIZE)) {
+                footnoteAnchor.setProperty(Property.FONT_SIZE, defaultStyle.<UnitValue>getProperty(Property.FONT_SIZE));
+            }
+            if (!footnoteAnchorModelElement.getOwnProperties().containsKey(Property.TEXT_RISE)
+                    && !hasStyleWithOwnProperty(footnoteAnchorModelElement, Property.TEXT_RISE)) {
+                footnoteAnchor.setProperty(Property.TEXT_RISE, defaultStyle.<Float>getProperty(Property.TEXT_RISE));
+            }
+        }
+
+        setFootnoteAnchor(((FootnoteAnchor) this.modelElement), footnoteAnchorModelElement);
+    }
+
+    private static <T extends IElement> void copyPropertiesAndStyles(FootnoteAnchor sourceElement,
+            AbstractElement<T> targetElement) {
+        for (Map.Entry<Integer, Object> property : sourceElement.getOwnProperties().entrySet()) {
+            if (!targetElement.hasProperty(property.getKey())) {
+                targetElement.setProperty(property.getKey(), property.getValue());
+            }
+        }
+        for (Style style : sourceElement.getStyles()) {
+            targetElement.addStyleIfAbsent(style);
+        }
+    }
+
+    private static <T extends IElement> boolean hasStyleWithOwnProperty(AbstractElement<T> element, int property) {
+        for (Style style : element.getStyles()) {
+            if (style.hasOwnProperty(property)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

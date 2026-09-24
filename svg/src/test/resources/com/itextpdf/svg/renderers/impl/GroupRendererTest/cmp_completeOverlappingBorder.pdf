@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250103175455+03'00')/ModDate(D:20250103175455+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20260817145656+03'00')/ModDate(D:20260817145656+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -31,7 +31,7 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 375 375]/Length 476/Resources<<>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 375 375]/Length 508/Resources<<>>/Subtype/Form/Type/XObject>>stream
 0 0 375 375 re
 W
 n
@@ -40,6 +40,7 @@ q
 q
 0 0.50196 0 RG
 7.5 w
+4 M
 % rect
 0 0 150 150 re
 S
@@ -49,6 +50,7 @@ q
 1 0.64706 0 rg
 0 0 1 RG
 15 w
+4 M
 % rect
 75 75 150 150 re
 B
@@ -58,6 +60,7 @@ q
 1 0.64706 0 rg
 0 0 1 RG
 15 w
+4 M
 % rect
 150 150 150 150 re
 B
@@ -65,6 +68,7 @@ Q
 q
 0 0.50196 0 RG
 7.5 w
+4 M
 % rect
 75 75 150 150 re
 S
@@ -73,6 +77,7 @@ q
 1 0.64706 0 rg
 0 0 1 RG
 15 w
+4 M
 % rect
 225 0 150 150 re
 B
@@ -80,6 +85,7 @@ Q
 q
 0 0.50196 0 RG
 7.5 w
+4 M
 % rect
 150 0 150 150 re
 S
@@ -88,6 +94,7 @@ q
 1 0.64706 0 rg
 0 0 1 RG
 15 w
+4 M
 % rect
 0 225 150 150 re
 B
@@ -95,6 +102,7 @@ Q
 q
 0 0.50196 0 RG
 7.5 w
+4 M
 % rect
 0 150 150 150 re
 S
@@ -114,8 +122,8 @@ xref
 0000000479 00000 n 
 0000000647 00000 n 
 trailer
-<</ID [<3c4a153b7a3a682dfc9735b3987b70d98bcd1025519cf72b7024ee6bce09f5d602e3938d8305ec1b3dec5ad3fb9409dcaee1310951d5a298982b42e5ed6fca66><3c4a153b7a3a682dfc9735b3987b70d98bcd1025519cf72b7024ee6bce09f5d602e3938d8305ec1b3dec5ad3fb9409dcaee1310951d5a298982b42e5ed6fca66>]/Info 3 0 R/Root 1 0 R/Size 8>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<b495bcf0a69e5de81ecb55a01b1f99736339575ae44a6b677ee3a3cb6abf90dd9558adb3bb10eba903c1d505125d04dde9a74c1725be5dd77b5d4807c582c017><b495bcf0a69e5de81ecb55a01b1f99736339575ae44a6b677ee3a3cb6abf90dd9558adb3bb10eba903c1d505125d04dde9a74c1725be5dd77b5d4807c582c017>]/Info 3 0 R/Root 1 0 R/Size 8>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-1229
+1261
 %%EOF

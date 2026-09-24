@@ -23,11 +23,11 @@
 package com.itextpdf.commons.json;
 
 /**
- * Class representing json null value.
+ * Class representing JSON null value.
  */
 public final class JsonNull extends JsonValue {
     /**
-     * A single null instance of this class.
+     * A single NULL instance of this class.
      */
     public static final JsonNull JSON_NULL = new JsonNull();
 

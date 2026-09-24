@@ -33,6 +33,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Decodes GIF image data into image frames.
+ */
 public final class GifImageHelper {
 
     // max decoder pixel stack size
@@ -40,6 +43,11 @@ public final class GifImageHelper {
 
     private static class GifParameters {
 
+        /**
+         * Creates a parsing context for a GIF image.
+         *
+         * @param image GIF image being decoded
+         */
         public GifParameters(GifImageData image) {
             this.image = image;
         }

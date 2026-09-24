@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
+  <defs>
+    <clipPath id="c">
+      <circle cx="120" cy="80" r="55"/>
+    </clipPath>
+    <mask id="m" x="40" y="30" width="160" height="100" maskUnits="userSpaceOnUse">
+      <rect x="40" y="30" width="160" height="100" fill="white"/>
+    </mask>
+  </defs>
+  <rect width="240" height="160" fill="#ddd"/>
+  <rect x="20" y="20" width="200" height="120" fill="#005599" clip-path="url(#c)" mask="url(#m)"/>
+</svg>

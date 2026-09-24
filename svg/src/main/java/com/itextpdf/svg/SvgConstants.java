@@ -578,6 +578,21 @@ public final class SvgConstants {
         public static final String GRADIENT_TRANSFORM = "gradientTransform";
 
         /**
+         * Attribute defining the radius of radial gradient focal point.
+         */
+        public static final String FR = "fr";
+
+        /**
+         * Attribute defining the x value of radial gradient focal point.
+         */
+        public static final String FX = "fx";
+
+        /**
+         * Attribute defining the y value of radial gradient focal point.
+         */
+        public static final String FY = "fy";
+
+        /**
          * Attribute defining the height. Used in several elements.
          */
         public static final String HEIGHT = "height";
@@ -626,6 +641,26 @@ public final class SvgConstants {
          * Attribute defining the coordinate system for attributes ‘markerWidth’, ‘markerHeight’ and the contents of the ‘marker’.
          */
         public static final String MARKER_UNITS = "markerUnits";
+
+        /**
+         * Attribute defining the mask to be applied to a specific shape or group of shapes.
+         */
+        public static final String MASK = "mask";
+
+        /**
+         * Attribute defining the coordinate system for mask geometry attributes x, y, width and height.
+         */
+        public static final String MASK_UNITS = "maskUnits";
+
+        /**
+         * Attribute defining the coordinate system for mask content.
+         */
+        public static final String MASK_CONTENT_UNITS = "maskContentUnits";
+
+        /**
+         * Attribute defining whether mask values come from alpha or luminance.
+         */
+        public static final String MASK_TYPE = "mask-type";
 
         /**
          * Attribute defining the offset of a stop color for gradients.
@@ -946,9 +981,16 @@ public final class SvgConstants {
         public static final String AUTO = "auto";
 
         /**
+         * Value representing alpha-based mask value extraction.
+         */
+        public static final String ALPHA = "alpha";
+
+        /**
          * Value representing reverse automatic orientation for the start marker.
          */
         public static final String AUTO_START_REVERSE = "auto-start-reverse";
+
+        public static final String BEVEL = "bevel";
 
         /**
          * Value representing the default value for the stroke linecap.
@@ -959,6 +1001,15 @@ public final class SvgConstants {
          * Value representing the default aspect ratio: xmidymid.
          */
         public static final String DEFAULT_ASPECT_RATIO = Values.XMID_YMID;
+
+        /**
+         * Value representing the default miter limit.
+         *
+         * <p>
+         * Default miter limit in PDF is 10, but in SVG it's 4, see
+         * <a href="https://w3c.github.io/svgwg/svg2-draft/painting.html#StrokeMiterlimitProperty">SVG specification</a>.
+         */
+        public static final float DEFAULT_MITER_LIMIT = 4f;
 
         /**
          * Default svg view port width value (300px * 0.75 = 225).
@@ -1012,6 +1063,8 @@ public final class SvgConstants {
          */
         public static final String OBJECT_BOUNDING_BOX = "objectBoundingBox";
 
+        public static final String ROUND = "round";
+
         /**
          * The value representing slice for the preserve aspect ratio calculations;
          */
@@ -1051,6 +1104,8 @@ public final class SvgConstants {
          * The value for markerUnits that represent values in a coordinate system which has a single unit equal the size in user units of the current stroke width.
          */
         public static final String STROKEWIDTH = "strokeWidth";
+
+        public static final String SQUARE = "square";
 
         /**
          * Value representing the units relation "userSpaceOnUse".

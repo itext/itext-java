@@ -22,14 +22,13 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +39,7 @@ import java.util.List;
  * {@link IShorthandResolver} implementation for grid items column/row start and end positions.
  */
 public abstract class GridItemShorthandResolver implements IShorthandResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GridItemShorthandResolver.class);
+    private static final LazyLogger LOGGER = new LazyLogger(GridItemShorthandResolver.class);
     private final String propertyTemplate;
 
     /**
@@ -56,7 +55,7 @@ public abstract class GridItemShorthandResolver implements IShorthandResolver {
     public List<CssDeclaration> resolveShorthand(String shorthandExpression) {
         shorthandExpression = shorthandExpression.trim();
         if (shorthandExpression.isEmpty()) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
                     propertyTemplate.substring(0, propertyTemplate.length() - 4)
             ));

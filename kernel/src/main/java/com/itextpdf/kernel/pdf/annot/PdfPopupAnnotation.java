@@ -48,6 +48,7 @@ public class PdfPopupAnnotation extends PdfAnnotation {
         super(pdfObject);
     }
 
+    @Override
     public PdfName getSubtype() {
         return PdfName.Popup;
     }

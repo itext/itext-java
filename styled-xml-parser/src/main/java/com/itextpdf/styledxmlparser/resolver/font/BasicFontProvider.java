@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.resolver.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.util.ResourceUtil;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.layout.font.FontProvider;
@@ -37,14 +38,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.LoggerFactory;
-
 /**
  * A basic {@link FontProvider} that allows configuring in the constructor which fonts are loaded by default.
  */
 public class BasicFontProvider extends FontProvider {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(BasicFontProvider.class);
+    private static final LazyLogger LOGGER = new LazyLogger(BasicFontProvider.class);
     private static final String DEFAULT_FONT_FAMILY = "Times";
     // This range excludes Hebrew, Arabic, Syriac, Arabic Supplement, Thaana, NKo, Samaritan,
     // Mandaic, Syriac Supplement, Arabic Extended-A, Devanagari, Bengali, Gurmukhi, Gujarati,
@@ -174,7 +173,7 @@ public class BasicFontProvider extends FontProvider {
                 // i.e. the unicode range that is to be rendered with standard or shipped free fonts
                 return FREE_FONT_RANGE;
             } catch (Exception e) {
-                LOGGER.error(StyledXmlParserLogMessageConstant.ERROR_LOADING_FONT, e);
+                LOGGER.error(() -> StyledXmlParserLogMessageConstant.ERROR_LOADING_FONT, e);
             }
         }
         return null;
@@ -195,7 +194,7 @@ public class BasicFontProvider extends FontProvider {
                 byte[] fontProgramBytes = StreamUtil.inputStreamToArray(stream);
                 addFont(fontProgramBytes, null, rangeToLoad);
             } catch (Exception e) {
-                LOGGER.error(StyledXmlParserLogMessageConstant.ERROR_LOADING_FONT, e);
+                LOGGER.error(() -> StyledXmlParserLogMessageConstant.ERROR_LOADING_FONT, e);
             }
         }
     }

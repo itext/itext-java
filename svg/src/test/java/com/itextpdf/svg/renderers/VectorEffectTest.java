@@ -89,7 +89,7 @@ public class VectorEffectTest extends SvgIntegrationTest {
 
     @Test
     @LogMessages(messages = @LogMessage(messageTemplate =
-            StyledXmlParserLogMessageConstant.UNABLE_TO_RETRIEVE_IMAGE_WITH_GIVEN_BASE_URI))
+            StyledXmlParserLogMessageConstant.UNABLE_TO_PROCESS_IMAGE_WITH_GIVEN_BASE_URI))
     // TODO DEVSIX-8884 Support svg format for image href attribute
     public void imageWithSvgTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithSvg");

@@ -56,6 +56,9 @@ public class FontEncoding {
      */
     protected IntHashtable unicodeToCode;
 
+    /**
+     * Unicode values indexed by unsigned one-byte font code; {@code -1} marks an unmapped code.
+     */
     protected int[] codeToUnicode;
 
     /**
@@ -67,6 +70,9 @@ public class FontEncoding {
      */
     protected IntHashtable unicodeDifferences;
 
+    /**
+     * Creates an empty encoding with 256 code slots and no base encoding.
+     */
     protected FontEncoding() {
         unicodeToCode = new IntHashtable(256);
         codeToUnicode = ArrayUtil.fillWithValue(new int[256], -1);
@@ -74,6 +80,13 @@ public class FontEncoding {
         fontSpecific = false;
     }
 
+    /**
+     * Creates an encoding from a named encoding or custom encoding description.
+     *
+     * @param baseEncoding encoding name or custom specification beginning with {@code #}
+     *
+     * @return created encoding
+     */
     public static FontEncoding createFontEncoding(String baseEncoding) {
         FontEncoding encoding = new FontEncoding();
         encoding.baseEncoding = normalizeEncoding(baseEncoding);
@@ -85,6 +98,11 @@ public class FontEncoding {
         return encoding;
     }
 
+    /**
+     * Creates an empty font encoding.
+     *
+     * @return empty non-font-specific encoding
+     */
     public static FontEncoding createEmptyFontEncoding() {
         FontEncoding encoding = new FontEncoding();
         encoding.baseEncoding = null;
@@ -122,10 +140,20 @@ public class FontEncoding {
         }
     }
 
+    /**
+     * Gets the normalized base encoding name.
+     *
+     * @return base encoding name, or {@code null} for an empty encoding
+     */
     public String getBaseEncoding() {
         return baseEncoding;
     }
 
+    /**
+     * Checks whether codes are interpreted using the font's built-in encoding.
+     *
+     * @return {@code true} for a font-specific encoding
+     */
     public boolean isFontSpecific() {
         return fontSpecific;
     }
@@ -245,6 +273,9 @@ public class FontEncoding {
         return Objects.equals(normalizeEncoding(encoding), baseEncoding);
     }
 
+    /**
+     * Parses the custom {@code #}-prefixed base encoding specification.
+     */
     protected void fillCustomEncoding() {
         differences = new String[256];
         StringTokenizer tok = new StringTokenizer(baseEncoding.substring(1), " ,\t\n\r\f");
@@ -292,6 +323,9 @@ public class FontEncoding {
         }
     }
 
+    /**
+     * Parses the named encoding.
+     */
     protected void fillNamedEncoding() {
         // check if the encoding exists
         PdfEncodings.convertToBytes(" ", baseEncoding);
@@ -322,6 +356,9 @@ public class FontEncoding {
         }
     }
 
+    /**
+     * Fills mappings from the PDF StandardEncoding table.
+     */
     protected void fillStandardEncoding() {
         int[] encoded = PdfEncodings.standardEncoding;
         for (int ch = 0; ch < 256; ++ch) {

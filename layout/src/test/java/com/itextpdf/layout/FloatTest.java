@@ -56,6 +56,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -82,12 +83,17 @@ public class FloatTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void floatParagraphTest01() throws IOException, InterruptedException {
         String cmpFileName = sourceFolder + "cmp_floatParagraphTest01.pdf";
         String outFile = destinationFolder + "floatParagraphTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
 
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
@@ -120,7 +126,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatParagraphTest02.pdf";
         String outFile = destinationFolder + "floatParagraphTest02.pdf";
 
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -153,7 +159,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatDivTest01.pdf";
         String outFile = destinationFolder + "floatDivTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -178,7 +184,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatDivTest02.pdf";
         String outFile = destinationFolder + "floatDivTest02.pdf";
 
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -216,7 +222,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatDivTest03.pdf";
         String outFile = destinationFolder + "floatDivTest03.pdf";
 
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -252,7 +258,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "floatingImageInCell.pdf";
         String imageSrc = sourceFolder + "itis.jpg";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
         Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
@@ -279,7 +285,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "floatingImageToNextPage.pdf";
         String imageSrc = sourceFolder + "itis.jpg";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
         Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleAbsolute(100, 500);
@@ -304,7 +310,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "inlineFloatingImageToNextPage.pdf";
         String imageSrc = sourceFolder + "itis.jpg";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)).setTagged());
 
         Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
         Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleAbsolute(100, 500);
@@ -330,7 +336,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "floatingTwoImages.pdf";
         String imageSrc = sourceFolder + "itis.jpg";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(400, 400);
         Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(400, 400);
@@ -353,7 +359,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "floatingTwoImagesLR.pdf";
         String imageSrc = sourceFolder + "itis.jpg";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(350, 350);
         Image img2 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(350, 350);
@@ -376,7 +382,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "floatingImageInParagraph.pdf";
         String imageSrc = sourceFolder + "itis.jpg";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         // Image floats on the left inside the paragraph
         Image img1 = new Image(ImageDataFactory.create(imageSrc)).scaleToFit(100, 100);
@@ -433,7 +439,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnCanvas.pdf";
         String outFile = destinationFolder + "floatsOnCanvas.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile)).setTagged();
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile)).setTagged();
         PdfPage page = pdfDoc.addNewPage();
         PdfCanvas pdfCanvas = new PdfCanvas(page);
         Canvas canvas = new Canvas(pdfCanvas, page.getPageSize().applyMargins(36, 36, 36, 36, false));
@@ -472,7 +478,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsFixedWidthTest01_floatRight.pdf";
         String outFile = destinationFolder + "floatsFixedWidthTest01_floatRight.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div containerDiv = new Div().setBorder(new SolidBorder(3)).setPadding(10);
         Div parentFixedDiv = new Div().setWidth(300).setMarginLeft(150).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
@@ -499,7 +505,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsFixedWidth01_noFloat.pdf";
         String outFile = destinationFolder + "floatsFixedWidth01_noFloat.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div containerDiv = new Div().setBorder(new SolidBorder(3)).setPadding(10);
         Div parentFixedDiv = new Div().setWidth(300).setMarginLeft(150).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
@@ -525,7 +531,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsFixedWidth01_floatLeft.pdf";
         String outFile = destinationFolder + "floatsFixedWidth01_floatLeft.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div containerDiv = new Div().setBorder(new SolidBorder(3)).setPadding(10);
         Div parentFixedDiv = new Div().setWidth(300).setMarginLeft(150).setBorder(new SolidBorder(ColorConstants.BLUE, 3));
@@ -553,7 +559,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatFixedHeightContentNotFit.pdf";
         String outFile = destinationFolder + "floatFixedHeightContentNotFit.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)).setTagged());
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         div.add(new Paragraph("Floating div.")).add(new Paragraph(text));
@@ -585,7 +591,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearanceFixedHeightPageSplitInRoot01.pdf";
         String outFile = destinationFolder + "clearanceFixedHeightPageSplitInRoot01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text));
 
@@ -611,7 +617,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatPartialInRoot01.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatPartialInRoot01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)).setTagged());
 
         document.add(new Paragraph(text + text));
 
@@ -639,7 +645,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatPartialInRoot02.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatPartialInRoot02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)).setTagged());
 
         document.add(new Paragraph(text + text));
 
@@ -666,7 +672,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatPartialInRoot03.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatPartialInRoot03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)).setTagged());
 
         document.add(new Paragraph(text + text));
 
@@ -699,7 +705,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatPartialInBlock01.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatPartialInBlock01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
@@ -736,7 +742,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatPartialInBlock02.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatPartialInBlock02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -766,7 +772,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatPartialInBlock03.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatPartialInBlock03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
@@ -808,7 +814,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInRoot01.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatNothingInRoot01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -837,7 +843,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInRoot02.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatNothingInRoot02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -866,7 +872,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInRoot03.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatNothingInRoot03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -897,7 +903,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInBlock01.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatNothingInBlock01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -929,7 +935,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInBlock02.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatNothingInBlock02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -961,7 +967,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearancePageSplitFloatNothingInBlock03.pdf";
         String outFile = destinationFolder + "clearancePageSplitFloatNothingInBlock03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -994,7 +1000,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearanceNoContentPageSplitFloatPartialInRoot01.pdf";
         String outFile = destinationFolder + "clearanceNoContentPageSplitFloatPartialInRoot01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1026,7 +1032,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_clearanceNoContentPageSplitFloatPartialInBlock01.pdf";
         String outFile = destinationFolder + "clearanceNoContentPageSplitFloatPartialInBlock01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1058,7 +1064,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit01.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1080,7 +1086,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit02.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1102,7 +1108,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit03.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1125,7 +1131,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit04.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit04.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1145,7 +1151,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit05.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit05.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1174,7 +1180,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit06_01.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit06_01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1202,7 +1208,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit06_02.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit06_02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1231,7 +1237,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit06_03.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit06_03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1258,7 +1264,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit07.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit07.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1287,7 +1293,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08_01.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit08_01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
@@ -1316,7 +1322,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08_02.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit08_02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
@@ -1345,7 +1351,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit08_03.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit08_03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
@@ -1370,7 +1376,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit09.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit09.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
@@ -1400,7 +1406,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit10.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit10.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
@@ -1424,7 +1430,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit11.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit11.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
         Div containerDiv = new Div();
@@ -1456,7 +1462,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit12_01.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit12_01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(100);
@@ -1476,7 +1482,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit12_02.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit12_02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div div = new Div().setBorder(new SolidBorder(ColorConstants.RED, 2));
         Image img = new Image(ImageDataFactory.create(sourceFolder + "itis.jpg")).setHeight(400).setWidth(100);
@@ -1496,7 +1502,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit14.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit14.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1522,7 +1528,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit15.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit15.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)).setTagged());
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)).setTagged());
 
         Div mainDiv = new Div().setBorder(new SolidBorder(ColorConstants.CYAN, 3));
 
@@ -1555,7 +1561,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit16.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit16.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1587,7 +1593,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit17.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit17.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1612,7 +1618,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit18.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit18.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1641,7 +1647,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOnPageSplit19.pdf";
         String outFile = destinationFolder + "floatsOnPageSplit19.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1671,7 +1677,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsKeepTogetherOnPageSplit01.pdf";
         String outFile = destinationFolder + "floatsKeepTogetherOnPageSplit01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph floatP = new Paragraph(text + text)
                 .setKeepTogether(true)
@@ -1692,7 +1698,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsKeepTogetherOnPageSplit02.pdf";
         String outFile = destinationFolder + "floatsKeepTogetherOnPageSplit02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph("A bit of text."));
         Paragraph floatP = new Paragraph(text + text)
@@ -1716,7 +1722,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsKeepTogetherOnPageSplit03.pdf";
         String outFile = destinationFolder + "floatsKeepTogetherOnPageSplit03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text));
 
@@ -1744,7 +1750,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit01.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1768,7 +1774,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit02.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1796,7 +1802,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit03.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1824,7 +1830,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit04.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit04.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -1852,7 +1858,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit05.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit05.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph mainP = new Paragraph();
 
@@ -1875,7 +1881,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit06.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit06.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph mainP = new Paragraph();
 
@@ -1907,7 +1913,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit07.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit07.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph mainP = new Paragraph();
 
@@ -1939,7 +1945,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsInParagraphPartialSplit08.pdf";
         String outFile = destinationFolder + "floatsInParagraphPartialSplit08.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph mainP = new Paragraph();
 
@@ -1970,7 +1976,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatingTextInParagraphPartialSplit01.pdf";
         String outFile = destinationFolder + "floatingTextInParagraphPartialSplit01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph mainP = new Paragraph().setBorder(new SolidBorder(ColorConstants.BLUE, 1.5f));
 
@@ -1991,7 +1997,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatingTextInParagraphPartialSplit02.pdf";
         String outFile = destinationFolder + "floatingTextInParagraphPartialSplit02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph mainP = new Paragraph().setBorder(new SolidBorder(ColorConstants.BLUE, 1.5f));
 
@@ -2032,7 +2038,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatingTextInParagraphPartialSplit03.pdf";
         String outFile = destinationFolder + "floatingTextInParagraphPartialSplit03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph mainP = new Paragraph().setBorder(new SolidBorder(ColorConstants.BLUE, 1.5f));
 
@@ -2064,7 +2070,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsFirstOnPageNotFit01.pdf";
         String outFile = destinationFolder + "floatsFirstOnPageNotFit01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph mainP = new Paragraph();
 
@@ -2091,7 +2097,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsFirstOnPageNotFit02.pdf";
         String outFile = destinationFolder + "floatsFirstOnPageNotFit02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div mainDiv = new Div();
 
@@ -2118,7 +2124,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsFirstOnPageNotFit03.pdf";
         String outFile = destinationFolder + "floatsFirstOnPageNotFit03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div div = new Div()
                 .setWidth(150)
@@ -2141,7 +2147,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatPartialSplitBigGapAtPageEnd01.pdf";
         String outFile = destinationFolder + "floatPartialSplitBigGapAtPageEnd01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div div = new Div()
                 .setWidth(350)
@@ -2167,7 +2173,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatPartialSplitBigGapAtPageEnd02.pdf";
         String outFile = destinationFolder + "floatPartialSplitBigGapAtPageEnd02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div div = new Div()
                 .setWidth(350)
@@ -2202,7 +2208,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatInParagraphLastLineLeadingOverflow01.pdf";
         String outFile = destinationFolder + "floatInParagraphLastLineLeadingOverflow01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text + text).setMargin(0).setMultipliedLeading(1.3f));
         Paragraph p = new Paragraph()
@@ -2228,7 +2234,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatOverflowNothingInParagraph01.pdf";
         String outFile = destinationFolder + "floatOverflowNothingInParagraph01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -2265,7 +2271,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatOverflowNothingInParagraph02.pdf";
         String outFile = destinationFolder + "floatOverflowNothingInParagraph02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text));
 
@@ -2288,7 +2294,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatInlineBlockTest01.pdf";
         String outFile = destinationFolder + "floatInlineBlockTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFile));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
         Document doc = new Document(pdfDoc);
 
         Paragraph p = new Paragraph().setBorder(new SolidBorder(1));
@@ -2311,7 +2317,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsHeightFixedInBlock01.pdf";
         String outFile = destinationFolder + "floatsHeightFixedInBlock01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div div = new Div()
                 .setBorder(new SolidBorder(ColorConstants.RED, 2))
@@ -2332,7 +2338,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsHeightFixedInBlock02.pdf";
         String outFile = destinationFolder + "floatsHeightFixedInBlock02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
 
@@ -2357,7 +2363,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsHeightFixedInParagraph01.pdf";
         String outFile = destinationFolder + "floatsHeightFixedInParagraph01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph parentParagraph = new Paragraph()
                 .setBorder(new SolidBorder(ColorConstants.MAGENTA, 2))
@@ -2381,7 +2387,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsHeightFixedInParagraph02.pdf";
         String outFile = destinationFolder + "floatsHeightFixedInParagraph02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
 
@@ -2407,7 +2413,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMaxHeightFixedInBlock01.pdf";
         String outFile = destinationFolder + "floatsMaxHeightFixedInBlock01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div div = new Div()
                 .setBorder(new SolidBorder(ColorConstants.RED, 2))
@@ -2428,7 +2434,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMaxHeightFixedInBlock02.pdf";
         String outFile = destinationFolder + "floatsMaxHeightFixedInBlock02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
 
@@ -2453,7 +2459,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMaxHeightFixedInParagraph01.pdf";
         String outFile = destinationFolder + "floatsMaxHeightFixedInParagraph01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph parentParagraph = new Paragraph()
                 .setBorder(new SolidBorder(ColorConstants.MAGENTA, 2))
@@ -2477,7 +2483,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMaxHeightFixedInParagraph02.pdf";
         String outFile = destinationFolder + "floatsMaxHeightFixedInParagraph02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
 
@@ -2502,7 +2508,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMinHeightFixedInBlock01.pdf";
         String outFile = destinationFolder + "floatsMinHeightFixedInBlock01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div div = new Div()
                 .setBorder(new SolidBorder(ColorConstants.RED, 2))
@@ -2522,7 +2528,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMinHeightFixedInBlock02.pdf";
         String outFile = destinationFolder + "floatsMinHeightFixedInBlock02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
 
@@ -2546,7 +2552,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMinHeightFixedInParagraph01.pdf";
         String outFile = destinationFolder + "floatsMinHeightFixedInParagraph01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph parentParagraph = new Paragraph()
                 .setBorder(new SolidBorder(ColorConstants.MAGENTA, 2))
@@ -2569,7 +2575,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMinHeightFixedInParagraph02.pdf";
         String outFile = destinationFolder + "floatsMinHeightFixedInParagraph02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
 
@@ -2594,7 +2600,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest01.pdf";
         String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
         document.add(new Paragraph(text));
 
         // Gray area in this test is expected to be not split, continuous and have height equal
@@ -2622,7 +2628,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest02.pdf";
         String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
         document.add(new Paragraph(text));
 
         // Gray area in this test is expected to be not split, continuous and have height equal
@@ -2653,7 +2659,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest03.pdf";
         String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
         document.add(new Paragraph(text));
 
         // Gray area in this test is expected to be split, however also not to have a gap before page end.
@@ -2683,7 +2689,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest04.pdf";
         String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest04.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div mainDiv = new Div();
         mainDiv.setBackgroundColor(ColorConstants.LIGHT_GRAY)
@@ -2721,7 +2727,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsMinHeightApplyingOnSplitTest05.pdf";
         String outFile = destinationFolder + "floatsMinHeightApplyingOnSplitTest05.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         // Since mainDiv is floating here, it encompasses all the floating children in it's occupied area.
         // In this case, behaviour is expected to be the same as with just normal content and min_height property:
@@ -2768,7 +2774,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsFixedMaxHeightAndOverflowHidden01.pdf";
         String outFile = destinationFolder + "floatsFixedMaxHeightAndOverflowHidden01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         document.add(new Paragraph(text + text + text.substring(0, text.length() / 2) + "."));
 
@@ -2803,7 +2809,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOverflowToNextLineAtPageEndInParagraph01.pdf";
         String outFile = destinationFolder + "floatsOverflowToNextLineAtPageEndInParagraph01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
         document.add(new Paragraph(text + text));
 
         Paragraph mainP = new Paragraph()
@@ -2834,7 +2840,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOverflowToNextLineAtPageEndInParagraph02.pdf";
         String outFile = destinationFolder + "floatsOverflowToNextLineAtPageEndInParagraph02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
         document.add(new Paragraph(text + text));
 
         Paragraph mainP = new Paragraph()
@@ -2861,7 +2867,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatsOverflowToNextLineAtPageEndInParagraph03.pdf";
         String outFile = destinationFolder + "floatsOverflowToNextLineAtPageEndInParagraph03.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
         document.add(new Paragraph(text + text));
 
         Paragraph mainP = new Paragraph()
@@ -2920,7 +2926,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "floatRootElementNotFitPage01.pdf";
 
         //Initialize PDF writer
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
 
         //Initialize PDF document
         PdfDocument pdf = new PdfDocument(writer);
@@ -2965,7 +2971,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "floatRootElementNotFitPage02.pdf";
 
         //Initialize PDF writer
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
 
         //Initialize PDF document
         PdfDocument pdf = new PdfDocument(writer);
@@ -3014,7 +3020,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatOverflowAlongWithNewContent01.pdf";
         String outFile = destinationFolder + "floatOverflowAlongWithNewContent01.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div divContainer = new Div();
         divContainer.setMargin(20);
@@ -3038,7 +3044,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatOverflowAlongWithNewContent02.pdf";
         String outFile = destinationFolder + "floatOverflowAlongWithNewContent02.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div divContainer = new Div();
         divContainer.setMargin(20);
@@ -3063,7 +3069,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_floatTableTest01.pdf";
         String outFile = destinationFolder + "floatTableTest01.pdf";
 
-        PdfWriter writer = new PdfWriter(outFile);
+        PdfWriter writer = CompareTool.createTestPdfWriter(outFile);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document doc = new Document(pdfDoc);
 
@@ -3094,7 +3100,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_keepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
         String outFile = destinationFolder + "keepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         fillWithKeptTogetherElement(document, text, 2, false, false);
 
@@ -3110,7 +3116,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_keepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest.pdf";
         String outFile = destinationFolder + "keepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         fillWithKeptTogetherElement(document, text, 3, false, false);
 
@@ -3125,7 +3131,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_keepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
         String outFile = destinationFolder + "keepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         fillWithKeptTogetherElement(document, text, 4, false, false);
 
@@ -3140,7 +3146,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_keepTogetherNotEnoughSpaceOnNewEmptyPageShortFloatTest.pdf";
         String outFile = destinationFolder + "keepTogetherNotEnoughSpaceOnNewEmptyPageShortFloatTest.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         fillWithKeptTogetherElement(document, "Some short text", 4, false, true);
 
@@ -3156,7 +3162,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_innerKeepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
         String outFile = destinationFolder + "innerKeepTogetherEnoughSpaceOnNewPageWithFloatTest.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         fillWithKeptTogetherElement(document, text, 2, true, false);
 
@@ -3173,7 +3179,7 @@ public class FloatTest extends ExtendedITextTest {
                 sourceFolder + "cmp_innerKeepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest.pdf";
         String outFile = destinationFolder + "innerKeepTogetherNotEnoughSpaceOnNewPageWithFloatEnoughOnEmptyTest.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         fillWithKeptTogetherElement(document, text, 3, true, false);
 
@@ -3188,7 +3194,7 @@ public class FloatTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_innerKeepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
         String outFile = destinationFolder + "innerKeepTogetherNotEnoughSpaceOnNewEmptyPageTest.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         fillWithKeptTogetherElement(document, text, 4, true, false);
 
@@ -3202,7 +3208,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "indentInParagraphAndFloatInInnerDiv.pdf";
         String cmpFileName = sourceFolder + "cmp_indentInParagraphAndFloatInInnerDiv.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Div div = new Div().add(new Paragraph("Video provides a powerful way to help you prove"
                 + " your point. When you click Online Video, you can"));
@@ -3225,7 +3231,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "floatAndIndentInFirstParagraphInDiv.pdf";
         String cmpFileName = sourceFolder + "cmp_floatAndIndentInFirstParagraphInDiv.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph shortFloat = new Paragraph("Hello, iText! Hello, iText!").setBackgroundColor(ColorConstants.CYAN);
         shortFloat.setFirstLineIndent(50).setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -3247,7 +3253,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "shortFloatRightAndIndentInSecondParagraphInDiv.pdf";
         String cmpFileName = sourceFolder + "cmp_shortFloatRightAndIndentInSecondParagraphInDiv.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph shortFloat = new Paragraph("Hello, iText! Hello, iText!").setBackgroundColor(ColorConstants.CYAN);
         shortFloat.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -3269,7 +3275,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "shortFloatLeftAndIndentInSecondParagraphInDiv.pdf";
         String cmpFileName = sourceFolder + "cmp_shortFloatLeftAndIndentInSecondParagraphInDiv.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph shortFloat = new Paragraph("Hello, iText! Hello, iText!").setBackgroundColor(ColorConstants.CYAN);
         shortFloat.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
@@ -3291,7 +3297,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "longFloatAndIndentInSecondParagraphInDiv.pdf";
         String cmpFileName = sourceFolder + "cmp_longFloatAndIndentInSecondParagraphInDiv.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph longFloat = new Paragraph(text).setBackgroundColor(ColorConstants.CYAN);
         longFloat.setProperty(Property.FLOAT, FloatPropertyValue.RIGHT);
@@ -3313,7 +3319,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "indentInParentParagraphShortFirstFloat.pdf";
         String cmpFileName = sourceFolder + "cmp_indentInParentParagraphShortFirstFloat.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph parent = new Paragraph(text).setFirstLineIndent(50);
 
@@ -3336,7 +3342,7 @@ public class FloatTest extends ExtendedITextTest {
         String outFile = destinationFolder + "indentInParentParagraphLongFirstFloat.pdf";
         String cmpFileName = sourceFolder + "cmp_indentInParentParagraphLongFirstFloat.pdf";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFile)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFile)));
 
         Paragraph parent = new Paragraph(text).setFirstLineIndent(50);
 

@@ -26,11 +26,26 @@ import com.itextpdf.io.util.IntHashtable;
 
 import java.util.List;
 
+/**
+ * Applies GSUB OpenType single substitutions.
+ */
 public class GsubLookupType1 extends OpenTableLookup {
 
     private IntHashtable substMap;
 
-    public GsubLookupType1(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations) throws java.io.IOException {
+    /**
+     * Creates a new GSUB Lookup Type 1.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param subTableLocations the sub table locations
+     *
+     * @throws java.io.IOException if the OpenType data cannot be read
+     */
+    public GsubLookupType1(OpenTypeFontTableReader openReader, int lookupFlag, int[] subTableLocations)
+            throws java.io.IOException {
         super(openReader, lookupFlag, subTableLocations);
         substMap = new IntHashtable();
         readSubTables();
@@ -52,7 +67,7 @@ public class GsubLookupType1 extends OpenTableLookup {
                 changed = true;
             }
         }
-        line.setIdx(line.getIdx()+1);
+        line.setIdx(line.getIdx() + 1);
         return changed;
     }
 

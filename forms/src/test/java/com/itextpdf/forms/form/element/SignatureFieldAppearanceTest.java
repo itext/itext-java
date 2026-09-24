@@ -70,6 +70,7 @@ import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -86,12 +87,17 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
+    }
+
     @Test
     public void basicSigFieldTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "basicSigField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_basicSigField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignatureFieldAppearance formSigField = new SignatureFieldAppearance("form SigField");
             formSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
             formSigField.setContent("form SigField");
@@ -116,7 +122,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "invisibleSigField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_invisibleSigField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignatureFieldAppearance formSigField = new SignatureFieldAppearance("form SigField");
             formSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, false);
             formSigField.setContent("form SigField");
@@ -136,7 +142,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "customizedSigField.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_customizedSigField.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignedAppearanceText description = new SignedAppearanceText()
                     .setSignedBy("signer").setLocationLine("Location capt: location")
                     .setReasonLine("Reason capt: reason");
@@ -170,7 +176,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "emptySigFieldAppearance.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_emptySigFieldAppearance.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignedAppearanceText description = new SignedAppearanceText()
                     .setSignedBy(null).setLocationLine(null).setReasonLine(null);
 
@@ -189,7 +195,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "ignoreSignDateAndReasonInAppearance.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_ignoreSignDateAndReasonInAppearance.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignedAppearanceText description = new SignedAppearanceText()
                     .setSignedBy("Signer Name").setLocationLine("Test Location").setReasonLine(null);
 
@@ -209,7 +215,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "signatureFieldVerticalAlignment.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_signatureFieldVerticalAlignment.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignatureFieldAppearance bottomSigField = new SignatureFieldAppearance("bottomSigField");
             bottomSigField.setProperty(FormProperty.FORM_FIELD_FLATTEN, true);
             bottomSigField.setContent("description on bottom");
@@ -250,7 +256,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_sigFieldWithGraphicAndDescriptionMode.pdf";
         String imagePath = SOURCE_FOLDER + "1.png";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignatureFieldAppearance formSigField = new SignatureFieldAppearance("SigField");
             ImageData image = ImageDataFactory.create(imagePath);
             formSigField.setContent("description", image);
@@ -271,7 +277,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String cmpPdf = SOURCE_FOLDER + "cmp_sigFieldWithGraphicMode.pdf";
         String imagePath = SOURCE_FOLDER + "1.png";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignatureFieldAppearance formSigField = new SignatureFieldAppearance("SigField");
             ImageData image = ImageDataFactory.create(imagePath);
             formSigField.setContent(image);
@@ -288,7 +294,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "sigFieldWithNameAndDescriptionModeHorizontal.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_sigFieldWithNameAndDescriptionModeHorizontal.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignatureFieldAppearance formSigField = new SignatureFieldAppearance("SigField");
             formSigField.setProperty(Property.WIDTH, UnitValue.createPointValue(250));
             formSigField.setProperty(Property.HEIGHT, UnitValue.createPointValue(150));
@@ -309,7 +315,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "sigFieldWithNameAndDescriptionModeVertical.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_sigFieldWithNameAndDescriptionModeVertical.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignatureFieldAppearance formSigField = new SignatureFieldAppearance("SigField");
             formSigField.setProperty(Property.WIDTH, UnitValue.createPointValue(150));
             formSigField.setProperty(Property.HEIGHT, UnitValue.createPointValue(250));
@@ -330,7 +336,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "borderBoxes.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_borderBoxes.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             // BORDER_BOX
             SignatureFieldAppearance interactiveSigField = new SignatureFieldAppearance("interactiveSigField")
                     .setBorder(new SolidBorder(ColorConstants.PINK, 10));
@@ -376,7 +382,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "borderTypes.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_borderTypes.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             // DASHED
             SignatureFieldAppearance sigField = new SignatureFieldAppearance("SigField")
                     .setBorder(new DashedBorder(ColorConstants.PINK, 10))
@@ -435,7 +441,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
     public void fontSizeTest() throws IOException, InterruptedException {
         String outPdf = DESTINATION_FOLDER + "fontSizeTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_fontSizeTest.pdf";
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             SignatureFieldAppearance sigField = new SignatureFieldAppearance("SigField");
             sigField.setFontSize(20);
             sigField.setContent("test");
@@ -447,7 +453,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
     @Test
     public void fontNullCustomCheck() throws IOException {
         String outPdf = DESTINATION_FOLDER + "fontNullCustomCheck.pdf";
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf)) {
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf)) {
             @Override
             public PdfFont getDefaultFont() {
                 return null;
@@ -470,7 +476,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "signatureOnRotatedPages.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_signatureOnRotatedPages.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             document.getPdfDocument().addNewPage().setRotation(90);
             document.getPdfDocument().addNewPage().setRotation(180);
             document.getPdfDocument().addNewPage().setRotation(270);
@@ -513,7 +519,7 @@ public class SignatureFieldAppearanceTest extends ExtendedITextTest {
         String outPdf = DESTINATION_FOLDER + "customModeTest.pdf";
         String cmpPdf = SOURCE_FOLDER + "cmp_customModeTest.pdf";
 
-        try (Document document = new Document(new PdfDocument(new PdfWriter(outPdf)))) {
+        try (Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outPdf)))) {
             Div div = new Div();
             div.add(new Paragraph("Paragraph inside div with red dashed border and pink background")
                     .setBorder(new DashedBorder(ColorConstants.RED, 1)).setBackgroundColor(ColorConstants.PINK));

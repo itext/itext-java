@@ -45,7 +45,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
 
     @Override
     public void applyMappingConfiguration(MappingConfigurator configurator) {
-        configurator.removeField("com.itextpdf.pdfa.checker.PdfAChecker.LOGGER");
+
     }
 
     @Override

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.pdfua.wtpdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.contrast.ColorContrastChecker;
 import com.itextpdf.kernel.pdf.DocumentProperties;
@@ -44,8 +45,6 @@ import com.itextpdf.pdfua.logs.PdfUALogMessageConstants;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Creates a Well Tagged PDF document.
@@ -53,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * It will add necessary validation to guide the user to create a Well Tagged compliant document.
  */
 public class WellTaggedPdfDocument extends PdfDocument {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WellTaggedPdfDocument.class);
+    private static final LazyLogger LOGGER = new LazyLogger(WellTaggedPdfDocument.class);
 
     /**
      * Creates a WellTaggedPdfDocument instance.
@@ -110,7 +109,7 @@ public class WellTaggedPdfDocument extends PdfDocument {
             WellTaggedPdfConfig config) {
         super(reader, writer, properties);
         if (!getConformance().isWtpdf()) {
-            LOGGER.warn(PdfUALogMessageConstants.PDF_TO_WTPDF_CONVERSION_IS_NOT_SUPPORTED);
+            LOGGER.warn(() -> PdfUALogMessageConstants.PDF_TO_WTPDF_CONVERSION_IS_NOT_SUPPORTED);
         }
         setupWtpdfConfiguration(config);
 
@@ -159,7 +158,7 @@ public class WellTaggedPdfDocument extends PdfDocument {
             List<WellTaggedPdfConformance> wtpdfConformance) {
         writer.getProperties().addWtpdfXmpMetadata(wtpdfConformance);
         if (writer.getPdfVersion() != null && !PdfVersion.PDF_2_0.equals(writer.getPdfVersion())) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     PdfUALogMessageConstants.WRITER_PROPERTIES_PDF_VERSION_WAS_OVERRIDDEN, PdfVersion.PDF_2_0));
             writer.getProperties().setPdfVersion(PdfVersion.PDF_2_0);
         }

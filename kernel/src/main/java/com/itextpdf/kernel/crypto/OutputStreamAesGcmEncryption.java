@@ -86,6 +86,7 @@ public class OutputStreamAesGcmEncryption extends OutputStreamEncryption {
      *                     an {@code IOException} is thrown if the output
      *                     stream is closed
      */
+    @Override
     public void write(byte[] b, int off, int len) throws IOException {
         byte[] cipherBuffer = cipher.update(b, off, len);
         if (cipherBuffer != null) {
@@ -98,6 +99,7 @@ public class OutputStreamAesGcmEncryption extends OutputStreamEncryption {
      * Input data that may have been buffered during a previous update operation is processed,
      * with padding (if requested) being applied and authentication tag is appended.
      */
+    @Override
     public void finish() {
         if (!finished) {
             finished = true;

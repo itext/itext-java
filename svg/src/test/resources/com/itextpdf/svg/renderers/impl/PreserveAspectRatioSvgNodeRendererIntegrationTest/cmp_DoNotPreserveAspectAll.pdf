@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250103181204+03'00')/ModDate(D:20250103181204+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20260817150054+03'00')/ModDate(D:20260817150054+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -34,7 +34,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 450 1200]/Length 824/Resources<</XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R/Fm5 13 0 R/Fm6 14 0 R/Fm7 15 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 450 1200]/Length 856/Resources<</XObject<</Fm1 9 0 R/Fm2 10 0 R/Fm3 11 0 R/Fm4 12 0 R/Fm5 13 0 R/Fm6 14 0 R/Fm7 15 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 450 1200 re
 W
 n
@@ -42,6 +42,7 @@ q
 0.50196 0.50196 0.50196 rg
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0 0 450 1200 re
 B
@@ -50,6 +51,7 @@ q
 0 0 0 rg
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0 0 225 150 re
 B
@@ -64,6 +66,7 @@ q
 0 0 0 rg
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0 150 112.5 150 re
 B
@@ -79,6 +82,7 @@ q
 0 0 0 rg
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0 300 450 150 re
 B
@@ -94,6 +98,7 @@ q
 0 0 0 rg
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0 450 225 75 re
 B
@@ -109,6 +114,7 @@ q
 0 0 0 rg
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0 525 225 300 re
 B
@@ -124,6 +130,7 @@ q
 0 0 0 rg
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0 825 112.5 75 re
 B
@@ -139,6 +146,7 @@ q
 0 0 0 rg
 1 0 0 RG
 0.75 w
+4 M
 % rect
 0 900 450 300 re
 B
@@ -154,7 +162,7 @@ Q
 endstream
 endobj
 9 0 obj
-<</BBox[0 0 1125 750]/Length 227/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 231/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -162,6 +170,7 @@ q
 1 1 0 rg
 0 0 1 RG
 9 w
+4 M
 % rect
 0 0 1125 750 re
 B
@@ -189,7 +198,7 @@ Q
 endstream
 endobj
 10 0 obj
-<</BBox[0 0 1125 750]/Length 227/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 231/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -197,6 +206,7 @@ q
 1 1 0 rg
 0 0 1 RG
 9 w
+4 M
 % rect
 0 0 1125 750 re
 B
@@ -224,7 +234,7 @@ Q
 endstream
 endobj
 11 0 obj
-<</BBox[0 0 1125 750]/Length 227/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 231/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -232,6 +242,7 @@ q
 1 1 0 rg
 0 0 1 RG
 9 w
+4 M
 % rect
 0 0 1125 750 re
 B
@@ -259,7 +270,7 @@ Q
 endstream
 endobj
 12 0 obj
-<</BBox[0 0 1125 750]/Length 227/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 231/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -267,6 +278,7 @@ q
 1 1 0 rg
 0 0 1 RG
 9 w
+4 M
 % rect
 0 0 1125 750 re
 B
@@ -294,7 +306,7 @@ Q
 endstream
 endobj
 13 0 obj
-<</BBox[0 0 1125 750]/Length 227/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 231/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -302,6 +314,7 @@ q
 1 1 0 rg
 0 0 1 RG
 9 w
+4 M
 % rect
 0 0 1125 750 re
 B
@@ -329,7 +342,7 @@ Q
 endstream
 endobj
 14 0 obj
-<</BBox[0 0 1125 750]/Length 227/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 231/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -337,6 +350,7 @@ q
 1 1 0 rg
 0 0 1 RG
 9 w
+4 M
 % rect
 0 0 1125 750 re
 B
@@ -364,7 +378,7 @@ Q
 endstream
 endobj
 15 0 obj
-<</BBox[0 0 1125 750]/Length 227/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 1125 750]/Length 231/Resources<</Font<</F1 6 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 1125 750 re
 W
 n
@@ -372,6 +386,7 @@ q
 1 1 0 rg
 0 0 1 RG
 9 w
+4 M
 % rect
 0 0 1125 750 re
 B
@@ -409,16 +424,16 @@ xref
 0000000430 00000 n 
 0000000571 00000 n 
 0000000741 00000 n 
-0000001760 00000 n 
-0000002112 00000 n 
-0000002465 00000 n 
-0000002818 00000 n 
-0000003171 00000 n 
-0000003524 00000 n 
-0000003877 00000 n 
+0000001792 00000 n 
+0000002148 00000 n 
+0000002505 00000 n 
+0000002862 00000 n 
+0000003219 00000 n 
+0000003576 00000 n 
+0000003933 00000 n 
 trailer
-<</ID [<b0cbd6a5f9d8c6cad3e3350d592bb1352a729dc6911fa415d4851a9b261491f9d3ffe7cec0c02ebcaae6eb4d689fa4caaf7ba8f6df01b5e6c23db40e59214d6f><b0cbd6a5f9d8c6cad3e3350d592bb1352a729dc6911fa415d4851a9b261491f9d3ffe7cec0c02ebcaae6eb4d689fa4caaf7ba8f6df01b5e6c23db40e59214d6f>]/Info 3 0 R/Root 1 0 R/Size 16>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<4febe419d371b4479ab0e1bf7cb6015daed60880383800834aac25527d4a65fb43472595220b2035b9fcf664a5bf9af6d68bde08546da2f8c4b7318e587d3dae><4febe419d371b4479ab0e1bf7cb6015daed60880383800834aac25527d4a65fb43472595220b2035b9fcf664a5bf9af6d68bde08546da2f8c4b7318e587d3dae>]/Info 3 0 R/Root 1 0 R/Size 16>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-4230
+4290
 %%EOF

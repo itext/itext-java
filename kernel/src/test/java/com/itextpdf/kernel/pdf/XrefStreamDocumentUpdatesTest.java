@@ -285,13 +285,13 @@ public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
 
         PdfDocument pdfDoc1 = new PdfDocument(
                 new PdfReader(inFileName),
-                new PdfWriter(destinationFolder + "hybridReferenceDocumentUpdate.pdf"),
+                CompareTool.createTestPdfWriter(destinationFolder + "hybridReferenceDocumentUpdate.pdf"),
                 new StampingProperties().useAppendMode()
         );
         pdfDoc1.close();
 
         PdfDocument pdfDoc2 = new PdfDocument(
-                new PdfReader(destinationFolder + "hybridReferenceDocumentUpdate.pdf"),
+                CompareTool.createOutputReader(destinationFolder + "hybridReferenceDocumentUpdate.pdf"),
                 CompareTool.createTestPdfWriter(outFileName),
                 new StampingProperties().useAppendMode()
         );

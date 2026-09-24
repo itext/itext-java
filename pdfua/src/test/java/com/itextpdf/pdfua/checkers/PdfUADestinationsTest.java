@@ -102,7 +102,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // structure destination to be added into special SD entry. There is no such requirement in released
                 // PDF 2.0 spec.
                 // Although it is already mentioned in errata version.
-                framework.assertOnlyVeraPdfFail(filename);
+                framework.assertVeraPdfFailITextValid(filename);
                 break;
         }
     }
@@ -133,7 +133,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
                 // That's why in this particular example we fail, however in reality GoTo action cannot be added
                 // directly to catalog.
-                framework.assertOnlyITextFail(filename,
+                framework.assertITextFailVeraPdfValid(filename,
                         PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
         }
@@ -171,7 +171,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "OutlineWithAction":
                 // Verapdf doesn't allow name destination to contain dictionary with structure destination in D entry.
                 // Instead, it wants it to be in special SD entry.
-                framework.assertOnlyVeraPdfFail(filename);
+                framework.assertVeraPdfFailITextValid(filename);
                 break;
             case "GoToR":
             case "GoToInRandomPlace":
@@ -221,7 +221,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
                 // That's why in this particular example we fail, however in reality GoTo action cannot be added
                 // directly to catalog.
-                framework.assertOnlyITextFail(filename,
+                framework.assertITextFailVeraPdfValid(filename,
                         PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
         }
@@ -249,7 +249,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // SD is specifically reserved for structure destinations,
                 // that's why placing not structure destination in there is wrong in the first place.
                 // However, if one is placed there, UA-2 exception is expected.
-                framework.assertOnlyITextFail(filename,
+                framework.assertITextFailVeraPdfValid(filename,
                         PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
             case "GoToR":
@@ -277,7 +277,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "OutlineWithAction":
                 // Verapdf doesn't allow named destination inside named destination, because it contradicts PDF 2.0
                 // spec.
-                framework.assertOnlyVeraPdfFail(filename);
+                framework.assertVeraPdfFailITextValid(filename);
                 break;
             case "GoToR":
             case "GoToInRandomPlace":
@@ -313,7 +313,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
                 // That's why in this particular example we fail, however in reality GoTo action cannot be added
                 // directly to catalog.
-                framework.assertOnlyITextFail(filename,
+                framework.assertITextFailVeraPdfValid(filename,
                         PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
         }
@@ -351,7 +351,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
             case "OutlineWithAction":
                 // Verapdf doesn't allow name destination to contain dictionary with structure destination in D entry.
                 // Instead, it wants it to be in special SD entry.
-                framework.assertOnlyVeraPdfFail(filename);
+                framework.assertVeraPdfFailITextValid(filename);
                 break;
             case "GoToR":
             case "GoToInRandomPlace":
@@ -401,7 +401,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // We traverse whole document looking for a dictionary, which can represent GoTo action.
                 // That's why in this particular example we fail, however in reality GoTo action cannot be added
                 // directly to catalog.
-                framework.assertOnlyITextFail(filename,
+                framework.assertITextFailVeraPdfValid(filename,
                         PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
         }
@@ -430,7 +430,7 @@ public class PdfUADestinationsTest extends ExtendedITextTest {
                 // SD is specifically reserved for structure destinations,
                 // that's why placing not structure destination in there is wrong in the first place.
                 // However, if one is placed there, UA-2 exception is expected.
-                framework.assertOnlyITextFail(filename,
+                framework.assertITextFailVeraPdfValid(filename,
                         PdfUAExceptionMessageConstants.DESTINATION_NOT_STRUCTURE_DESTINATION);
                 break;
             case "GoToR":

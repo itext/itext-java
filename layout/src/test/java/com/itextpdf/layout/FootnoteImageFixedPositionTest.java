@@ -71,7 +71,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
@@ -95,7 +95,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
@@ -118,7 +118,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
             Footnote footnote = new Footnote(TestResourceUtil.repeatString(TestResourceUtil.getByronStanza(), 6));
             footnote.setBorder(new DashedBorder(ColorConstants.YELLOW, 3));
@@ -141,7 +141,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bee.png"));
@@ -168,7 +168,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Image image = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bee.png"));
@@ -195,7 +195,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
@@ -220,7 +220,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
@@ -244,7 +244,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
@@ -270,7 +270,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
@@ -298,7 +298,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Footnote footnote = new Footnote(TestResourceUtil.getByronStanza());
@@ -327,7 +327,7 @@ public class FootnoteImageFixedPositionTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_" + fileName + ".pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
              Document document = new Document(pdfDoc)) {
 
             Image footnoteImage = new Image(ImageDataFactory.create(SOURCE_FOLDER + "bee.png"));

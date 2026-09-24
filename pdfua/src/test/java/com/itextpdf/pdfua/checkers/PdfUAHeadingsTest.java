@@ -771,7 +771,7 @@ public class PdfUAHeadingsTest extends ExtendedITextTest {
         });
 
         if (conformance.equals(PdfConformance.PDF_UA_1)) {
-            framework.assertOnlyVeraPdfFail("usualHTest");
+            framework.assertVeraPdfFailITextValid("usualHTest");
         } else {
             framework.assertBothFail("usualHTest", PdfUAExceptionMessageConstants.DOCUMENT_USES_H_TAG);
         }

@@ -23,6 +23,7 @@
 package com.itextpdf.layout.properties;
 
 import com.itextpdf.kernel.colors.gradients.AbstractLinearGradientBuilder;
+import com.itextpdf.kernel.colors.gradients.IGradientBuilder;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.kernel.pdf.xobject.PdfXObject;
@@ -39,6 +40,9 @@ public class BackgroundImage {
 
     protected PdfXObject image;
 
+    protected IGradientBuilder gradientBuilder;
+    // This field should still be set for supporting deprecated methods
+    @Deprecated
     protected AbstractLinearGradientBuilder linearGradientBuilder;
 
     private BlendMode blendMode = DEFAULT_BLEND_MODE;
@@ -59,14 +63,48 @@ public class BackgroundImage {
      * @param backgroundImage {@link BackgroundImage} for cloning
      */
     public BackgroundImage(BackgroundImage backgroundImage) {
-        this(backgroundImage.getImage() == null ? (PdfXObject) backgroundImage.getForm() : backgroundImage.getImage(),
+        this(backgroundImage.getImage() == null
+                        ? (PdfXObject) backgroundImage.getForm()
+                        : (PdfXObject) backgroundImage.getImage(),
                 backgroundImage.getRepeat(),
                 backgroundImage.getBackgroundPosition(),
                 backgroundImage.getBackgroundSize(),
-                backgroundImage.getLinearGradientBuilder(),
+                backgroundImage.getGradientBuilder(),
                 backgroundImage.getBlendMode(),
                 backgroundImage.getBackgroundClip(),
                 backgroundImage.getBackgroundOrigin());
+    }
+
+    /**
+     * Creates a new {@link BackgroundImage} instance.
+     *
+     * @param image                 background-image property. {@link PdfXObject} instance.
+     * @param repeat                background-repeat property. {@link BackgroundRepeat} instance.
+     * @param position              background-position property. {@link BackgroundPosition} instance.
+     * @param backgroundSize        background-size property. {@link BackgroundSize} instance.
+     * @param gradientBuilder background-image property. {@link IGradientBuilder} instance.
+     * @param blendMode             the image's blend mode. {@link BlendMode} instance.
+     * @param clip                  background-clip property. {@link BackgroundBox} instance.
+     * @param origin                background-origin property. {@link BackgroundBox} instance.
+     */
+    private BackgroundImage(PdfXObject image, BackgroundRepeat repeat, BackgroundPosition position,
+            BackgroundSize backgroundSize, IGradientBuilder gradientBuilder,
+            BlendMode blendMode, BackgroundBox clip, BackgroundBox origin) {
+        this.image = image;
+        this.repeat = repeat;
+        this.position = position;
+        this.backgroundSize = backgroundSize;
+        this.gradientBuilder = gradientBuilder;
+        if (gradientBuilder instanceof AbstractLinearGradientBuilder) {
+            this.linearGradientBuilder = (AbstractLinearGradientBuilder) gradientBuilder;
+        } else {
+            this.linearGradientBuilder = null;
+        }
+        if (blendMode != null) {
+            this.blendMode = blendMode;
+        }
+        this.backgroundClip = clip;
+        this.backgroundOrigin = origin;
     }
 
     /**
@@ -88,33 +126,6 @@ public class BackgroundImage {
     }
 
     /**
-     * Creates a new {@link BackgroundImage} instance.
-     *
-     * @param image                 background-image property. {@link PdfXObject} instance.
-     * @param repeat                background-repeat property. {@link BackgroundRepeat} instance.
-     * @param position              background-position property. {@link BackgroundPosition} instance.
-     * @param backgroundSize        background-size property. {@link BackgroundSize} instance.
-     * @param linearGradientBuilder background-image property. {@link AbstractLinearGradientBuilder} instance.
-     * @param blendMode             the image's blend mode. {@link BlendMode} instance.
-     * @param clip                  background-clip property. {@link BackgroundBox} instance.
-     * @param origin                background-origin property. {@link BackgroundBox} instance.
-     */
-    private BackgroundImage(PdfXObject image, BackgroundRepeat repeat, BackgroundPosition position,
-            BackgroundSize backgroundSize, AbstractLinearGradientBuilder linearGradientBuilder,
-            BlendMode blendMode, BackgroundBox clip, BackgroundBox origin) {
-        this.image = image;
-        this.repeat = repeat;
-        this.position = position;
-        this.backgroundSize = backgroundSize;
-        this.linearGradientBuilder = linearGradientBuilder;
-        if (blendMode != null) {
-            this.blendMode = blendMode;
-        }
-        this.backgroundClip = clip;
-        this.backgroundOrigin = origin;
-    }
-
-    /**
      * Calculates width and height values for background image with a given area params.
      *
      * @param areaWidth width of the area of this images
@@ -124,7 +135,7 @@ public class BackgroundImage {
      */
     public float[] calculateBackgroundImageSize(float areaWidth, float areaHeight) {
         BackgroundSize size;
-        if (getLinearGradientBuilder() == null && getBackgroundSize().isSpecificSize()) {
+        if (getGradientBuilder() == null && getBackgroundSize().isSpecificSize()) {
             size = calculateBackgroundSizeForArea(this, areaWidth, areaHeight);
         } else {
             size = getBackgroundSize();
@@ -155,10 +166,22 @@ public class BackgroundImage {
     }
 
     /**
-     * Gets linearGradientBuilder.
+     * Gets gradient builder.
      *
-     * @return {@link AbstractLinearGradientBuilder}
+     * @return {@link IGradientBuilder}
      */
+    public IGradientBuilder getGradientBuilder() {
+        return this.gradientBuilder;
+    }
+
+    /**
+     * Gets linear gradient builder.
+     *
+     * @return {@link AbstractLinearGradientBuilder} or {@code null} if current gradient is not linear
+     *
+     * @deprecated use {@link BackgroundImage#getGradientBuilder()} instead
+     */
+    @Deprecated
     public AbstractLinearGradientBuilder getLinearGradientBuilder() {
         return this.linearGradientBuilder;
     }
@@ -169,7 +192,7 @@ public class BackgroundImage {
      * @return {@code true} if background is specified, otherwise false
      */
     public boolean isBackgroundSpecified() {
-        return image instanceof PdfFormXObject || image instanceof PdfImageXObject || linearGradientBuilder != null;
+        return image instanceof PdfFormXObject || image instanceof PdfImageXObject || gradientBuilder != null;
     }
 
     /**
@@ -246,7 +269,7 @@ public class BackgroundImage {
      * @return the final size of the background image
      */
     protected float[] resolveWidthAndHeight(Float width, Float height, float areaWidth, float areaHeight) {
-        boolean isGradient = getLinearGradientBuilder() != null;
+        boolean isGradient = getGradientBuilder() != null;
         Float[] widthAndHeight = new Float[2];
         if (width != null) {
             widthAndHeight[0] = width;
@@ -301,7 +324,7 @@ public class BackgroundImage {
     public static class Builder {
 
         private PdfXObject image;
-        private AbstractLinearGradientBuilder linearGradientBuilder;
+        private IGradientBuilder gradientBuilder;
         private BackgroundPosition position = new BackgroundPosition();
         private BackgroundRepeat repeat = new BackgroundRepeat();
         private BlendMode blendMode = DEFAULT_BLEND_MODE;
@@ -318,30 +341,45 @@ public class BackgroundImage {
         /**
          * Sets image.
          * <p>
-         * Makes linearGradientBuilder null as far as we can't have them both.
+         * Makes gradientBuilder null as far as we can't have them both.
          *
          * @param image {@link PdfXObject} to be set.
          * @return this {@link Builder}.
          */
         public Builder setImage(PdfXObject image) {
             this.image = image;
-            this.linearGradientBuilder = null;
+            this.gradientBuilder = null;
             return this;
         }
 
         /**
-         * Sets linearGradientBuilder.
+         * Sets gradient builder.
+         * <p>
+         * Makes image null as far as we can't have them both. It also makes background-repeat: no-repeat.
+         *
+         * @param gradientBuilder {@link IGradientBuilder} to be set.
+         * @return this {@link Builder}.
+         */
+        public Builder setGradientBuilder(IGradientBuilder gradientBuilder) {
+            this.gradientBuilder = gradientBuilder;
+            this.repeat = new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT);
+            this.image = null;
+            return this;
+        }
+
+        /**
+         * Sets linear gradient builder.
          * <p>
          * Makes image null as far as we can't have them both. It also makes background-repeat: no-repeat.
          *
          * @param linearGradientBuilder {@link AbstractLinearGradientBuilder} to be set.
          * @return this {@link Builder}.
+         *
+         * @deprecated use {@link BackgroundImage#getGradientBuilder()} instead
          */
+        @Deprecated
         public Builder setLinearGradientBuilder(AbstractLinearGradientBuilder linearGradientBuilder) {
-            this.linearGradientBuilder = linearGradientBuilder;
-            this.repeat = new BackgroundRepeat(BackgroundRepeatValue.NO_REPEAT);
-            this.image = null;
-            return this;
+            return setGradientBuilder(linearGradientBuilder);
         }
 
         /**
@@ -420,7 +458,7 @@ public class BackgroundImage {
          * @return new {@link BackgroundImage}.
          */
         public BackgroundImage build() {
-            return new BackgroundImage(image, repeat, position, backgroundSize, linearGradientBuilder, blendMode, clip,
+            return new BackgroundImage(image, repeat, position, backgroundSize, gradientBuilder, blendMode, clip,
                     origin);
         }
     }

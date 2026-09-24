@@ -32,6 +32,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Provides PDF encoding names and conversion utilities between text and encoded byte sequences.
+ */
 public class PdfEncodings {
 
     //-Encodings--------------------------------------------------------------------------------------------------------
@@ -331,6 +334,7 @@ public class PdfEncodings {
 
     private static class WingdingsConversion implements IExtraEncoding {
 
+        @Override
         public byte[] charToByte(char char1, String encoding) {
             if (char1 == ' ')
                 return new byte[]{(byte)char1};
@@ -342,6 +346,7 @@ public class PdfEncodings {
             return new byte[0];
         }
 
+        @Override
         public byte[] charToByte(String text, String encoding) {
             char[] cc = text.toCharArray();
             byte[] b = new byte[cc.length];
@@ -364,6 +369,7 @@ public class PdfEncodings {
             return b2;
         }
 
+        @Override
         public String byteToChar(byte[] b, String encoding) {
             return null;
         }
@@ -395,6 +401,7 @@ public class PdfEncodings {
     private static class Cp437Conversion implements IExtraEncoding {
         private static IntHashtable c2b = new IntHashtable();
 
+        @Override
         public byte[] charToByte(String text, String encoding) {
             char[] cc = text.toCharArray();
             byte[] b = new byte[cc.length];
@@ -417,6 +424,7 @@ public class PdfEncodings {
             return b2;
         }
 
+        @Override
         public byte[] charToByte(char char1, String encoding) {
             if (char1 < 128)
                 return new byte[]{(byte)char1};
@@ -429,6 +437,7 @@ public class PdfEncodings {
             }
         }
 
+        @Override
         public String byteToChar(byte[] b, String encoding) {
             int len = b.length;
             char[] cc = new char[len];
@@ -481,6 +490,7 @@ public class PdfEncodings {
             }
         }
 
+        @Override
         public byte[] charToByte(String text, String encoding) {
             char[] cc = text.toCharArray();
             byte[] b = new byte[cc.length];
@@ -499,6 +509,7 @@ public class PdfEncodings {
             return b2;
         }
 
+        @Override
         public byte[] charToByte(char char1, String encoding) {
             byte v = (byte)translation.get(char1);
             if (v != 0)
@@ -507,6 +518,7 @@ public class PdfEncodings {
                 return new byte[0];
         }
 
+        @Override
         public String byteToChar(byte[] b, String encoding) {
             int len = b.length;
             char[] cc = new char[len];
@@ -573,6 +585,7 @@ public class PdfEncodings {
 
     private static class SymbolTTConversion implements IExtraEncoding {
 
+        @Override
         public byte[] charToByte(char char1, String encoding) {
             if ((char1 & 0xff00) == 0 || (char1 & 0xff00) == 0xf000)
                 return new byte[]{(byte)char1};
@@ -580,6 +593,7 @@ public class PdfEncodings {
                 return new byte[0];
         }
 
+        @Override
         public byte[] charToByte(String text, String encoding) {
             char[] ch = text.toCharArray();
             byte[] b = new byte[ch.length];
@@ -597,6 +611,7 @@ public class PdfEncodings {
             return b2;
         }
 
+        @Override
         public String byteToChar(byte[] b, String encoding) {
             return null;
         }

@@ -34,6 +34,7 @@ import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -51,12 +52,17 @@ public class XFAFormTest extends ExtendedITextTest {
         createDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void createEmptyXFAFormTest01() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "createEmptyXFAFormTest01.pdf";
         String cmpFileName = sourceFolder + "cmp_createEmptyXFAFormTest01.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         XfaForm xfa = new XfaForm(doc);
         XfaForm.setXfaForm(xfa, doc);
         doc.addNewPage();
@@ -70,7 +76,7 @@ public class XFAFormTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "createEmptyXFAFormTest02.pdf";
         String cmpFileName = sourceFolder + "cmp_createEmptyXFAFormTest02.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         XfaForm xfa = new XfaForm();
         XfaForm.setXfaForm(xfa, doc);
         doc.addNewPage();
@@ -84,7 +90,7 @@ public class XFAFormTest extends ExtendedITextTest {
         String outFileName = destinationFolder + "createXFAFormTest.pdf";
         String cmpFileName = sourceFolder + "cmp_createXFAFormTest.pdf";
 
-        PdfDocument doc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         XfaForm xfa = new XfaForm(FileUtil.getInputStreamForFile(XML));
         xfa.write(doc);
         doc.addNewPage();

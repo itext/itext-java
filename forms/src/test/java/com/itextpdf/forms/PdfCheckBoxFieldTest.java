@@ -38,7 +38,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfStream;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.annot.PdfWidgetAnnotation;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -48,6 +47,7 @@ import com.itextpdf.test.TestUtil;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -64,12 +64,17 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void checkBoxFontSizeTest01() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "checkBoxFontSizeTest01.pdf";
         String cmpPdf = sourceFolder + "cmp_checkBoxFontSizeTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         pdfDoc.addNewPage();
         addCheckBox(pdfDoc, 6, 750, 7, 7);
 
@@ -87,7 +92,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "checkBoxFontSizeTest02.pdf";
         String cmpPdf = sourceFolder + "cmp_checkBoxFontSizeTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         pdfDoc.addNewPage();
         addCheckBox(pdfDoc, 0, 730, 7, 7);
         // fallback to default fontsize — 12 is expected.
@@ -115,7 +120,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "checkBoxFontSizeTest03.pdf";
         String cmpPdf = sourceFolder + "cmp_checkBoxFontSizeTest03.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         pdfDoc.addNewPage();
         addCheckBox(pdfDoc, 2, 730, 7, 7);
 
@@ -133,7 +138,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "checkBoxFontSizeTest04.pdf";
         String cmpPdf = sourceFolder + "cmp_checkBoxFontSizeTest04.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         pdfDoc.addNewPage();
         addCheckBox(pdfDoc, 0, 730, 10, new CheckBoxFormFieldBuilder(pdfDoc, "cb_1")
                 .setWidgetRectangle(new Rectangle(50, 730, 10, 10)).createCheckBox()
@@ -165,7 +170,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "checkBoxFontSizeTest05.pdf";
         String cmpPdf = sourceFolder + "cmp_checkBoxFontSizeTest05.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf));
         pdfDoc.addNewPage();
         addCheckBox(pdfDoc, 0, 730, 40, 40);
         addCheckBox(pdfDoc, 0, 600, 100, 100);
@@ -185,7 +190,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "checkBoxToggleTest01.pdf";
         String cmpPdf = sourceFolder + "cmp_checkBoxToggleTest01.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(outPdf));
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField checkBox = form.getField("cb_fs_6_7_7");
         checkBox.setValue("Off");
@@ -205,7 +210,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "checkBoxToggleTest02.pdf";
         String cmpPdf = sourceFolder + "cmp_checkBoxToggleTest02.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf));
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(outPdf));
         PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
         PdfFormField checkBox = form.getField("cb_fs_6_7_7");
         checkBox.setValue("Off", false);
@@ -225,7 +230,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "keepCheckTypeTest.pdf";
         String cmpPdf = sourceFolder + "cmp_keepCheckTypeTest.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(srcPdf))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(srcPdf))) {
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
             PdfButtonFormField checkField = new CheckBoxFormFieldBuilder(pdfDoc, "checkField")
@@ -237,7 +242,8 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
             form.addField(checkField);
         }
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createOutputReader(srcPdf),
+                CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
             form.getField("checkField").setValue("Yes");
         }
@@ -250,7 +256,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "appearanceRegenerationTest.pdf";
         String cmpPdf = sourceFolder + "cmp_appearanceRegenerationTest.pdf";
 
-        try (PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm form = PdfFormCreator.getAcroForm(pdfDoc, true);
 
             PdfButtonFormField checkBox1 = new CheckBoxFormFieldBuilder(pdfDoc, "checkbox1")
@@ -282,7 +288,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "setValueForMutuallyExclusiveCheckBox.pdf";
         String cmpPdf = sourceFolder + "cmp_setValueForMutuallyExclusiveCheckBox.pdf";
         String srcPdf = sourceFolder + "mutuallyExclusiveCheckBox.pdf";
-        try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
             PdfFormField radioGroupField = acroForm.getField("group");
             radioGroupField.setValue("1");
@@ -300,7 +306,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "changeOnStateAppearanceNameForCheckBoxWidget.pdf";
         String cmpPdf = sourceFolder + "cmp_changeOnStateAppearanceNameForCheckBoxWidget.pdf";
         String srcPdf = sourceFolder + "mutuallyExclusiveCheckBox.pdf";
-        try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
             PdfFormField checkBoxField = acroForm.getField("check");
             checkBoxField.setValue("3");
@@ -314,7 +320,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
         String outPdf = destinationFolder + "changeOnStateAppearanceNameSeveralTimes.pdf";
         String cmpPdf = sourceFolder + "cmp_changeOnStateAppearanceNameSeveralTimes.pdf";
         String srcPdf = sourceFolder + "mutuallyExclusiveCheckBox.pdf";
-        try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(new PdfReader(srcPdf), CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
             PdfFormField checkBoxField = acroForm.getField("check");
             checkBoxField.setValue("3");
@@ -328,7 +334,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
     public void checkBoxWidgetAppearanceTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "checkBoxWidgetAppearance.pdf";
         String cmpPdf = sourceFolder + "cmp_checkBoxWidgetAppearance.pdf";
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
 
             PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(doc, "checkbox")
@@ -362,7 +368,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
     public void setInvalidCheckBoxOnAppearanceTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "setInvalidCheckBoxOnAppearance.pdf";
         String cmpPdf = sourceFolder + "cmp_setInvalidCheckBoxOnAppearance.pdf";
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
 
             PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(doc, "checkbox")
@@ -396,7 +402,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
     public void createMutuallyExclusiveCheckBoxesTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "createMutuallyExclusiveCheckBoxes.pdf";
         String cmpPdf = sourceFolder + "cmp_createMutuallyExclusiveCheckBoxes.pdf";
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
 
             PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(doc, "checkbox")
@@ -415,7 +421,7 @@ public class PdfCheckBoxFieldTest extends ExtendedITextTest {
     public void createNotMutuallyExclusiveCheckBoxTest() throws IOException, InterruptedException {
         String outPdf = destinationFolder + "createNotMutuallyExclusiveCheckBox.pdf";
         String cmpPdf = sourceFolder + "cmp_createNotMutuallyExclusiveCheckBox.pdf";
-        try (PdfDocument doc = new PdfDocument(new PdfWriter(outPdf))) {
+        try (PdfDocument doc = new PdfDocument(CompareTool.createTestPdfWriter(outPdf))) {
             PdfAcroForm acroForm = PdfFormCreator.getAcroForm(doc, true);
 
             PdfButtonFormField checkBox = new CheckBoxFormFieldBuilder(doc, "checkbox")

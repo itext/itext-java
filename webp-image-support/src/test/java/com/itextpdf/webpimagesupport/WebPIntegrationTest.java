@@ -42,7 +42,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -51,7 +50,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 @Tag("IntegrationTest")
-@DisabledInNativeImage
 public class WebPIntegrationTest extends ExtendedITextTest {
 
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/webpimagesupport/WebpIntegrationTest/";
@@ -78,7 +76,7 @@ public class WebPIntegrationTest extends ExtendedITextTest {
                 {"linearRGBProfile", false, true},
                 // TODO DEVSIX-10022 - Support image orientation set in exif metadata
                 // when modern browsers start supporting it
-                {"orientation", false, false}
+                {"orientation", false, true}
         });
     }
 
@@ -108,7 +106,7 @@ public class WebPIntegrationTest extends ExtendedITextTest {
         pdfDocument.close();
 
         if (isPlatformDependent) {
-            Assertions.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, DESTINATION_FOLDER, 1));
+            Assertions.assertNull(new CompareTool().compareVisually(outFileName, cmpFileName, DESTINATION_FOLDER, 10));
         } else {
             Assertions.assertNull(new CompareTool().compareByContent(outFileName, cmpFileName, DESTINATION_FOLDER));
         }

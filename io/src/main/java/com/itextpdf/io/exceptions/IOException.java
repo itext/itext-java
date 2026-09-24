@@ -34,7 +34,7 @@ import java.util.List;
 public class IOException extends ITextException {
 
     /**
-     * Object for more details
+     * The object that provides additional context for this exception.
      */
     protected Object obj;
 

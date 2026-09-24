@@ -25,6 +25,7 @@ package com.itextpdf.layout.element;
 import com.itextpdf.kernel.pdf.tagutils.AccessibilityProperties;
 import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.Transform;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.itextpdf.layout.tagging.IAccessibleElement;
@@ -352,9 +353,24 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     }
 
     /**
-     * Sets the rotation radAngle.
+     * Sets the rotation angle for this element.
      *
-     * @param angleInRadians the new rotation radAngle, as a <code>float</code>, in radians
+     * <p>
+     * The angle is specified in radians and stored in {@link Property#ROTATION_ANGLE}.
+     * Positive values rotate counter-clockwise; negative values rotate clockwise.
+     *
+     * <p>
+     * Rotation is applied during rendering, and layout calculates an occupied area
+     * that encloses the rotated content, so neighboring content is positioned according
+     * to the rotated bounding box.
+     *
+     * <p>
+     * For positioned elements, a custom pivot can be provided via
+     * {@link Property#ROTATION_POINT_X} and {@link Property#ROTATION_POINT_Y}; otherwise
+     * the renderer uses its default pivot behavior.
+     *
+     * @param angleInRadians the rotation angle, in radians
+     *
      * @return this element
      */
     public T setRotationAngle(float angleInRadians) {
@@ -363,13 +379,30 @@ public abstract class BlockElement<T extends IElement> extends AbstractElement<T
     }
 
     /**
-     * Sets the rotation angle.
+     * Sets the rotation angle for this element.
      *
-     * @param angleInRadians the new rotation angle, as a <code>double</code>, in radians
+     * <p>
+     * Convenience overload of {@link #setRotationAngle(float)}.
+     *
+     * @param angleInRadians the rotation angle, in radians
+     *
      * @return this element
      */
     public T setRotationAngle(double angleInRadians) {
         setProperty(Property.ROTATION_ANGLE, (float) angleInRadians);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Sets a transformation to be applied to this block element during rendering.
+     *
+     * @param transform a {@link Transform} describing the sequence of transform operations
+     *                  (for example, translate, scale, rotate, skew)
+     *
+     * @return this element
+     */
+    public T setTransform(Transform transform) {
+        setProperty(Property.TRANSFORM, transform);
         return (T) (Object) this;
     }
 

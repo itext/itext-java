@@ -22,11 +22,10 @@
  */
 package com.itextpdf.signatures.validation.report.xml;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.signatures.cms.CMSContainer;
 import com.itextpdf.signatures.validation.report.xml.SignatureValidationStatus.MainIndication;
 import com.itextpdf.signatures.validation.report.xml.SignatureValidationStatus.MessageType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.Stack;
@@ -36,7 +35,7 @@ import java.util.Stack;
  */
 public class DefaultAdESReportAggregator implements AdESReportAggregator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAdESReportAggregator.class);
+    private static final LazyLogger LOGGER = new LazyLogger(DefaultAdESReportAggregator.class);
 
     private final ValidationObjects validationObjects = new ValidationObjects();
     private final PadesValidationReport report = new PadesValidationReport(validationObjects);
@@ -57,7 +56,7 @@ public class DefaultAdESReportAggregator implements AdESReportAggregator {
             validationReportStack.push(currentSignatureValidationReport);
             report.addSignatureValidationReport(currentSignatureValidationReport);
         } catch (Exception e) { // catching generic Exception here for portability
-            LOGGER.error("Unable to parse signature container.", e);
+            LOGGER.error(() -> "Unable to parse signature container.", e);
             throw new IllegalArgumentException("Signature is not parsable", e);
         }
     }
@@ -70,7 +69,7 @@ public class DefaultAdESReportAggregator implements AdESReportAggregator {
             validationReportStack.push(currentValidationReport);
             validationObjects.addObject(currentValidationReport);
         } catch (Exception e) { // catching generic Exception here for portability
-            LOGGER.error("Unable to parse timestamp signature container.", e);
+            LOGGER.error(() -> "Unable to parse timestamp signature container.", e);
             throw new IllegalArgumentException("Timestamp signature is not parsable", e);
         }
     }

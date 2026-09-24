@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="140" viewBox="0 0 420 140">
+  <defs>
+    <mask id="luminanceMask" style="mask-type:luminance" maskUnits="objectBoundingBox"
+          maskContentUnits="objectBoundingBox" x="0" y="0" width="1" height="1">
+      <image href="mask-alpha-luminance-side-by-side.png" x="0" y="0" width="1" height="1"
+             preserveAspectRatio="none"/>
+    </mask>
+    <mask id="alphaMask" style="mask-type:alpha" maskUnits="objectBoundingBox"
+          maskContentUnits="objectBoundingBox" x="0" y="0" width="1" height="1">
+      <image href="mask-alpha-luminance-side-by-side.png" x="0" y="0" width="1" height="1"
+             preserveAspectRatio="none"/>
+    </mask>
+  </defs>
+  <rect width="420" height="140" fill="white"/>
+  <rect x="20" y="20" width="180" height="100" fill="#1769aa" mask="url(#luminanceMask)"/>
+  <rect x="220" y="20" width="180" height="100" fill="#1769aa" mask="url(#alphaMask)"/>
+</svg>

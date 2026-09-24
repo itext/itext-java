@@ -753,7 +753,7 @@ public class PdfCanvas {
         }
 
         checkTextOnAddition(text);
-        document.checkIsoConformance(new FontValidationContext(text.toString(), currentGs.getFont()));
+        document.checkIsoConformance(new FontValidationContext(text, currentGs.getFont()));
 
         final float fontSize = FontProgram.convertTextSpaceToGlyphSpace(currentGs.getFontSize());
         float charSpacing = currentGs.getCharSpacing();
@@ -1443,8 +1443,9 @@ public class PdfCanvas {
      * @see PdfCanvasConstants.LineCapStyle for possible values.
      */
     public PdfCanvas setLineCapStyle(int lineCapStyle) {
-        if (currentGs.getLineCapStyle() == lineCapStyle)
+        if (currentGs.getLineCapStyle() == lineCapStyle) {
             return this;
+        }
         currentGs.setLineCapStyle(lineCapStyle);
         contentStream.getOutputStream()
                 .writeInteger(lineCapStyle).writeSpace()
@@ -1461,8 +1462,9 @@ public class PdfCanvas {
      * @see PdfCanvasConstants.LineJoinStyle for possible values.
      */
     public PdfCanvas setLineJoinStyle(int lineJoinStyle) {
-        if (currentGs.getLineJoinStyle() == lineJoinStyle)
+        if (currentGs.getLineJoinStyle() == lineJoinStyle) {
             return this;
+        }
         currentGs.setLineJoinStyle(lineJoinStyle);
         contentStream.getOutputStream()
                 .writeInteger(lineJoinStyle).writeSpace()
@@ -1478,8 +1480,9 @@ public class PdfCanvas {
      * @return current canvas.
      */
     public PdfCanvas setMiterLimit(float miterLimit) {
-        if (currentGs.getMiterLimit() == miterLimit)
+        if (currentGs.getMiterLimit() == miterLimit) {
             return this;
+        }
         currentGs.setMiterLimit(miterLimit);
         contentStream.getOutputStream()
                 .writeFloat(miterLimit).writeSpace()
@@ -2550,17 +2553,18 @@ public class PdfCanvas {
     }
 
     private void applyRotation(PdfPage page) {
+        // Rotate around (0, 0)
         Rectangle rectangle = page.getPageSizeWithRotation();
         int rotation = page.getRotation();
         switch (rotation) {
             case 90:
-                concatMatrix(0, 1, -1, 0, rectangle.getTop(), 0);
+                concatMatrix(0, 1, -1, 0, rectangle.getHeight(), 0);
                 break;
             case 180:
-                concatMatrix(-1, 0, 0, -1, rectangle.getRight(), rectangle.getTop());
+                concatMatrix(-1, 0, 0, -1, rectangle.getWidth(), rectangle.getHeight());
                 break;
             case 270:
-                concatMatrix(0, -1, 1, 0, 0, rectangle.getRight());
+                concatMatrix(0, -1, 1, 0, 0, rectangle.getWidth());
                 break;
         }
     }

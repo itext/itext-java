@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250124014539+03'00')/ModDate(D:20250124014539+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2025 Apryse Group NV)>>
+<</CreationDate(D:20260817145848+03'00')/ModDate(D:20260817145848+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -33,7 +33,7 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[0 -46.7 225 271.7]/Length 87/Resources<</Pattern<</P1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 -46.7 225 271.7]/Length 91/Resources<</Pattern<</P1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 -46.7 225 318.4 re
 W
 n
@@ -43,6 +43,7 @@ q
 /P1 scn
 0 0 0 RG
 0.6 w
+4 M
 % rect
 0 0 75 75 re
 B
@@ -51,9 +52,10 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 10.5 10.5]/Length 47/Matrix[1 0 0 1 1.5 1.5]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 10.5/YStep 10.5>>stream
+<</BBox[0 0 10.5 10.5]/Length 51/Matrix[1 0 0 1 1.5 1.5]/PaintType 1/PatternType 1/Resources<<>>/TilingType 1/Type/Pattern/XStep 10.5/YStep 10.5>>stream
 1 0.64706 0 RG
 0.3 w
+4 M
 % rect
 0 0 10.5 10.5 re
 S
@@ -70,10 +72,10 @@ xref
 0000000015 00000 n 
 0000000479 00000 n 
 0000000687 00000 n 
-0000000906 00000 n 
+0000000910 00000 n 
 trailer
-<</ID [<cc80da71d89ffacf0595908e72a1db09d7ea32f381cd311f54f73a1eac56fe24f1727eec7fb4f0e8b17559db5eb2b84b22ad5c01768087089c4a10190d9d05c4><cc80da71d89ffacf0595908e72a1db09d7ea32f381cd311f54f73a1eac56fe24f1727eec7fb4f0e8b17559db5eb2b84b22ad5c01768087089c4a10190d9d05c4>]/Info 3 0 R/Root 1 0 R/Size 9>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<f699b9f04db49e1eff7b711828a90bedffac2eb3051faae7e71e201a1ffab93e0c22e3dcef34f308f9accf5dd4013e91069fe0adbcd89f8072fc8150b9d9778e><f699b9f04db49e1eff7b711828a90bedffac2eb3051faae7e71e201a1ffab93e0c22e3dcef34f308f9accf5dd4013e91069fe0adbcd89f8072fc8150b9d9778e>]/Info 3 0 R/Root 1 0 R/Size 9>>
+%iText-Core-9.8.0-SNAPSHOT
 startxref
-1132
+1140
 %%EOF

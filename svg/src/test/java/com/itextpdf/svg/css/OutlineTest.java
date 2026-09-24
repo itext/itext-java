@@ -42,7 +42,6 @@ public class OutlineTest extends SvgIntegrationTest {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
-
     @Test
     public void outlineShortHandTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER,"outlineShortHand");

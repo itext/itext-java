@@ -23,6 +23,7 @@
 package com.itextpdf.kernel.utils;
 
 import com.itextpdf.commons.utils.DIContainer;
+import com.itextpdf.kernel.colors.gradients.GradientPropertiesResolver;
 import com.itextpdf.kernel.di.pagetree.IPageTreeListFactory;
 import com.itextpdf.kernel.di.pagetree.DefaultPageTreeListFactory;
 import com.itextpdf.kernel.mac.IMacContainerLocator;
@@ -42,6 +43,7 @@ public class RegisterDefaultDiContainer {
                 () -> new DefaultPageTreeListFactory(DEFAULT_PAGE_TREE_LIST_FACTORY_MAX_SAFE_ENTRIES));
         DIContainer.registerDefault(IMacContainerLocator.class, () -> new StandaloneMacContainerLocator());
         DIContainer.registerDefault(IStreamCompressionStrategy.class, () -> new FlateCompressionStrategy());
+        DIContainer.registerDefault(GradientPropertiesResolver.class, () -> new GradientPropertiesResolver());
     }
 
     /**

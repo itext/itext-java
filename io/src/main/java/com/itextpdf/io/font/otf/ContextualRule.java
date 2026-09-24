@@ -22,10 +22,14 @@
  */
 package com.itextpdf.io.font.otf;
 
+/**
+ * Represents the contextual rule of an OpenType font.
+ */
 public abstract class ContextualRule {
 
     /**
-     * Gets the length of the context glyph sequence defined by this rule
+     * Gets the length of the context glyph sequence defined by this rule.
+     *
      * @return length of the context
      */
     public abstract int getContextLength();
@@ -34,16 +38,18 @@ public abstract class ContextualRule {
      * Checks if glyph line element matches element from input sequence of the rule.
      * <br><br>
      * NOTE: rules do not contain the first element of the input sequence, the first element is defined by rule
-     * position in substitution table. Therefore atIdx shall not be 0.
+     * position in substitution table. Therefore, atIdx shall not be 0.
      *
      * @param glyphId glyph code id
-     * @param atIdx   index in the rule sequence. Shall be: 0 &lt; atIdx &lt; {@link ContextualSubstRule#getContextLength}
+     * @param atIdx index in the rule sequence. Shall be: 0 &lt; atIdx &lt; {@link ContextualSubstRule#getContextLength}
+     *
      * @return {@code true} if glyph matches element
      */
     public abstract boolean isGlyphMatchesInput(int glyphId, int atIdx);
 
     /**
-     * Gets the length of the lookahead context glyph sequence defined by this rule
+     * Gets the length of the lookahead context glyph sequence defined by this rule.
+     *
      * @return length of the lookahead context
      */
     public int getLookaheadContextLength() {
@@ -51,7 +57,8 @@ public abstract class ContextualRule {
     }
 
     /**
-     * Gets the length of the backtrack context glyph sequence defined by this rule
+     * Gets the length of the backtrack context glyph sequence defined by this rule.
+     *
      * @return length of the backtrack context
      */
     public int getBacktrackContextLength() {
@@ -62,7 +69,8 @@ public abstract class ContextualRule {
      * Checks if glyph line element matches element from lookahead sequence of the rule.
      *
      * @param glyphId glyph code id
-     * @param atIdx   index in rule sequence. Shall be: 0 &lt;= atIdx &lt; {@link ContextualSubstRule#getLookaheadContextLength()}
+     * @param atIdx index in rule sequence. Shall be: 0 &lt;= atIdx &lt; {@link ContextualSubstRule#getLookaheadContextLength()}
+     *
      * @return {@code true} if glyph matches element from lookahead sequence
      */
     public boolean isGlyphMatchesLookahead(int glyphId, int atIdx) {
@@ -73,7 +81,8 @@ public abstract class ContextualRule {
      * Checks if glyph line element matches element from backtrack sequence of the rule.
      *
      * @param glyphId glyph code id
-     * @param atIdx   index in rule sequence. Shall be: 0 &lt;= atIdx &lt; {@link ContextualSubstRule#getBacktrackContextLength()}
+     * @param atIdx index in rule sequence. Shall be: 0 &lt;= atIdx &lt; {@link ContextualSubstRule#getBacktrackContextLength()}
+     *
      * @return {@code true} if glyph matches element from backtrack sequence
      */
     public boolean isGlyphMatchesBacktrack(int glyphId, int atIdx) {

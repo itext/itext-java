@@ -27,14 +27,24 @@ import com.itextpdf.io.exceptions.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Maps variable-length character codes to CID values.
+ */
 public class CMapByteCid extends AbstractCMap {
-
-
+    /**
+     * Tracks the unread portion of a byte sequence during CID decoding.
+     */
     protected static class Cursor {
 
         private int offset;
         private int length;
 
+        /**
+         * Creates a cursor over a byte sequence segment.
+         *
+         * @param offset the zero-based first unread byte offset
+         * @param length the number of unread bytes
+         */
         public Cursor(int offset, int length) {
             this.offset = offset;
             this.length = length;
@@ -79,6 +89,9 @@ public class CMapByteCid extends AbstractCMap {
 
     private final List<int[]> planes = new ArrayList<>();
 
+    /**
+     * Creates an empty byte code to CID map.
+     */
     public CMapByteCid() {
         planes.add(new int[256]);
     }
@@ -108,6 +121,14 @@ public class CMapByteCid extends AbstractCMap {
         return sb.toString();
     }
 
+    /**
+     * Decodes one CID and advances the supplied cursor.
+     *
+     * @param cidBytes the source byte array
+     * @param cursor   the mutable segment cursor to advance
+     *
+     * @return the decoded CID, or {@code -1} when the segment ends before a complete CID
+     */
     protected int decodeSingle(byte[] cidBytes, Cursor cursor) {
         int end = cursor.getOffset() + cursor.getLength();
         int currentPlane = 0;

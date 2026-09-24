@@ -383,6 +383,7 @@ public final class PropertyOptions extends Options
 	/**
 	 * @see Options#getValidOptions()
 	 */
+	@Override
 	protected int getValidOptions()
 	{
 		return
@@ -404,6 +405,7 @@ public final class PropertyOptions extends Options
 	/**
 	 * @see Options#defineOptionName(int)
 	 */
+	@Override
 	protected String defineOptionName(int option)
 	{
 		switch (option)
@@ -431,6 +433,7 @@ public final class PropertyOptions extends Options
 	 * @param options the bitmask to check.
 	 * @throws XMPException Thrown if the options are not consistent.
 	 */
+	@Override
 	public void assertConsistency(int options) throws XMPException
 	{
 		if ((options & STRUCT) > 0  &&  (options & ARRAY) > 0)

@@ -52,6 +52,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("com.itextpdf.layout.element.AreaBreak.getType", "GetAreaType");
         configurator.mapMethod("com.itextpdf.layout.properties.Leading.getType", "GetLeadingType");
         configurator.addFullName("com.itextpdf.layout.element.Image");
+        configurator.mapType("com.itextpdf.layout.properties.WritingMode", "iText.Layout.Properties.WritingMode?");
         configurator.mapType("com.itextpdf.layout.properties.VerticalAlignment", "iText.Layout.Properties.VerticalAlignment?");
         configurator.mapType("com.itextpdf.layout.properties.InlineVerticalAlignmentType", "iText.Layout.Properties.InlineVerticalAlignmentType?");
         configurator.mapType("com.itextpdf.layout.properties.HorizontalAlignment", "iText.Layout.Properties.HorizontalAlignment?");
@@ -78,7 +79,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethodToCustomMember("com.itextpdf.layout.layout.LayoutArea.clone", "Clone", SharpenConfigCustomMembers.cloneLayoutArea);
         configurator.mapMethodToCustomMember("com.itextpdf.layout.margincollapse.MarginsCollapse.clone", "Clone", SharpenConfigCustomMembers.cloneMarginsCollapse);
         configurator.addFullName("iText.Layout.Font.Range");
-        configurator.addCustomUsingDeclaration("com.itextpdf.layout.renderer.TypographyUtils", Arrays.asList("System.IO", "System.Reflection", "Versions.Attributes", "Microsoft.Extensions.Logging", "iText.Commons" , "iText.Commons", "iText.Commons.Internal.Runtime"));
+        configurator.addCustomUsingDeclaration("com.itextpdf.layout.renderer.TypographyUtils", Arrays.asList("System.IO", "System.Reflection", "Versions.Attributes", "iText.Commons.Logs", "iText.Commons.Internal.Runtime"));
     }
 
     @Override

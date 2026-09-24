@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.util;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
 import com.itextpdf.styledxmlparser.css.parse.CssDeclarationVarParser;
@@ -34,15 +35,13 @@ import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for resolving css variables in declarations.
  */
 public class CssVariableUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CssVariableUtil.class);
+    private static final LazyLogger LOGGER = new LazyLogger(CssVariableUtil.class);
 
     /**
      * Max count of css var expressions in single declaration.
@@ -69,7 +68,7 @@ public class CssVariableUtil {
             try {
                 result = resolveSingleVar(entry.getKey(), entry.getValue(), styles);
             } catch (StyledXMLParserException exception) {
-                LOGGER.warn(MessageFormatUtil.format(exception.getMessage(),
+                LOGGER.warn(() -> MessageFormatUtil.format(exception.getMessage(),
                         new CssDeclaration(entry.getKey(), entry.getValue())));
             }
             varExpressions.add(result);

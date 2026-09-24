@@ -31,6 +31,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Holds the logical screen properties and decoded frames of a GIF image.
+ */
 public class GifImageData {
 
     private float logicalHeight;
@@ -39,42 +42,92 @@ public class GifImageData {
     private byte[] data;
     private URL url;
 
+    /**
+     * Creates GIF data to be loaded from a URL.
+     *
+     * @param url source URL, not {@code null}
+     */
     protected GifImageData(URL url) {
         this.url = url;
     }
 
+    /**
+     * Creates GIF data from encoded bytes.
+     *
+     * @param data encoded GIF bytes; the array is retained
+     */
     protected GifImageData(byte[] data) {
         this.data = data;
     }
 
+    /**
+     * Gets the logical screen height.
+     *
+     * @return height in pixels
+     */
     public float getLogicalHeight() {
         return logicalHeight;
     }
 
+    /**
+     * Sets the logical screen height.
+     *
+     * @param logicalHeight height in pixels
+     */
     public void setLogicalHeight(float logicalHeight) {
         this.logicalHeight = logicalHeight;
     }
 
+    /**
+     * Gets the logical screen width.
+     *
+     * @return width in pixels
+     */
     public float getLogicalWidth() {
         return logicalWidth;
     }
 
+    /**
+     * Sets the logical screen width.
+     *
+     * @param logicalWidth width in pixels
+     */
     public void setLogicalWidth(float logicalWidth) {
         this.logicalWidth = logicalWidth;
     }
 
+    /**
+     * Gets the decoded GIF frames.
+     *
+     * @return list of frames in source order
+     */
     public List<ImageData> getFrames() {
         return frames;
     }
 
+    /**
+     * Gets the encoded GIF bytes.
+     *
+     * @return retained bytes, or {@code null} until loaded
+     */
     protected byte[] getData() {
         return data;
     }
 
+    /**
+     * Gets the source URL.
+     *
+     * @return source URL, or {@code null} when data was supplied directly
+     */
     protected URL getUrl() {
         return url;
     }
 
+    /**
+     * Appends a decoded frame.
+     *
+     * @param frame decoded frame to append
+     */
     protected void addFrame(ImageData frame) {
         frames.add(frame);
     }

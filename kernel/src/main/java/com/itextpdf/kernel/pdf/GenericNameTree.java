@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 
@@ -32,16 +33,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Abstract representation of a name tree structure, as used in PDF for various purposes
  * such as the Dests tree, the ID tree of structure elements and the embedded file tree.
  */
 public class GenericNameTree implements IPdfNameTreeAccess {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenericNameTree.class);
+    private static final LazyLogger LOGGER = new LazyLogger(GenericNameTree.class);
     private static final int NODE_SIZE = 40;
 
     private LinkedHashMap<PdfString, PdfObject> items = new LinkedHashMap<>();
@@ -168,7 +166,8 @@ public class GenericNameTree implements IPdfNameTreeAccess {
             if (valueRef != null && valueRef.equals(existingVal.getIndirectReference())) {
                 return;
             } else {
-                LOGGER.warn(MessageFormatUtil.format(IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        IoLogMessageConstant.NAME_ALREADY_EXISTS_IN_THE_NAME_TREE, key));
                 if (onErrorAction != null) {
                     onErrorAction.accept(pdfDoc);
                 }

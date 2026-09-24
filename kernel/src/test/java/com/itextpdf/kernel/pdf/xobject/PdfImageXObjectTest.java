@@ -269,7 +269,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         PdfStream cmpStream = cmpDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
 
-        Assertions.assertNull(new CompareTool().compareStreamsStructure(outStream, cmpStream));
+        Assertions.assertNull(new CompareTool().compareStreamsByStructure(outStream, cmpStream));
 
         cmpDoc.close();
         outDoc.close();
@@ -296,7 +296,7 @@ public class PdfImageXObjectTest extends ExtendedITextTest {
         PdfStream cmpStream = cmpDoc.getFirstPage().getResources().getResource(PdfName.XObject).getAsStream(new PdfName("Im1"));
 
 
-        Assertions.assertNull(new CompareTool().compareStreamsStructure(outStream, cmpStream));
+        Assertions.assertNull(new CompareTool().compareStreamsByStructure(outStream, cmpStream));
 
         cmpDoc.close();
         outDoc.close();

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.tagging;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -44,14 +45,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.itextpdf.kernel.pdf.tagutils.TagTreeIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Internal helper class which is used to copy, clone or move tag structure across documents.
  */
 class StructureTreeCopier {
+
+    private static final LazyLogger LOGGER = new LazyLogger(StructureTreeCopier.class);
 
     private static List<PdfName> ignoreKeysForCopy = new ArrayList<PdfName>();
 
@@ -278,8 +277,7 @@ class StructureTreeCopier {
                     String srcMapping = mappingEntry.getKey() + " -> " + mappingEntry.getValue();
                     String destMapping = mappingEntry.getKey() + " -> " + destRoleMap.get(mappingEntry.getKey());
 
-                    Logger logger = LoggerFactory.getLogger(StructureTreeCopier.class);
-                    logger.warn(MessageFormat.format(
+                    LOGGER.warn(() -> MessageFormat.format(
                             IoLogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_ALREADY_EXIST, srcMapping,
                             destMapping));
                 }
@@ -507,8 +505,7 @@ class StructureTreeCopier {
                         copiedMappingArray.add(copiedNamespace);
                         copiedMapping = copiedMappingArray;
                     } else {
-                        Logger logger = LoggerFactory.getLogger(StructureTreeCopier.class);
-                        logger.warn(MessageFormat.format(
+                        LOGGER.warn(() -> MessageFormat.format(
                                 IoLogMessageConstant.ROLE_MAPPING_FROM_SOURCE_IS_NOT_COPIED_INVALID,
                                 entry.getKey().toString()));
                         continue;

@@ -597,6 +597,7 @@ public class DefaultClipper extends ClipperBase {
         sortedEdges = null;
         intersectList = new ArrayList<>();
         intersectNodeComparer = new Comparator<IntersectNode>() {
+            @Override
             public int compare(IntersectNode o1, IntersectNode o2) {
                 final long i = o2.getPt().getY() - o1.getPt().getY();
                 if (i > 0) {
@@ -1258,6 +1259,7 @@ public class DefaultClipper extends ClipperBase {
         return execute(clipType, solution, FillType, FillType);
     }
 
+    @Override
     public boolean execute(ClipType clipType, PolyTree polytree)
     {
         return execute(clipType, polytree, PolyFillType.EVEN_ODD);
@@ -1270,10 +1272,12 @@ public class DefaultClipper extends ClipperBase {
     }
 
 
+    @Override
     public boolean execute(ClipType clipType, Paths solution) {
         return execute(clipType, solution, PolyFillType.EVEN_ODD);
     }
 
+    @Override
     public boolean execute( ClipType clipType, Paths solution, PolyFillType subjFillType, PolyFillType clipFillType ) {
 
         synchronized (this) {
@@ -1304,6 +1308,7 @@ public class DefaultClipper extends ClipperBase {
 
     }
 
+    @Override
     public boolean execute( ClipType clipType, PolyTree polytree, PolyFillType subjFillType, PolyFillType clipFillType ) {
         synchronized (this) {
             this.subjFillType = subjFillType;

@@ -23,6 +23,7 @@
 package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.commons.datastructures.ConcurrentHashSet;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.signatures.exceptions.SignExceptionMessageConstant;
@@ -43,7 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.slf4j.Logger;
 
 /**
  * This class provides services for managing the Europian List of Trusted Lists (LOTL) and related resources.
@@ -53,7 +53,7 @@ import org.slf4j.Logger;
  */
 public class EuropeanLotlService extends LotlService {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(EuropeanLotlService.class);
+    private static final LazyLogger LOGGER = new LazyLogger(EuropeanLotlService.class);
     private EuropeanLotlFetcher lotlByteFetcher;
     private PivotFetcher pivotFetcher;
     private CountrySpecificLotlFetcher countrySpecificLotlFetcher;
@@ -128,7 +128,7 @@ public class EuropeanLotlService extends LotlService {
                     countriesInCache.add(countryCode);
                 } else {
                     resultToAddToCache.remove(key);
-                    LOGGER.warn(MessageFormatUtil.format(
+                    LOGGER.warn(() -> MessageFormatUtil.format(
                             SignLogMessageConstant.COUNTRY_NOT_REQUIRED_BY_CONFIGURATION,
                             countryCode));
                 }
@@ -350,7 +350,7 @@ public class EuropeanLotlService extends LotlService {
             currentJournalUri = europeanResourceFetcherEUJournalCertificates.getCurrentlySupportedPublication();
             if (europeanResourceFetcherEUJournalCertificates.getLocalReport().getValidationResult()
                     != ValidationResult.VALID) {
-                LOGGER.warn(MessageFormatUtil.format(
+                LOGGER.warn(() -> MessageFormatUtil.format(
                         SignLogMessageConstant.FAILED_TO_FETCH_EU_JOURNAL_CERTIFICATES,
                         europeanResourceFetcherEUJournalCertificates.getLocalReport().getFailures().get(0)
                                 .getMessage()));
@@ -358,7 +358,7 @@ public class EuropeanLotlService extends LotlService {
             }
             europeanResourceFetcherEUJournalCertificatesToUse = europeanResourceFetcherEUJournalCertificates;
         } catch (Exception e) {
-            LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.FAILED_TO_FETCH_EU_JOURNAL_CERTIFICATES,
+            LOGGER.warn(() -> MessageFormatUtil.format(SignLogMessageConstant.FAILED_TO_FETCH_EU_JOURNAL_CERTIFICATES,
                     e.getMessage()));
             return;
         }
@@ -389,14 +389,18 @@ public class EuropeanLotlService extends LotlService {
                 pivotFetchException = e;
             }
         } else {
-            LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.UPDATING_MAIN_LOTL_TO_CACHE_FAILED,
-                    mainLotlFetchException == null ? "" : mainLotlFetchException.getMessage()));
+            String mainLotlExceptionMessagePart = mainLotlFetchException == null
+                    ? ""
+                    : mainLotlFetchException.getMessage();
+            LOGGER.warn(() -> MessageFormatUtil.format(
+                    SignLogMessageConstant.UPDATING_MAIN_LOTL_TO_CACHE_FAILED, mainLotlExceptionMessagePart));
         }
 
         // Only update main LOTL and pivot result if both are successful.
         if (!fetchPivotFilesSuccessful) {
-            LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED,
-                    pivotFetchException == null ? "" : pivotFetchException.getMessage()));
+            String pivotExceptionMessagePart = pivotFetchException == null ? "" : pivotFetchException.getMessage();
+            LOGGER.warn(() -> MessageFormatUtil.format(
+                    SignLogMessageConstant.UPDATING_PIVOT_TO_CACHE_FAILED, pivotExceptionMessagePart));
         }
         if (!mainLotlFetchSuccessful) {
             // if main LOTL is null we do not proceed with country specific LOTL fetch because it depends on main LOTL
@@ -409,13 +413,13 @@ public class EuropeanLotlService extends LotlService {
             allCountries = countrySpecificLotlFetcher.getAndValidateCountrySpecificLotlFiles(
                     mainLotlResultToUse.getLotlXml(), this);
         } catch (Exception e) {
-            LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.FAILED_TO_FETCH_COUNTRY_SPECIFIC_LOTL,
+            LOGGER.warn(() -> MessageFormatUtil.format(SignLogMessageConstant.FAILED_TO_FETCH_COUNTRY_SPECIFIC_LOTL,
                     e.getMessage()));
             return;
         }
         // If an error happened don't update the cache value, if the warning is too stale we will throw an exception
         if (allCountries == null || allCountries.isEmpty()) {
-            LOGGER.warn(SignLogMessageConstant.NO_COUNTRY_SPECIFIC_LOTL_FETCHED);
+            LOGGER.warn(() -> SignLogMessageConstant.NO_COUNTRY_SPECIFIC_LOTL_FETCHED);
             return;
         }
         Map<String, CountrySpecificLotlFetcher.Result> countrySpecificLotlResultsToUse =
@@ -423,7 +427,7 @@ public class EuropeanLotlService extends LotlService {
         for (Result countrySpecificResult : allCountries.values()) {
             boolean wasCountryFetchedSuccessfully = countrySpecificResult.getLocalReport().getFailures().isEmpty();
             if (!wasCountryFetchedSuccessfully) {
-                LOGGER.warn(MessageFormatUtil.format(SignLogMessageConstant.COUNTRY_SPECIFIC_FETCHING_FAILED,
+                LOGGER.warn(() -> MessageFormatUtil.format(SignLogMessageConstant.COUNTRY_SPECIFIC_FETCHING_FAILED,
                         countrySpecificResult.getCountrySpecificLotl().getSchemeTerritory(),
                         countrySpecificResult.getLocalReport()));
                 continue;

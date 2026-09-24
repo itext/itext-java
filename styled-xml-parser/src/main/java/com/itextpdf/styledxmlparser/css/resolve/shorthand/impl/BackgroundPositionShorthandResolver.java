@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
@@ -30,9 +31,6 @@ import com.itextpdf.styledxmlparser.css.resolve.shorthand.IShorthandResolver;
 import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssUtils;
 import com.itextpdf.styledxmlparser.css.validate.CssDeclarationValidationMaster;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +43,7 @@ import java.util.Map;
  */
 public class BackgroundPositionShorthandResolver implements IShorthandResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BackgroundPositionShorthandResolver.class);
+    private static final LazyLogger LOGGER = new LazyLogger(BackgroundPositionShorthandResolver.class);
     private static final int POSITION_VALUES_MAX_COUNT = 2;
 
     /**
@@ -60,7 +58,8 @@ public class BackgroundPositionShorthandResolver implements IShorthandResolver {
             );
         }
         if (shorthandExpression.trim().isEmpty()) {
-            LOGGER.warn(MessageFormatUtil.format(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
+            LOGGER.warn(() -> MessageFormatUtil.format(
+                    StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
                     CommonCssConstants.BACKGROUND_POSITION));
             return new ArrayList<>();
         }
@@ -71,13 +70,13 @@ public class BackgroundPositionShorthandResolver implements IShorthandResolver {
         final Map<String, String> values = new HashMap<>();
         for (final List<String> props : propsList) {
             if (props.isEmpty()) {
-                LOGGER.warn(
-                        MessageFormatUtil.format(StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
+                LOGGER.warn(() -> MessageFormatUtil.format(
+                        StyledXmlParserLogMessageConstant.SHORTHAND_PROPERTY_CANNOT_BE_EMPTY,
                                 CommonCssConstants.BACKGROUND_POSITION));
                 return new ArrayList<>();
             }
             if (!parsePositionShorthand(props, values)) {
-                LOGGER.warn(MessageFormatUtil.format(
+                LOGGER.warn(() -> MessageFormatUtil.format(
                         StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, shorthandExpression));
                 return new ArrayList<>();
             }
@@ -101,7 +100,7 @@ public class BackgroundPositionShorthandResolver implements IShorthandResolver {
 
     private static boolean checkProperty(Map<String, String> resolvedProps, String key) {
         if (!CssDeclarationValidationMaster.checkDeclaration(new CssDeclaration(key, resolvedProps.get(key)))) {
-            LOGGER.warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.INVALID_CSS_PROPERTY_DECLARATION, resolvedProps.get(key)));
             return false;
         }

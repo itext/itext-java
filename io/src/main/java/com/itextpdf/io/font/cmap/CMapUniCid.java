@@ -25,6 +25,9 @@ package com.itextpdf.io.font.cmap;
 import com.itextpdf.io.util.IntHashtable;
 import com.itextpdf.io.util.TextUtil;
 
+/**
+ * Maps Unicode code points to CIDs.
+ */
 public class CMapUniCid extends AbstractCMap {
 
     private IntHashtable map = new IntHashtable(65537);
@@ -43,10 +46,22 @@ public class CMapUniCid extends AbstractCMap {
         }
     }
 
+    /**
+     * Looks up the CID assigned to a Unicode code point.
+     *
+     * @param character the Unicode code point
+     *
+     * @return the mapped CID, or {@code 0} when absent
+     */
     public int lookup(int character) {
         return map.get(character);
     }
 
+    /**
+     * Exports this mapping as a ToUnicode CMap.
+     *
+     * @return a newly created CMap containing this map's CID-to-Unicode mappings
+     */
     public CMapToUnicode exportToUnicode() {
         CMapToUnicode uni = new CMapToUnicode();
         int[] keys = map.toOrderedKeys();

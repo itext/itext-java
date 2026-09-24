@@ -26,6 +26,7 @@ import java.util.List;
  * Usage example: {@code Document xmlDoc = Jsoup.parse(html, baseUrl, Parser.xmlParser());}
  */
 public class XmlTreeBuilder extends TreeBuilder {
+    @Override
     ParseSettings defaultSettings() {
         return ParseSettings.preserveCase;
     }
@@ -159,6 +160,7 @@ public class XmlTreeBuilder extends TreeBuilder {
         return doc.childNodes();
     }
 
+    @Override
     List<Node> parseFragment(String inputFragment, Element context, String baseUri, Parser parser) {
         return parseFragment(inputFragment, baseUri, parser);
     }

@@ -25,10 +25,11 @@ package com.itextpdf.commons.json;
 import java.util.Objects;
 
 /**
- * Class representing json number value.
+ * Class representing JSON number value.
  */
 public final class JsonNumber extends JsonValue {
-    private final double value;
+    private final Double doubleValue;
+    private final Long longValue;
 
     /**
      * Creates a new {@link JsonNumber} representing a provided value.
@@ -37,16 +38,56 @@ public final class JsonNumber extends JsonValue {
      */
     public JsonNumber(double value) {
         super();
-        this.value = value;
+        this.doubleValue = value;
+        this.longValue = null;
     }
 
     /**
-     * Gets a number value wrapped into this {@link JsonNumber}.
+     * Creates a new {@link JsonNumber} representing a provided value.
      *
-     * @return a number value
+     * @param value to wrap into this {@link JsonNumber}
+     */
+    public JsonNumber(long value) {
+        super();
+        this.doubleValue = null;
+        this.longValue = value;
+    }
+
+    /**
+     * Gets a {@code double} value wrapped into this {@link JsonNumber}.
+     *
+     * @return a {@code double} value
      */
     public double getValue() {
-        return value;
+        return getDoubleValue();
+    }
+
+    /**
+     * Gets a {@code double} value wrapped into this {@link JsonNumber}.
+     *
+     * @return a {@code double} value
+     */
+    public double getDoubleValue() {
+        return isDouble() ? doubleValue.doubleValue() : (double) longValue.doubleValue();
+    }
+
+    /**
+     * Gets a {@code long} value wrapped into this {@link JsonNumber}.
+     *
+     * @return a {@code long} value
+     */
+    public long getLongValue() {
+        return isDouble() ? (long) doubleValue.longValue() : longValue.longValue();
+    }
+
+    /**
+     * Checks if this {@link JsonNumber} represents {@code double} value
+     *
+     * @return {@code true} if this {@link JsonNumber} represents {@code double} value, {@code false} if it represents
+     * {@code long} value
+     */
+    public boolean isDouble() {
+        return doubleValue != null;
     }
 
     /**
@@ -63,7 +104,7 @@ public final class JsonNumber extends JsonValue {
         }
 
         JsonNumber that = (JsonNumber) obj;
-        return Objects.equals(this.value, that.value);
+        return Objects.equals(this.doubleValue, that.doubleValue) && Objects.equals(this.longValue, that.longValue);
     }
 
     /**
@@ -71,6 +112,6 @@ public final class JsonNumber extends JsonValue {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(doubleValue, longValue);
     }
 }

@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout.renderer;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.properties.grid.AutoRepeatValue;
 import com.itextpdf.layout.properties.grid.FixedRepeatValue;
@@ -34,9 +35,11 @@ import com.itextpdf.layout.properties.grid.TemplateValue.ValueType;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.LoggerFactory;
 
 class GridTemplateResolver {
+
+    private static final LazyLogger LOGGER = new LazyLogger(GridTemplateResolver.class);
+
     private final float space;
     private final float gap;
     private boolean containsIntrinsicOrFlexible = false;
@@ -108,7 +111,7 @@ class GridTemplateResolver {
             }
             return result.getList();
         } catch (IllegalStateException exception) {
-            LoggerFactory.getLogger(GridTemplateResolver.class).warn(exception.getMessage());
+            LOGGER.warn(() -> exception.getMessage());
             reset();
         }
         return null;

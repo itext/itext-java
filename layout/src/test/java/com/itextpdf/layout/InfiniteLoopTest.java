@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class InfiniteLoopTest extends ExtendedITextTest {
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/InfiniteLoopTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/InfiniteLoopTest/";
     private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/InfiniteLoopTest/";
 
     @BeforeAll
@@ -63,7 +63,7 @@ public class InfiniteLoopTest extends ExtendedITextTest {
 
     @AfterAll
     public static void afterClass() {
-        //We need to clean this because it generate a very big pdf file which is not used.
+        // We need to clean this because it generates a very big pdf file which is not used
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
@@ -71,7 +71,7 @@ public class InfiniteLoopTest extends ExtendedITextTest {
     public void infiniteLoopWithPartialResultTest() throws IOException {
         String outFileName = DESTINATION_FOLDER + "infiniteLoopWithPartialResult.pdf";
         DocumentProperties documentProperties = new DocumentProperties();
-        documentProperties.registerDependency(LayoutInfiniteLoopResolver.class, () -> new LayoutInfiniteLoopResolver(10_000));
+        documentProperties.registerDependency(LayoutInfiniteLoopResolver.class, () -> new LayoutInfiniteLoopResolver(100));
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName), documentProperties)) {
             try (Document document = new Document(pdfDocument)) {
                 Paragraph paragraph = new Paragraph() {
@@ -86,16 +86,16 @@ public class InfiniteLoopTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 450))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 15))
     public void veryBigLayoutThrowsTest() throws IOException {
         String outFileName = DESTINATION_FOLDER + "veryBigLayoutThrows.pdf";
         DocumentProperties documentProperties = new DocumentProperties();
-        documentProperties.registerDependency(LayoutInfiniteLoopResolver.class, () -> new LayoutInfiniteLoopResolver(300));
+        documentProperties.registerDependency(LayoutInfiniteLoopResolver.class, () -> new LayoutInfiniteLoopResolver(10));
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName), documentProperties)) {
             pdfDocument.setDefaultPageSize(PageSize.A10);
             try (Document document = new Document(pdfDocument)) {
                 Div container = new Div();
-                for (int i = 0; i < 451; ++i) {
+                for (int i = 0; i < 16; ++i) {
                     PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "Desert.jpg"));
                     Image image = new Image(xObject, 50);
                     container.add(image);
@@ -106,16 +106,16 @@ public class InfiniteLoopTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 450))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 15))
     public void notBigEnoughLayoutDoesntThrowTest() throws IOException {
         String outFileName = DESTINATION_FOLDER + "notBigEnoughLayoutDoesntThrow.pdf";
         DocumentProperties documentProperties = new DocumentProperties();
-        documentProperties.registerDependency(LayoutInfiniteLoopResolver.class, () -> new LayoutInfiniteLoopResolver(300));
+        documentProperties.registerDependency(LayoutInfiniteLoopResolver.class, () -> new LayoutInfiniteLoopResolver(10));
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName), documentProperties)) {
             pdfDocument.setDefaultPageSize(PageSize.A10);
             try (Document document = new Document(pdfDocument)) {
                 Div container = new Div();
-                for (int i = 0; i < 450; ++i) {
+                for (int i = 0; i < 15; ++i) {
                     PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "Desert.jpg"));
                     Image image = new Image(xObject, 50);
                     container.add(image);
@@ -126,16 +126,16 @@ public class InfiniteLoopTest extends ExtendedITextTest {
     }
 
     @Test
-    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 600))
+    @LogMessages(messages = @LogMessage(messageTemplate = LayoutLogMessageConstant.ELEMENT_DOES_NOT_FIT_AREA, count = 20))
     public void limitWithKeepTogetherEvenSmallerTest() throws IOException {
         String outFileName = DESTINATION_FOLDER + "limitWithKeepTogetherEvenSmaller.pdf";
         DocumentProperties documentProperties = new DocumentProperties();
-        documentProperties.registerDependency(LayoutInfiniteLoopResolver.class, () -> new LayoutInfiniteLoopResolver(300));
+        documentProperties.registerDependency(LayoutInfiniteLoopResolver.class, () -> new LayoutInfiniteLoopResolver(10));
         try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(outFileName), documentProperties)) {
             pdfDocument.setDefaultPageSize(PageSize.A10);
             try (Document document = new Document(pdfDocument)) {
                 Div container = new Div();
-                for (int i = 0; i < 301; ++i) {
+                for (int i = 0; i < 11; ++i) {
                     PdfImageXObject xObject = new PdfImageXObject(ImageDataFactory.create(SOURCE_FOLDER + "Desert.jpg"));
                     Image image = new Image(xObject, 50);
                     image.setProperty(Property.KEEP_TOGETHER, Boolean.TRUE);

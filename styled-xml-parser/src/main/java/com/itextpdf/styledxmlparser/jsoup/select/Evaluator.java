@@ -485,11 +485,13 @@ public abstract class Evaluator {
     		super(a,b);
 		}
 
+		@Override
 		protected int calculatePosition(Element root, Element element) {
 			return element.elementSiblingIndex()+1;
 		}
 
 
+		@Override
 		protected String getPseudoClass() {
 			return "nth-child";
 		}
@@ -528,6 +530,7 @@ public abstract class Evaluator {
     		super(a,b);
     	}
 
+		@Override
 		protected int calculatePosition(Element root, Element element) {
 			int pos = 0;
             Element parent = (Element) element.parent();

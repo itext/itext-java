@@ -37,14 +37,27 @@ import java.util.Set;
  * Chained Contexts Positioning Format 2: Class-based Glyph Contexts
  */
 public class PosTableLookup8Format2 extends ChainingContextualTable<ContextualPositionRule> {
-    private Set<Integer> posCoverageGlyphIds;
-    private List<List<ContextualPositionRule>> posClassSets;
-    private OtfClass backtrackClassDefinition;
-    private OtfClass inputClassDefinition;
-    private OtfClass lookaheadClassDefinition;
+    private final Set<Integer> posCoverageGlyphIds;
+    private final List<List<ContextualPositionRule>> posClassSets;
+    private final OtfClass backtrackClassDefinition;
+    private final OtfClass inputClassDefinition;
+    private final OtfClass lookaheadClassDefinition;
 
+    /**
+     * Creates a new Chained Contexts Positioning Format 2.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param posCoverageGlyphIds the positioning coverage glyph ids
+     * @param backtrackClassDefinition the backtrack class definition
+     * @param inputClassDefinition the input class definition
+     * @param lookaheadClassDefinition the lookahead class definition
+     */
     public PosTableLookup8Format2(OpenTypeFontTableReader openReader, int lookupFlag, Set<Integer> posCoverageGlyphIds,
-            OtfClass backtrackClassDefinition, OtfClass inputClassDefinition, OtfClass lookaheadClassDefinition) {
+                                  OtfClass backtrackClassDefinition, OtfClass inputClassDefinition,
+                                  OtfClass lookaheadClassDefinition) {
         super(openReader, lookupFlag);
         this.posCoverageGlyphIds = posCoverageGlyphIds;
         this.backtrackClassDefinition = backtrackClassDefinition;
@@ -53,9 +66,14 @@ public class PosTableLookup8Format2 extends ChainingContextualTable<ContextualPo
         this.posClassSets = new ArrayList<>();
     }
 
+    /**
+     * Adds the positioning class set.
+     *
+     * @param posClassSet the positioning class set
+     */
     public void addPosClassSet(List<ContextualPositionRule> posClassSet) {
         for (ContextualPositionRule rule : posClassSet) {
-            if (((PosRuleFormat2)rule).getPosTable() != this) {
+            if (((PosRuleFormat2) rule).getPosTable() != this) {
                 throw new IllegalArgumentException("Position class set is invalid. Position rule refers to another table");
             }
         }
@@ -71,20 +89,31 @@ public class PosTableLookup8Format2 extends ChainingContextualTable<ContextualPo
         return Collections.<ContextualPositionRule>emptyList();
     }
 
+    /**
+     * Represents the positioning rule format2 of an OpenType font.
+     */
     public static class PosRuleFormat2 extends ContextualPositionRule {
-        private static final long serialVersionUID = 8583758144617770335L;
         // inputClassIds array omits the first class in the sequence,
         // the first class is defined by corresponding index of subClassSet array
-        private int[] backtrackClassIds;
-        private int[] inputClassIds;
-        private int[] lookAheadClassIds;
+        private final int[] backtrackClassIds;
+        private final int[] inputClassIds;
+        private final int[] lookAheadClassIds;
 
-        private PosLookupRecord[] posLookupRecords;
+        private final PosLookupRecord[] posLookupRecords;
 
-        private PosTableLookup8Format2 posTable;
+        private final PosTableLookup8Format2 posTable;
 
+        /**
+         * Creates a new ositioning rule format2.
+         *
+         * @param posTable the positioning table
+         * @param backtrackClassIds the backtrack class ids
+         * @param inputClassIds the input class ids
+         * @param lookAheadClassIds the look ahead class ids
+         * @param posLookupRecords the positioning lookup records
+         */
         public PosRuleFormat2(PosTableLookup8Format2 posTable, int[] backtrackClassIds, int[] inputClassIds,
-                                int[] lookAheadClassIds, PosLookupRecord[] posLookupRecords) {
+                              int[] lookAheadClassIds, PosLookupRecord[] posLookupRecords) {
             this.posTable = posTable;
             this.backtrackClassIds = backtrackClassIds;
             this.inputClassIds = inputClassIds;
@@ -127,6 +156,11 @@ public class PosTableLookup8Format2 extends ChainingContextualTable<ContextualPo
             return posTable.backtrackClassDefinition.getOtfClass(glyphId) == backtrackClassIds[atIdx];
         }
 
+        /**
+         * Returns the positioning table.
+         *
+         * @return the requested result
+         */
         public PosTableLookup8Format2 getPosTable() {
             return posTable;
         }

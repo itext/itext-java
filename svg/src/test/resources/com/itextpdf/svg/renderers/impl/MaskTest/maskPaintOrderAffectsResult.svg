@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="130" viewBox="0 0 240 130">
+  <defs>
+    <mask id="m1">
+      <rect width="240" height="130" fill="black"/>
+      <rect x="30" y="20" width="120" height="90" fill="white" fill-opacity="0.4"/>
+      <rect x="90" y="20" width="120" height="90" fill="white" fill-opacity="0.8"/>
+    </mask>
+    <mask id="m2">
+      <rect width="240" height="130" fill="black"/>
+      <rect x="90" y="20" width="120" height="90" fill="white" fill-opacity="0.8"/>
+      <rect x="30" y="20" width="120" height="90" fill="white" fill-opacity="0.4"/>
+    </mask>
+  </defs>
+  <rect x="0" y="0" width="120" height="130" fill="#aa0000" mask="url(#m1)"/>
+  <rect x="120" y="0" width="120" height="130" fill="#aa0000" mask="url(#m2)"/>
+</svg>
+

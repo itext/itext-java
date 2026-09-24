@@ -26,13 +26,12 @@ import com.itextpdf.bouncycastle.BouncyCastleFactory;
 import com.itextpdf.bouncycastleconnector.logs.BouncyCastleLogMessageConstant;
 import com.itextpdf.bouncycastlefips.BouncyCastleFipsFactory; // Android-Conversion-Skip-Line (BC FIPS isn't supported on Android)
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.SystemUtil;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class provides the ability to create {@link IBouncyCastleFactory} instance.
@@ -47,7 +46,7 @@ public final class BouncyCastleFactoryCreator {
     
     private static final String FACTORY_ENVIRONMENT_VARIABLE_NAME = "ITEXT_BOUNCY_CASTLE_FACTORY_NAME";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BouncyCastleFactoryCreator.class);
+    private static final LazyLogger LOGGER = new LazyLogger(BouncyCastleFactoryCreator.class);
 
     static {
         populateFactoriesMap();
@@ -66,7 +65,7 @@ public final class BouncyCastleFactoryCreator {
         }
         
         if (factory == null) {
-            LOGGER.error(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+            LOGGER.error(() -> BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
             factory = new BouncyCastleDefaultFactory();
         }
     }

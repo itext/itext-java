@@ -22,18 +22,19 @@
  */
 package com.itextpdf.layout.properties;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.layout.renderer.ParagraphRenderer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A specialized class holding configurable parameters related to {@link com.itextpdf.layout.element.Paragraph}'s
  * widows restrictions. This class is meant to be used as the value for the {@link Property#WIDOWS_CONTROL} key.
  */
 public class ParagraphWidowsControl {
+
+    private static final LazyLogger LOGGER = new LazyLogger(ParagraphWidowsControl.class);
+
     private int minWidows;
     private int maxLinesToMove;
     private boolean overflowOnWidowsViolation;
@@ -110,14 +111,14 @@ public class ParagraphWidowsControl {
      * @param message        {@link String} explaining the reason for violation
      */
     public void handleViolatedWidows(ParagraphRenderer widowsRenderer, String message) {
-        Logger logger = LoggerFactory.getLogger(ParagraphWidowsControl.class);
-        if (widowsRenderer.getOccupiedArea() != null && widowsRenderer.getLines() != null) {
-            int pageNumber = widowsRenderer.getOccupiedArea().getPageNumber();
-            String warnText = MessageFormatUtil.format(IoLogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED,
-                    pageNumber, minWidows, widowsRenderer.getLines().size(), message);
-            logger.warn(warnText);
-        } else {
-            logger.warn(IoLogMessageConstant.PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD);
-        }
+        LOGGER.warn(() -> {
+            if (widowsRenderer.getOccupiedArea() != null && widowsRenderer.getLines() != null) {
+                int pageNumber = widowsRenderer.getOccupiedArea().getPageNumber();
+                return MessageFormatUtil.format(IoLogMessageConstant.WIDOWS_CONSTRAINT_VIOLATED,
+                        pageNumber, minWidows, widowsRenderer.getLines().size(), message);
+            } else {
+                return IoLogMessageConstant.PREMATURE_CALL_OF_HANDLE_VIOLATION_METHOD;
+            }
+        });
     }
 }

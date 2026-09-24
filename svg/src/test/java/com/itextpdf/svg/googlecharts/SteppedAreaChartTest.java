@@ -34,26 +34,26 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class SteppedAreaChartTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/SteppedAreaChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/SteppedAreaChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/SteppedAreaChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/SteppedAreaChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void steppedAreaChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "steppedAreaChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "steppedAreaChart");
     }
 
     @Test
     public void steppedArea2Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "steppedArea2Chart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "steppedArea2Chart");
     }
 
     @Test
     public void steppedArea3Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "steppedArea3Chart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "steppedArea3Chart");
     }
 }

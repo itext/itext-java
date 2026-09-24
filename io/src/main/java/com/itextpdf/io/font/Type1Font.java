@@ -22,21 +22,25 @@
  */
 package com.itextpdf.io.font;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.exceptions.IOException;
-import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.font.constants.FontWeights;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
+/**
+ * Font program parsed from Adobe Type 1 AFM/PFM metrics and optional PFB outline data.
+ */
 public class Type1Font extends FontProgram {
+
+    private static final LazyLogger LOGGER = new LazyLogger(Type1Font.class);
 
 
     private Type1Parser fontParser;
@@ -57,6 +61,15 @@ public class Type1Font extends FontProgram {
     private byte[] fontStreamBytes;
     private int[] fontStreamLengths;
 
+    /**
+     * Creates a font program for one of the PDF standard Type 1 fonts.
+     *
+     * @param name standard font name
+     *
+     * @return initialized standard-font program
+     *
+     * @throws java.io.IOException if font cannot be read or parsed
+     */
     protected static Type1Font createStandardFont(String name) throws java.io.IOException {
         if (StandardFonts.isStandardFont(name)) {
             return new Type1Font(name, null, null, null);
@@ -65,17 +78,69 @@ public class Type1Font extends FontProgram {
         }
     }
 
+    /**
+     * Creates an empty Type 1 font program.
+     */
     protected Type1Font() {
         fontNames = new FontNames();
     }
 
-    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) throws java.io.IOException {
+    /**
+     * Creates a Type 1 font program from AFM/PFM metrics and optional PFB data without remapping codes.
+     *
+     * @param metricsPath metrics file path, built-in font name, or {@code null} when {@code afm} is supplied
+     * @param binaryPath  PFB path, or {@code null} when {@code pfb} is supplied
+     * @param afm         AFM/PFM bytes, or {@code null} when {@code metricsPath} is supplied
+     * @param pfb         PFB bytes, or {@code null} when {@code binaryPath} is supplied
+     *
+     * @throws java.io.IOException if supplied font data cannot be read or parsed
+     */
+    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb)
+            throws java.io.IOException {
+        this(metricsPath, binaryPath, afm, pfb, null);
+    }
+
+    /**
+     * Creates a {@link Type1Font} by parsing the AFM/PFM metrics and, optionally, the PFB binary
+     * data, then applying an explicit encoding to the resulting glyph maps.
+     *
+     * <p>
+     * The font source may be supplied either as file-system paths or as raw byte arrays; one pair
+     * ({@code metricsPath}/{@code binaryPath} or {@code afm}/{@code pfb}) must be non-{@code null}.
+     * After parsing, if {@code fontEncoding} is non-{@code null}, {@link #initializeGlyphs(FontEncoding)}
+     * is called to remap character codes according to that encoding.
+     *
+     * @param metricsPath  path to the AFM or PFM metrics file, or a built-in standard font name,
+     *                     or {@code null} if {@code afm} bytes are provided instead
+     * @param binaryPath   path to the PFB binary file, or {@code null} if {@code pfb} bytes are
+     *                     provided or if the font is a built-in standard font
+     * @param afm          byte contents of the AFM or PFM metrics file, or {@code null} if
+     *                     {@code metricsPath} is provided instead
+     * @param pfb          byte contents of the PFB binary file, or {@code null} if {@code binaryPath}
+     *                     is provided or if the font is a built-in standard font
+     * @param fontEncoding the encoding used to remap character codes to Unicode values after the font
+     *                     has been parsed; may be {@code null} to skip glyph remapping
+     *
+     * @throws java.io.IOException if an I/O error occurs while reading the metrics or binary file,
+     *                             or if the AFM/PFM data is malformed
+     */
+    protected Type1Font(String metricsPath, String binaryPath, byte[] afm, byte[] pfb, FontEncoding fontEncoding)
+            throws java.io.IOException {
         this();
 
         fontParser = new Type1Parser(metricsPath, binaryPath, afm, pfb);
         process();
+
+        if (fontEncoding != null) {
+            initializeGlyphs(fontEncoding);
+        }
     }
 
+    /**
+     * Creates a lightweight Type 1 font program for a named base font without parsing metrics.
+     *
+     * @param baseFont PostScript base-font name
+     */
     protected Type1Font(String baseFont) {
         this();
         getFontNames().setFontName(baseFont);
@@ -85,7 +150,10 @@ public class Type1Font extends FontProgram {
      * Fills missing character codes in {@code codeToGlyph} map.
      *
      * @param fontEncoding to be used to map unicode values to character codes.
+     *
+     * @deprecated to make private
      */
+    @Deprecated
     public void initializeGlyphs(FontEncoding fontEncoding) {
         for (int i = 0; i < 256; i++) {
             final int unicode = fontEncoding.getUnicode(i);
@@ -101,6 +169,11 @@ public class Type1Font extends FontProgram {
         }
     }
 
+    /**
+     * Checks whether this program represents a built-in standard font.
+     *
+     * @return {@code true} when no external font program is required
+     */
     public boolean isBuiltInFont() {
         return fontParser != null && fontParser.isBuiltInFont();
     }
@@ -124,6 +197,11 @@ public class Type1Font extends FontProgram {
         return flags;
     }
 
+    /**
+     * Gets the AFM {@code CharacterSet} declaration.
+     *
+     * @return character set description, or {@code null} when absent
+     */
     public String getCharacterSet() {
         return characterSet;
     }
@@ -193,13 +271,11 @@ public class Type1Font extends FontProgram {
             int bytePtr = 0;
             for (int k = 0; k < 3; ++k) {
                 if (raf.read() != 0x80) {
-                    Logger logger = LoggerFactory.getLogger(Type1Font.class);
-                    logger.error(IoLogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE);
+                    LOGGER.error(() -> IoLogMessageConstant.START_MARKER_MISSING_IN_PFB_FILE);
                     return null;
                 }
                 if (raf.read() != PFB_TYPES[k]) {
-                    Logger logger = LoggerFactory.getLogger(Type1Font.class);
-                    logger.error("incorrect.segment.type.in.pfb.file");
+                    LOGGER.error(() -> "incorrect.segment.type.in.pfb.file");
                     return null;
                 }
                 int size = raf.read();
@@ -210,8 +286,7 @@ public class Type1Font extends FontProgram {
                 while (size != 0) {
                     int got = raf.read(fontStreamBytes, bytePtr, size);
                     if (got < 0) {
-                        Logger logger = LoggerFactory.getLogger(Type1Font.class);
-                        logger.error("premature.end.in.pfb.file");
+                        LOGGER.error(() -> "premature.end.in.pfb.file");
                         return null;
                     }
                     bytePtr += got;
@@ -220,8 +295,7 @@ public class Type1Font extends FontProgram {
             }
             return fontStreamBytes;
         } catch (Exception e) {
-            Logger logger = LoggerFactory.getLogger(Type1Font.class);
-            logger.error("type1.font.file.exception");
+            LOGGER.error(() -> "type1.font.file.exception");
             return null;
         } finally {
             if (raf != null) {
@@ -237,10 +311,16 @@ public class Type1Font extends FontProgram {
         return fontStreamLengths;
     }
 
+    @Override
     public boolean isBuiltWith(String fontProgram) {
         return Objects.equals(fontParser.getAfmPath(), fontProgram);
     }
 
+    /**
+     * Parses AFM/PFM metrics, character metrics, and kerning pairs into this font program.
+     *
+     * @throws java.io.IOException if mandatory sections are missing or the metrics source cannot be read
+     */
     protected void process() throws java.io.IOException {
         RandomAccessFileOrArray raf = fontParser.getMetricsFile();
         String line;

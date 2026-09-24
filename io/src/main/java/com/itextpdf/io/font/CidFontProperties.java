@@ -34,6 +34,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+/**
+ * Loads properties and CMap compatibility metadata for CID fonts.
+ */
 public class CidFontProperties {
 
     private static final Map<String, Map<String, Object>> allFonts = new HashMap<>();
@@ -48,10 +51,13 @@ public class CidFontProperties {
         } catch (Exception ignored) { }
     }
 
-    /** Checks if its a valid CJKFont font.
-     * @param fontName the font name.
-     * @param enc the encoding.
-     * @return {@code true} if it is CJKFont.
+    /**
+     * Checks if it's a valid CJKFont font.
+     *
+     * @param fontName the font name
+     * @param enc      the encoding
+     *
+     * @return {@code true} if it is CJKFont
      */
     public static boolean isCidFont(String fontName, String enc) {
         if (!registryNames.containsKey("fonts"))
@@ -65,6 +71,13 @@ public class CidFontProperties {
         return encodings != null && encodings.contains(enc);
     }
 
+    /**
+     * Finds a CID font compatible with an encoding.
+     *
+     * @param enc the CMap encoding name
+     *
+     * @return a compatible font name, or {@code null} when none is available
+     */
     public static String getCompatibleFont(String enc) {
         for (Map.Entry<String,Set<String>> e : registryNames.entrySet()) {
             if (e.getValue().contains(enc)) {
@@ -78,10 +91,20 @@ public class CidFontProperties {
         return null;
     }
 
+    /**
+     * Returns loaded font properties.
+     *
+     * @return the map of font properties
+     */
     public static Map<String, Map<String, Object>> getAllFonts() {
         return allFonts;
     }
 
+    /**
+     * Returns loaded CID registry metadata.
+     *
+     * @return the map of registry names and values
+     */
     public static Map<String, Set<String>> getRegistryNames() {
         return registryNames;
     }

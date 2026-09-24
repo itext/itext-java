@@ -34,8 +34,8 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class DirectionTest extends SvgIntegrationTest {
-    public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/DirectionTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/DirectionTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/DirectionTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/DirectionTest/";
 
     @BeforeAll
     public static void beforeClass() {

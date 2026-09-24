@@ -44,6 +44,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -106,6 +107,16 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
             default:
                 return (T1) (Object) null;
         }
+    }
+
+
+    /**
+     * Gets a copy of this container's properties.
+     *
+     * @return an unmodifiable map with properties set directly on this container
+     */
+    public Map<Integer, Object> getOwnProperties() {
+        return Collections.unmodifiableMap(properties);
     }
 
     /**
@@ -712,6 +723,99 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
     }
 
     /**
+     * Gets the line cap style for the current element.
+     *
+     * <p>
+     * The line cap style is the shape used at the end of open subpaths when they are stroked.
+     *
+     * <p>
+     * For values see {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineCapStyle}
+     *
+     * @return the current line cap style
+     */
+    public Integer getLineCapStyle() {
+        return this.<Integer>getProperty(Property.LINE_CAP_STYLE);
+    }
+
+    /**
+     * Sets the line cap style for the current element.
+     *
+     * <p>
+     * The line cap style is the shape used at the end of open subpaths when they are stroked.
+     *
+     * <p>
+     * For values see {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineCapStyle}
+     *
+     * @param lineCapStyle a new line cap style
+     *
+     * @return this Element
+     */
+    public T setLineCapStyle(int lineCapStyle) {
+        setProperty(Property.LINE_CAP_STYLE, lineCapStyle);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Gets the line join style for the current element.
+     *
+     * <p>
+     * The line join style is the shape used at the corners of paths when they are stroked.
+     *
+     * <p>
+     * For values see {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineJoinStyle}
+     *
+     * @return the current line join style
+     */
+    public Integer getLineJoinStyle() {
+        return this.<Integer>getProperty(Property.LINE_JOIN_STYLE);
+    }
+
+    /**
+     * Sets the line join style for the current element.
+     *
+     * <p>
+     * The line join style is the shape used at the corners of paths when they are stroked.
+     *
+     * <p>
+     * For values see {@link com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.LineJoinStyle}
+     *
+     * @param lineJoinStyle a new line join style
+     *
+     * @return this Element
+     */
+    public T setLineJoinStyle(int lineJoinStyle) {
+        setProperty(Property.LINE_JOIN_STYLE, lineJoinStyle);
+        return (T) (Object) this;
+    }
+
+    /**
+     * Gets the miter limit for the current element.
+     *
+     * <p>
+     * The miter limit is the maximum ratio of miter length to stroke width used to draw a miter join.
+     *
+     * @return the current miter limit
+     */
+    public Float getMiterLimit() {
+        return this.<Float>getProperty(Property.MITER_LIMIT);
+    }
+
+    /**
+     * Sets the miter limit for the current element.
+     *
+     * <p>
+     * The miter limit is the maximum ratio of miter length to stroke width used to draw a miter join.
+     *
+     * @param miterLimit a new miter limit
+     *
+     * @return this Element
+     */
+    public T setMiterLimit(float miterLimit) {
+        setProperty(Property.MITER_LIMIT, miterLimit);
+        return (T) (Object) this;
+    }
+
+    /**
      * Simulates bold style for a font.
      * Be aware that using correct bold font is highly preferred over this option.
      *
@@ -735,13 +839,14 @@ public abstract class ElementPropertyContainer<T extends IPropertyContainer> ext
 
     /**
      * Sets default line-through attributes for text.
-     * See {@link #setUnderline(Color, float, float, float, float, int)} for more fine tuning.
+     * See {@link #setUnderline(Color, float, float, float, float, int)} for more fine-tuning.
      *
      * @return this element
      */
     public T setLineThrough() {
         // 7/24 is the average between default browser behavior(1/4) and iText5 behavior(1/3)
-        return setUnderline(null, .75f, 0, 0, 7 / 24f, PdfCanvasConstants.LineCapStyle.BUTT);
+        return setUnderline(new Underline(null, .75f, 0, 0, 7 / 24f, PdfCanvasConstants.LineCapStyle.BUTT)
+                .setXPosition(0, 0.5f));
     }
 
     /**

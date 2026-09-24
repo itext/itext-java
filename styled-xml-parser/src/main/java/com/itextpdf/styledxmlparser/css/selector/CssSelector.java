@@ -59,6 +59,7 @@ public class CssSelector extends AbstractCssSelector {
     /* (non-Javadoc)
      * @see com.itextpdf.styledxmlparser.css.selector.ICssSelector#matches(com.itextpdf.styledxmlparser.html.node.INode)
      */
+    @Override
     public boolean matches(INode element) {
         return matches(element, selectorItems.size() - 1, null);
     }

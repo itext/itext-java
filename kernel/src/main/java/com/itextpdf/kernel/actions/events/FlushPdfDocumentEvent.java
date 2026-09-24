@@ -27,6 +27,7 @@ import com.itextpdf.commons.actions.confirmations.ConfirmedEventWrapper;
 import com.itextpdf.commons.actions.confirmations.EventConfirmationType;
 import com.itextpdf.commons.actions.data.ProductData;
 import com.itextpdf.commons.actions.sequence.SequenceId;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.actions.AbstractITextConfigurationEvent;
 import com.itextpdf.commons.actions.AbstractProductProcessITextEvent;
@@ -42,14 +43,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class represents events notifying that {@link PdfDocument} was flushed.
  */
 public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FlushPdfDocumentEvent.class);
+    private static final LazyLogger LOGGER = new LazyLogger(FlushPdfDocumentEvent.class);
 
     private final WeakReference<PdfDocument> document;
 
@@ -94,8 +93,9 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
 
             for (final String product : products) {
                 final ITextProductEventProcessor processor = getActiveProcessor(product);
-                if (processor == null && LOGGER.isWarnEnabled()) {
-                    LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED, product));
+                if (processor == null) {
+                    LOGGER.warn(() -> MessageFormatUtil.format(
+                            KernelLogMessageConstant.UNKNOWN_PRODUCT_INVOLVED, product));
                 }
             }
 
@@ -113,7 +113,7 @@ public final class FlushPdfDocumentEvent extends AbstractITextConfigurationEvent
             if (event instanceof ConfirmedEventWrapper) {
                 confirmedEvents.add((ConfirmedEventWrapper) event);
             } else {
-                LOGGER.warn(MessageFormatUtil.format(KernelLogMessageConstant.UNCONFIRMED_EVENT,
+                LOGGER.warn(() -> MessageFormatUtil.format(KernelLogMessageConstant.UNCONFIRMED_EVENT,
                         event.getProductName(), event.getEventType()));
             }
         }

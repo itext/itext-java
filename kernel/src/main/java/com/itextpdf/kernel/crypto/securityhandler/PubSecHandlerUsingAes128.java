@@ -77,10 +77,12 @@ public class PubSecHandlerUsingAes128 extends PubKeySecurityHandler {
             nextObjectKeySize = 16;
     }
 
+    @Override
     protected String getDigestAlgorithm() {
         return "SHA-1";
     }
 
+    @Override
     protected void initKey(byte[] globalKey, int keyLength) {
         mkey = new byte[keyLength / 8];
         System.arraycopy(globalKey, 0, mkey, 0, mkey.length);

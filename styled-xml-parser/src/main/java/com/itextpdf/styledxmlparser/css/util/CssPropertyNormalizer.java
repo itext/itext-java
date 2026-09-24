@@ -22,11 +22,11 @@
  */
 package com.itextpdf.styledxmlparser.css.util;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.styledxmlparser.logs.StyledXmlParserLogMessageConstant;
 import com.itextpdf.styledxmlparser.PortUtil;
-import org.slf4j.LoggerFactory;
 
 import java.util.regex.Pattern;
 
@@ -34,6 +34,8 @@ import java.util.regex.Pattern;
  * Utilities class with functionality to normalize CSS properties.
  */
 class CssPropertyNormalizer {
+
+    private static final LazyLogger LOGGER = new LazyLogger(CssPropertyNormalizer.class);
 
     private static final Pattern URL_PATTERN = PortUtil.createRegexPatternWithDotMatchingNewlines("^[uU][rR][lL]\\(");
 
@@ -93,7 +95,7 @@ class CssPropertyNormalizer {
         int end = CssUtils.findNextUnescapedChar(source, endQuoteSymbol, start + 1);
         if (end == -1) {
             end = source.length();
-            LoggerFactory.getLogger(CssPropertyNormalizer.class).warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.QUOTE_IS_NOT_CLOSED_IN_CSS_EXPRESSION, source));
         } else {
             ++end;
@@ -122,7 +124,7 @@ class CssPropertyNormalizer {
             } else {
                 curr = CssUtils.findNextUnescapedChar(source, ')', curr);
                 if (curr == -1) {
-                    LoggerFactory.getLogger(CssPropertyNormalizer.class).warn(MessageFormatUtil.format(
+                    LOGGER.warn(() -> MessageFormatUtil.format(
                             StyledXmlParserLogMessageConstant.URL_IS_NOT_CLOSED_IN_CSS_EXPRESSION, source));
                     return source.length();
                 } else {
@@ -132,7 +134,7 @@ class CssPropertyNormalizer {
                 }
             }
         } else {
-            LoggerFactory.getLogger(CssPropertyNormalizer.class).warn(MessageFormatUtil.format(
+            LOGGER.warn(() -> MessageFormatUtil.format(
                     StyledXmlParserLogMessageConstant.URL_IS_EMPTY_IN_CSS_EXPRESSION, source));
             return source.length();
         }

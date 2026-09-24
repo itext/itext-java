@@ -22,6 +22,7 @@
  */
 package com.itextpdf.styledxmlparser.css.resolve.shorthand.impl;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
 import com.itextpdf.styledxmlparser.css.CssDeclaration;
@@ -35,15 +36,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * {@link IShorthandResolver} implementation for flex.
  */
 public class FlexShorthandResolver implements IShorthandResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FlexShorthandResolver.class);
+    private static final LazyLogger LOGGER = new LazyLogger(FlexShorthandResolver.class);
 
     /**
      * {@inheritDoc}
@@ -239,7 +238,7 @@ public class FlexShorthandResolver implements IShorthandResolver {
 
     private static List<CssDeclaration> handleExpressionError(String logMessage, String attribute,
             String shorthandExpression) {
-        LOGGER.warn(MessageFormatUtil.format(logMessage, attribute, shorthandExpression));
+        LOGGER.warn(() -> MessageFormatUtil.format(logMessage, attribute, shorthandExpression));
         return Collections.<CssDeclaration>emptyList();
     }
 }

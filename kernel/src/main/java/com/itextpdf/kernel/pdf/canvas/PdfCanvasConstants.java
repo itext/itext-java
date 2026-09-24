@@ -22,10 +22,29 @@
  */
 package com.itextpdf.kernel.pdf.canvas;
 
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.DeviceGray;
+
 /**
  * A container for constants defined in the PDF specification (ISO 32000-1).
  */
 public class PdfCanvasConstants {
+    /** Default value for stroke color */
+    public static final Color DEFAULT_STROKE_COLOR = DeviceGray.BLACK;
+    /** Default value for fill color */
+    public static final Color DEFAULT_FILL_COLOR = DeviceGray.BLACK;
+    /** Default value for line width */
+    public static final float DEFAULT_LINE_WIDTH = 1f;
+    /** Default value for line cap style */
+    public static final int DEFAULT_LINE_CAP_STYLE = PdfCanvasConstants.LineCapStyle.BUTT;
+    /** Default value for line join style */
+    public static final int DEFAULT_LINE_JOIN_STYLE = PdfCanvasConstants.LineJoinStyle.MITER;
+    /** Default value for miter limit */
+    public static final float DEFAULT_MITER_LIMIT = 10f;
+    /** Default value for fill opacity */
+    public static final float DEFAULT_FILL_OPACITY = 1f;
+    /** Default value for stroke opacity */
+    public static final float DEFAULT_STROKE_OPACITY = 1f;
 
     private PdfCanvasConstants() {
         // This private constructor will prevent the instantiation of this class

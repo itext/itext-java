@@ -47,6 +47,7 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      *
      * @throws java.io.IOException if an I/O error occurs.
      */
+    @Override
     public void close() throws IOException {
         finish();
         out.close();
@@ -64,6 +65,7 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      *
      * @throws IOException if an I/O error occurs.
      */
+    @Override
     public void flush() throws IOException {
         out.flush();
     }
@@ -78,6 +80,7 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      * @throws IOException if an I/O error occurs.
      * @see java.io.OutputStream#write(byte[], int, int)
      */
+    @Override
     public void write(byte[] b) throws IOException {
         write(b, 0, b.length);
     }
@@ -96,6 +99,7 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      * @throws IOException if an I/O error occurs. In particular, an {@code IOException} may be thrown if the
      *                     output stream has been closed.
      */
+    @Override
     public void write(int b) throws IOException {
         sb[0] = (byte) b;
         write(sb, 0, 1);
@@ -129,6 +133,7 @@ public abstract class OutputStreamEncryption extends java.io.OutputStream {
      *                     an {@code IOException} is thrown if the output
      *                     stream is closed.
      */
+    @Override
     public abstract void write(byte[] b, int off, int len) throws IOException;
 
     //TODO DEVSIX-9612 make this class implement IFinishable interface

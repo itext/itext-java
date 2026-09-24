@@ -160,6 +160,7 @@ final class FormatInformation {
     /**
      * @return the hashcode of the QR-code format information
      */
+    @Override
     public int hashCode() {
         return (errorCorrectionLevel.ordinal() << 3) | (int) dataMask;
     }
@@ -169,6 +170,7 @@ final class FormatInformation {
      * @param o object to compare to
      * @return True if o is a FormatInformationObject and the error-correction level and the datamask are equal, false otherwise
      */
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof FormatInformation)) {
             return false;

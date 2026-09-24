@@ -24,7 +24,6 @@ package com.itextpdf.layout;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Paragraph;
@@ -32,6 +31,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -47,13 +47,18 @@ public class NonBreakableSpaceTest extends ExtendedITextTest {
         createOrClearDestinationFolder(destinationFolder);
     }
 
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
+    }
+
     @Test
     public void simpleParagraphTest() throws IOException, InterruptedException {
         String outFileName = destinationFolder + "simpleParagraphTest.pdf";
         String cmpFileName = sourceFolder + "cmp_simpleParagraphTest.pdf";
         String diffPrefix = "diff_simpleParagraphTest_";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
         document.add(new Paragraph("aaa bbb\u00a0ccccccccccc").setWidth(100).setBorder(new SolidBorder(ColorConstants.RED, 10)));
         document.add(new Paragraph("aaa bbb ccccccccccc").setWidth(100).setBorder(new SolidBorder(ColorConstants.GREEN, 10)));
         document.add(new Paragraph("aaaaaaa\u00a0bbbbbbbbbbb").setWidth(100).setBorder(new SolidBorder(ColorConstants.BLUE, 10)));
@@ -68,7 +73,7 @@ public class NonBreakableSpaceTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_consecutiveSpacesTest.pdf";
         String diffPrefix = "diff_consecutiveSpacesTest_";
 
-        Document document = new Document(new PdfDocument(new PdfWriter(outFileName)));
+        Document document = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)));
         document.add(new Paragraph("aaa\u00a0\u00a0\u00a0bbb").setWidth(100).setBorder(new SolidBorder(ColorConstants.RED, 10)));
         document.add(new Paragraph("aaa\u00a0bbb").setWidth(100).setBorder(new SolidBorder(ColorConstants.GREEN, 10)));
         document.add(new Paragraph("aaa   bbb").setWidth(100).setBorder(new SolidBorder(ColorConstants.BLUE, 10)));

@@ -32,41 +32,68 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Contextual Positioning Subtable: Class-Based Glyph Contexts.
+ */
 public class PosTableLookup7Format2 extends ContextualTable<ContextualPositionRule> {
-    private Set<Integer> posCoverageGlyphIds;
-    private List<List<ContextualPositionRule>> subClassSets;
-    private OtfClass classDefinition;
+    private final Set<Integer> posCoverageGlyphIds;
+    private final OtfClass classDefinition;
+    private List<List<ContextualPositionRule>> posClassSets;
 
+    /**
+     * Creates a new Contextual Positioning Subtable.
+     *
+     * @param openReader the OpenType font reader
+     * @param lookupFlag specifies processing options, e.g. whether to skip base glyphs, marks or
+     *                   ligatures during glyph substitution or positioning. See
+     *                   <a href="https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table">Lookup table</a>
+     * @param posCoverageGlyphIds the positioning coverage glyph ids
+     * @param classDefinition the class definition
+     */
     public PosTableLookup7Format2(OpenTypeFontTableReader openReader, int lookupFlag, Set<Integer> posCoverageGlyphIds,
-            OtfClass classDefinition) {
+                                  OtfClass classDefinition) {
         super(openReader, lookupFlag);
         this.posCoverageGlyphIds = posCoverageGlyphIds;
-
         this.classDefinition = classDefinition;
     }
 
-    public void setPosClassSets(List<List<ContextualPositionRule>> subClassSets) {
-        this.subClassSets = subClassSets;
+    /**
+     * Updates the positioning class sets.
+     *
+     * @param posClassSets the positioning class sets
+     */
+    public void setPosClassSets(List<List<ContextualPositionRule>> posClassSets) {
+        this.posClassSets = posClassSets;
     }
 
     @Override
     protected List<ContextualPositionRule> getSetOfRulesForStartGlyph(int startId) {
         if (posCoverageGlyphIds.contains(startId) && !openReader.isSkip(startId, lookupFlag)) {
             int gClass = classDefinition.getOtfClass(startId);
-            return subClassSets.get(gClass);
+            return posClassSets.get(gClass);
         }
         return Collections.<ContextualPositionRule>emptyList();
     }
 
+    /**
+     * Represents the positioning rule format2 of an OpenType font.
+     */
     public static class PosRuleFormat2 extends ContextualPositionRule {
         // inputClassIds array omits the first class in the sequence,
         // the first class is defined by corresponding index of subClassSet array
-        private int[] inputClassIds;
-        private PosLookupRecord[] posLookupRecords;
-        private OtfClass classDefinition;
+        private final int[] inputClassIds;
+        private final PosLookupRecord[] posLookupRecords;
+        private final OtfClass classDefinition;
 
+        /**
+         * Creates a new positioning rule format2.
+         *
+         * @param subTable the sub table
+         * @param inputClassIds the input class ids
+         * @param posLookupRecords the positioning lookup records
+         */
         public PosRuleFormat2(PosTableLookup7Format2 subTable, int[] inputClassIds,
-                PosLookupRecord[] posLookupRecords) {
+                              PosLookupRecord[] posLookupRecords) {
             this.inputClassIds = inputClassIds;
             this.posLookupRecords = posLookupRecords;
             this.classDefinition = subTable.classDefinition;

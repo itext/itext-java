@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.fields.merging;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.forms.exceptions.FormsExceptionMessageConstant;
 import com.itextpdf.forms.fields.PdfFormField;
@@ -31,8 +32,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import static com.itextpdf.forms.fields.PdfFormFieldMergeUtil.mergeFormFields;
 
 /**
@@ -41,6 +40,8 @@ import static com.itextpdf.forms.fields.PdfFormFieldMergeUtil.mergeFormFields;
  * This strategy is used by default.
  */
 public class MergeFieldsStrategy implements OnDuplicateFormFieldNameStrategy {
+
+    private static final LazyLogger LOGGER = new LazyLogger(MergeFieldsStrategy.class);
 
 
     /**
@@ -76,8 +77,7 @@ public class MergeFieldsStrategy implements OnDuplicateFormFieldNameStrategy {
                 throw new PdfException(MessageFormatUtil.format(FormsExceptionMessageConstant.CANNOT_MERGE_FORMFIELDS,
                         firstField.getPartialFieldName()));
             } else {
-                Logger logger = LoggerFactory.getLogger(MergeFieldsStrategy.class);
-                logger.warn(MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_MERGE_FORMFIELDS,
+                LOGGER.warn(() -> MessageFormatUtil.format(FormsLogMessageConstants.CANNOT_MERGE_FORMFIELDS,
                         firstField.getPartialFieldName()));
                 return false;
             }

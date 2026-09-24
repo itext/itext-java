@@ -23,6 +23,7 @@
 package com.itextpdf.forms.fields;
 
 import com.itextpdf.commons.datastructures.NullableContainer;
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.forms.fields.borders.FormBorderFactory;
 import com.itextpdf.forms.fields.properties.CheckBoxType;
@@ -79,8 +80,6 @@ import com.itextpdf.layout.renderer.MetaInfoContainer;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class represents a single annotation in form fields hierarchy in an {@link com.itextpdf.forms.PdfAcroForm
@@ -105,7 +104,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
      * Value which represents "on" state of form field.
      */
     public static final String ON_STATE_VALUE = "Yes";
-    private static final Logger LOGGER = LoggerFactory.getLogger(PdfFormAnnotation.class);
+    private static final LazyLogger LOGGER = new LazyLogger(PdfFormAnnotation.class);
     private static final String LINE_ENDINGS_REGEXP = "\\r\\n|\\r|\\n";
     private static final float EPS = 1e-4f;
     protected float borderWidth = 1;
@@ -1269,7 +1268,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             if (textField.isComb()) {
                 if (textField.getMaxLen() == 0 ||
                         textField.isMultiline() || textField.isPassword() || textField.isFileSelect()) {
-                    LOGGER.error(IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT);
+                    LOGGER.error(() -> IoLogMessageConstant.COMB_FLAG_MAY_BE_SET_ONLY_IF_MAXLEN_IS_PRESENT);
                     return false;
                 }
                 return true;
@@ -1385,8 +1384,7 @@ public class PdfFormAnnotation extends AbstractPdfFormField {
             case 270:
                 return new PdfArray(new float[] {0, -1, 1, 0, 0, width});
             default:
-                Logger logger = LoggerFactory.getLogger(PdfFormAnnotation.class);
-                logger.error(FormsLogMessageConstants.INCORRECT_WIDGET_ROTATION);
+                LOGGER.error(() -> FormsLogMessageConstants.INCORRECT_WIDGET_ROTATION);
                 return null;
         }
     }

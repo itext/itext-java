@@ -22,9 +22,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.WriterProperties;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.element.Paragraph;
@@ -32,6 +30,7 @@ import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -46,6 +45,11 @@ public class NewLineTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(destinationFolder);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(destinationFolder);
     }
 
     @Test
@@ -112,8 +116,7 @@ public class NewLineTest extends ExtendedITextTest {
         String cmpFileName = sourceFolder + "cmp_" + fileName;
         String diffPrefix = "diff_" + fileName + "_";
 
-        PdfDocument pdf = new PdfDocument(new PdfWriter(FileUtil.getFileOutputStream(outFileName),
-                new WriterProperties().setCompressionLevel(0)));
+        PdfDocument pdf = new PdfDocument(CompareTool.createTestPdfWriter(outFileName, new WriterProperties().setCompressionLevel(0)));
         Document document = new Document(pdf);
 
         Paragraph paragraph = new Paragraph().add(new StringBuilder(pre).append(newlineCharacters).append(post).toString());

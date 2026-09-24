@@ -42,23 +42,23 @@ public class ContextManager {
 
     static {
         ContextManager local = new ContextManager();
+
+        // Registering the default contexts
         local.registerGenericContext(NamespaceConstant.ITEXT_CORE_NAMESPACES,
                 Collections.singleton(ProductNameConstant.ITEXT_CORE));
-
-        local.registerGenericContext(Collections.singleton(NamespaceConstant.CORE_SIGN),
-                Collections.singleton(ProductNameConstant.ITEXT_CORE_SIGN));
-
         local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_HTML),
                 Collections.singleton(ProductNameConstant.PDF_HTML));
-
         local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_SWEEP),
                 Collections.singleton(ProductNameConstant.PDF_SWEEP));
-
         local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR_TESSERACT4),
                 Collections.singleton(ProductNameConstant.PDF_OCR_TESSERACT4));
-
         local.registerGenericContext(Collections.singletonList(NamespaceConstant.PDF_OCR_ONNX),
                 Collections.singleton(ProductNameConstant.PDF_OCR_ONNX));
+
+        // Registering the custom contexts
+        // (need to be synchronized with ProductManager, so that custom contexts won't be overridden)
+        local.registerGenericContext(Collections.singleton(NamespaceConstant.CORE_SIGN),
+                Collections.singleton(ProductNameConstant.ITEXT_CORE_SIGN));
 
         INSTANCE = local;
     }

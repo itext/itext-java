@@ -36,15 +36,18 @@ class FontSetCollection extends AbstractCollection<FontInfo> {
         this.additional = additional;
     }
 
+    @Override
     public int size() {
         return primary.size() + (additional != null ? additional.size() : 0);
     }
 
+    @Override
     public Iterator<FontInfo> iterator() {
         return new Iterator<FontInfo>() {
             private Iterator<FontInfo> i = primary.iterator();
             boolean isPrimary = true;
 
+            @Override
             public boolean hasNext() {
                 boolean hasNext = i.hasNext();
                 if (!hasNext && isPrimary && additional != null) {
@@ -56,16 +59,19 @@ class FontSetCollection extends AbstractCollection<FontInfo> {
                 }
             }
 
+            @Override
             public FontInfo next() {
                 return i.next();
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }
         };
     }
 
+    @Override
     public boolean remove(Object o) {
         throw new UnsupportedOperationException();
     }

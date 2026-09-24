@@ -34,36 +34,36 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TrendlinesChartsTest extends SvgIntegrationTest {
 
-    public static final String sourceFolder = "./src/test/resources/com/itextpdf/svg/googlecharts/TrendlinesChartsTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/svg/googlecharts/TrendlinesChartsTest/";
+    private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/TrendlinesChartsTest/";
+    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/TrendlinesChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {
-        ITextTest.createDestinationFolder(destinationFolder);
+        ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }
 
     @Test
     public void trendlinesChart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "trendlinesChart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "trendlinesChart");
     }
 
     @Test
     public void trendlines2Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "trendlines2Chart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "trendlines2Chart");
     }
 
     @Test
     public void trendlines3Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "trendlines3Chart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "trendlines3Chart");
     }
 
     @Test
     public void trendlines4Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "trendlines4Chart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "trendlines4Chart");
     }
 
     @Test
     public void trendlines5Chart() throws IOException, InterruptedException, java.io.IOException {
-        convertAndCompare(sourceFolder, destinationFolder, "trendlines5Chart");
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "trendlines5Chart");
     }
 }

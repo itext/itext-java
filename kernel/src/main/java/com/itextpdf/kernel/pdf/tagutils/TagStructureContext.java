@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.pdf.tagutils;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -42,8 +43,6 @@ import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructTreeRoot;
 import com.itextpdf.kernel.pdf.tagging.StandardNamespaces;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -66,6 +65,8 @@ import java.util.Set;
  * {@link PdfDocument#getTagStructureContext()}.
  */
 public class TagStructureContext {
+
+    private static final LazyLogger LOGGER = new LazyLogger(TagStructureContext.class);
 
     private static final Set<String> ALLOWED_ROOT_TAG_ROLES;
 
@@ -314,8 +315,7 @@ public class TagStructureContext {
         int maxIters = 100;
         while (mappingResolver.currentRoleShallBeMappedToStandard()) {
             if (++i > maxIters) {
-                Logger logger = LoggerFactory.getLogger(TagStructureContext.class);
-                logger.error(composeTooMuchTransitiveMappingsException(role, namespace));
+                LOGGER.error(() -> composeTooMuchTransitiveMappingsException(role, namespace));
                 return null;
             }
             if (!mappingResolver.resolveNextMapping()) {
@@ -578,8 +578,7 @@ public class TagStructureContext {
             if (forbidUnknownRoles) {
                 throw new PdfException(exMessage);
             } else {
-                Logger logger = LoggerFactory.getLogger(TagStructureContext.class);
-                logger.warn(exMessage);
+                LOGGER.warn(() -> exMessage);
             }
         }
     }
@@ -634,15 +633,13 @@ public class TagStructureContext {
             PdfStructElem firstKid = (PdfStructElem) rootKids.get(0);
             IRoleMappingResolver resolvedMapping = resolveMappingToStandardOrDomainSpecificRole(firstKid.getRole().getValue(), firstKid.getNamespace());
             if (resolvedMapping == null || !resolvedMapping.currentRoleIsStandard()) {
-
-                Logger logger = LoggerFactory.getLogger(TagStructureContext.class);
                 String nsStr;
                 if (firstKid.getNamespace() != null) {
                     nsStr = firstKid.getNamespace().getNamespaceName();
                 } else {
                     nsStr = StandardNamespaces.getDefault();
                 }
-                logger.warn(MessageFormat.format(IoLogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD,
+                LOGGER.warn(() -> MessageFormat.format(IoLogMessageConstant.EXISTING_TAG_STRUCTURE_ROOT_IS_NOT_STANDARD,
                         firstKid.getRole().getValue(), nsStr));
             }
             if (resolvedMapping == null || !StandardNamespaces.PDF_1_7.equals(resolvedMapping.getNamespace().getNamespaceName())) {

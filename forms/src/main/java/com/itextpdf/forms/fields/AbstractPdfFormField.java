@@ -22,6 +22,7 @@
  */
 package com.itextpdf.forms.fields;
 
+import com.itextpdf.commons.logs.LazyLogger;
 import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.source.PdfTokenizer;
@@ -39,8 +40,6 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfObjectWrapper;
 import com.itextpdf.kernel.pdf.PdfString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -69,7 +68,7 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
 
     private static final PdfName[] TERMINAL_FIELDS = new PdfName[] {PdfName.Btn, PdfName.Tx, PdfName.Ch, PdfName.Sig};
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPdfFormField.class);
+    private static final LazyLogger LOGGER = new LazyLogger(AbstractPdfFormField.class);
 
     /**
      * Index of font value in default appearance element.
@@ -486,7 +485,7 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
                     parentName = pName.toUnicodeString() + ".";
                 }
             } else {
-                LOGGER.warn(FormsLogMessageConstants.FORM_FIELD_HAS_CYCLED_PARENT_STRUCTURE);
+                LOGGER.warn(() -> FormsLogMessageConstants.FORM_FIELD_HAS_CYCLED_PARENT_STRUCTURE);
                 remove(PdfName.Parent);
                 this.parent = null;
             }

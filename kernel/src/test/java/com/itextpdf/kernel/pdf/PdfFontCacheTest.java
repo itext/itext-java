@@ -589,8 +589,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         //There is only one just loaded and used document font.
         Assertions.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
-        // TODO DEVSIX-9683 Replace abserif4_5.ttc in kernel
-        addPagesWithFonts(pdfDoc, FONTS_FOLDER + "abserif4_5.ttf", "WinAnsi", TextSetWithABC);
+        addPagesWithFonts(pdfDoc, FONTS_FOLDER + "NotoSansCanadianAboriginal-Regular.ttf", "WinAnsi", TextSetWithABC);
         pdfDoc.close();
 
         //We cannot rely on font name for a document font, so we treat them as two different fonts.
@@ -683,8 +682,7 @@ public class PdfFontCacheTest extends ExtendedITextTest {
         //There is only one just loaded and used document font.
         Assertions.assertEquals(1, pdfDoc.getDocumentFonts().size());
 
-        // TODO DEVSIX-9683 Replace abserif4_5.ttc in kernel
-        addPagesWithFonts(pdfDoc, FONTS_FOLDER + "abserif4_5.ttf", encoding, TextSetWithABC);
+        addPagesWithFonts(pdfDoc, FONTS_FOLDER + "NotoSansCanadianAboriginal-Regular.ttf", encoding, TextSetWithABC);
         pdfDoc.close();
 
         //We cannot rely on font name for a document font, so we treat them as two different fonts.

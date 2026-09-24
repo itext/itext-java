@@ -24,26 +24,62 @@ package com.itextpdf.io.font;
 
 import java.util.Arrays;
 
+/**
+ * Defines an equality key for a cached font program source.
+ *
+ * <p>
+ * See {@link FontCache}
+ */
 public abstract class FontCacheKey {
 
+    /**
+     * Creates a cache key for a font name.
+     *
+     * @param fontName the font name, possibly {@code null}
+     *
+     * @return a new name based cache key
+     */
     public static FontCacheKey create(String fontName) {
         return new FontCacheStringKey(fontName);
     }
 
+    /**
+     * Creates a cache key for a font collection member identified by name.
+     *
+     * @param fontName the collection source name
+     * @param ttcIndex the collection member index
+     *
+     * @return a new collection member cache key
+     */
     public static FontCacheKey create(String fontName, int ttcIndex) {
         return new FontCacheTtcKey(fontName, ttcIndex);
     }
 
+    /**
+     * Creates a cache key for font program bytes.
+     *
+     * @param fontProgram the font bytes, possibly {@code null}
+     *
+     * @return a new byte based cache key
+     */
     public static FontCacheKey create(byte[] fontProgram) {
         return new FontCacheBytesKey(fontProgram);
     }
 
+    /**
+     * Creates a cache key for a font collection member identified by bytes.
+     *
+     * @param fontProgram the collection bytes, possibly {@code null}
+     * @param ttcIndex    the collection member index
+     *
+     * @return a new collection member cache key
+     */
     public static FontCacheKey create(byte[] fontProgram, int ttcIndex) {
         return new FontCacheTtcKey(fontProgram, ttcIndex);
     }
 
     private static class FontCacheStringKey extends FontCacheKey {
-        private String fontName;
+        private final String fontName;
 
         FontCacheStringKey(String fontName) {
             this.fontName = fontName;
@@ -69,7 +105,7 @@ public abstract class FontCacheKey {
         private byte[] firstFontBytes;
         private int fontLength;
 
-        private int hashcode;
+        private final int hashcode;
 
         FontCacheBytesKey(byte[] fontBytes) {
             if (fontBytes != null) {
@@ -104,8 +140,8 @@ public abstract class FontCacheKey {
     }
 
     private static class FontCacheTtcKey extends FontCacheKey {
-        private FontCacheKey ttcKey;
-        private int ttcIndex;
+        private final FontCacheKey ttcKey;
+        private final int ttcIndex;
 
         FontCacheTtcKey(String fontName, int ttcIndex) {
             this.ttcKey = new FontCacheStringKey(fontName);

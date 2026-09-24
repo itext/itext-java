@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.utils;
 
+import com.itextpdf.commons.utils.FileUtil;
 import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.font.constants.StandardFonts;
@@ -116,7 +117,9 @@ public class CompareToolTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
-        String outPdf = sourceFolder + "tagged_pdf.pdf";
+        String outRefPdf = sourceFolder + "tagged_pdf.pdf";
+        String outPdf = destinationFolder + "tagged_pdf.pdf";
+        FileUtil.copy(outRefPdf, outPdf);
         String cmpPdf = sourceFolder + "cmp_tagged_xml_neg.xml";
         String result = compareTool.compareTagStructureAgainstXml(outPdf, cmpPdf);
         System.out.println("\nRESULT:\n" + result);
@@ -130,7 +133,9 @@ public class CompareToolTest extends ExtendedITextTest {
         CompareTool compareTool = new CompareTool();
         compareTool.setCompareByContentErrorsLimit(10);
         compareTool.setGenerateCompareByContentXmlReport(true);
-        String outPdf = sourceFolder + "tagged_pdf.pdf";
+        String outRefPdf = sourceFolder + "tagged_pdf.pdf";
+        String outPdf = destinationFolder + "tagged_pdf.pdf";
+        FileUtil.copy(outRefPdf, outPdf);
         String cmpXml = sourceFolder + "cmp_tagged_xml_pos.xml";
         String result = compareTool.compareTagStructureAgainstXml(outPdf, cmpXml);
         System.out.println("\nRESULT:\n" + result);
@@ -207,11 +212,11 @@ public class CompareToolTest extends ExtendedITextTest {
     }
 
     @Test
-    public void gsEnvironmentVariableSpecifiedIncorrectlyTest() throws IOException, InterruptedException {
+    public void gsEnvironmentVariableSpecifiedIncorrectlyTest() {
         String outPdf = sourceFolder + "simple_pdf.pdf";
         String cmpPdf = sourceFolder + "cmp_simple_pdf.pdf";
 
-        Exception e = Assertions.assertThrows(CompareTool.CompareToolExecutionException.class,
+        Exception e = Assertions.assertThrows(RuntimeException.class,
                 () -> new CompareTool("unspecified", null).compareVisually(outPdf, cmpPdf, destinationFolder, "diff_")
         );
         Assertions.assertEquals(IoExceptionMessageConstant.GS_ENVIRONMENT_VARIABLE_IS_NOT_SPECIFIED, e.getMessage());
@@ -365,6 +370,24 @@ public class CompareToolTest extends ExtendedITextTest {
     }
 
     @Test
+    public void compareByContentCleansUpOutPdfFromMemoryTest() throws InterruptedException, IOException {
+        String firstPdf = destinationFolder + "compareByContentCleansUpOutPdfFromMemoryTest.pdf";
+        String secondPdf = destinationFolder + "compareByContentCleansUpOutPdfFromMemoryTest2.pdf";
+        PdfDocument firstDocument = new PdfDocument(CompareTool.createTestPdfWriter(firstPdf));
+        PdfDocument secondDocument = new PdfDocument(CompareTool.createTestPdfWriter(secondPdf));
+
+        firstDocument.addNewPage();
+        firstDocument.close();
+
+        secondDocument.addNewPage();
+        secondDocument.close();
+
+        Assertions.assertNotNull(MemoryFirstPdfWriter.get(firstPdf));
+        Assertions.assertNull(new CompareTool().compareByContent(firstPdf, secondPdf, destinationFolder));
+        Assertions.assertNull(MemoryFirstPdfWriter.get(firstPdf));
+    }
+
+    @Test
     public void memoryFirstWriterCmpMissingTest() throws IOException {
         String firstPdf = destinationFolder + "memoryFirstWriterCmpMissingTest.pdf";
         String secondPdf = destinationFolder + "cmp_memoryFirstWriterCmpMissingTest.pdf";
@@ -458,5 +481,16 @@ public class CompareToolTest extends ExtendedITextTest {
         Assertions.assertNotNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0));
         Assertions.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, 0.8));
         Assertions.assertNull(compareTool.compareVisually(outPdf, cmpPdf, outPath, null,  ignoredAreas, 0.4));
+    }
+
+    @Test
+    public void compareToolWithStreamToleranceTest()
+            throws InterruptedException, IOException {
+        String outPdf = sourceFolder + "tolerance1.pdf";
+        String cmpPdf = sourceFolder + "tolerance2.pdf";
+        Assertions.assertNull(new CompareTool().setContentStreamFloatTolerance(0.02f)
+                .compareByContent(outPdf, cmpPdf, destinationFolder));
+
+        Assertions.assertNotNull(new CompareTool().compareByContent(outPdf, cmpPdf, destinationFolder));
     }
 }

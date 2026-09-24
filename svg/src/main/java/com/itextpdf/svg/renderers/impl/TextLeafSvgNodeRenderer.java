@@ -150,6 +150,9 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         text.setStrokeColor(textProperties.getStrokeColor(), textProperties.getStrokeOpacity());
         text.setDashPattern(textProperties.getDashArray(), textProperties.getDashPhase());
         text.setProperty(Property.UNDERLINE, textProperties.getTextDecoration());
+        text.setLineCapStyle(textProperties.getLineCapStyle());
+        text.setLineJoinStyle(textProperties.getLineJoinStyle());
+        text.setMiterLimit(textProperties.getMiterLimit());
     }
 
     private LineRenderer layoutText(SvgDrawContext context) {

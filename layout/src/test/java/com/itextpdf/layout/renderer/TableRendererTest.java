@@ -47,6 +47,7 @@ import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -60,6 +61,11 @@ public class TableRendererTest extends ExtendedITextTest {
     @BeforeAll
     public static void beforeClass() {
         createDestinationFolder(DESTINATION_FOLDER);
+    }
+
+    @AfterAll
+    public static void afterClass() {
+        CompareTool.cleanup(DESTINATION_FOLDER);
     }
 
     @Test
@@ -123,7 +129,7 @@ public class TableRendererTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "nestedTableWithSpecifiedWidth.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_nestedTableWithSpecifiedWidth.pdf";
 
-        PdfDocument pdfDoc = new PdfDocument(new PdfWriter(outFileName));
+        PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFileName));
         Document doc = new Document(pdfDoc);
 
         Table table = new Table(2);
@@ -159,7 +165,7 @@ public class TableRendererTest extends ExtendedITextTest {
         String outFileName = DESTINATION_FOLDER + "collapsedBorderRowspanOnPageSplit.pdf";
         String cmpFileName = SOURCE_FOLDER + "cmp_collapsedBorderRowspanOnPageSplit.pdf";
 
-        try (Document doc = new Document(new PdfDocument(new PdfWriter(outFileName)))) {
+        try (Document doc = new Document(new PdfDocument(CompareTool.createTestPdfWriter(outFileName)))) {
 
             Div dummyDiv = new Div();
             dummyDiv.setBorder(new SolidBorder(ColorConstants.BLACK, 1.5f));
