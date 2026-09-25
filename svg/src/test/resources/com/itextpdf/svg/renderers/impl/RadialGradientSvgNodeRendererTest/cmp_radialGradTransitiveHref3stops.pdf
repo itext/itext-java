@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20260723130215+03'00')/ModDate(D:20260723130215+03'00')/Producer(iText® Core 9.8.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
+<</CreationDate(D:20260929155129+03'00')/ModDate(D:20260929155129+03'00')/Producer(iText® Core 9.9.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 2 0 obj
 <</Count 1/Kids[4 0 R]/Type/Pages>>
@@ -31,41 +31,90 @@ Q
 endstream
 endobj
 7 0 obj
-<</BBox[0 0 150 150]/Length 68/Resources<</Pattern<</P1 8 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 150 150]/Length 47/Resources<</ExtGState<</Gs1 8 0 R>>/XObject<</Fm1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 150 150 re
 W
 n
 q
+q
+/Gs1 gs
+q
+/Fm1 Do
+Q
+Q
+Q
+
+endstream
+endobj
+8 0 obj
+<</SMask<</G 10 0 R/S/Luminosity>>>>
+endobj
+9 0 obj
+<</BBox[0 0 150 150]/Group<</I true/S/Transparency>>/Length 64/Resources<</Pattern<</P1 11 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 150 150 re
+W
+n
 /Pattern cs
 
 /P1 scn
 % rect
 0 0 150 150 re
 f
-Q
 
 endstream
 endobj
-8 0 obj
-<</Matrix[200 0 0 200 0 0]/PatternType 2/Shading 9 0 R/Type/Pattern>>
-endobj
-9 0 obj
-<</ColorSpace/DeviceRGB/Coords[0 0 0 2.56 2.56 2.56]/Domain[0 6.83]/Function 10 0 R/ShadingType 3>>
-endobj
 10 0 obj
-<</Bounds[0.75 1]/Domain[0 6.83]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[11 0 R 12 0 R 13 0 R]>>
+<</BBox[0 0 150 150]/Group<</CS/DeviceGray/S/Transparency>>/Length 64/Resources<</Pattern<</P1 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
+0 0 150 150 re
+W
+n
+/Pattern cs
+
+/P1 scn
+% rect
+0 0 150 150 re
+f
+
+endstream
 endobj
 11 0 obj
-<</C0[1 1 0]/C1[1 0.64706 0]/Domain[0 1]/FunctionType 2/N 1>>
+<</Matrix[200 0 0 200 0 0]/PatternType 2/Shading 13 0 R/Type/Pattern>>
 endobj
 12 0 obj
-<</C0[1 0.64706 0]/C1[0 0.50196 0]/Domain[0 1]/FunctionType 2/N 1>>
+<</Matrix[200 0 0 200 0 0]/PatternType 2/Shading 14 0 R/Type/Pattern>>
 endobj
 13 0 obj
+<</ColorSpace/DeviceRGB/Coords[0 0 0 2.56 2.56 2.56]/Domain[0 6.83]/Function 15 0 R/ShadingType 3>>
+endobj
+14 0 obj
+<</ColorSpace/DeviceGray/Coords[0 0 0 2.56 2.56 2.56]/Domain[0 6.83]/Function 16 0 R/ShadingType 3>>
+endobj
+15 0 obj
+<</Bounds[0.75 1]/Domain[0 6.83]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[17 0 R 18 0 R 19 0 R]>>
+endobj
+16 0 obj
+<</Bounds[0.75 1]/Domain[0 6.83]/Encode[0 1 0 1 0 1]/FunctionType 3/Functions[20 0 R 21 0 R 22 0 R]>>
+endobj
+17 0 obj
+<</C0[1 1 0]/C1[1 0.64706 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+18 0 obj
+<</C0[1 0.64706 0]/C1[0 0.50196 0]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+19 0 obj
 <</C0[0 0.50196 0]/C1[0 0.50196 0]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
+20 0 obj
+<</C0[1]/C1[1]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+21 0 obj
+<</C0[1]/C1[0.5]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
+22 0 obj
+<</C0[0.5]/C1[0.5]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
 xref
-0 14
+0 23
 0000000000 65535 f 
 0000000211 00000 n 
 0000000428 00000 n 
@@ -74,15 +123,24 @@ xref
 0000000015 00000 n 
 0000000479 00000 n 
 0000000647 00000 n 
-0000000841 00000 n 
-0000000926 00000 n 
-0000001041 00000 n 
-0000001159 00000 n 
-0000001237 00000 n 
-0000001321 00000 n 
+0000000845 00000 n 
+0000000897 00000 n 
+0000001120 00000 n 
+0000001351 00000 n 
+0000001438 00000 n 
+0000001525 00000 n 
+0000001641 00000 n 
+0000001758 00000 n 
+0000001876 00000 n 
+0000001994 00000 n 
+0000002072 00000 n 
+0000002156 00000 n 
+0000002240 00000 n 
+0000002304 00000 n 
+0000002370 00000 n 
 trailer
-<</ID [<acc4e4ee0cfee23c431c6fa74ca76ca13fc5f5b9960921255210e5201c0347e3f9a2bf6a9c98ac13bf5ba4ee961572cf4105c20956235a5dfcb8301b403b4ce9><acc4e4ee0cfee23c431c6fa74ca76ca13fc5f5b9960921255210e5201c0347e3f9a2bf6a9c98ac13bf5ba4ee961572cf4105c20956235a5dfcb8301b403b4ce9>]/Info 3 0 R/Root 1 0 R/Size 14>>
-%iText-Core-9.8.0-SNAPSHOT
+<</ID [<bf859ea2d382cbda6cbc666c57dde8fdf6aa139e124971b5e9ddd439fac9aaf3a6e8f5c4304b0ed878101b8b3cd014418bcf8f731a81969e326c021455f65291><bf859ea2d382cbda6cbc666c57dde8fdf6aa139e124971b5e9ddd439fac9aaf3a6e8f5c4304b0ed878101b8b3cd014418bcf8f731a81969e326c021455f65291>]/Info 3 0 R/Root 1 0 R/Size 23>>
+%iText-Core-9.9.0-SNAPSHOT
 startxref
-1405
+2438
 %%EOF

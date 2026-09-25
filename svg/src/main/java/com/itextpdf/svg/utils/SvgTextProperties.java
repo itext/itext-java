@@ -35,7 +35,9 @@ import java.util.List;
  */
 public class SvgTextProperties {
     private Color fillColor = PdfCanvasConstants.DEFAULT_FILL_COLOR;
+    private Color fillOpacityMaskColor = null;
     private Color strokeColor = PdfCanvasConstants.DEFAULT_STROKE_COLOR;
+    private Color strokeOpacityMaskColor = null;
     private float fillOpacity = PdfCanvasConstants.DEFAULT_FILL_OPACITY;
     private float strokeOpacity = PdfCanvasConstants.DEFAULT_STROKE_OPACITY;
     private float[] dashArray = null;
@@ -60,7 +62,9 @@ public class SvgTextProperties {
      */
     public SvgTextProperties(SvgTextProperties textProperties) {
         this.fillColor = textProperties.getFillColor();
+        this.fillOpacityMaskColor = textProperties.getFillOpacityMaskColor();
         this.strokeColor = textProperties.getStrokeColor();
+        this.strokeOpacityMaskColor = textProperties.getStrokeOpacityMaskColor();
         this.fillOpacity = textProperties.getFillOpacity();
         this.strokeOpacity = textProperties.getStrokeOpacity();
         this.dashArray = textProperties.getDashArray();
@@ -157,6 +161,27 @@ public class SvgTextProperties {
     }
 
     /**
+     * Gets the opacity mask color used for text stroke gradients with translucent stops.
+     *
+     * @return stroke opacity mask color
+     */
+    public Color getStrokeOpacityMaskColor() {
+        return strokeOpacityMaskColor;
+    }
+
+    /**
+     * Sets the opacity mask color used for text stroke gradients with translucent stops.
+     *
+     * @param strokeOpacityMaskColor stroke opacity mask color to set
+     *
+     * @return this same {@link SvgTextProperties} instance
+     */
+    public SvgTextProperties setStrokeOpacityMaskColor(Color strokeOpacityMaskColor) {
+        this.strokeOpacityMaskColor = strokeOpacityMaskColor;
+        return this;
+    }
+
+    /**
      * Gets text fill color.
      *
      * @return fill color
@@ -174,6 +199,27 @@ public class SvgTextProperties {
      */
     public SvgTextProperties setFillColor(Color fillColor) {
         this.fillColor = fillColor;
+        return this;
+    }
+
+    /**
+     * Gets the opacity mask color used for text fill gradients with translucent stops.
+     *
+     * @return fill opacity mask color
+     */
+    public Color getFillOpacityMaskColor() {
+        return fillOpacityMaskColor;
+    }
+
+    /**
+     * Sets the opacity mask color used for text fill gradients with translucent stops.
+     *
+     * @param fillOpacityMaskColor fill opacity mask color to set
+     *
+     * @return this same {@link SvgTextProperties} instance
+     */
+    public SvgTextProperties setFillOpacityMaskColor(Color fillOpacityMaskColor) {
+        this.fillOpacityMaskColor = fillOpacityMaskColor;
         return this;
     }
 

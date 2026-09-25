@@ -121,8 +121,6 @@ public abstract class AbstractGradientBuilder<T> implements IGradientBuilder {
     /**
      * {@inheritDoc}
      */
-    // TODO: DEVSIX-4136 the document argument would be required for opaque gradients
-    //  (as we would need to create a mask form xObject)
     @Override
     public Color buildColor(Rectangle targetBoundingBox, AffineTransform contextTransform, PdfDocument document) {
         Tuple2<T[], AffineTransform> gradientVectorWithTransform = getGradientVectorWithTransform(

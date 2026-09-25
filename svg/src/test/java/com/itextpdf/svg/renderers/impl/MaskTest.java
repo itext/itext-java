@@ -88,7 +88,6 @@ public class MaskTest extends SvgIntegrationTest {
   }
 
   @Test
-  //TODO DEVSIX-4136 update after gradient opacity support implementation
   public void maskWithGradientWithStopOpacity() throws IOException, InterruptedException {
     convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "maskWithGradientWithStopOpacity", properties);
   }

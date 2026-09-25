@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-labelledby="title description">
+  <title id="title">Gradient landscape with a masked glow</title>
+  <desc id="description">A colorful gradient background revealed through a soft circular mask.</desc>
+
+  <defs>
+    <linearGradient id="skyGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6d5dfc"/>
+      <stop offset="50%" stop-color="#df4fad"/>
+      <stop offset="100%" stop-color="#ffb347"/>
+    </linearGradient>
+
+    <radialGradient id="glowGradient" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#fffbd5"/>
+      <stop offset="55%" stop-color="#7afcff"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </radialGradient>
+
+    <radialGradient id="maskFade">
+      <stop offset="0%" stop-color="white"/>
+      <stop offset="70%" stop-color="white"/>
+      <stop offset="100%" stop-color="black"/>
+    </radialGradient>
+
+    <mask id="softCircleMask">
+      <rect width="800" height="500" fill="black"/>
+      <circle cx="400" cy="245" r="190" fill="url(#maskFade)"/>
+    </mask>
+  </defs>
+
+  <rect width="800" height="500" fill="#111827"/>
+  <rect x="35" y="35" width="730" height="430" rx="36" fill="url(#skyGradient)"/>
+
+  <g>
+    <rect x="150" y="30" width="500" height="430"
+          fill="url(#glowGradient)" mask="url(#softCircleMask)"/>
+    <path d="M145 355 C235 255 315 405 405 305 S590 240 675 350 V475 H145 Z"
+          fill="#0f172a" opacity="0.68"/>
+    <circle cx="330" cy="205" r="34" fill="#ffffff" opacity="0.8"/>
+  </g>
+
+  <text x="400" y="430" fill="#ffffff" font-size="28"
+        font-weight="700" text-anchor="middle" letter-spacing="4">GRADIENT + MASK</text>
+</svg>

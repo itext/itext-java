@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <!-- Translucent gradient: stop-opacity < 1 triggers the buggy
+         deferred-paint path in ImageSvgNodeRenderer -->
+    <linearGradient id="translucentGradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="red" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="blue" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- fill is inherited by the <image> below, but fill/stroke should
+       have NO effect on raster image geometry -->
+  <g fill="url(#translucentGradient)">
+    <image x="0" y="0" width="200" height="200"
+           href="red-square.png"/>
+  </g>
+</svg>

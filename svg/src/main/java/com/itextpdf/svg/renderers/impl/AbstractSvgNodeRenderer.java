@@ -27,13 +27,17 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceGray;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.NoninvertibleTransformException;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.extgstate.PdfExtGState;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.kernel.utils.ColorUtils;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.styledxmlparser.css.CommonCssConstants;
@@ -82,6 +86,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     boolean doStroke = false;
 
     private ISvgNodeRenderer parent;
+    private FillProperties fillProperties;
+    private StrokeProperties strokeProperties;
 
     @Override
     public void setParent(ISvgNodeRenderer parent) {
@@ -152,7 +158,6 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             }
 
             String transformString = this.attributesAndStyles.get(SvgConstants.Attributes.TRANSFORM);
-
             if (transformString != null && !transformString.isEmpty()) {
                 AffineTransform transformation = TransformUtils.parseTransform(transformString);
                 if (!transformation.isIdentity()) {
@@ -168,7 +173,10 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             }
         }
 
-        if (!drawWithMask(context) && !drawInClipPath(context)) {
+        setFillAndStrokePropertiesIfNeeded(context);
+
+        if (!drawWithMask(context) && !drawInClipPath(context)
+                && !drawOpacityMask(context, fillProperties, strokeProperties)) {
             preDraw(context);
             doDraw(context);
             postDraw(context);
@@ -387,14 +395,13 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @param context the svg draw context
      */
     void postDraw(SvgDrawContext context) {
+        if (this instanceof ISvgTextNodeRenderer) {
+            // Text rendering is performed via layout, which takes the responsibility for clipping, filling, stroking
+            return;
+        }
+
         if (this.attributesAndStyles != null) {
             PdfCanvas currentCanvas = context.getCurrentCanvas();
-
-            if (this instanceof ISvgTextNodeRenderer) {
-                // Text rendering is performed via layout, which takes the responsibility for clipping, filling, stroking
-                return;
-            }
-
             // fill-rule
             if (getParentClipPath() == null) {
                 if (doFill && canElementFill()) {
@@ -456,11 +463,8 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
      * @param context the svg draw context
      */
     void preDraw(SvgDrawContext context) {
-        if (this.attributesAndStyles != null && getParentClipPath() == null) {
-            FillProperties fillProperties = calculateFillProperties(context);
-            StrokeProperties strokeProperties = calculateStrokeProperties(context);
-            applyFillAndStrokeProperties(fillProperties, strokeProperties, context);
-        }
+        setFillAndStrokePropertiesIfNeeded(context);
+        applyFillAndStrokeProperties(fillProperties, strokeProperties, context);
     }
 
     void applyFillAndStrokeProperties(FillProperties fillProperties, StrokeProperties strokeProperties,
@@ -471,7 +475,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             Color fillColor = context.isRenderingLuminosityMask()
                     ? ColorUtils.toDeviceGrayForSvgLuminanceMode(fillProperties.getColor()) : fillProperties.getColor();
             currentCanvas.setFillColor(fillColor);
-            if (!CssUtils.compareFloats(fillProperties.getOpacity(), 1f)) {
+            if (!CssUtils.compareFloats(fillProperties.getOpacity(), 1F)) {
                 opacityGraphicsState.setFillOpacity(fillProperties.getOpacity());
             }
         }
@@ -495,7 +499,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 currentCanvas.setMiterLimit(strokeProperties.getMiterLimit());
             }
 
-            if (!CssUtils.compareFloats(strokeProperties.getOpacity(), 1f)) {
+            if (!CssUtils.compareFloats(strokeProperties.getOpacity(), 1F)) {
                 // TODO DEVSIX-8854 Draw SVG elements with transparent stroke in 2 steps
                 opacityGraphicsState.setStrokeOpacity(strokeProperties.getOpacity());
             }
@@ -555,6 +559,40 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         return SvgCssUtils.parseAbsoluteLength(this, length, percentBaseValue, defaultValue, context);
     }
 
+    /**
+     * Draws this element in a clipped context, routing through the deferred opacity path if needed.
+     *
+     * @param context the SVG draw context
+     */
+    void drawAsClippedElement(SvgDrawContext context) {
+        // Exclude container renderers from deferred paint handling. Branch renderers (like <g> or <use>) should not
+        // create soft masks themselves.
+        // Also exclude images as fill/stroke (and opacity mask) are unapplicable for them.
+        final boolean renderOpacityMask = !(this instanceof AbstractBranchSvgNodeRenderer) &&
+                !(this instanceof UseSvgNodeRenderer) &&
+                !(this instanceof ImageSvgNodeRenderer) &&
+                !(this instanceof ISvgTextNodeRenderer) &&
+                ((fillProperties != null && fillProperties.hasOpacityMaskColor())
+                || (strokeProperties != null && strokeProperties.hasOpacityMaskColor()));
+
+        if (renderOpacityMask) {
+            renderDeferredPaints(context, fillProperties, strokeProperties);
+        } else {
+            preDraw(context);
+            doDraw(context);
+            postDraw(context);
+        }
+    }
+
+    private void setFillAndStrokePropertiesIfNeeded(SvgDrawContext context) {
+        if (fillProperties == null && strokeProperties == null && getParentClipPath() == null) {
+            fillProperties = calculateFillProperties(context);
+            strokeProperties = calculateStrokeProperties(context);
+        }
+        doFill = fillProperties != null && canElementFill();
+        doStroke = strokeProperties != null;
+    }
+
     private TransparentColor getColorFromAttributeValue(SvgDrawContext context, String rawColorValue,
             float objectBoundingBoxMargin, float parentOpacity) {
         if (rawColorValue == null) {
@@ -570,12 +608,12 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         }
         String tokenValue = token.getValue();
         boolean isUrlInvalid = false;
+        boolean paintServerResolvedWithoutColor = false;
         if (tokenValue.startsWith("url(") && tokenValue.endsWith(")")) {
             String normalizedName = tokenValue.substring(4, tokenValue.length() - 1).trim();
             normalizedName = CssUtils.extractUnquotedString(normalizedName);
             if (normalizedName.startsWith("#")) {
                 Color resolvedColor = null;
-                float resolvedOpacity = 1;
                 normalizedName = normalizedName.substring(1);
                 ISvgNodeRenderer colorRenderer = context.getNamedObject(normalizedName);
                 if (colorRenderer instanceof AbstractSvgNodeRenderer
@@ -589,9 +627,11 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                     Rectangle objectBoundingBox = getObjectBoundingBox(context);
                     resolvedColor = ((ISvgPaintServer) colorRenderer).createColor(
                             context, objectBoundingBox, objectBoundingBoxMargin, parentOpacity);
+                    paintServerResolvedWithoutColor = colorRenderer instanceof AbstractGradientSvgNodeRenderer
+                            && resolvedColor == null;
                 }
                 if (resolvedColor != null) {
-                    return new TransparentColor(resolvedColor, resolvedOpacity);
+                    return new TransparentColor(resolvedColor);
                 }
                 if (colorRenderer == null) {
                     isUrlInvalid = true;
@@ -612,13 +652,13 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             String value = token.getValue();
             if (!SvgConstants.Values.NONE.equalsIgnoreCase(value)) {
                 if (!CssDeclarationValidationMaster.checkDeclaration(new CssDeclaration(CommonCssConstants.COLOR, value))) {
-                    return new TransparentColor(new DeviceRgb(0.0f, 0.0f, 0.0f), 1.0f);
+                    return new TransparentColor(new DeviceRgb(0.0F, 0.0F, 0.0F), 1.0F);
                 }
                 TransparentColor result = CssDimensionParsingUtils.parseColor(value);
                 return new TransparentColor(result.getColor(), result.getOpacity() * parentOpacity);
             }
         }
-        if (isUrlInvalid) {
+        if (isUrlInvalid || paintServerResolvedWithoutColor) {
             return new TransparentColor(ColorConstants.BLACK, 0.0F);
         }
         return null;
@@ -631,7 +671,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         if (opacityStr != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityStr)) {
             float opacityValue;
             if (CssTypesValidationUtils.isPercentageValue(opacityStr)) {
-                opacityValue = CssDimensionParsingUtils.parseRelativeValue(opacityStr, 1f);
+                opacityValue = CssDimensionParsingUtils.parseRelativeValue(opacityStr, 1F);
             } else if (CssTypesValidationUtils.isNumber(opacityStr)) {
                 opacityValue = (float) CssDimensionParsingUtils.parseFloat(opacityStr);
             } else {
@@ -704,7 +744,7 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
     }
 
     private float getOpacity() {
-        float result = 1f;
+        float result = 1F;
 
         String opacityValue = getAttribute(SvgConstants.Attributes.OPACITY);
         if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
@@ -781,20 +821,161 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
             if (strokeWidth > 0) {
                 doStroke = true;
-                return new StrokeProperties(strokeColor, strokeWidth, strokeOpacity, lineDashParameters, lineCap,
-                        lineJoin, miterLimit);
+                return new StrokeProperties(strokeColor, strokeWidth, strokeOpacity,
+                        lineDashParameters, lineCap, lineJoin, miterLimit);
             }
         }
         return null;
     }
 
+    private boolean drawOpacityMask(SvgDrawContext context, FillProperties fillProperties, StrokeProperties strokeProperties) {
+        // Exclude container renderers from deferred paint handling. Branch renderers (like <g> or <use>) should not
+        // create soft masks themselves.
+        // Also exclude images as fill/stroke (and opacity mask) are unapplicable for them.
+        // Text is drawn via layout so text elements apply their opacity masks themselves when the text chunk is drawn
+        if (this instanceof AbstractBranchSvgNodeRenderer || this instanceof UseSvgNodeRenderer ||
+                this instanceof ImageSvgNodeRenderer || this instanceof ISvgTextNodeRenderer) {
+            return false;
+        }
+
+        final boolean renderOpacityMask = (fillProperties != null && fillProperties.hasOpacityMaskColor())
+                || (strokeProperties != null && strokeProperties.hasOpacityMaskColor());
+
+        if (renderOpacityMask) {
+            renderDeferredPaints(context, fillProperties, strokeProperties);
+        }
+
+        return renderOpacityMask;
+    }
+
+    private void renderDeferredPaints(SvgDrawContext context, FillProperties fillProperties,
+            StrokeProperties strokeProperties) {
+        if (fillProperties != null && canElementFill()) {
+            renderSinglePaintOperation(context, fillProperties, null);
+        }
+        if (strokeProperties != null) {
+            renderSinglePaintOperation(context, null, strokeProperties);
+        }
+    }
+
+    private void renderSinglePaintOperation(SvgDrawContext context, FillProperties fillProperties,
+            StrokeProperties strokeProperties) {
+        if (fillProperties == null && strokeProperties == null) {
+            return;
+        }
+
+        PdfCanvas currentCanvas = context.getCurrentCanvas();
+        Rectangle drawArea = getDrawAreaForOpacityMask(context, strokeProperties);
+        PdfFormXObject contentForm = createForm(drawArea, context, currentCanvas,
+                createOpaqueContentFill(fillProperties), createOpaqueContentStroke(strokeProperties), false);
+        PdfFormXObject opacityMaskForm = createForm(drawArea, context, currentCanvas,
+                createOpacityMaskFill(fillProperties), createOpacityMaskStroke(strokeProperties), true);
+
+        currentCanvas.saveState();
+        currentCanvas.setExtGState(MaskSvgNodeRenderer.createSoftMaskExtGState(opacityMaskForm, PdfName.Luminosity));
+        currentCanvas.addXObjectAt(contentForm, drawArea.getX(), drawArea.getY());
+        currentCanvas.restoreState();
+    }
+
+    private Rectangle getDrawAreaForOpacityMask(SvgDrawContext context, StrokeProperties strokeProperties) {
+        Rectangle objectBoundingBox = getObjectBoundingBox(context);
+        if (objectBoundingBox == null) {
+            return null;
+        }
+        float margin = 0F;
+        if (strokeProperties != null) {
+            margin = strokeProperties.getWidth() / 2F;
+            if (strokeProperties.getLineJoinStyle() == PdfCanvasConstants.LineJoinStyle.MITER) {
+                margin *= strokeProperties.getMiterLimit();
+            }
+        }
+        return new Rectangle(objectBoundingBox.getX() - margin, objectBoundingBox.getY() - margin,
+                objectBoundingBox.getWidth() + 2 * margin, objectBoundingBox.getHeight() + 2 * margin);
+    }
+
+    private PdfFormXObject createForm(Rectangle drawArea, SvgDrawContext context, PdfCanvas currentCanvas,
+            FillProperties fillProperties, StrokeProperties strokeProperties, boolean isOpacityMask) {
+        PdfFormXObject form = new PdfFormXObject(drawArea);
+        PdfTransparencyGroup group = new PdfTransparencyGroup();
+        if (isOpacityMask) {
+            group.setColorSpace(PdfName.DeviceGray);
+        } else {
+            group.setIsolated(true);
+        }
+        form.setGroup(group);
+
+        PdfCanvas formCanvas = new PdfCanvas(form, currentCanvas.getDocument());
+        context.pushCanvas(formCanvas);
+        try {
+            formCanvas.rectangle(drawArea);
+            formCanvas.clip();
+            formCanvas.endPath();
+            drawForm(context, fillProperties, strokeProperties);
+        } finally {
+            context.popCanvas();
+        }
+        return form;
+    }
+
+    private void drawForm(SvgDrawContext context, FillProperties fillProperties, StrokeProperties strokeProperties) {
+        AbstractSvgNodeRenderer copy = (AbstractSvgNodeRenderer) createDeepCopy();
+        copy.setParent(getParent());
+        copy.fillProperties = fillProperties;
+        copy.strokeProperties = strokeProperties;
+        // Remove clip-path and transform from the form copy because the canvas already has the clip applied
+        // and the form content is rendered directly in the form coordinates
+        if (copy.attributesAndStyles != null) {
+            copy.attributesAndStyles.remove(SvgConstants.Attributes.CLIP_PATH);
+            copy.attributesAndStyles.remove(SvgConstants.Attributes.TRANSFORM);
+        }
+        copy.draw(context);
+    }
+
+    private static FillProperties createOpaqueContentFill(FillProperties fillProperties) {
+        return fillProperties == null ? null : new FillProperties(1F, fillProperties.getColor());
+    }
+
+    private static StrokeProperties createOpaqueContentStroke(StrokeProperties strokeProperties) {
+        return strokeProperties == null ? null : new StrokeProperties(strokeProperties.getColor(),
+                strokeProperties.getWidth(), 1F, strokeProperties.getLineDashParameters(),
+                strokeProperties.getLineCapStyle(), strokeProperties.getLineJoinStyle(),
+                strokeProperties.getMiterLimit());
+    }
+
+    private static FillProperties createOpacityMaskFill(FillProperties fillProperties) {
+        if (fillProperties == null) {
+            return null;
+        }
+        Color opacityColor = fillProperties.hasOpacityMaskColor() ? fillProperties.getOpacityMaskColor()
+                : new DeviceGray(fillProperties.getOpacity());
+        return new FillProperties(1F, opacityColor);
+    }
+
+    private static StrokeProperties createOpacityMaskStroke(StrokeProperties strokeProperties) {
+        if (strokeProperties == null) {
+            return null;
+        }
+        Color opacityColor = strokeProperties.hasOpacityMaskColor() ? strokeProperties.getOpacityMaskColor()
+                : new DeviceGray(strokeProperties.getOpacity());
+        return new StrokeProperties(opacityColor, strokeProperties.getWidth(), 1F,
+                strokeProperties.getLineDashParameters(), strokeProperties.getLineCapStyle(),
+                strokeProperties.getLineJoinStyle(), strokeProperties.getMiterLimit());
+    }
+
     static final class FillProperties {
         final float opacity;
         final Color color;
+        final Color opacityMaskColor;
 
         public FillProperties(float opacity, Color color) {
             this.opacity = opacity;
-            this.color = color;
+            if (color instanceof GradientColor) {
+                this.color = ((GradientColor) color).getColor();
+                this.opacityMaskColor = ((GradientColor) color).getOpacityColor();
+            } else {
+                this.color = color;
+                this.opacityMaskColor = null;
+            }
         }
 
         public float getOpacity() {
@@ -804,12 +985,21 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
         public Color getColor() {
             return color;
         }
+
+        public Color getOpacityMaskColor() {
+            return opacityMaskColor;
+        }
+
+        public boolean hasOpacityMaskColor() {
+            return opacityMaskColor != null;
+        }
     }
 
     static final class StrokeProperties {
         final Color color;
         final float width;
         final float opacity;
+        final Color opacityMaskColor;
         final SvgStrokeParameterConverter.PdfLineDashParameters lineDashParameters;
         final int lineCapStyle;
         final int lineJoinStyle;
@@ -819,7 +1009,13 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
                 SvgStrokeParameterConverter.PdfLineDashParameters lineDashParameters, int lineCapStyle,
                 int lineJoinStyle, float miterLimit) {
 
-            this.color = color;
+            if (color instanceof GradientColor) {
+                this.color = ((GradientColor) color).getColor();
+                this.opacityMaskColor = ((GradientColor) color).getOpacityColor();
+            } else {
+                this.color = color;
+                this.opacityMaskColor = null;
+            }
             this.width = width;
             this.opacity = opacity;
             this.lineDashParameters = lineDashParameters;
@@ -838,6 +1034,14 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
 
         float getOpacity() {
             return opacity;
+        }
+
+        Color getOpacityMaskColor() {
+            return opacityMaskColor;
+        }
+
+        boolean hasOpacityMaskColor() {
+            return opacityMaskColor != null;
         }
 
         PdfLineDashParameters getLineDashParameters() {

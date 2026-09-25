@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="260" viewBox="0 0 600 260">
+  <defs>
+    <linearGradient id="linearOpaque" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff0000"/>
+      <stop offset="50%" stop-color="#00aa00"/>
+      <stop offset="100%" stop-color="#0000ff"/>
+    </linearGradient>
+    <linearGradient id="linearTransparent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff0000" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#00aa00" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#0000ff" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="600" height="260" fill="#e0e0e0"/>
+  <rect x="20" y="20" width="560" height="100" fill="#ffffff"/>
+  <rect x="20" y="140" width="560" height="100" fill="#303030"/>
+
+  <g font-family="Courier" font-size="64" font-weight="bold">
+    <text x="40" y="95" fill="url(#linearOpaque)">Linear</text>
+    <text x="40" y="215" fill="url(#linearTransparent)">Linear</text>
+    <text x="305" y="215" fill="#ffffff">A<tspan fill="url(#linearTransparent)">BC</tspan>D</text>
+  </g>
+</svg>

@@ -24,8 +24,8 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.colors.WebColors;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.styledxmlparser.css.util.CssDimensionParsingUtils;
+import com.itextpdf.styledxmlparser.css.util.CssTypesValidationUtils;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.SvgConstants.Attributes;
 import com.itextpdf.svg.SvgConstants.Tags;
@@ -83,9 +83,14 @@ public class StopSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implement
         Float result = null;
         String opacityValue = getAttribute(Tags.STOP_OPACITY);
         if (opacityValue != null && !SvgConstants.Values.NONE.equalsIgnoreCase(opacityValue)) {
-            result = CssDimensionParsingUtils.parseFloat(opacityValue);
+            opacityValue = opacityValue.trim();
+            if (CssTypesValidationUtils.isPercentageValue(opacityValue)) {
+                result = CssDimensionParsingUtils.parseRelativeValue(opacityValue, 1F);
+            } else {
+                result = CssDimensionParsingUtils.parseFloat(opacityValue);
+            }
         }
-        return result != null ? result.floatValue() : 1f;
+        return result != null ? result.floatValue() : 1F;
     }
 
     @Override

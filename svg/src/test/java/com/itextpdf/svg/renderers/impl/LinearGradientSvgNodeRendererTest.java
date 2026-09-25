@@ -281,8 +281,6 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectMultipleStopsWithSameOffsetRepeat");
     }
 
-    // TODO: DEVSIX-4136 update cmp_ after fix
-    //  (opacity is not implemented. No stops defines no color, i.e. transparent color or black with 100% opacity)
     @Test
     public void rectNoStopsTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "rectNoStops");
@@ -671,5 +669,75 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void lowerCaseGradientUnitsTest() throws java.io.IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "lowerCaseGradientUnits");
+    }
+
+    @Test
+    public void gradientWithStrokeOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "gradientWithStrokeOpacity");
+    }
+
+    @Test
+    public void gradientFillAndStrokeOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "gradientFillAndStrokeOpacity");
+    }
+
+    @Test
+    public void markerGradientStopOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerGradientStopOpacity");
+    }
+
+    @Test
+    public void textGradientStopOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textGradientStopOpacity");
+    }
+
+    @Test
+    public void linearGradientOpacityTransformTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "linearGradientOpacityTransform");
+    }
+
+    @Test
+    public void clipPathWithGradientOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "clipPathWithGradientOpacity");
+    }
+
+    @Test
+    public void inheritedGradientOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "inheritedGradientOpacity");
+    }
+
+    @Test
+    public void textLinearGradientOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textLinearGradientOpacity");
+    }
+
+    @Test
+    public void textGradientStrokeOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textGradientStrokeOpacity");
+    }
+
+    @Test
+    public void textGradientFillAndStrokeOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textGradientFillAndStrokeOpacity");
+    }
+
+    @Test
+    public void tspanGradientOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "tspanGradientOpacity");
+    }
+
+    @Test
+    public void clippedGradientTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "clippedGradient");
+    }
+
+    @Test
+    public void imageWithGradientTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "imageWithGradient");
+    }
+
+    @Test
+    public void gradientPercentStopOpacityTest() throws java.io.IOException, InterruptedException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "gradientPercentStopOpacity");
     }
 }

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
+  <defs>
+    <linearGradient id="fillGradient" gradientUnits="userSpaceOnUse"
+                    x1="40" y1="40" x2="200" y2="120">
+      <stop offset="0%" stop-color="cyan" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="blue" stop-opacity="0.9"/>
+    </linearGradient>
+
+    <linearGradient id="strokeGradient" gradientUnits="userSpaceOnUse"
+                    x1="40" y1="80" x2="200" y2="80">
+      <stop offset="0%" stop-color="#80008080" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#ff000080" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#FFA50080" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="40" y="40" width="160" height="80" rx="16"
+        fill="url(#fillGradient)"
+        stroke="url(#strokeGradient)"
+        stroke-width="12"/>
+</svg>

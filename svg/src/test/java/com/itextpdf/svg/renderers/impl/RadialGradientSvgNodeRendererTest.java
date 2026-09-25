@@ -105,8 +105,6 @@ public class RadialGradientSvgNodeRendererTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidSpreadMethod");
     }
 
-    // TODO: DEVSIX-4136 update cmp_ after fix
-    //  (opacity is not implemented. No stops defines no color, i.e. transparent color or black with 100% opacity)
     @Test
     public void noStopsTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "noStops");
@@ -406,19 +404,16 @@ public class RadialGradientSvgNodeRendererTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "radialGradXlinkNegativeOffset");
     }
 
-    // TODO: DEVSIX-4136 change cmp when gradient opacity is added
     @Test
     public void radialGradXlinkNegativeOpacityTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "radialGradXlinkNegativeOpacity");
     }
 
-    // TODO: DEVSIX-4136 change cmp when gradient opacity is added
     @Test
     public void radialGradXlinkOpacityTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "radialGradXlinkOpacity");
     }
 
-    // TODO: DEVSIX-4136 change cmp when gradient opacity is added
     @Test
     public void radialGradXlinkOpacity2Test() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "radialGradXlinkOpacity2");
@@ -444,13 +439,11 @@ public class RadialGradientSvgNodeRendererTest extends SvgIntegrationTest {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "radialGradXlinkHreOffsetSwap");
     }
 
-    // TODO: DEVSIX-4136 change cmp when gradient opacity is added
     @Test
     public void radialGradTransitiveHrefOpacityTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "radialGradTransitiveHrefOpacity");
     }
 
-    // TODO: DEVSIX-4136 change cmp when gradient opacity is added
     @Test
     public void radialGradTransitiveHrefNegativeOpacityTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "radialGradTransitiveHrefNegativeOpacity");
@@ -647,5 +640,20 @@ public class RadialGradientSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void lowerCaseGradientUnitsTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "lowerCaseGradientUnits");
+    }
+
+    @Test
+    public void radialGradientStrokeTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "radialGradientStroke");
+    }
+
+    @Test
+    public void elementWithGradientAndMaskTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "elementWithGradientAndMask");
+    }
+
+    @Test
+    public void textRadialGradientOpacityTest() throws IOException, InterruptedException, java.io.IOException {
+        convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "textRadialGradientOpacity");
     }
 }

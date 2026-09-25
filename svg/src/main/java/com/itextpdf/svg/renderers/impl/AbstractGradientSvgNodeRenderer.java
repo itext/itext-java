@@ -80,20 +80,45 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
         // createColor is an entry point for gradients when drawing svg, so resolving href values here
         TemplateResolveUtils.resolve(this, context);
 
-        IGradientBuilder builder =
-                createGradientBuilderAndConfigureGeometry(context, objectBoundingBox);
+        IGradientBuilder builder = createGradientBuilderAndConfigureGeometry(context, objectBoundingBox);
         if (builder == null) {
             return null;
         }
-
-        configureGradientBuilderStopsAndSpread(builder, parentOpacity);
+        for (GradientColorStop stopColor : parseStops()) {
+            builder.addStopColor(stopColor);
+        }
+        builder.setSpread(parseSpreadMethod());
         builder.setSvgLuminanceMode(context.isRenderingLuminosityMask());
 
-        return builder.buildColor(
+        Color mainColor = builder.buildColor(
                 objectBoundingBox.applyMargins(objectBoundingBoxMargin, objectBoundingBoxMargin,
                         objectBoundingBoxMargin, objectBoundingBoxMargin, true),
                 context.getCurrentCanvasTransform(), context.getCurrentCanvas().getDocument()
         );
+
+        // Check if there is an opacity
+        if (!hasStopOpacity(parentOpacity)) {
+            return mainColor;
+        }
+
+        IGradientBuilder opacityColorBuilder = createGradientBuilderAndConfigureGeometry(context, objectBoundingBox);
+        if (opacityColorBuilder == null) {
+            return null;
+        }
+
+        for (GradientColorStop stopColor : parseOpacityStops(parentOpacity)) {
+            opacityColorBuilder.addStopColor(stopColor);
+        }
+        opacityColorBuilder.setSpread(parseSpreadMethod());
+        opacityColorBuilder.setSvgLuminanceMode(true);
+
+        Color opacityColor = opacityColorBuilder.buildColor(
+                objectBoundingBox.applyMargins(objectBoundingBoxMargin, objectBoundingBoxMargin,
+                        objectBoundingBoxMargin, objectBoundingBoxMargin, true),
+                context.getCurrentCanvasTransform(), context.getCurrentCanvas().getDocument()
+        );
+
+        return new GradientColor(mainColor, opacityColor);
     }
 
     /**
@@ -193,8 +218,6 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
         return gradientTransform;
     }
 
-
-
     /**
      * Construct a list of child stop renderers
      * @return a list of {@link StopSvgNodeRenderer} elements that represents the child stop values
@@ -243,29 +266,62 @@ public abstract class AbstractGradientSvgNodeRenderer extends AbstractBranchSvgN
         }
     }
 
-    private void configureGradientBuilderStopsAndSpread(IGradientBuilder builder, float parentOpacity) {
-        for (GradientColorStop stopColor : parseStops(parentOpacity)) {
-            builder.addStopColor(stopColor);
+    private boolean hasStopOpacity(float parentOpacity) {
+        for (StopSvgNodeRenderer stopRenderer : getChildStopRenderers()) {
+            final float stopOpacity = getStopOpacity(stopRenderer, parentOpacity);
+            if (Float.compare(stopOpacity, 1F) < 0) {
+                return true;
+            }
         }
-        builder.setSpread(parseSpreadMethod());
+        return false;
     }
 
     /**
      * Parses gradient stop children into a normalized list of color stops.
      *
-     * @param parentOpacity parent element opacity; currently reserved for future stop opacity support
      * @return a list of parsed and normalized {@link GradientColorStop} instances
      */
-    // TODO: DEVSIX-4136 opacity is not supported now.
-    //  The opacity should be equal to 'parentOpacity * stopRenderer.getStopOpacity() * stopColor[3]'
-    private List<GradientColorStop> parseStops(float parentOpacity) {
-        List<GradientColorStop> stopsList = new ArrayList<>();
-        for (StopSvgNodeRenderer stopRenderer : getChildStopRenderers()) {
+    private List<GradientColorStop> parseStops() {
+        List<StopSvgNodeRenderer> stopRenderers = getChildStopRenderers();
+        List<GradientColorStop> stopsList = new ArrayList<>(stopRenderers.size());
+        for (StopSvgNodeRenderer stopRenderer : stopRenderers) {
             float[] stopColor = stopRenderer.getStopColor();
             double offset = stopRenderer.getOffset();
             stopsList.add(new GradientColorStop(stopColor, offset, OffsetType.RELATIVE));
         }
+        return normalizeStops(stopsList);
+    }
 
+    private List<GradientColorStop> parseOpacityStops(float parentOpacity) {
+        List<StopSvgNodeRenderer> stopRenderers = getChildStopRenderers();
+        List<GradientColorStop> stopsList = new ArrayList<>(stopRenderers.size());
+        for (StopSvgNodeRenderer stopRenderer : stopRenderers) {
+            float stopOpacity = getStopOpacity(stopRenderer, parentOpacity);
+            double offset = stopRenderer.getOffset();
+            stopsList.add(new GradientColorStop(stopOpacity, offset, OffsetType.RELATIVE));
+        }
+        return normalizeStops(stopsList);
+    }
+
+    private static float getStopOpacity(StopSvgNodeRenderer stopRenderer, float parentOpacity) {
+        // From https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/stop-opacity
+        // The opacity value used for the gradient calculation is the product of the value of stop-opacity
+        // and the opacity of the value of the stop-color attribute. For stop-color values that don't include
+        // explicit opacity information, the opacity is treated as 1.
+        // And from https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/opacity
+        // opacity is applied to whole objects or groups, and is more like a post-processing operation
+        // on the rendered image of the object or group. Therefore, when you have both opacity
+        // and the other opacity attributes in the same area, they will be overlaid on top of each other
+        // and cause the opacity to be multiplied.
+        float[] stopColor = stopRenderer.getStopColor();
+        float colorOpacity = stopColor.length > 3 ? stopColor[3] : 1F;
+        float normalizedParentOpacity = Math.max(0F, Math.min(1F, parentOpacity));
+        float stopOpacity = Math.max(0F, Math.min(1F, stopRenderer.getStopOpacity()));
+        colorOpacity = Math.max(0F, Math.min(1F, colorOpacity));
+        return normalizedParentOpacity * stopOpacity * colorOpacity;
+    }
+
+    private static List<GradientColorStop> normalizeStops(List<GradientColorStop> stopsList) {
         if (!stopsList.isEmpty()) {
             GradientColorStop firstStop = stopsList.get(0);
             if (firstStop.getOffset() > 0) {

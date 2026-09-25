@@ -111,9 +111,12 @@ public class ClipPathSvgNodeRenderer extends AbstractBranchSvgNodeRenderer {
         // Therefore, save clippingElementTransform and restore it after drawing the clipped renderer.
         AffineTransform originalClippingElementTransform = new AffineTransform(context.getClippingElementTransform());
         context.resetClippingElementTransform();
-        clippedRenderer.preDraw(context);
-        clippedRenderer.doDraw(context);
-        clippedRenderer.postDraw(context);
+
+        // Route clipped painting through the deferred opacity path when needed, without recursively
+        // reentering clip path handling. The clippedRenderer's fill/stroke properties are already
+        // calculated from the draw() method before drawInClipPath was called.
+        clippedRenderer.drawAsClippedElement(context);
+
         context.resetClippingElementTransform();
         context.getClippingElementTransform().concatenate(originalClippingElementTransform);
 

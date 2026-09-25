@@ -49,19 +49,16 @@ public class WordTreesChartsTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO update cmp file after DEVSIX-4136 will be fixed (opacity gradient)
     public void wordTrees2Chart() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "wordTrees2Chart", PageSize.A1);
     }
 
     @Test
-    //TODO update cmp file after DEVSIX-4136 will be fixed (opacity gradient)
     public void wordTrees3Chart() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "wordTrees3Chart", PageSize.A1);
     }
 
     @Test
-    //TODO update cmp file after DEVSIX-4136 will be fixed (opacity gradient)
     public void wordTrees4Chart() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "wordTrees4Chart", PageSize.A1);
     }

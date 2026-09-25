@@ -22,13 +22,18 @@
  */
 package com.itextpdf.svg.renderers.impl;
 
+import com.itextpdf.commons.datastructures.Tuple2;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants.TextRenderingMode;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
+import com.itextpdf.kernel.pdf.xobject.PdfTransparencyGroup;
 import com.itextpdf.kernel.utils.ColorUtils;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.IElement;
@@ -66,16 +71,22 @@ import java.util.List;
 public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements ISvgTextNodeRenderer {
 
     /**
-     * Top level transformation to flip the y-axis results in the character glyphs being mirrored, this tf corrects for this behaviour
+     * Top level transformation to flip the y-axis results in the character glyphs being mirrored,
+     * this tf corrects for this behavior
      */
     protected final static AffineTransform TEXTFLIP = new AffineTransform(1, 0, 0, -1, 0, 0);
+
+    // Large area used for forms of text chunks composited with an opacity mask
+    private static final Rectangle FORM_BBOX = new Rectangle(0, 0, 1e6F, 1e6F);
 
     private final List<ISvgTextNodeRenderer> children = new ArrayList<>();
     @Deprecated
     protected boolean performRootTransformations;
 
     private Paragraph paragraph;
+    private Paragraph opacityMaskParagraph;
     private Rectangle objectBoundingBox;
+    private boolean paragraphHasOpacityMask;
 
     private boolean moveResolved;
     private float xMove;
@@ -300,24 +311,26 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             SvgTextUtil.processWhiteSpace(this, true, context);
         }
 
-        this.paragraph = new Paragraph();
-        this.paragraph.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
-        this.paragraph.setProperty(Property.RENDERING_MODE, RenderingMode.SVG_MODE);
-        this.paragraph.setProperty(Property.NO_SOFT_WRAP_INLINE, true);
+        this.paragraph = createTextParagraph();
+        this.opacityMaskParagraph = createTextParagraph();
+        this.paragraphHasOpacityMask = false;
         if (getParentClipPath() != null) {
             this.paragraph.setProperty(Property.BEFORE_TEXT_RESTORE_EXECUTOR,
                     new ClippedElementDrawer(getParentClipPath(), context));
         }
-        this.paragraph.setMargin(0);
         String direction = this.attributesAndStyles.get(SvgConstants.Attributes.DIRECTION);
         boolean isRtl = "rtl".equals(direction);
         if (isRtl) {
             paragraph.setProperty(Property.BASE_DIRECTION, BaseDirection.RIGHT_TO_LEFT);
+            opacityMaskParagraph.setProperty(Property.BASE_DIRECTION, BaseDirection.RIGHT_TO_LEFT);
         } else {
             paragraph.setProperty(Property.BASE_DIRECTION, BaseDirection.LEFT_TO_RIGHT);
+            opacityMaskParagraph.setProperty(Property.BASE_DIRECTION, BaseDirection.LEFT_TO_RIGHT);
         }
         applyTextRenderingMode(paragraph);
+        applyTextRenderingMode(opacityMaskParagraph);
         applyFontProperties(paragraph, context);
+        applyFontProperties(opacityMaskParagraph, context);
         // We resolve and draw absolutely positioned text chunks similar to getTextRectangle method. We are interested
         // not only in building of properly positioned rectangles, but also in drawing and text properties applying.
         startNewTextChunk(context, TEXTFLIP);
@@ -360,16 +373,14 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         }
     }
 
-    void addTextChild(Text text, SvgDrawContext drawContext) {
+    void addTextChild(Text text, Text opacityMaskText, boolean hasOpacityMask, SvgDrawContext drawContext) {
         if (getParent() instanceof TextSvgBranchRenderer) {
-            ((TextSvgBranchRenderer) getParent()).addTextChild(text, drawContext);
+            ((TextSvgBranchRenderer) getParent()).addTextChild(text, opacityMaskText, hasOpacityMask, drawContext);
             return;
         }
-
-        text.setProperty(Property.POSITION, LayoutPosition.RELATIVE);
-        text.setProperty(Property.LEFT, drawContext.getRelativePosition()[0]);
-        text.setProperty(Property.BOTTOM, drawContext.getRelativePosition()[1]);
-        paragraph.add(text);
+        addTextToParagraph(paragraph, text, drawContext);
+        addTextToParagraph(opacityMaskParagraph, opacityMaskText, drawContext);
+        paragraphHasOpacityMask |= hasOpacityMask;
     }
 
     void performDrawing(SvgDrawContext context) {
@@ -408,16 +419,13 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         if (paragraph.getChildren().isEmpty()) {
             return;
         }
-        ParagraphRenderer paragraphRenderer = new ParagraphRenderer(paragraph);
-        paragraph.setNextRenderer(paragraphRenderer);
-        try (Canvas canvas = new Canvas(context.getCurrentCanvas(), new Rectangle(
-                (float) context.getRootTransform().getTranslateX(),
-                (float) context.getRootTransform().getTranslateY(), 1e6f, 0))) {
-            canvas.add(paragraph);
-        }
-        float textLength = paragraphRenderer.getLines().get(0).getOccupiedAreaBBox().getWidth();
+        float textLength = paragraphHasOpacityMask && getParentClipPath() == null
+                ? drawTextChunkWithOpacityMask(context)
+                : drawTextChunkNormal(context);
         context.addTextMove(textLength, 0);
         paragraph.getChildren().clear();
+        opacityMaskParagraph.getChildren().clear();
+        paragraphHasOpacityMask = false;
     }
 
     @Override
@@ -427,6 +435,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
             context.getSvgTextProperties().setFillColor(context.isRenderingLuminosityMask()
                     ? ColorUtils.toDeviceGrayForSvgLuminanceMode(fillProperties.getColor())
                     : fillProperties.getColor());
+            context.getSvgTextProperties().setFillOpacityMaskColor(fillProperties.getOpacityMaskColor());
             if (!CssUtils.compareFloats(fillProperties.getOpacity(), 1f)) {
                 context.getSvgTextProperties().setFillOpacity(fillProperties.getOpacity());
             }
@@ -442,6 +451,7 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
                         ? ColorUtils.toDeviceGrayForSvgLuminanceMode(strokeProperties.getColor())
                         : strokeProperties.getColor());
             }
+            context.getSvgTextProperties().setStrokeOpacityMaskColor(strokeProperties.getOpacityMaskColor());
             context.getSvgTextProperties().setLineWidth(strokeProperties.getWidth());
             if (!CssUtils.compareFloats(strokeProperties.getOpacity(), 1f)) {
                 context.getSvgTextProperties().setStrokeOpacity(strokeProperties.getOpacity());
@@ -454,6 +464,67 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         }
     }
 
+    private static Paragraph createTextParagraph() {
+        Paragraph result = new Paragraph();
+        result.setProperty(Property.FORCED_PLACEMENT, Boolean.TRUE);
+        result.setProperty(Property.RENDERING_MODE, RenderingMode.SVG_MODE);
+        result.setProperty(Property.NO_SOFT_WRAP_INLINE, true);
+        result.setMargin(0);
+        return result;
+    }
+
+    private static void addTextToParagraph(Paragraph targetParagraph, Text targetText, SvgDrawContext drawContext) {
+        targetText.setProperty(Property.POSITION, LayoutPosition.RELATIVE);
+        targetText.setProperty(Property.LEFT, drawContext.getRelativePosition()[0]);
+        targetText.setProperty(Property.BOTTOM, drawContext.getRelativePosition()[1]);
+        targetParagraph.add(targetText);
+    }
+
+    private float drawTextChunkNormal(SvgDrawContext context) {
+        ParagraphRenderer paragraphRenderer = new ParagraphRenderer(paragraph);
+        paragraph.setNextRenderer(paragraphRenderer);
+        try (Canvas canvas = new Canvas(context.getCurrentCanvas(), new Rectangle(
+                (float) context.getRootTransform().getTranslateX(),
+                (float) context.getRootTransform().getTranslateY(), 1e6f, 0))) {
+            canvas.add(paragraph);
+        }
+        return paragraphRenderer.getLines().get(0).getOccupiedAreaBBox().getWidth();
+    }
+
+    private float drawTextChunkWithOpacityMask(SvgDrawContext context) {
+        Tuple2<PdfFormXObject, Float> contentForm = createTextForm(context, paragraph, false);
+        Tuple2<PdfFormXObject, Float> opacityMaskForm = createTextForm(context, opacityMaskParagraph, true);
+
+        PdfCanvas currentCanvas = context.getCurrentCanvas();
+        currentCanvas.saveState();
+        currentCanvas.setExtGState(
+                MaskSvgNodeRenderer.createSoftMaskExtGState(opacityMaskForm.getFirst(), PdfName.Luminosity));
+        currentCanvas.addXObjectAt(contentForm.getFirst(), FORM_BBOX.getX(), FORM_BBOX.getY());
+        currentCanvas.restoreState();
+        return contentForm.getSecond();
+    }
+
+    private static Tuple2<PdfFormXObject, Float> createTextForm(SvgDrawContext context, Paragraph paragraph,
+            boolean isOpacityMask) {
+        PdfFormXObject textForm = new PdfFormXObject(FORM_BBOX);
+        PdfTransparencyGroup group = new PdfTransparencyGroup();
+        if (isOpacityMask) {
+            group.setColorSpace(PdfName.DeviceGray);
+        } else {
+            group.setIsolated(true);
+        }
+        textForm.setGroup(group);
+
+        ParagraphRenderer paragraphRenderer = new ParagraphRenderer(paragraph);
+        paragraph.setNextRenderer(paragraphRenderer);
+        try (Canvas canvas = new Canvas(new PdfCanvas(textForm, context.getCurrentCanvas().getDocument()),
+                new Rectangle((float) context.getRootTransform().getTranslateX(),
+                        (float) context.getRootTransform().getTranslateY(), 1e6F, 0))) {
+            canvas.add(paragraph);
+        }
+        return new Tuple2<>(textForm, paragraphRenderer.getLines().get(0).getOccupiedAreaBBox().getWidth());
+    }
+    
     private void resolveRelativeTextMove(SvgDrawContext context) {
         if (this.attributesAndStyles != null) {
             String xRawValue = this.attributesAndStyles.get(SvgConstants.Attributes.DX);
@@ -577,14 +648,17 @@ public class TextSvgBranchRenderer extends AbstractSvgNodeRenderer implements IS
         }
         if (SvgConstants.Values.TEXT_ANCHOR_MIDDLE.equals(textAnchorValue)) {
             paragraph.setProperty(Property.TEXT_ANCHOR, TextAnchor.MIDDLE);
+            opacityMaskParagraph.setProperty(Property.TEXT_ANCHOR, TextAnchor.MIDDLE);
             return;
         }
         if (SvgConstants.Values.TEXT_ANCHOR_END.equals(textAnchorValue) && !isRtl ||
                 !SvgConstants.Values.TEXT_ANCHOR_END.equals(textAnchorValue) && isRtl) {
             paragraph.setProperty(Property.TEXT_ANCHOR, TextAnchor.END);
+            opacityMaskParagraph.setProperty(Property.TEXT_ANCHOR, TextAnchor.END);
             return;
         }
         paragraph.setProperty(Property.TEXT_ANCHOR, TextAnchor.START);
+        opacityMaskParagraph.setProperty(Property.TEXT_ANCHOR, TextAnchor.START);
     }
 
     private Point getStartPoint(SvgDrawContext context, Point basePoint) {

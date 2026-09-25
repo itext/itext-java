@@ -52,4 +52,13 @@ public class GradientColorStopTest extends ExtendedITextTest {
         Assertions.assertEquals(0, stopToTest.getHintOffset(), 1e-10);
         Assertions.assertEquals(HintOffsetType.NONE, stopToTest.getHintOffsetType());
     }
+
+    @Test
+    public void colorOpacityTest() {
+        GradientColorStop colorOpacity = new GradientColorStop(0.2F, 1.5, OffsetType.AUTO);
+        Assertions.assertArrayEquals(new float[]{0.2F, 0.2F, 0.2F}, colorOpacity.getRgbArray(), 1e-10F);
+
+        colorOpacity = new GradientColorStop(2F, 1.5, OffsetType.AUTO);
+        Assertions.assertArrayEquals(new float[]{1F, 1F, 1F}, colorOpacity.getRgbArray(), 1e-10F);
+    }
 }

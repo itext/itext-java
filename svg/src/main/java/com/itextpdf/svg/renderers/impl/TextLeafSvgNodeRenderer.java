@@ -23,6 +23,8 @@
 package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.geom.Rectangle;
@@ -121,13 +123,24 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
     protected void doDraw(SvgDrawContext context) {
         if (this.attributesAndStyles != null &&
                 this.attributesAndStyles.containsKey(SvgConstants.Attributes.TEXT_CONTENT)) {
-            text.setText(this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT));
+            String textContent = this.attributesAndStyles.get(SvgConstants.Attributes.TEXT_CONTENT);
+            text.setText(textContent);
 
-            ((TextSvgBranchRenderer) getParent()).applyFontProperties(text, context);
-            ((TextSvgBranchRenderer) getParent()).applyTextRenderingMode(text);
-            applyTransform(context);
-            applyGraphicsState(context);
-            ((TextSvgBranchRenderer) getParent()).addTextChild(text, context);
+            TextSvgBranchRenderer parent = (TextSvgBranchRenderer) getParent();
+            SvgTextProperties textProperties = context.getSvgTextProperties();
+            parent.applyFontProperties(text, context);
+            parent.applyTextRenderingMode(text);
+            applyTransform(text, context);
+            applyGraphicsState(text, textProperties);
+
+            // Identical layout of the "opacity" text element
+            Color fillMaskColor = textProperties.getFillOpacityMaskColor();
+            Color strokeMaskColor = textProperties.getStrokeOpacityMaskColor();
+            Text opacityMaskText = new Text(textContent);
+            applyTransform(opacityMaskText, context);
+            applyOpacityMaskGraphicsState(opacityMaskText, textProperties, fillMaskColor, strokeMaskColor);
+
+            parent.addTextChild(text, opacityMaskText, fillMaskColor != null || strokeMaskColor != null, context);
         }
     }
 
@@ -136,23 +149,31 @@ public class TextLeafSvgNodeRenderer extends AbstractSvgNodeRenderer implements 
         return false;
     }
 
-    private void applyTransform(SvgDrawContext context) {
+    private static void applyTransform(Text targetText, SvgDrawContext context) {
         AffineTransform transform = context.getRootTransform();
-        text.setHorizontalScaling((float) transform.getScaleX());
-        text.setProperty(Property.VERTICAL_SCALING, transform.getScaleY());
-        text.setProperty(Property.SKEW, new float[]{(float) transform.getShearX(), (float) transform.getShearY()});
+        targetText.setHorizontalScaling((float) transform.getScaleX());
+        targetText.setProperty(Property.VERTICAL_SCALING, transform.getScaleY());
+        targetText.setProperty(Property.SKEW,
+                new float[]{(float) transform.getShearX(), (float) transform.getShearY()});
     }
 
-    private void applyGraphicsState(SvgDrawContext context) {
-        SvgTextProperties textProperties = context.getSvgTextProperties();
-        text.setFontColor(textProperties.getFillColor(), textProperties.getFillOpacity());
-        text.setStrokeWidth(textProperties.getLineWidth());
-        text.setStrokeColor(textProperties.getStrokeColor(), textProperties.getStrokeOpacity());
-        text.setDashPattern(textProperties.getDashArray(), textProperties.getDashPhase());
-        text.setProperty(Property.UNDERLINE, textProperties.getTextDecoration());
-        text.setLineCapStyle(textProperties.getLineCapStyle());
-        text.setLineJoinStyle(textProperties.getLineJoinStyle());
-        text.setMiterLimit(textProperties.getMiterLimit());
+    private static void applyGraphicsState(Text targetText, SvgTextProperties textProperties) {
+        targetText.setFontColor(textProperties.getFillColor(), textProperties.getFillOpacity());
+        targetText.setStrokeWidth(textProperties.getLineWidth());
+        targetText.setStrokeColor(textProperties.getStrokeColor(), textProperties.getStrokeOpacity());
+        targetText.setDashPattern(textProperties.getDashArray(), textProperties.getDashPhase());
+        targetText.setProperty(Property.UNDERLINE, textProperties.getTextDecoration());
+        targetText.setLineCapStyle(textProperties.getLineCapStyle());
+        targetText.setLineJoinStyle(textProperties.getLineJoinStyle());
+        targetText.setMiterLimit(textProperties.getMiterLimit());
+    }
+
+    private static void applyOpacityMaskGraphicsState(Text targetText, SvgTextProperties textProperties,
+            Color fillMaskColor, Color strokeMaskColor) {
+        applyGraphicsState(targetText, textProperties);
+
+        targetText.setFontColor(fillMaskColor != null ? fillMaskColor : ColorConstants.WHITE, 1f);
+        targetText.setStrokeColor(strokeMaskColor != null ? strokeMaskColor : ColorConstants.WHITE, 1f);
     }
 
     private LineRenderer layoutText(SvgDrawContext context) {

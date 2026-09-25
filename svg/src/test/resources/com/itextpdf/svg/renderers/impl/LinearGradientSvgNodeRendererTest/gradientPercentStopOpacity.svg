@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <!-- stop-opacity expressed as a percentage instead of a 0-1 fraction -->
+    <linearGradient id="translucentGradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="red" stop-opacity=" 30% "/>
+      <stop offset="1" stop-color="blue" stop-opacity=" 3e-1 "/>
+    </linearGradient>
+  </defs>
+
+  <path d="M10,10 H190 V190 H10 Z" fill="url(#translucentGradient)"/>
+</svg>

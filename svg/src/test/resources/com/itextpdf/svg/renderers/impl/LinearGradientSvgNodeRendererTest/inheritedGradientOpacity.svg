@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300" viewBox="0 0 600 300">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e91e63" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#1565c0" stop-opacity="0.8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+  <g fill="url(#g)">
+    <path d="M50 60 H250 V240 H50 Z"/>
+    <path d="M350 100 H550 V200 H350 Z"/>
+  </g>
+</svg>

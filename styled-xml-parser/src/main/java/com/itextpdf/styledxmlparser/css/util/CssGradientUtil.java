@@ -291,8 +291,6 @@ public final class CssGradientUtil {
             offsetType = OffsetType.RELATIVE;
             offsetValue = offset.getValue() / 100;
         }
-        // TODO: DEVSIX-4136 when opacity would be implemented - check the 4th element of
-        //  the rgba array and use it as the opacity
         return new GradientColorStop(rgba, offsetValue, offsetType);
     }
 }

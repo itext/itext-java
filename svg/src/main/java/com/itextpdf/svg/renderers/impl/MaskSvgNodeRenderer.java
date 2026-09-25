@@ -131,6 +131,16 @@ public class MaskSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implement
         throw new UnsupportedOperationException(SvgExceptionMessageConstant.DRAW_NO_DRAW);
     }
 
+    static PdfExtGState createSoftMaskExtGState(PdfFormXObject maskForm, PdfName alphaType) {
+        PdfDictionary softMask = new PdfDictionary();
+        softMask.put(PdfName.S, alphaType);
+        softMask.put(PdfName.G, maskForm.getPdfObject());
+
+        PdfExtGState extGState = new PdfExtGState();
+        extGState.setSoftMask(softMask);
+        return extGState;
+    }
+
     private static PdfFormXObject createMaskedContentForm(Rectangle maskArea, AbstractSvgNodeRenderer maskedRenderer,
             SvgDrawContext context, PdfCanvas currentCanvas) {
         PdfFormXObject maskedContentForm = new PdfFormXObject(maskArea);
@@ -235,22 +245,13 @@ public class MaskSvgNodeRenderer extends AbstractBranchSvgNodeRenderer implement
 
     private void applySoftMaskAndDrawMaskedContent(PdfCanvas currentCanvas, PdfFormXObject maskedContentForm,
             PdfFormXObject maskForm, Rectangle maskArea) {
-        PdfExtGState extGState = createSoftMaskExtGState(maskForm);
+        PdfExtGState extGState = createSoftMaskExtGState(maskForm,
+                isAlphaMaskType() ? PdfName.Alpha : PdfName.Luminosity);
 
         currentCanvas.saveState();
         currentCanvas.setExtGState(extGState);
         currentCanvas.addXObjectAt(maskedContentForm, maskArea.getX(), maskArea.getY());
         currentCanvas.restoreState();
-    }
-
-    private PdfExtGState createSoftMaskExtGState(PdfFormXObject maskForm) {
-        PdfDictionary softMask = new PdfDictionary();
-        softMask.put(PdfName.S, isAlphaMaskType() ? PdfName.Alpha : PdfName.Luminosity);
-        softMask.put(PdfName.G, maskForm.getPdfObject());
-
-        PdfExtGState extGState = new PdfExtGState();
-        extGState.setSoftMask(softMask);
-        return extGState;
     }
 
     private static boolean isValidArea(Rectangle area) {

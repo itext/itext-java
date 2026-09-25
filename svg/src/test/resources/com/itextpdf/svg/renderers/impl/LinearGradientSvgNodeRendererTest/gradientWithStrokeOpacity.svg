@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="120" viewBox="0 0 320 120">
+  <defs>
+    <linearGradient id="gradient" gradientUnits="userSpaceOnUse"
+                    x1="30" y1="60" x2="290" y2="60">
+      <stop offset="0%" stop-color="blue" stop-opacity="0.2"/>
+      <stop offset="50%" stop-color="purple" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="red" stop-opacity="0.8"/>
+    </linearGradient>
+  </defs>
+
+  <line x1="30" y1="60" x2="290" y2="60"
+        stroke="url(#gradient)" stroke-width="20" stroke-linecap="round"/>
+</svg>

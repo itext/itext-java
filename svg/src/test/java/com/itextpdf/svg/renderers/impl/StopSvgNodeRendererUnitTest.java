@@ -214,6 +214,17 @@ public class StopSvgNodeRendererUnitTest extends ExtendedITextTest {
     }
 
     @Test
+    public void getStopOpacityPercentageValueTest() {
+        Map<String, String> styles = new HashMap<>();
+        styles.put(Tags.STOP_OPACITY, "20%");
+
+        StopSvgNodeRenderer renderer = new StopSvgNodeRenderer();
+        renderer.setAttributesAndStyles(styles);
+
+        Assertions.assertEquals(0.2F, renderer.getStopOpacity(), DELTA);
+    }
+
+    @Test
     public void getStopOpacityNoneValueTest() {
         Map<String, String> styles = new HashMap<>();
         styles.put(Tags.STOP_OPACITY, null);

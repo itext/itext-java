@@ -37,7 +37,6 @@ import java.util.Objects;
  */
 public class GradientColorStop {
     private final float[] rgb;
-    private final float opacity;
 
     private OffsetType offsetType;
     private double offset;
@@ -51,18 +50,34 @@ public class GradientColorStop {
      * @param rgb the color value
      */
     public GradientColorStop(float[] rgb) {
-        this(rgb, 1f, 0d, OffsetType.AUTO);
+        this(rgb, 0d, OffsetType.AUTO);
     }
 
     /**
-     * Constructor of stop color with with specified rgb color and offset
+     * Constructor of stop color with the specified rgb color and offset.
      *
      * @param rgb        the color value
      * @param offset     the offset value. Makes sense only if the {@code offsetType} is not {@link OffsetType#AUTO}
-     * @param offsetType the offset's type
+     * @param offsetType the offset type
      */
     public GradientColorStop(float[] rgb, double offset, OffsetType offsetType) {
-        this(rgb, 1f, offset, offsetType);
+        this.rgb = copyRgbArray(rgb);
+
+        setOffset(offset, offsetType);
+    }
+
+    /**
+     * Constructor of stop color with the same rgb value for all channels and offset.
+     *
+     * @param stopOpacity the color value for all channels
+     * @param offset      the offset value. Makes sense only if the {@code offsetType} is not {@link OffsetType#AUTO}
+     * @param offsetType  the offset type
+     */
+    public GradientColorStop(float stopOpacity, double offset, OffsetType offsetType) {
+        float normalizedStopOpacity = normalize(stopOpacity);
+        this.rgb = new float[] {normalizedStopOpacity, normalizedStopOpacity, normalizedStopOpacity};
+
+        setOffset(offset, offsetType);
     }
 
     /**
@@ -73,15 +88,7 @@ public class GradientColorStop {
      * @param offsetType        the new offset's type
      */
     public GradientColorStop(GradientColorStop gradientColorStop, double offset, OffsetType offsetType) {
-        this(gradientColorStop.getRgbArray(), gradientColorStop.getOpacity(), offset, offsetType);
-    }
-
-    private GradientColorStop(float[] rgb, float opacity, double offset, OffsetType offsetType) {
-        this.rgb = copyRgbArray(rgb);
-
-        this.opacity = normalize(opacity);
-
-        setOffset(offset, offsetType);
+        this(gradientColorStop.getRgbArray(), offset, offsetType);
     }
 
     /**
@@ -91,16 +98,6 @@ public class GradientColorStop {
      */
     public float[] getRgbArray() {
         return copyRgbArray(this.rgb);
-    }
-
-    // TODO: DEVSIX-4136 make public with opacity logic implementation
-    /**
-     * Get the stop color opacity value
-     *
-     * @return the stop color opacity value
-     */
-    private float getOpacity() {
-        return this.opacity;
     }
 
     /**
@@ -176,8 +173,7 @@ public class GradientColorStop {
             return false;
         }
         GradientColorStop that = (GradientColorStop) o;
-        return Float.compare(that.opacity, opacity) == 0 &&
-                Double.compare(that.offset, offset) == 0 &&
+        return Double.compare(that.offset, offset) == 0 &&
                 Double.compare(that.hintOffset, hintOffset) == 0 &&
                 Arrays.equals(rgb, that.rgb) &&
                 offsetType == that.offsetType &&
@@ -186,7 +182,7 @@ public class GradientColorStop {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(opacity, offset, hintOffset);
+        int result = Objects.hash(offset, hintOffset);
         result = 31 * result + offsetType.hashCode();
         result = 31 * result + hintOffsetType.hashCode();
         result = 31 * result + Arrays.hashCode(rgb);

@@ -15,7 +15,7 @@ endobj
 <</Pages 2 0 R/Type/Catalog>>
 endobj
 3 0 obj
-<</CreationDate(D:20250103181818+03'00')/ModDate(D:20250103181818+03'00')/Producer(iText® Core 9.1.0-SNAPSHOT \(AGPL version\) ©2000-2024 Apryse Group NV)>>
+<</CreationDate(D:20260929155045+03'00')/ModDate(D:20260929155045+03'00')/Producer(iText® Core 9.9.0-SNAPSHOT \(AGPL version\) ©2000-2026 Apryse Group NV)>>
 endobj
 6 0 obj
 <</BaseFont/Times-Roman/Encoding/WinAnsiEncoding/Subtype/Type1/Type/Font>>
@@ -34,7 +34,7 @@ Q
 endstream
 endobj
 8 0 obj
-<</BBox[0 0 675.75 375.75]/Length 13367/Resources<</Font<</F1 6 0 R>>/Pattern<</P1 9 0 R>>>>/Subtype/Form/Type/XObject>>stream
+<</BBox[0 0 675.75 375.75]/Length 13336/Resources<</ExtGState<</Gs1 9 0 R>>/Font<</F1 6 0 R>>/XObject<</Fm1 10 0 R>>>>/Subtype/Form/Type/XObject>>stream
 0 0 675.75 375.75 re
 W
 n
@@ -1097,12 +1097,12 @@ ET
 Q
 Q
 q
-/Pattern cs
-
-/P1 scn
-% rect
-619.44 0 56.31 375.75 re
-f
+q
+/Gs1 gs
+q
+/Fm1 Do
+Q
+Q
 Q
 Q
 q
@@ -1117,19 +1117,62 @@ Q
 endstream
 endobj
 9 0 obj
-<</Matrix[75.08 0 0 501 619.44 0]/PatternType 2/Shading 10 0 R/Type/Pattern>>
+<</SMask<</G 11 0 R/S/Luminosity>>>>
 endobj
 10 0 obj
-<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 11 0 R/ShadingType 2>>
+<</BBox[619.44 0 675.75 375.75]/Group<</I true/S/Transparency>>/Length 84/Resources<</Pattern<</P1 12 0 R>>>>/Subtype/Form/Type/XObject>>stream
+619.44 0 56.31 375.75 re
+W
+n
+/Pattern cs
+
+/P1 scn
+% rect
+619.44 0 56.31 375.75 re
+f
+
+endstream
 endobj
 11 0 obj
-<</Bounds[]/Domain[0 1]/Encode[0 1]/FunctionType 3/Functions[12 0 R]>>
+<</BBox[619.44 0 675.75 375.75]/Group<</CS/DeviceGray/S/Transparency>>/Length 84/Resources<</Pattern<</P1 13 0 R>>>>/Subtype/Form/Type/XObject>>stream
+619.44 0 56.31 375.75 re
+W
+n
+/Pattern cs
+
+/P1 scn
+% rect
+619.44 0 56.31 375.75 re
+f
+
+endstream
 endobj
 12 0 obj
+<</Matrix[75.08 0 0 501 619.44 0]/PatternType 2/Shading 14 0 R/Type/Pattern>>
+endobj
+13 0 obj
+<</Matrix[75.08 0 0 501 619.44 0]/PatternType 2/Shading 15 0 R/Type/Pattern>>
+endobj
+14 0 obj
+<</ColorSpace/DeviceRGB/Coords[0 0 0.75 0]/Domain[0 1]/Function 16 0 R/ShadingType 2>>
+endobj
+15 0 obj
+<</ColorSpace/DeviceGray/Coords[0 0 0.75 0]/Domain[0 1]/Function 17 0 R/ShadingType 2>>
+endobj
+16 0 obj
+<</Bounds[]/Domain[0 1]/Encode[0 1]/FunctionType 3/Functions[18 0 R]>>
+endobj
+17 0 obj
+<</Bounds[]/Domain[0 1]/Encode[0 1]/FunctionType 3/Functions[19 0 R]>>
+endobj
+18 0 obj
 <</C0[1 1 1]/C1[1 1 1]/Domain[0 1]/FunctionType 2/N 1>>
 endobj
+19 0 obj
+<</C0[0]/C1[1]/Domain[0 1]/FunctionType 2/N 1>>
+endobj
 xref
-0 13
+0 20
 0000000000 65535 f 
 0000000215 00000 n 
 0000000522 00000 n 
@@ -1139,13 +1182,20 @@ xref
 0000000432 00000 n 
 0000000573 00000 n 
 0000000750 00000 n 
-0000014270 00000 n 
-0000014363 00000 n 
-0000014466 00000 n 
-0000014553 00000 n 
+0000014265 00000 n 
+0000014317 00000 n 
+0000014572 00000 n 
+0000014834 00000 n 
+0000014928 00000 n 
+0000015022 00000 n 
+0000015125 00000 n 
+0000015229 00000 n 
+0000015316 00000 n 
+0000015403 00000 n 
+0000015475 00000 n 
 trailer
-<</ID [<81d6fa02bcb4ecd6abe530d3eb657c68573d751e7abf5a4d2a0a4e1cbc708f979e1c0b518ae58f6de3661a9413da43b8c287bc2addd029be6c6d68839d488154><81d6fa02bcb4ecd6abe530d3eb657c68573d751e7abf5a4d2a0a4e1cbc708f979e1c0b518ae58f6de3661a9413da43b8c287bc2addd029be6c6d68839d488154>]/Info 3 0 R/Root 1 0 R/Size 13>>
-%iText-Core-9.1.0-SNAPSHOT
+<</ID [<32dd5098a2dd8cec142087e0e993c7e36e957a978838ed0696e7a50aa397cc3773ce5761f6b06f9f984b1ee1a2cabc809c487092a5c358cb1ed3072be67db047><32dd5098a2dd8cec142087e0e993c7e36e957a978838ed0696e7a50aa397cc3773ce5761f6b06f9f984b1ee1a2cabc809c487092a5c358cb1ed3072be67db047>]/Info 3 0 R/Root 1 0 R/Size 20>>
+%iText-Core-9.9.0-SNAPSHOT
 startxref
-14625
+15539
 %%EOF
