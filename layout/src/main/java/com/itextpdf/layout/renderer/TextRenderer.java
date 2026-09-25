@@ -73,7 +73,7 @@ import com.itextpdf.layout.properties.TextCombineUpright;
 import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.renderer.typography.DefaultTypographyApplier;
+import com.itextpdf.layout.renderer.typography.AbstractTypographyApplier;
 import com.itextpdf.layout.splitting.BreakAllSplitCharacters;
 import com.itextpdf.layout.splitting.ISplitCharacters;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
@@ -926,6 +926,7 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
     }
 
     public void applyOtf() {
+        AbstractTypographyApplier typographyApplier = TypographyUtils.getApplierInstance(isVerticalWriting());
         updateFontAndText();
         Character.UnicodeScript script = this.<Character.UnicodeScript>getProperty(Property.FONT_SCRIPT);
         if (!otfFeaturesApplied && text.getStart() < text.getEnd()) {
@@ -937,10 +938,10 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                 Object typographyConfig = this.<Object>getProperty(Property.TYPOGRAPHY_CONFIG);
                 Collection<Character.UnicodeScript> supportedScripts = null;
                 if (typographyConfig != null) {
-                    supportedScripts = TypographyUtils.getSupportedScripts(typographyConfig);
+                    supportedScripts = typographyApplier.getSupportedScripts(typographyConfig);
                 }
                 if (supportedScripts == null) {
-                    supportedScripts = TypographyUtils.getSupportedScripts();
+                    supportedScripts = typographyApplier.getSupportedScripts();
                 }
                 List<ScriptRange> scriptsRanges = new ArrayList<>();
                 if (script != null) {
@@ -990,13 +991,9 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
                         // from text renderers (see LineRenderer#applyOtf).
                         setProperty(Property.BASE_DIRECTION, BaseDirection.DEFAULT_BIDI);
                     }
-                    if (isVerticalWriting()) {
-                        new DefaultTypographyApplier().applyOtfScript((TrueTypeFont) font.getFontProgram(),
-                                text, scriptsRange.script, typographyConfig, sequenceId, metaInfo);
-                    } else {
-                        TypographyUtils.applyOtfScript(font.getFontProgram(), text,
+                    typographyApplier.applyOtfScript((TrueTypeFont) font.getFontProgram(), text,
                                 scriptsRange.script, typographyConfig, sequenceId, metaInfo);
-                    }
+
 
                     delta += text.getEnd() - scriptsRange.rangeEnd;
                     scriptsRange.rangeEnd = shapingRangeStart = text.getEnd();
@@ -1007,13 +1004,8 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
 
             FontKerning fontKerning = (FontKerning) this.<FontKerning>getProperty(Property.FONT_KERNING, FontKerning.NO);
             if (fontKerning == FontKerning.YES) {
-                if (isVerticalWriting()) {
-                    new DefaultTypographyApplier().applyKerning(font.getFontProgram(), text, sequenceId, metaInfo);
-                } else {
-                    TypographyUtils.applyKerning(font.getFontProgram(), text, sequenceId, metaInfo);
-                }
+                typographyApplier.applyKerning(font.getFontProgram(), text, sequenceId, metaInfo);
             }
-
             otfFeaturesApplied = true;
         }
     }

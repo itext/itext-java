@@ -46,6 +46,7 @@ public final class TypographyUtils {
     private static final String TYPOGRAPHY_APPLIER_INITIALIZE = "registerForLayout";
 
     private static AbstractTypographyApplier applierInstance;
+    private static AbstractTypographyApplier defaultApplierInstance;
 
     static {
         try {
@@ -59,8 +60,9 @@ public final class TypographyUtils {
         } catch (Exception ignored) {
             // do nothing
         }
+        defaultApplierInstance = new DefaultTypographyApplier();
         if (applierInstance == null) {
-            setTypographyApplierInstance(new DefaultTypographyApplier());
+            setTypographyApplierInstance(defaultApplierInstance);
         }
     }
 
@@ -94,6 +96,13 @@ public final class TypographyUtils {
 
     public static Map<String, byte[]> loadShippedFonts() throws IOException {
         return applierInstance.loadShippedFonts();
+    }
+
+    public static AbstractTypographyApplier getApplierInstance(boolean vertical) {
+        if (vertical) {
+            return defaultApplierInstance;
+        }
+        return applierInstance;
     }
 
     static void applyOtfScript(FontProgram fontProgram, GlyphLine text, UnicodeScript script, Object typographyConfig,

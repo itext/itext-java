@@ -80,6 +80,10 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethodToCustomMember("com.itextpdf.layout.margincollapse.MarginsCollapse.clone", "Clone", SharpenConfigCustomMembers.cloneMarginsCollapse);
         configurator.addFullName("iText.Layout.Font.Range");
         configurator.addCustomUsingDeclaration("com.itextpdf.layout.renderer.TypographyUtils", Arrays.asList("System.IO", "System.Reflection", "Versions.Attributes", "iText.Commons.Logs", "iText.Commons.Internal.Runtime"));
+
+        configurator.mapType("org.junit.jupiter.api.parallel.ResourceLock", "NUnit.Framework.NonParallelizable");
+        configurator.removeNamedParameterFromAnnotation("NonParallelizable", "Value");
+        configurator.ignoreUsing("NUnit.Framework.Parallel");
     }
 
     @Override

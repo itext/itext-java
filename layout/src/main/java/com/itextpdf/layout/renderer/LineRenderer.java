@@ -59,7 +59,7 @@ import com.itextpdf.layout.properties.VerticalTextOrientation;
 import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.LastFittingChildRendererData;
 import com.itextpdf.layout.renderer.TextSequenceWordWrapping.MinMaxWidthOfTextRendererSequenceHelper;
-import com.itextpdf.layout.renderer.typography.DefaultTypographyApplier;
+import com.itextpdf.layout.renderer.typography.AbstractTypographyApplier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,6 +99,7 @@ public class LineRenderer extends AbstractRenderer {
         List<Rectangle> floatRendererAreas = layoutContext.getFloatRendererAreas();
 
         boolean isVerticalWriting = isVerticalWriting();
+        AbstractTypographyApplier typographyApplier = TypographyUtils.getApplierInstance(isVerticalWriting);
         WritingMode writingMode = getWritingMode(this);
 
         boolean textSequenceOverflowProcessing = false;
@@ -177,7 +178,7 @@ public class LineRenderer extends AbstractRenderer {
 
         BaseDirection baseDirection = applyOtf();
 
-        updateBidiLevels(totalNumberOfTrimmedGlyphs, baseDirection);
+        updateBidiLevels(totalNumberOfTrimmedGlyphs, baseDirection, typographyApplier);
 
         boolean anythingPlaced = false;
         TabStop hangingTabStop = null;
@@ -226,7 +227,7 @@ public class LineRenderer extends AbstractRenderer {
 
             if (TextSequenceWordWrapping.isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(
                     childRenderer, sameDirection)
-                    && TypographyUtils.isPdfCalligraphAvailable() && !isVerticalWriting) {
+                    && typographyApplier.isPdfCalligraphInstance()) {
                 TextSequenceWordWrapping.processSpecialScriptPreLayout(this, childPos);
             }
             TextSequenceWordWrapping.resetTextSequenceIfItEnded(
@@ -827,12 +828,7 @@ public class LineRenderer extends AbstractRenderer {
             }
 
             final int[] newOrder;
-            if (isVerticalWriting) {
-                newOrder = new DefaultTypographyApplier().reorderLine(
-                        splitIntoGlyphsData.getLineGlyphs(), lineLevels, levels);
-            } else {
-                newOrder = TypographyUtils.reorderLine(splitIntoGlyphsData.getLineGlyphs(), lineLevels, levels);
-            }
+            newOrder = typographyApplier.reorderLine(splitIntoGlyphsData.getLineGlyphs(), lineLevels, levels);
             if (newOrder != null) {
                 reorder(toProcess, splitIntoGlyphsData, newOrder);
                 adjustChildPositionsAfterReordering(toProcess.getChildRenderers(), occupiedArea.getBBox().getLeft());
@@ -1762,7 +1758,8 @@ public class LineRenderer extends AbstractRenderer {
         }
     }
 
-    private void updateBidiLevels(int totalNumberOfTrimmedGlyphs, BaseDirection baseDirection) {
+    private void updateBidiLevels(int totalNumberOfTrimmedGlyphs, BaseDirection baseDirection,
+            AbstractTypographyApplier typographyApplier) {
         if (totalNumberOfTrimmedGlyphs != 0 && levels != null) {
             levels = Arrays.copyOfRange(levels, totalNumberOfTrimmedGlyphs, levels.length);
         }
@@ -1797,13 +1794,9 @@ public class LineRenderer extends AbstractRenderer {
                 final SequenceId sequenceId = pdfDocument == null ? null : pdfDocument.getDocumentIdWrapper();
                 final MetaInfoContainer metaInfoContainer = this.<MetaInfoContainer>getProperty(Property.META_INFO);
                 final IMetaInfo metaInfo = metaInfoContainer == null ? null : metaInfoContainer.getMetaInfo();
-                if (isVerticalWriting()) {
-                    levels = new DefaultTypographyApplier().getBidiLevels(
-                            baseDirection, ArrayUtil.toIntArray(unicodeIdsReorderingList), sequenceId, metaInfo);
-                } else {
-                    levels = TypographyUtils.getBidiLevels(baseDirection,
-                            ArrayUtil.toIntArray(unicodeIdsReorderingList), sequenceId, metaInfo);
-                }
+                levels = typographyApplier.getBidiLevels(baseDirection,
+                        ArrayUtil.toIntArray(unicodeIdsReorderingList), sequenceId, metaInfo);
+
             } else {
                 levels = null;
             }
