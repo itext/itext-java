@@ -199,6 +199,7 @@
                 <file path="com/itextpdf/bouncycastle/cert/X509CRLHolderBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cert/X509v2CRLBuilderBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cert/CertIOExceptionBC.java"/>
+                <file path="com/itextpdf/bouncycastle/cert/CipherParamsBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cert/jcajce/JcaX509v3CertificateBuilderBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cert/jcajce/JcaX509CertificateConverterBC.java"/>
                 <file path="com/itextpdf/bouncycastle/cert/jcajce/JcaX509CertificateHolderBC.java"/>
@@ -248,6 +249,7 @@
                 <file path="com/itextpdf/bouncycastle/asn1/x509/SubjectPublicKeyInfoBC.java"/>
                 <file path="com/itextpdf/bouncycastle/asn1/x509/NameConstraintsBC.java" />
                 <file path="com/itextpdf/bouncycastle/pkix/PKIXNameConstraintValidatorBC.java" />
+                <file path="com/itextpdf/bouncycastle/rsa/RSADigestSignerBC.java"/>
                 <file path="com/itextpdf/bouncycastlefips/BouncyCastleFipsFactory.java"/>
                 <file path="com/itextpdf/bouncycastlefips/BouncyCastleFipsTestConstantsFactory.java"/>
                 <file path="com/itextpdf/bouncycastlefips/asn1/ASN1IntegerBCFips.java"/>

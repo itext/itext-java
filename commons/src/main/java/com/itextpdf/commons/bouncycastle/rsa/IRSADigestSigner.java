@@ -20,36 +20,38 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.itextpdf.commons.bouncycastle.cert;
+package com.itextpdf.commons.bouncycastle.rsa;
 
-import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
-import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
-import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
+import com.itextpdf.commons.bouncycastle.cert.ICipherParams;
 
 /**
- * This interface represents the wrapper for X509CertificateHolder that provides the ability
- * to switch between bouncy-castle and bouncy-castle FIPS implementations.
+ * Wrapper for BouncyCastle RSADigestSigner.
  */
-public interface IX509CertificateHolder {
+public interface IRSADigestSigner {
 
     /**
-     * Retrieves signature algorithm identifier from the certificate.
+     * Initialize the signer for signing or verification.
      *
-     * @return signature algorithm.
+     * @param forSigning {@code true} if for signing, {@code false} otherwise
+     * @param parameters necessary parameters
      */
-    IAlgorithmIdentifier getSignatureAlgorithm();
+    void init(boolean forSigning, ICipherParams parameters);
 
     /**
-     * Retrieves an array of {@link IASN1ObjectIdentifier} representing subject attribute types.
+     * Update the internal digest with the byte array.
      *
-     * @return array of {@link IASN1ObjectIdentifier} representing subject attribute types
+     * @param input the byte array to update the digest with
+     * @param inOff the offset in the byte array to start from
+     * @param length the number of bytes to update the digest with
      */
-    IASN1ObjectIdentifier[] getSubjectAttributeTypes();
+    void update(byte[] input, int inOff, int length);
 
     /**
-     * Retrieves subject public key info from the certificate.
+     * Return {@code true} if the internal state represents the signature described in the updated array.
      *
-     * @return {@link ISubjectPublicKeyInfo} representing subject public key info
+     * @param signature the signature to verify
+     *
+     * @return {@code true} if the signature is valid, {@code false} otherwise
      */
-    ISubjectPublicKeyInfo getSubjectPublicKeyInfo();
+    boolean verifySignature(byte[] signature);
 }

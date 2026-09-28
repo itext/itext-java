@@ -24,8 +24,10 @@ package com.itextpdf.bouncycastle.cert;
 
 import com.itextpdf.bouncycastle.asn1.ASN1ObjectIdentifierBC;
 import com.itextpdf.bouncycastle.asn1.x509.AlgorithmIdentifierBC;
+import com.itextpdf.bouncycastle.asn1.x509.SubjectPublicKeyInfoBC;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 
 import java.io.IOException;
@@ -91,6 +93,16 @@ public class X509CertificateHolderBC implements IX509CertificateHolder {
             subjectAttributeTypesWrapper[i] = new ASN1ObjectIdentifierBC(subjectAttributeTypes[i]);
         }
         return subjectAttributeTypesWrapper;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public ISubjectPublicKeyInfo getSubjectPublicKeyInfo() {
+        return new SubjectPublicKeyInfoBC(certificateHolder.getSubjectPublicKeyInfo());
     }
 
     /**

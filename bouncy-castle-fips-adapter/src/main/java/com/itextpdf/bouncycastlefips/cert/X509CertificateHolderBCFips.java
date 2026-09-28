@@ -24,8 +24,10 @@ package com.itextpdf.bouncycastlefips.cert;
 
 import com.itextpdf.bouncycastlefips.asn1.ASN1ObjectIdentifierBCFips;
 import com.itextpdf.bouncycastlefips.asn1.x509.AlgorithmIdentifierBCFips;
+import com.itextpdf.bouncycastlefips.asn1.x509.SubjectPublicKeyInfoBCFips;
 import com.itextpdf.commons.bouncycastle.asn1.IASN1ObjectIdentifier;
 import com.itextpdf.commons.bouncycastle.asn1.x509.IAlgorithmIdentifier;
+import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 
 import java.io.IOException;
@@ -91,6 +93,16 @@ public class X509CertificateHolderBCFips implements IX509CertificateHolder {
             subjectAttributeTypesWrapper[i] = new ASN1ObjectIdentifierBCFips(subjectAttributeTypes[i]);
         }
         return subjectAttributeTypesWrapper;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public ISubjectPublicKeyInfo getSubjectPublicKeyInfo() {
+        return new SubjectPublicKeyInfoBCFips(certificateHolder.getSubjectPublicKeyInfo());
     }
 
     /**

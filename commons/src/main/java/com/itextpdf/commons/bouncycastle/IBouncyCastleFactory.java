@@ -91,6 +91,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
 import com.itextpdf.commons.bouncycastle.asn1.x509.qualified.IQCStatement;
+import com.itextpdf.commons.bouncycastle.cert.ICipherParams;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
@@ -128,6 +129,7 @@ import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentVerifierProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaDigestCalculatorProviderBuilder;
+import com.itextpdf.commons.bouncycastle.rsa.IRSADigestSigner;
 import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
@@ -1834,4 +1836,22 @@ public interface IBouncyCastleFactory {
      * @return {@link INameConstraints} name constraints wrapper
      */
     INameConstraints createNameConstraints(IASN1Primitive primitive);
+
+    /**
+     * Creates public key parameters from the provided subject public key info.
+     *
+     * @param subjectPublicKeyInfo {@link ISubjectPublicKeyInfo} from which public key parameters are created
+     *
+     * @return {@link ICipherParams} public key parameters
+     *
+     * @throws IOException in case of Input-Output exceptions
+     */
+    ICipherParams createPublicKey(ISubjectPublicKeyInfo subjectPublicKeyInfo) throws IOException;
+
+    /**
+     * Creates an instance of {@link IRSADigestSigner} with SHA-1 digest.
+     *
+     * @return {@link IRSADigestSigner} instance
+     */
+    IRSADigestSigner createRSADigestSignerWithSha1Digest();
 }

@@ -90,6 +90,7 @@ import com.itextpdf.bouncycastle.asn1.x509.SubjectPublicKeyInfoBC;
 import com.itextpdf.bouncycastle.asn1.x509.TBSCertificateBC;
 import com.itextpdf.bouncycastle.asn1.x509.TimeBC;
 import com.itextpdf.bouncycastle.asn1.x509.qualified.QCStatementBC;
+import com.itextpdf.bouncycastle.cert.CipherParamsBC;
 import com.itextpdf.bouncycastle.cert.X509CertificateHolderBC;
 import com.itextpdf.bouncycastle.cert.X509ExtensionUtilsBC;
 import com.itextpdf.bouncycastle.cert.X509v2CRLBuilderBC;
@@ -124,6 +125,7 @@ import com.itextpdf.bouncycastle.operator.jcajce.JcaContentSignerBuilderBC;
 import com.itextpdf.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilderBC;
 import com.itextpdf.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilderBC;
 import com.itextpdf.bouncycastle.pkix.PKIXNameConstraintValidatorBC;
+import com.itextpdf.bouncycastle.rsa.RSADigestSignerBC;
 import com.itextpdf.bouncycastle.tsp.TSPExceptionBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampRequestBC;
 import com.itextpdf.bouncycastle.tsp.TimeStampRequestGeneratorBC;
@@ -203,6 +205,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
 import com.itextpdf.commons.bouncycastle.asn1.x509.qualified.IQCStatement;
+import com.itextpdf.commons.bouncycastle.cert.ICipherParams;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
@@ -239,6 +242,7 @@ import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentVerifierProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaDigestCalculatorProviderBuilder;
+import com.itextpdf.commons.bouncycastle.rsa.IRSADigestSigner;
 import com.itextpdf.commons.bouncycastle.tsp.AbstractTSPException;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
@@ -336,11 +340,15 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.cms.jcajce.JceKeyAgreeEnvelopedRecipient;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
+import org.bouncycastle.crypto.signers.RSADigestSigner;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -2055,5 +2063,24 @@ public class BouncyCastleFactory implements IBouncyCastleFactory {
     @Override
     public INameConstraints createNameConstraints(IASN1Primitive primitive) {
         return new NameConstraintsBC(NameConstraints.getInstance(((ASN1PrimitiveBC) primitive).getPrimitive()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ICipherParams createPublicKey(ISubjectPublicKeyInfo subjectPublicKeyInfo) throws IOException {
+        CipherParameters cipherParameters = subjectPublicKeyInfo == null
+                ? null
+                : PublicKeyFactory.createKey(((SubjectPublicKeyInfoBC) subjectPublicKeyInfo).getSubjectPublicKeyInfo());
+        return new CipherParamsBC(cipherParameters);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRSADigestSigner createRSADigestSignerWithSha1Digest() {
+        return new RSADigestSignerBC(new RSADigestSigner(new SHA1Digest()));
     }
 }

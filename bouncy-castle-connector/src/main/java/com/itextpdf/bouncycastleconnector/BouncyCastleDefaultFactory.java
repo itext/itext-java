@@ -94,6 +94,7 @@ import com.itextpdf.commons.bouncycastle.asn1.x509.ISubjectPublicKeyInfo;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITBSCertificate;
 import com.itextpdf.commons.bouncycastle.asn1.x509.ITime;
 import com.itextpdf.commons.bouncycastle.asn1.x509.qualified.IQCStatement;
+import com.itextpdf.commons.bouncycastle.cert.ICipherParams;
 import com.itextpdf.commons.bouncycastle.cert.IX509CertificateHolder;
 import com.itextpdf.commons.bouncycastle.cert.IX509ExtensionUtils;
 import com.itextpdf.commons.bouncycastle.cert.IX509v2CRLBuilder;
@@ -130,6 +131,7 @@ import com.itextpdf.commons.bouncycastle.operator.IDigestCalculatorProvider;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentSignerBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaContentVerifierProviderBuilder;
 import com.itextpdf.commons.bouncycastle.operator.jcajce.IJcaDigestCalculatorProviderBuilder;
+import com.itextpdf.commons.bouncycastle.rsa.IRSADigestSigner;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequest;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampRequestGenerator;
 import com.itextpdf.commons.bouncycastle.tsp.ITimeStampResponse;
@@ -1072,6 +1074,16 @@ class BouncyCastleDefaultFactory implements IBouncyCastleFactory {
 
     @Override
     public INameConstraints createNameConstraints(IASN1Primitive primitive) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public ICipherParams createPublicKey(ISubjectPublicKeyInfo subjectPublicKeyInfo) {
+        throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
+    }
+
+    @Override
+    public IRSADigestSigner createRSADigestSignerWithSha1Digest() {
         throw new UnsupportedOperationException(BouncyCastleLogMessageConstant.BOUNCY_CASTLE_DEPENDENCY_MUST_PRESENT);
     }
 }
