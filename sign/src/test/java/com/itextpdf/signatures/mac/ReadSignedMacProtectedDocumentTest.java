@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 @Tag("BouncyCastleIntegrationTest")
 public class ReadSignedMacProtectedDocumentTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/mac/ReadSignedMacProtectedDocumentTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/mac/ReadSignedMacProtectedDocumentTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/mac/ReadSignedMacProtectedDocumentTest/";
     private static final byte[] ENCRYPTION_PASSWORD = "123".getBytes();
 
     @BeforeAll

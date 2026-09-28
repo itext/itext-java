@@ -48,7 +48,7 @@ import java.util.TreeMap;
 @Tag("IntegrationTest")
 public class PdfWriterTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfWriterTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfWriterTest/";
 
     @BeforeAll
     public static void beforeClass() {

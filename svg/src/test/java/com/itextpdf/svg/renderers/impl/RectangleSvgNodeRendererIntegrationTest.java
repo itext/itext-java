@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 public class RectangleSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/RectangleSvgNodeRendererTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/impl/RectangleSvgNodeRendererTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/impl/RectangleSvgNodeRendererTest/";
 
     @BeforeAll
     public static void beforeClass() {

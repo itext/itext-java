@@ -51,7 +51,7 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/kernel/colors/gradients/StrategyBasedRadialGradientBuilderTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/kernel/colors/gradients/StrategyBasedRadialGradientBuilderTest/";
+            "./target/test/com/itextpdf/kernel/colors/gradients/StrategyBasedRadialGradientBuilderTest/";
 
     @BeforeAll
     public static void beforeClass() {

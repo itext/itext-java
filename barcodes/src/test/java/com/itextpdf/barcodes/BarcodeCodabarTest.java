@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 public class BarcodeCodabarTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/barcodes/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/barcodes/Codabar/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/barcodes/Codabar/";
 
     @BeforeAll
     public static void beforeClass() {

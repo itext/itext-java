@@ -63,7 +63,7 @@ import java.io.IOException;
 @Tag("IntegrationTest")
 public class VerticalTextPropertiesTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/VerticalTextPropertiesTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/VerticalTextPropertiesTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/VerticalTextPropertiesTest/";
 
     @BeforeAll
     public static void beforeClass() {

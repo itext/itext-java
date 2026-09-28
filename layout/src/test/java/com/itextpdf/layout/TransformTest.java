@@ -51,7 +51,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class TransformTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/TransformTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/TransformTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/TransformTest/";
 
     private static Iterable<Object[]> transforms() {
         return Arrays.asList(new Object[][] {

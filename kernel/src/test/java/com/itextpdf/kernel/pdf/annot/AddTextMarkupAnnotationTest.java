@@ -47,7 +47,7 @@ public class AddTextMarkupAnnotationTest extends ExtendedITextTest {
     public static final String sourceFolder =
             "./src/test/resources/com/itextpdf/kernel/pdf/annot/AddTextMarkupAnnotationTest/";
     public static final String destinationFolder =
-            TestUtil.getOutputPath() + "/kernel/pdf/annot/AddTextMarkupAnnotationTest/";
+            "./target/test/com/itextpdf/kernel/pdf/annot/AddTextMarkupAnnotationTest/";
 
     @BeforeAll
     public static void beforeClass() {

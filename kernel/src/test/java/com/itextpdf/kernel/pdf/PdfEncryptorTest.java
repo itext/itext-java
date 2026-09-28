@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 public class PdfEncryptorTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfEncryptorTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfEncryptorTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfEncryptorTest/";
 
 
     @BeforeAll

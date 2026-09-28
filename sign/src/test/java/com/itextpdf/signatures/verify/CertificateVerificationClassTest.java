@@ -133,7 +133,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6447 fix different X509Certificate#checkValidity behavior)
+    @org.junit.jupiter.api.Disabled
     public void expiredCertificateTest() throws CertificateException, IOException {
 
         final X509Certificate expiredCert =
@@ -284,7 +284,7 @@ public class CertificateVerificationClassTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6447 fix different X509Certificate#checkValidity behavior)
+    @org.junit.jupiter.api.Disabled
     public void certChainWithExpiredCertTest()
             throws CertificateException, IOException {
         final String validCertChainFileName = CERTS_SRC + "signCertRsaWithExpiredChain.pem";

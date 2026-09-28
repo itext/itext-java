@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 @Tag("BouncyCastleIntegrationTest")
 public class XrefStreamDocumentUpdatesTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/XrefStreamDocumentUpdatesTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/XrefStreamDocumentUpdatesTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/XrefStreamDocumentUpdatesTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -70,7 +70,7 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     private static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA4ActionCheckTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA4ActionCheckTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA4ActionCheckTest/";
 
     @BeforeAll
     public static void beforeClass() throws FileNotFoundException {
@@ -445,8 +445,6 @@ public class PdfA4ActionCheckTest extends ExtendedITextTest {
     }
 
     private void compareResult(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        Assertions.assertNull(// Android-Conversion-Skip-Line TODO DEVSIX-7377
-                new VeraPdfValidator().validate(outPdf));// Android-Conversion-Skip-Line TODO DEVSIX-7377
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             Assertions.fail(result);

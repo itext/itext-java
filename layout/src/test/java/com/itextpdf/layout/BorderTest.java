@@ -63,7 +63,7 @@ import org.junit.jupiter.api.Test;
 public class BorderTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BorderTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/BorderTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/BorderTest/";
     public static final String cmpPrefix = "cmp_";
 
     @BeforeAll

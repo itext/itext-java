@@ -88,7 +88,7 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
 
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/TwoPhaseSigningTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/TwoPhaseSigningTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/TwoPhaseSigningTest/";
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 
     private static final String SIMPLE_DOC_PATH = SOURCE_FOLDER + "SimpleDoc.pdf";
@@ -284,7 +284,7 @@ public class TwoPhaseSigningTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-8113 Fix signatures tests)
+    @org.junit.jupiter.api.Disabled
     public void testWithCMS() throws IOException, GeneralSecurityException {
         String signatureName = "Signature1";
 

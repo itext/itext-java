@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 public class WhiteSpaceTest extends SvgIntegrationTest {
 
   private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/WhiteSpaceTest/";
-  private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/renderers/WhiteSpaceTest/";
+  private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/renderers/WhiteSpaceTest/";
 
   @BeforeAll
   public static void beforeClass() {

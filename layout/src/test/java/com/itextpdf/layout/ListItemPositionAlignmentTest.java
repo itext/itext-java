@@ -56,7 +56,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class ListItemPositionAlignmentTest extends ExtendedITextTest {
 
 	public static final String SOURCE_FOLDER  = "./src/test/resources/com/itextpdf/layout/ListItemPositionAlignmentTest/";
-	public static final String DESTINATION_FOLDER  = TestUtil.getOutputPath() + "/layout/ListItemPositionAlignmentTest/";
+	public static final String DESTINATION_FOLDER  = "./target/test/com/itextpdf/layout/ListItemPositionAlignmentTest/";
 
 	private static final String PARAMETERS_NAME_PATTERN = "{index}: list-base-direction: {0}; list-item-base-direction: {1};" +
 	                                                      " list-symbol-alignment: {2}; list-symbol-position: {3};";

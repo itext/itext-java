@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @Tag("IntegrationTest")
 public class PdfCopyTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfCopyTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfCopyTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfCopyTest/";
 
     @BeforeAll

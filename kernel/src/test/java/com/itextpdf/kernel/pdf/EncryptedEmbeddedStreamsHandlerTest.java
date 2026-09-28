@@ -44,7 +44,7 @@ import java.io.IOException;
 public class EncryptedEmbeddedStreamsHandlerTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/EncryptedEmbeddedStreamsHandlerTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/EncryptedEmbeddedStreamsHandlerTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/EncryptedEmbeddedStreamsHandlerTest/";
 
     @BeforeAll
     public static void beforeClass() {

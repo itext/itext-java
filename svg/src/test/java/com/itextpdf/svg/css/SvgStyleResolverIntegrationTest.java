@@ -49,7 +49,7 @@ import org.junit.jupiter.api.Test;
 public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/SvgStyleResolver/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/SvgStyleResolver/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/SvgStyleResolver/";
 
     @BeforeAll
     public static void beforeClass() {
@@ -199,7 +199,7 @@ public class SvgStyleResolverIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6459 Android: fix the SecurityException(Permission denied) from UrlUtil method)
+    @org.junit.jupiter.api.Disabled
     public void googleFontsTest() throws com.itextpdf.io.exceptions.IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "googleFontsTest");
     }

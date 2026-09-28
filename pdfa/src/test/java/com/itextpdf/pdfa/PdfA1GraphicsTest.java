@@ -53,7 +53,7 @@ import org.junit.jupiter.api.Test;
 public class PdfA1GraphicsTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     private static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA1GraphicsTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA1GraphicsTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA1GraphicsTest/";
 
     @BeforeAll
     public static void beforeClass() {

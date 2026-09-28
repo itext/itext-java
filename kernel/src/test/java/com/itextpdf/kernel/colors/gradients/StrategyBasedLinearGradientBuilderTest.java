@@ -50,7 +50,7 @@ public class StrategyBasedLinearGradientBuilderTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
+            "./target/test/com/itextpdf/kernel/colors/gradients/StrategyBasedLinearGradientBuilderTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -54,7 +54,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class OrphansWidowsTest extends ExtendedITextTest {
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/OrphansWidowsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/OrphansWidowsTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/OrphansWidowsTest/";
 
     @BeforeAll

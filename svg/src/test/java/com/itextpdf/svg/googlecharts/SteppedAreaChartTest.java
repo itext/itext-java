@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class SteppedAreaChartTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/SteppedAreaChartsTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/SteppedAreaChartsTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/googlecharts/SteppedAreaChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

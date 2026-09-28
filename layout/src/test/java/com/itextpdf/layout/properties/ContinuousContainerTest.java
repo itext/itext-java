@@ -53,7 +53,7 @@ public class ContinuousContainerTest extends ExtendedITextTest {
 
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/ContinuousContainerTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/ContinuousContainerTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/ContinuousContainerTest/";
 
     private static final float DEFAULT_PADDING = 40F;
     private static final float DEFAULT_MARGIN = 100F;

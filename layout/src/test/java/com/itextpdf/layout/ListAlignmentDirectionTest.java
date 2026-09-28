@@ -53,7 +53,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class ListAlignmentDirectionTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/ListAlignmentDirectionTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/ListAlignmentDirectionTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/ListAlignmentDirectionTest/";
 
     private static final String PARAMETERS_NAME_PATTERN = "item-text-align: {0}; item-direction: {1}, "
             + "list-text-align: {2}; list-direction: {3}";

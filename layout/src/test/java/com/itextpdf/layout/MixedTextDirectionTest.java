@@ -49,7 +49,7 @@ import java.util.Collection;
 @Tag("IntegrationTest")
 public class MixedTextDirectionTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/MixedTextDirectionTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/MixedTextDirectionTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/MixedTextDirectionTest/";
 
     public static Collection<WritingMode> mixedVertical() {
         return Arrays.asList(WritingMode.HORIZONTAL_TB, WritingMode.VERTICAL_LR, WritingMode.VERTICAL_RL);

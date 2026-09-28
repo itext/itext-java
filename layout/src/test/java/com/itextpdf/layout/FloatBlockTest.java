@@ -55,7 +55,7 @@ import org.xml.sax.SAXException;
 @Tag("IntegrationTest")
 public class FloatBlockTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatBlockTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FloatBlockTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatBlockTest/";
 
     @BeforeAll
     public static void beforeClass() {

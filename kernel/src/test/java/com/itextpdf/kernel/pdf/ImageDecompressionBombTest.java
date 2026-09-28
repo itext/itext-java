@@ -43,7 +43,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class ImageDecompressionBombTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/ImageDecompressionBombTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/ImageDecompressionBombTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/ImageDecompressionBombTest/";
 
     @BeforeAll
     public static void beforeClass() {

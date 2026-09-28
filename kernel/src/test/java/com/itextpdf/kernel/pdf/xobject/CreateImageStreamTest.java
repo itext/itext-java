@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 public class CreateImageStreamTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/xobject/CreateImageStreamTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/xobject/CreateImageStreamTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/xobject/CreateImageStreamTest/";
 
     @BeforeAll
     public static void beforeClass() {

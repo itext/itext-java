@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfA2AcroFormCheckTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
     public static final String cmpFolder = sourceFolder + "cmp/PdfA2AcroFormCheckTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfA2AcroFormCheckTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfA2AcroFormCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

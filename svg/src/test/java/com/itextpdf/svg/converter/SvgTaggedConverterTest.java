@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Test;
 public class SvgTaggedConverterTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/converter/SvgTaggedConverterTest/";
-    private static final String DEST_FOLDER = TestUtil.getOutputPath() + "/svg/converter/SvgTaggedConverterTest/";
+    private static final String DEST_FOLDER = "./target/test/com/itextpdf/svg/converter/SvgTaggedConverterTest/";
 
     @BeforeAll
     public static void beforeClass() {

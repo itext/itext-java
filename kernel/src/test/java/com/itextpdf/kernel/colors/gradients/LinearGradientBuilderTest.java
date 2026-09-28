@@ -52,7 +52,7 @@ public class LinearGradientBuilderTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/kernel/colors/gradients/LinearGradientBuilderTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/kernel/colors/gradients/LinearGradientBuilderTest/";
+            "./target/test/com/itextpdf/kernel/colors/gradients/LinearGradientBuilderTest/";
 
     @BeforeAll
     public static void beforeClass() {

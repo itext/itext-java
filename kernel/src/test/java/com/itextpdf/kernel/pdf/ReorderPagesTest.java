@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ReorderPagesTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/ReorderPagesTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/ReorderPagesTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/ReorderPagesTest/";
 
     @BeforeAll
     public static void beforeClass() {

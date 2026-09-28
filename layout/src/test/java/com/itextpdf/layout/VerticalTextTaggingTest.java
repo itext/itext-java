@@ -54,7 +54,7 @@ import java.util.List;
 public class VerticalTextTaggingTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/VerticalTextTaggingTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/VerticalTextTaggingTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/VerticalTextTaggingTest/";
 
     @BeforeAll
     public static void beforeClass() {

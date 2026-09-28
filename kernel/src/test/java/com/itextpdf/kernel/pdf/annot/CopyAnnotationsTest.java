@@ -44,7 +44,7 @@ public class CopyAnnotationsTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/annot"
             + "/CopyAnnotationsTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/annot/CopyAnnotationsTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/annot/CopyAnnotationsTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -206,34 +206,6 @@ public class BarcodeQRCode extends Barcode2D {
         return xObject;
     }
 
-    // Android-Conversion-Skip-Block-Start (java.awt library isn't available on Android)
-    /**
-     * Creates a <CODE>java.awt.Image</CODE>.
-     *
-     * @param foreground the color of the bars
-     * @param background the color of the background
-     * @return the image
-     */
-    public java.awt.Image createAwtImage(java.awt.Color foreground, java.awt.Color background) {
-        int f = foreground.getRGB();
-        int g = background.getRGB();
-        java.awt.Canvas canvas = new java.awt.Canvas();
-
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        int[] pix = new int[width * height];
-        byte[][] mt = bm.getArray();
-        for (int y = 0; y < height; ++y) {
-            byte[] line = mt[y];
-            for (int x = 0; x < width; ++x) {
-                pix[y * width + x] = line[x] == 0 ? f : g;
-            }
-        }
-
-        java.awt.Image img = canvas.createImage(new java.awt.image.MemoryImageSource(width, height, pix, 0, width));
-        return img;
-    }
-    // Android-Conversion-Skip-Block-End
 
     private byte[] getBitMatrix() {
         int width = bm.getWidth();

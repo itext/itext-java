@@ -58,7 +58,7 @@ import org.junit.jupiter.api.Test;
 public class MinWidthTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/MinWidthTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/MinWidthTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/MinWidthTest/";
 
     @BeforeAll
     public static void beforeClass() {

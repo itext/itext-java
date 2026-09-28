@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Tag;
 public class EncryptionInApprovedModeTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/crypto"
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/crypto"
             + "/EncryptionInApprovedModeTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/crypto"
             + "/EncryptionInApprovedModeTest/";

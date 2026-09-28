@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class FontFaceTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/processors/impl/font/FontFaceTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/processors/impl/font/FontFaceTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/processors/impl/font/FontFaceTest/";
 
     @BeforeAll
     public static void beforeClass() {

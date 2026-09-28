@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
 public class PdfA1CanvasCheckTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     private static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/PdfA1CanvasCheckTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA1CanvasCheckTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA1CanvasCheckTest/";
 
     @BeforeAll
     public static void beforeClass() {

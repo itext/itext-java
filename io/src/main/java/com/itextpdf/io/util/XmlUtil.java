@@ -22,9 +22,8 @@
  */
 package com.itextpdf.io.util;
 
-// Android-Conversion-Skip-Line (Directly use xerces library to unify behavior with vanilla java (where xerces is implemented into JRE))
-// Android-Conversion-Replace import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
-// Android-Conversion-Replace import org.apache.xerces.jaxp.SAXParserFactoryImpl;
+import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
+import org.apache.xerces.jaxp.SAXParserFactoryImpl;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -49,8 +48,7 @@ public final class XmlUtil {
      * @return document builder factory implementation
      */
     public static DocumentBuilderFactory getDocumentBuilderFactory() {
-        // Android-Conversion-Skip-Line (Directly use xerces library to unify behavior with vanilla java (where xerces is implemented into JRE))
-        return DocumentBuilderFactory.newInstance(); // Android-Conversion-Replace return new DocumentBuilderFactoryImpl();
+        return new DocumentBuilderFactoryImpl();
     }
 
     /**
@@ -59,8 +57,7 @@ public final class XmlUtil {
      * @return SAX parser factory implementation
      */
     public static SAXParserFactory createSAXParserFactory() {
-        // Android-Conversion-Skip-Line (Directly use xerces library to unify behavior with vanilla java (where xerces is implemented into JRE))
-        return SAXParserFactory.newInstance(); // Android-Conversion-Replace return new SAXParserFactoryImpl();
+        return new SAXParserFactoryImpl();
     }
 
     /**

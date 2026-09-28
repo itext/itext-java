@@ -63,7 +63,7 @@ import org.junit.jupiter.api.Test;
 public class FontSelectorTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/FontSelectorTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/FontSelectorTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/FontSelectorTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

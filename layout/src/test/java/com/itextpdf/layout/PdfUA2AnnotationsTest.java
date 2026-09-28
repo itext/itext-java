@@ -89,7 +89,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PdfUA2AnnotationsTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/PdfUA2AnnotationsTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/PdfUA2AnnotationsTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

@@ -54,7 +54,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class CollapsingMarginsTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/CollapsingMarginsTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/layout/CollapsingMarginsTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/layout/CollapsingMarginsTest/";
     
     @BeforeAll
     public static void beforeClass() {

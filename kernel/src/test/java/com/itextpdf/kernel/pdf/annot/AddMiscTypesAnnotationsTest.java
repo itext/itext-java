@@ -79,7 +79,7 @@ public class AddMiscTypesAnnotationsTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/kernel/pdf/annot/AddMiscTypesAnnotationsTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/kernel/pdf/annot/AddMiscTypesAnnotationsTest/";
+            "./target/test/com/itextpdf/kernel/pdf/annot/AddMiscTypesAnnotationsTest/";
 
     @BeforeAll
     public static void beforeClass() {

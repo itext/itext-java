@@ -77,7 +77,7 @@ public class Pdf20SigningTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/sign/Pdf20SigningTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/sign/Pdf20SigningTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/sign/Pdf20SigningTest/";
     private static final String KEYSTORE_PATH = "./src/test/resources/com/itextpdf/signatures/certs/signCertRsa01.pem";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();

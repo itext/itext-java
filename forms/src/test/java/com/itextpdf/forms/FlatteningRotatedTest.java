@@ -46,7 +46,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class FlatteningRotatedTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/FlatteningRotatedTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/FlatteningRotatedTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/FlatteningRotatedTest/";
 
     public static Collection<Object[]> inputFileNames() {
         List<Object[]> inputFileNames = new ArrayList<Object[]>();

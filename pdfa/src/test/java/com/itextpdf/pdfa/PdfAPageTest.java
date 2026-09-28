@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfAPageTest extends ExtendedITextTest {
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/pdfa/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/pdfa/PdfAPageTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/pdfa/PdfAPageTest/";
 
     @BeforeAll
     public static void beforeClass() {

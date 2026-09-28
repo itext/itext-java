@@ -74,7 +74,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class ProhibitedTagRelationsResolverTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms" +
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms" +
             "/ResolveProhibitedRelationsRuleTest/";
 
     public static final String FONT_LOCATION = "./src/test/resources/com/itextpdf/forms/fonts/NotoSans-Regular.ttf";

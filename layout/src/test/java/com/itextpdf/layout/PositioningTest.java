@@ -61,7 +61,7 @@ import org.junit.jupiter.api.Test;
 public class PositioningTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/PositioningTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/PositioningTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/PositioningTest/";
 
     @BeforeAll
     public static void beforeClass() {

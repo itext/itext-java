@@ -57,7 +57,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfAnnotationCopyingTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfAnnotationCopyingTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfAnnotationCopyingTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfAnnotationCopyingTest/";
 
     @BeforeAll

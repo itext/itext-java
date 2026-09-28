@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class TrendlinesChartsTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/TrendlinesChartsTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/TrendlinesChartsTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/googlecharts/TrendlinesChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

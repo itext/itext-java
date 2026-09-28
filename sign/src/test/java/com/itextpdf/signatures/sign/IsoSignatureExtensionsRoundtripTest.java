@@ -88,7 +88,7 @@ public class IsoSignatureExtensionsRoundtripTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTests/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/signatures/sign/IsoSignatureExtensionsRoundtripTests/";
+            "./target/test/com/itextpdf/signatures/sign/IsoSignatureExtensionsRoundtripTests/";
     private static final char[] SAMPLE_KEY_PASSPHRASE = "secret".toCharArray();
     private static final String SOURCE_FILE = SOURCE_FOLDER + "helloWorldDoc.pdf";
     private static final String SIGNATURE_FIELD = "Signature";

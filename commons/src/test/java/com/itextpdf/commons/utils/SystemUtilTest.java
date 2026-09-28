@@ -45,7 +45,7 @@ public class SystemUtilTest extends ExtendedITextTest {
 
     private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/commons/utils/SystemUtilTest/";
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/commons/utils/SystemUtilTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/commons/utils/SystemUtilTest/";
 
     // This is empty file that used to check the logic for existed execution file
     private final static String STUB_EXEC_FILE = SOURCE_FOLDER + "folder with space/stubFile";
@@ -117,7 +117,7 @@ public class SystemUtilTest extends ExtendedITextTest {
         Assertions.assertEquals(Arrays.asList(
                 "D:\\itext\\java\\itextcore\\kernel\\.\\target\\test\\com\\itextpdf\\kernel\\utils\\CompareToolTest\\simple_pdf.pdf-001.png",
                 "D:\\itext\\java\\itextcore\\kernel\\.\\target\\test\\com\\itextpdf\\kernel\\utils\\CompareToolTest\\cmp_simple_pdf_with_space .pdf-001.png",
-                TestUtil.getOutputPath() + "/kernel/utils/CompareToolTest/diff_simple_pdf.pdf_1.png"),
+                "./target/test/com/itextpdf/kernel/utils/CompareToolTest/diff_simple_pdf.pdf_1.png"),
                 processArguments);
     }
 
@@ -144,7 +144,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6441 fix problem with System#getEnv method)
+    @org.junit.jupiter.api.Disabled
     public void runProcessAndWaitWithWorkingDirectoryTest() throws IOException, InterruptedException {
         String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
         if (imageMagickPath == null) {
@@ -167,7 +167,7 @@ public class SystemUtilTest extends ExtendedITextTest {
     }
 
     @Test
-    // Android-Conversion-Ignore-Test (TODO DEVSIX-6441 fix problem with System#getEnv method)
+    @org.junit.jupiter.api.Disabled
     public void runProcessAndGetProcessInfoTest() throws IOException, InterruptedException {
         String imageMagickPath = SystemUtil.getPropertyOrEnvironmentVariable(MAGICK_COMPARE_ENVIRONMENT_VARIABLE);
         if (imageMagickPath == null) {
