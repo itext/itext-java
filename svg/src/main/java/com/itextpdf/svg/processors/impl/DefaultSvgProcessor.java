@@ -45,6 +45,7 @@ import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.impl.AbstractGradientSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.DefsSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.ForeignObjectNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ISvgTextNodeRenderer;
 import com.itextpdf.svg.renderers.impl.StopSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.TextSvgBranchRenderer;
@@ -75,7 +76,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     }
 
     @Override
-    public ISvgProcessorResult process(INode root, ISvgConverterProperties converterProps) throws SvgProcessingException {
+    public ISvgProcessorResult process(INode root, ISvgConverterProperties converterProps)
+            throws SvgProcessingException {
         if (root == null) {
             throw new SvgProcessingException(SvgExceptionMessageConstant.I_NODE_ROOT_IS_NULL);
         }
@@ -95,6 +97,35 @@ public class DefaultSvgProcessor implements ISvgProcessor {
             return new SvgProcessorResult(namedObjects, rootSvgRenderer, context);
         } else {
             throw new SvgProcessingException(SvgExceptionMessageConstant.NO_ROOT);
+        }
+    }
+
+    /**
+     * Handles the foreign object handling, currently we just render the plain text content
+     * for nodes which use the xhtml namespace. Content not having this namespace will not be displayed.
+     *
+     * @param node the {@code foreignObject} node
+     */
+    protected void visitForeignObject(INode node) {
+        if (node instanceof IElementNode) {
+            IElementNode element = (IElementNode) node;
+            if (!isXhtmlElement(element)) {
+                return;
+            }
+            String name = element.name();
+            name = name.substring(name.indexOf(':') + 1);
+            if ("script".equalsIgnoreCase(name) || Tags.STYLE.equalsIgnoreCase(name)) {
+                return;
+            }
+            for (INode child : node.childNodes()) {
+                visitForeignObject(child);
+            }
+        } else if (node instanceof ITextNode && node.parentNode() instanceof IElementNode) {
+            IElementNode parent = (IElementNode) node.parentNode();
+            boolean shouldShowText = isXhtmlElement(parent) || Tags.FOREIGN_OBJECT.equalsIgnoreCase(parent.name());
+            if (shouldShowText) {
+                processText((ITextNode) node);
+            }
         }
     }
 
@@ -128,7 +159,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
 
             ISvgNodeRenderer startingRenderer = rendererFactory.createSvgNodeRendererForTag(rootElementNode, null);
             if (startingRenderer != null) {
-                Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode, context.getCssContext());
+                Map<String, String> attributesAndStyles = cssResolver.resolveStyles(startingNode,
+                        context.getCssContext());
                 rootElementNode.setStyles(attributesAndStyles);
                 startingRenderer.setAttributesAndStyles(attributesAndStyles);
                 processorState.push(startingRenderer);
@@ -160,6 +192,11 @@ public class DefaultSvgProcessor implements ISvgProcessor {
      * @param node INode to visit
      */
     private void visit(INode node) {
+        if (processorState.top() instanceof ForeignObjectNodeRenderer) {
+            // Foreign gets flattened to only text, even for tag names shared with SVG.
+            visitForeignObject(node);
+            return;
+        }
         if (node instanceof IElementNode) {
             IElementNode element = (IElementNode) node;
 
@@ -184,12 +221,14 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                             // because StopSvgNodeRenderer performs an auxiliary function and should not be drawn at all
                             ((AbstractGradientSvgNodeRenderer) parentRenderer).addChild(renderer);
                         }
-                    }
-                    // DefsSvgNodeRenderer should not have parental relationship with any renderer, it only serves as a storage
-                    else if (!(renderer instanceof INoDrawSvgNodeRenderer) && !(parentRenderer instanceof DefsSvgNodeRenderer)) {
+                    } else if (!(renderer instanceof INoDrawSvgNodeRenderer)
+                            && !(parentRenderer instanceof DefsSvgNodeRenderer)) {
+                        // DefsSvgNodeRenderer should not have parental relationship with any renderer, it only
+                        // serves as a storage
                         if (parentRenderer instanceof IBranchSvgNodeRenderer) {
                             ((IBranchSvgNodeRenderer) parentRenderer).addChild(renderer);
-                        } else if (parentRenderer instanceof TextSvgBranchRenderer && renderer instanceof ISvgTextNodeRenderer) {
+                        } else if (parentRenderer instanceof TextSvgBranchRenderer
+                                && renderer instanceof ISvgTextNodeRenderer) {
                             // Text branch node renderers only accept ISvgTextNodeRenderers
                             ((TextSvgBranchRenderer) parentRenderer).addChild((ISvgTextNodeRenderer) renderer);
                         }
@@ -211,10 +250,30 @@ public class DefaultSvgProcessor implements ISvgProcessor {
         }
     }
 
+    private static boolean isXhtmlElement(IElementNode element) {
+        String name = element.name();
+        int prefixEnd = name.indexOf(':');
+        String namespaceAttribute = prefixEnd < 0 ? SvgConstants.Attributes.XMLNS
+                : (SvgConstants.Attributes.XMLNS + ":" + name.substring(0, prefixEnd));
+        for (INode current = element; current != null; current = current.parentNode()) {
+            if (!(current instanceof IElementNode)) {
+                continue;
+            }
+            String namespace = ((IElementNode) current).getAttribute(namespaceAttribute);
+            if (namespace == null) {
+                continue;
+            }
+            return "http://www.w3.org/1999/xhtml".equals(namespace);
+        }
+        return false;
+    }
+
+
     /**
      * Check if this node is a text node that needs to be processed by the parent
      *
      * @param node node to check
+     *
      * @return true if the node should be processed as text, false otherwise
      */
     private boolean processAsText(INode node) {
@@ -229,24 +288,31 @@ public class DefaultSvgProcessor implements ISvgProcessor {
     private void processText(ITextNode textNode) {
         ISvgNodeRenderer parentRenderer = this.processorState.top();
 
-        if (parentRenderer instanceof TextSvgBranchRenderer) {
+        boolean isForeignObject = parentRenderer instanceof ForeignObjectNodeRenderer;
+        if (parentRenderer instanceof TextSvgBranchRenderer || isForeignObject) {
             String wholeText = textNode.wholeText();
-            if (!"".equals(wholeText) && !SvgTextUtil.isOnlyWhiteSpace(wholeText)) {
+            if (!"".equals(wholeText) && (isForeignObject || !SvgTextUtil.isOnlyWhiteSpace(wholeText))) {
                 final IElementNode textLeafElement = new JsoupElementNode(new Element(Tag.valueOf(Tags.TEXT_LEAF), ""));
                 ISvgTextNodeRenderer textLeaf = (ISvgTextNodeRenderer) this.rendererFactory
                         .createSvgNodeRendererForTag(textLeafElement, parentRenderer);
                 textLeaf.setParent(parentRenderer);
                 textLeaf.setAttribute(SvgConstants.Attributes.TEXT_CONTENT, wholeText);
-                ((TextSvgBranchRenderer) parentRenderer).addChild(textLeaf);
+                if (isForeignObject) {
+                    ((ForeignObjectNodeRenderer) parentRenderer).addChild(textLeaf);
+                } else {
+                    ((TextSvgBranchRenderer) parentRenderer).addChild(textLeaf);
+                }
             }
         }
     }
 
     /**
-     * Find the first element in the node-tree that corresponds with the passed tag-name. Search is performed depth-first
+     * Find the first element in the node-tree that corresponds with the passed tag-name. Search is performed
+     * depth-first
      *
      * @param node    root-node to start with
      * @param tagName name of the tag that needs to be fonund
+     *
      * @return IElementNode
      */
     IElementNode findFirstElement(INode node, String tagName) {
@@ -261,7 +327,8 @@ public class DefaultSvgProcessor implements ISvgProcessor {
                 return null;
             }
 
-            if (currentNode instanceof IElementNode && ((IElementNode) currentNode).name() != null && ((IElementNode) currentNode).name().equals(tagName)) {
+            if (currentNode instanceof IElementNode && ((IElementNode) currentNode).name() != null
+                    && ((IElementNode) currentNode).name().equals(tagName)) {
                 return (IElementNode) currentNode;
             }
 

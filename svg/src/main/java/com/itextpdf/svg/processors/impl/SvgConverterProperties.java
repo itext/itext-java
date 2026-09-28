@@ -30,6 +30,7 @@ import com.itextpdf.styledxmlparser.css.CssStyleSheet;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.resolver.resource.DefaultResourceRetriever;
 import com.itextpdf.styledxmlparser.resolver.resource.IResourceRetriever;
+import com.itextpdf.styledxmlparser.resolver.resource.ResourceResolver;
 import com.itextpdf.svg.processors.ISvgConverterProperties;
 import com.itextpdf.svg.renderers.factories.DefaultSvgNodeRendererFactory;
 import com.itextpdf.svg.renderers.factories.ISvgNodeRendererFactory;
@@ -44,16 +45,24 @@ import static com.itextpdf.svg.converter.SvgConverter.SVG_DEFAULT_ROLE;
  */
 public class SvgConverterProperties implements ISvgConverterProperties {
 
-    /** The media device description. */
+    /**
+     * The media device description.
+     */
     private MediaDeviceDescription mediaDeviceDescription;
 
-    /** The font provider. */
+    /**
+     * The font provider.
+     */
     private FontProvider fontProvider;
 
-    /** The base URI. */
+    /**
+     * The base URI.
+     */
     private String baseUri = "";
 
-    /** The resource retriever. */
+    /**
+     * The resource retriever.
+     */
     private IResourceRetriever resourceRetriever;
 
     private ISvgNodeRendererFactory rendererFactory;
@@ -66,6 +75,7 @@ public class SvgConverterProperties implements ISvgConverterProperties {
 
     private final AccessibilityProperties accessibilityProperties = new DefaultAccessibilityProperties(
             SVG_DEFAULT_ROLE);
+    private ResourceResolver resourceResolver;
 
     /**
      * Creates a new {@link SvgConverterProperties} instance.
@@ -84,7 +94,8 @@ public class SvgConverterProperties implements ISvgConverterProperties {
      * @return the custom viewport
      */
     public Rectangle getCustomViewport() {
-        // TODO DEVSIX-8808 add this getter to the interface ISvgConverterProperties and remove class casting where getCustomViewport is called
+        // TODO DEVSIX-8808 add this getter to the interface ISvgConverterProperties and remove class casting where
+        //  getCustomViewport is called
         return customViewport;
     }
 
@@ -190,6 +201,7 @@ public class SvgConverterProperties implements ISvgConverterProperties {
      * Sets the media device description.
      *
      * @param mediaDeviceDescription the media device description
+     *
      * @return the ConverterProperties instance
      */
     public SvgConverterProperties setMediaDeviceDescription(MediaDeviceDescription mediaDeviceDescription) {
@@ -201,6 +213,7 @@ public class SvgConverterProperties implements ISvgConverterProperties {
      * Sets the base URI.
      *
      * @param baseUri the base URI
+     *
      * @return the ConverterProperties instance
      */
     public SvgConverterProperties setBaseUri(String baseUri) {
@@ -215,10 +228,11 @@ public class SvgConverterProperties implements ISvgConverterProperties {
 
     /**
      * Sets the resource retriever.
-     *
+     * <p>
      * The resourceRetriever is used to retrieve data from resources by URL.
      *
      * @param resourceRetriever the resource retriever
+     *
      * @return the {@link SvgConverterProperties} instance
      */
     public SvgConverterProperties setResourceRetriever(IResourceRetriever resourceRetriever) {
@@ -242,5 +256,23 @@ public class SvgConverterProperties implements ISvgConverterProperties {
     public SvgConverterProperties setCssStyleSheet(CssStyleSheet cssStyleSheet) {
         this.cssStyleSheet = cssStyleSheet;
         return this;
+    }
+
+    /**
+     * gets the {@link  ResourceResolver}
+     *
+     * @return {@link  ResourceResolver}
+     */
+    public ResourceResolver getResourceResolver() {
+        return this.resourceResolver;
+    }
+
+    /**
+     * Sets the {@link  ResourceResolver}
+     *
+     * @param resolver the {@link  ResourceResolver} to set.
+     */
+    public void setResourceResolver(ResourceResolver resolver) {
+        this.resourceResolver = resolver;
     }
 }

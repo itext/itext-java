@@ -47,7 +47,7 @@ public class SvgProcessorContext {
      */
     private FontSet tempFonts;
 
-    private final ResourceResolver resourceResolver;
+    private ResourceResolver resourceResolver;
     /**
      * The device description.
      */
@@ -75,9 +75,14 @@ public class SvgProcessorContext {
         if (fontProvider == null) {
             fontProvider = new BasicFontProvider();
         }
-        resourceResolver = new ResourceResolver(converterProperties.getBaseUri(),
-                converterProperties.getResourceRetriever());
 
+        if (converterProperties instanceof SvgConverterProperties) {
+            resourceResolver = ((SvgConverterProperties) converterProperties).getResourceResolver();
+        }
+        if (resourceResolver == null) {
+            resourceResolver = new ResourceResolver(converterProperties.getBaseUri(),
+                    converterProperties.getResourceRetriever());
+        }
         cssStyleSheet = converterProperties.getCssStyleSheet();
         if (cssStyleSheet == null) {
             cssStyleSheet = new CssStyleSheet();

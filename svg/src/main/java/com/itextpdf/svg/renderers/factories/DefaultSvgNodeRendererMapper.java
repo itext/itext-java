@@ -25,10 +25,12 @@ package com.itextpdf.svg.renderers.factories;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.renderers.ISvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.ANodeRenderer;
 import com.itextpdf.svg.renderers.impl.CircleSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ClipPathSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.DefsSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.EllipseSvgNodeRenderer;
+import com.itextpdf.svg.renderers.impl.ForeignObjectNodeRenderer;
 import com.itextpdf.svg.renderers.impl.GroupSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.ImageSvgNodeRenderer;
 import com.itextpdf.svg.renderers.impl.LineSvgNodeRenderer;
@@ -65,6 +67,7 @@ class DefaultSvgNodeRendererMapper {
     private static final String LINEAR_GRADIENT_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.LINEAR_GRADIENT);
     private static final String RADIAL_GRADIENT_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.RADIAL_GRADIENT);
     private static final String TEXT_LEAF_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.TEXT_LEAF);
+    private static final String FOREIGN_OBJECT_LC = StringNormalizer.toLowerCase(SvgConstants.Tags.FOREIGN_OBJECT);
 
     /**
      * Creates a new {@link DefaultSvgNodeRendererMapper} instance.
@@ -97,6 +100,8 @@ class DefaultSvgNodeRendererMapper {
         result.put(SvgConstants.Tags.SVG, () -> new SvgTagSvgNodeRenderer());
         result.put(SvgConstants.Tags.SYMBOL, () -> new SymbolSvgNodeRenderer());
         result.put(SvgConstants.Tags.TEXT, () -> new TextSvgBranchRenderer());
+        result.put(SvgConstants.Tags.A, () -> new ANodeRenderer());
+        result.put(SvgConstants.Tags.FOREIGN_OBJECT, () -> new ForeignObjectNodeRenderer());
         result.put(SvgConstants.Tags.TSPAN, () -> new TextSvgTSpanBranchRenderer());
         result.put(SvgConstants.Tags.USE, () -> new UseSvgNodeRenderer());
         result.put(SvgConstants.Tags.TEXT_LEAF, () -> new TextLeafSvgNodeRenderer());
@@ -106,13 +111,13 @@ class DefaultSvgNodeRendererMapper {
         result.put(LINEAR_GRADIENT_LC, () -> new LinearGradientSvgNodeRenderer());
         result.put(RADIAL_GRADIENT_LC, () -> new RadialGradientSvgNodeRenderer());
         result.put(TEXT_LEAF_LC, () -> new TextLeafSvgNodeRenderer());
+        result.put(FOREIGN_OBJECT_LC, () -> new ForeignObjectNodeRenderer());
 
         mapping = Collections.unmodifiableMap(result);
 
         // Not supported tags as of yet
         Collection<String> ignoredTags = new HashSet<>();
 
-        ignoredTags.add(SvgConstants.Tags.A);
         ignoredTags.add(SvgConstants.Tags.ALT_GLYPH);
         ignoredTags.add(SvgConstants.Tags.ALT_GLYPH_DEF);
         ignoredTags.add(SvgConstants.Tags.ALT_GLYPH_ITEM);
@@ -152,7 +157,6 @@ class DefaultSvgNodeRendererMapper {
         ignoredTags.add(SvgConstants.Tags.FONT_FACE_NAME);
         ignoredTags.add(SvgConstants.Tags.FONT_FACE_SRC);
         ignoredTags.add(SvgConstants.Tags.FONT_FACE_URI);
-        ignoredTags.add(SvgConstants.Tags.FOREIGN_OBJECT);
 
         ignoredTags.add(SvgConstants.Tags.GLYPH);
         ignoredTags.add(SvgConstants.Tags.GLYPH_REF);

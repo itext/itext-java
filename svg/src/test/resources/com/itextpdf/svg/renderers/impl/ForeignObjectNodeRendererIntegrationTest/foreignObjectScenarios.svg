@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://www.w3.org/1999/xhtml"
+     width="640" height="650" viewBox="0 0 640 650" font-family="Helvetica" font-size="16">
+    <!-- Default namespace inheritance, inline elements, and foreignObject styles. -->
+    <foreignObject x="20" y="20" width="600" height="36"
+                   style="color:#432787;background-color:#eeeeee;font-weight:700;line-height:1.5">
+        <div xmlns="http://www.w3.org/1999/xhtml">Default namespace: <span>nested</span> <strong>inline</strong> <a href="#">link</a> &amp; entities.</div>
+    </foreignObject>
+
+    <!-- Prefix inherited from the SVG root; it does not change the default SVG namespace. -->
+    <foreignObject x="20" y="70" width="600" height="36">
+        <h:p>Prefixed namespace: <h:span>inherited</h:span><span>HIDDEN_UNPREFIXED_SVG</span><h:span> binding.</h:span></h:p>
+    </foreignObject>
+
+    <!-- A locally declared prefix and default namespace can be used together. -->
+    <foreignObject x="20" y="120" width="600" height="36">
+        <x:div xmlns:x="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">Local prefix: <span>default</span> <x:em>and prefixed</x:em> text.</x:div>
+    </foreignObject>
+
+    <!-- Namespace resets, overrides, undeclared prefixes, and foreign subtrees are excluded. -->
+    <foreignObject x="20" y="170" width="600" height="36">
+        <div xmlns="http://www.w3.org/1999/xhtml">Namespace overrides: before <span xmlns="">HIDDEN_EMPTY_NAMESPACE</span><text xmlns="http://www.w3.org/2000/svg">HIDDEN_SVG_TEXT</text><math xmlns="http://www.w3.org/1998/Math/MathML"><mtext>HIDDEN_MATHML</mtext></math><h:span xmlns:h="urn:other">HIDDEN_REBOUND_PREFIX</h:span><span xmlns="http://www.w3.org/1999/XHTML">HIDDEN_WRONG_CASE</span><other xmlns="urn:other"><span xmlns="http://www.w3.org/1999/xhtml">HIDDEN_FOREIGN_SUBTREE</span></other><h:span>after.</h:span></div>
+    </foreignObject>
+
+    <!-- Script and style contents are not text, including prefixed and uppercase variants. -->
+    <foreignObject x="20" y="220" width="600" height="36">
+        <div xmlns="http://www.w3.org/1999/xhtml">Scripts and styles: visible<script>HIDDEN_SCRIPT</script><style>/* HIDDEN_STYLE */</style><h:script>HIDDEN_PREFIXED_SCRIPT</h:script><h:style>HIDDEN_PREFIXED_STYLE</h:style><h:SCRIPT><h:span>HIDDEN_SCRIPT_CHILD</h:span></h:SCRIPT><STYLE>HIDDEN_UPPERCASE_STYLE</STYLE> text.</div>
+    </foreignObject>
+
+    <!-- Whitespace-only text nodes between inline elements must be preserved. -->
+    <foreignObject x="20" y="270" width="600" height="36">
+        <div xmlns="http://www.w3.org/1999/xhtml">
+            <span>Whitespace</span>
+            <span>stays</span> <span>between</span> <span>inline elements.</span>
+        </div>
+    </foreignObject>
+
+    <!-- Narrow bounds exercise paragraph wrapping rather than SVG text layout. -->
+    <foreignObject x="20" y="320" width="120" height="140" font-size="12">
+        <div xmlns="http://www.w3.org/1999/xhtml">Wrapped XHTML text uses several lines inside the foreign object.</div>
+    </foreignObject>
+
+    <!-- Image resources must not be loaded; SVG descendants must not become renderers. -->
+    <foreignObject x="20" y="470" width="600" height="36">
+        <div xmlns="http://www.w3.org/1999/xhtml">Images and foreign graphics <img src="does-not-exist.png" alt="HIDDEN_ALT_TEXT"/><svg xmlns="http://www.w3.org/2000/svg"><text>HIDDEN_NESTED_SVG</text><rect width="600" height="600" fill="red"/></svg>are ignored.</div>
+    </foreignObject>
+
+    <!-- Raw text in the SVG namespace and children with no XHTML declaration are excluded. -->
+    <foreignObject x="20" y="520" width="600" height="36">
+        HIDDEN_DIRECT_TEXT
+        <div>HIDDEN_SVG_DIV</div>
+        <div xmlns="">HIDDEN_NO_NAMESPACE</div>
+        <div xmlns="urn:other">HIDDEN_OTHER_NAMESPACE</div>
+        <div xmlns="http://www.w3.org/1999/xhtml">Only XHTML text is included.</div>
+    </foreignObject>
+
+
+    <!-- Empty and non-positive bounds do not render even valid XHTML text. -->
+    <foreignObject x="20" y="570" width="100" height="30"/>
+    <foreignObject width="0" height="50"><h:div>HIDDEN_ZERO_WIDTH</h:div></foreignObject>
+    <foreignObject width="100" height="0"><h:div>HIDDEN_ZERO_HEIGHT</h:div></foreignObject>
+    <foreignObject width="-1" height="50"><h:div>HIDDEN_NEGATIVE_WIDTH</h:div></foreignObject>
+    <foreignObject width="100" height="-1"><h:div>HIDDEN_NEGATIVE_HEIGHT</h:div></foreignObject>
+    <foreignObject height="50"><h:div>HIDDEN_MISSING_WIDTH</h:div></foreignObject>
+    <foreignObject width="100"><h:div>HIDDEN_MISSING_HEIGHT</h:div></foreignObject>
+
+    <foreignObject x="20" y="570" width="600" height="36">
+        DO IS SHOW?
+    </foreignObject>
+
+    <text x="20" y="610">Ordinary SVG text still renders.</text>
+</svg>
+
