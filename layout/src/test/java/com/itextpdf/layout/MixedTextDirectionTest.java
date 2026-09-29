@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -35,6 +36,8 @@ import com.itextpdf.layout.properties.VerticalTextOrientation;
 import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -61,6 +64,7 @@ public class MixedTextDirectionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void paragraphMixedTextTest() throws IOException, InterruptedException {
         String fileName = "paragraphMixedTextTest";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
@@ -97,8 +101,6 @@ public class MixedTextDirectionTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("mixedVertical")
-    // TODO DEVSIX-10200 Consider text elements with different writing-mode as inline-blocks,
-    //  after that vertical RTL text chunks in vertical LTR paragraphs and vice versa will be fixed.
     public void paragraphMixedVerticalTextTest(WritingMode paragraphWritingMode)
             throws IOException, InterruptedException {
         String fileName = "paragraphMixedVerticalText_" + paragraphWritingMode.name();
@@ -145,8 +147,6 @@ public class MixedTextDirectionTest extends ExtendedITextTest {
 
     @ParameterizedTest
     @MethodSource("mixedVertical")
-    // TODO DEVSIX-10200 Consider text elements with different writing-mode as inline-blocks,
-    //  after that vertical RTL text chunks in vertical LTR paragraphs and vice versa should be fixed.
     // No line breaks in vertical text with different writing-mode looks like workaround for horizontal text.
     public void paragraphMixedVerticalTextNoHeightTest(WritingMode paragraphWritingMode)
             throws IOException, InterruptedException {
@@ -547,6 +547,7 @@ public class MixedTextDirectionTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void verticalWritingAtTextLevelLongTextTest() throws IOException, InterruptedException {
         String fileName = "verticalWritingAtTextLevelLongTextTest";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";

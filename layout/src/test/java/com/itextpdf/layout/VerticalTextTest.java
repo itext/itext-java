@@ -22,12 +22,7 @@
  */
 package com.itextpdf.layout;
 
-import com.itextpdf.commons.actions.contexts.IMetaInfo;
-import com.itextpdf.commons.actions.sequence.SequenceId;
-import com.itextpdf.io.font.FontProgram;
-import com.itextpdf.io.font.TrueTypeFont;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.font.otf.GlyphLine;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
@@ -35,7 +30,6 @@ import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.layout.borders.SolidBorder;
@@ -45,9 +39,6 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.element.VerticalParagraph;
-import com.itextpdf.layout.logs.LayoutLogMessageConstant;
-import com.itextpdf.layout.properties.BaseDirection;
-import com.itextpdf.layout.properties.FontKerning;
 import com.itextpdf.layout.properties.InlineVerticalAlignment;
 import com.itextpdf.layout.properties.InlineVerticalAlignmentType;
 import com.itextpdf.layout.properties.LineHeight;
@@ -60,20 +51,11 @@ import com.itextpdf.layout.properties.TransparentColor;
 import com.itextpdf.layout.properties.Underline;
 import com.itextpdf.layout.properties.VerticalTextOrientation;
 import com.itextpdf.layout.properties.WritingMode;
-import com.itextpdf.layout.renderer.LineRenderer.RendererGlyph;
-import com.itextpdf.layout.renderer.TypographyUtils;
-import com.itextpdf.layout.renderer.typography.AbstractTypographyApplier;
-import com.itextpdf.layout.renderer.typography.DefaultTypographyApplier;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
-import java.io.ByteArrayOutputStream;
-import java.lang.Character.UnicodeScript;
-import java.util.List;
-import java.util.Map;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -306,8 +288,10 @@ public class VerticalTextTest extends ExtendedITextTest {
             verticalText.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_LR);
             verticalText.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
             verticalText.setBorder(new SolidBorder(ColorConstants.RED, 1));
+            VerticalParagraph verticalParagraph = new VerticalParagraph(false);
+            verticalParagraph.add(verticalText);
 
-            paragraph.add(verticalText);
+            paragraph.add(verticalParagraph);
             paragraph.add(new Text("horizontal text.").setBorder(new SolidBorder(ColorConstants.BLUE, 1)));
 
             document.add(paragraph);

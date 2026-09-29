@@ -22,6 +22,7 @@
  */
 package com.itextpdf.layout;
 
+import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.utils.CompareTool;
@@ -40,6 +41,8 @@ import com.itextpdf.layout.properties.VerticalTextOrientation;
 import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
@@ -51,6 +54,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
+// Most tests in this class look wrong. The reason is that text elements, which writing-mode is different from their parent,
+// are supposed to be wrapped inside a paragraph. We do that at html2pdf level, but we don't do that in pure layout,
+// mostly because in our high level API users can't add a child with different writing-mode to a VerticalParagraph.
 @Tag("IntegrationTest")
 public class VerticalTextRTLTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/VerticalTextRTLTest/";
@@ -135,11 +141,13 @@ public class VerticalTextRTLTest extends ExtendedITextTest {
             Paragraph paragraph = new Paragraph();
             paragraph.setProperty(Property.OVERFLOW_X, OverflowPropertyValue.VISIBLE);
             paragraph.setHeight(300).setFontSize(16).setBorder(new SolidBorder(1));
+            VerticalParagraph verticalParagraph = new VerticalParagraph(true);
             Text text = new Text("The quick brown fox jumps over the lazy dog. 1234567890 ABCDEFG abcdefg.");
             text.setProperty(Property.WRITING_MODE, WritingMode.VERTICAL_RL);
             text.setProperty(Property.TEXT_ORIENTATION, VerticalTextOrientation.UPRIGHT);
             text.setBackgroundColor(ColorConstants.YELLOW);
-            paragraph.add(text);
+            verticalParagraph.add(text);
+            paragraph.add(verticalParagraph);
             document.add(paragraph);
         }
 
@@ -147,6 +155,7 @@ public class VerticalTextRTLTest extends ExtendedITextTest {
     }
 
     @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = IoLogMessageConstant.CLIP_ELEMENT))
     public void severalInnerTextVerticalRlTest() throws IOException, InterruptedException {
         String fileName = "severalInnerTextVerticalRl";
         String outFileName = DESTINATION_FOLDER + fileName + ".pdf";
