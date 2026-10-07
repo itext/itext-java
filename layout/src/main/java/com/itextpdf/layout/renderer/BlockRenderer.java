@@ -55,6 +55,7 @@ import com.itextpdf.layout.properties.OverflowPropertyValue;
 import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
+import com.itextpdf.layout.properties.WritingMode;
 import com.itextpdf.layout.tagging.LayoutTaggingHelper;
 
 import java.util.ArrayList;
@@ -644,17 +645,29 @@ public abstract class BlockRenderer extends AbstractRenderer {
      */
     protected void applyVerticalAlignment() {
         VerticalAlignment verticalAlignment = this.<VerticalAlignment>getProperty(Property.VERTICAL_ALIGNMENT);
-        if (verticalAlignment == null || verticalAlignment == VerticalAlignment.TOP || childRenderers.isEmpty()) {
+        if (childRenderers.isEmpty() || verticalAlignment == null) {
             return;
         }
+        boolean isVerticalWriting = isVerticalWriting();
+        boolean isVerticalRl = isVerticalWriting &&
+                WritingMode.VERTICAL_RL == this.<WritingMode>getProperty(Property.WRITING_MODE);
+        if (!isVerticalRl && verticalAlignment == VerticalAlignment.TOP) {
+            return;
+        }
+        float extremeChildCoordinate = isVerticalWriting ? -Float.MAX_VALUE : Float.MAX_VALUE;
 
-        float lowestChildBottom = Float.MAX_VALUE;
         if (FloatingHelper.isRendererFloating(this) || this instanceof CellRenderer) {
-            // include floats in vertical alignment
+            // Include floats in vertical alignment.
             for (IRenderer child : childRenderers) {
-                if (child.getOccupiedArea() != null &&
-                        child.getOccupiedArea().getBBox().getBottom() < lowestChildBottom) {
-                    lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
+                if (child.getOccupiedArea() == null) {
+                    continue;
+                }
+
+                float coordinate = isVerticalWriting ? child.getOccupiedArea().getBBox().getRight() :
+                        child.getOccupiedArea().getBBox().getBottom();
+
+                if (isVerticalWriting ? (coordinate > extremeChildCoordinate) : (coordinate < extremeChildCoordinate)) {
+                    extremeChildCoordinate = coordinate;
                 }
             }
         } else {
@@ -662,31 +675,44 @@ public abstract class BlockRenderer extends AbstractRenderer {
             while (lastChildIndex >= 0) {
                 IRenderer child = childRenderers.get(lastChildIndex--);
                 if (!FloatingHelper.isRendererFloating(child) && child.getOccupiedArea() != null) {
-                    lowestChildBottom = child.getOccupiedArea().getBBox().getBottom();
+                    extremeChildCoordinate = isVerticalWriting ? child.getOccupiedArea().getBBox().getRight() :
+                            child.getOccupiedArea().getBBox().getBottom();
                     break;
                 }
             }
         }
 
-        if (lowestChildBottom == Float.MAX_VALUE) {
+        if ((!isVerticalWriting && extremeChildCoordinate == Float.MAX_VALUE) ||
+                (isVerticalWriting && extremeChildCoordinate == -Float.MAX_VALUE)) {
             return;
         }
 
-        float deltaY = lowestChildBottom - getInnerAreaBBox().getY();
-        if (deltaY < 0) {
+        float delta = isVerticalWriting ? (getInnerAreaBBox().getRight() - extremeChildCoordinate) :
+                (extremeChildCoordinate - getInnerAreaBBox().getY());
+
+        if (delta < 0) {
             return;
         }
+
+        float shift;
         switch (verticalAlignment) {
             case BOTTOM:
-                for (IRenderer child : childRenderers) {
-                    child.move(0, -deltaY);
-                }
+                shift = isVerticalRl ? 0 : delta;
                 break;
             case MIDDLE:
-                for (IRenderer child : childRenderers) {
-                    child.move(0, -deltaY / 2);
-                }
+                shift = delta / 2;
                 break;
+            case TOP:
+            default:
+                shift = isVerticalRl ? delta : 0;
+                break;
+        }
+        if (shift == 0) {
+            return;
+        }
+
+        for (IRenderer child : childRenderers) {
+            child.move(isVerticalWriting ? shift : 0, isVerticalWriting ? 0 : -shift);
         }
     }
 

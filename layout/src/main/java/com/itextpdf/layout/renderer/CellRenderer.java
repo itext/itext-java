@@ -35,6 +35,7 @@ import com.itextpdf.layout.exceptions.LayoutExceptionMessageConstant;
 import com.itextpdf.layout.layout.LayoutContext;
 import com.itextpdf.layout.properties.BorderCollapsePropertyValue;
 import com.itextpdf.layout.properties.Property;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 
 /**
@@ -158,6 +159,14 @@ public class CellRenderer extends BlockRenderer {
         return rect;
     }
 
+    @Override
+    protected void applyVerticalAlignment() {
+        if (isVerticalWriting()) {
+            correctChildrenHeight();
+        }
+        super.applyVerticalAlignment();
+    }
+
     /**
      * Applies spacings on the given rectangle.
      *
@@ -219,5 +228,38 @@ public class CellRenderer extends BlockRenderer {
     public IRenderer getNextRenderer() {
         logWarningIfGetNextRendererNotOverridden(CellRenderer.class, this.getClass());
         return new CellRenderer((Cell) getModelElement());
+    }
+
+    private void correctChildrenHeight() {
+        // We need this check since we don't support vertical writing mode in cells,
+        // so this logic is disabled in case we have several child renderers.
+        // After it will be supported, we'd need to replace it to childRenderers.isEmpty().
+        // See vertLrTableCellSeveralParagraphsTest in html2pdf module for more details.
+        if (childRenderers.size() != 1) {
+            return;
+        }
+
+        Rectangle innerAreaBBox = getInnerAreaBBox();
+        float cellHeight = innerAreaBBox.getHeight();
+
+        for (IRenderer child : childRenderers) {
+            if (child.getOccupiedArea() == null || !(child instanceof AbstractRenderer)) {
+                continue;
+            }
+
+            Float blockMaxHeight = ((AbstractRenderer) child).retrieveMaxHeight();
+            if (blockMaxHeight == null) {
+                Rectangle childBBox = child.getOccupiedArea().getBBox();
+                TextAlignment textAlignment = (TextAlignment) child.<TextAlignment>getProperty(Property.TEXT_ALIGNMENT);
+                if (TextAlignment.LEFT == textAlignment) {
+                    // Do nothing here. The child is already aligned to the left (top).
+                } else if (TextAlignment.CENTER == textAlignment) {
+                    child.move(0, -(cellHeight - childBBox.getHeight()) / 2);
+                } else if (TextAlignment.RIGHT == textAlignment) {
+                    child.move(0, -(cellHeight - childBBox.getHeight()));
+                }
+                childBBox.setY(innerAreaBBox.getY()).setHeight(cellHeight);
+            }
+        }
     }
 }
