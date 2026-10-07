@@ -86,7 +86,9 @@ public class PdfNamespace extends PdfObjectWrapper<PdfDictionary> {
             return new PdfNamespace(StandardNamespaces.getDefault());
         }
         for (PdfNamespace namespace : pdfDocument.getStructTreeRoot().getNamespaces()) {
-            if (StandardNamespaces.getDefault().equals(namespace.getNamespaceName())) {
+            if (StandardNamespaces.getDefault().equals(namespace.getNamespaceName())
+                    && namespace.getSchema() == null
+                    && namespace.getNamespaceRoleMap() == null) {
                 return namespace;
             }
         }

@@ -30,6 +30,7 @@ import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.IStructureNode;
 import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
@@ -53,6 +54,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.jupiter.api.AfterAll;
@@ -60,13 +62,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.xml.sax.SAXException;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag("IntegrationTest")
 public class TagTreePointerTest extends ExtendedITextTest {
@@ -82,6 +80,72 @@ public class TagTreePointerTest extends ExtendedITextTest {
     @AfterAll
     public static void afterClass() {
         CompareTool.cleanup(destinationFolder);
+    }
+
+
+    public static Iterable<Object[]> nameSpaceDuplicationArguments() {
+        PdfFileSpec schema1 = PdfFileSpec.wrapFileSpecObject(
+                new PdfString("https://itextpdf.com/customSchema_1"));
+        PdfDictionary roleMapNs = new PdfDictionary();
+        return Arrays.asList(
+                new Object[] {
+                        PdfVersion.PDF_2_0,
+                        "PDF2.0_simple_NS",
+                        new PdfNamespace(StandardNamespaces.PDF_1_7),
+                        new PdfNamespace(StandardNamespaces.PDF_1_7),
+                        "cmp_nameSpaceDuplication_PDF2.0_simple_NS.pdf"
+
+                },
+                new Object[] {
+                        PdfVersion.PDF_2_0,
+                        "PDF2.0_same_schema",
+                        new PdfNamespace(StandardNamespaces.PDF_2_0).setSchema(schema1),
+                        new PdfNamespace(StandardNamespaces.PDF_2_0).setSchema(schema1),
+                        "cmp_nameSpaceDuplication_PDF2.0_same_schema.pdf"
+                },
+                new Object[] {
+                        PdfVersion.PDF_2_0,
+                        "PDF2.0_same_role_mapping",
+                        new PdfNamespace(StandardNamespaces.PDF_2_0).setNamespaceRoleMap(roleMapNs),
+                        new PdfNamespace(StandardNamespaces.PDF_2_0).setNamespaceRoleMap(roleMapNs),
+                        "cmp_nameSpaceDuplication_PDF2.0_same_role_mapping.pdf"
+                },
+                new Object[] {
+                        PdfVersion.PDF_2_0,
+                        "PDF2.0_same_diff_schema",
+                        new PdfNamespace(StandardNamespaces.PDF_2_0),
+                        new PdfNamespace(StandardNamespaces.PDF_2_0).setSchema(schema1),
+                        "cmp_nameSpaceDuplication_PDF2.0_same_diff_schema.pdf"
+                }, new Object[] {
+                        PdfVersion.PDF_1_7,
+                        "PDF1.7_simple_NS",
+                        new PdfNamespace(StandardNamespaces.PDF_1_7),
+                        new PdfNamespace(StandardNamespaces.PDF_1_7),
+                        "cmp_nameSpaceDuplication_PDF1.7.pdf"
+
+                },
+                new Object[] {
+                        PdfVersion.PDF_1_7,
+                        "PDF1.7_same_schema",
+                        new PdfNamespace(StandardNamespaces.PDF_1_7).setSchema(schema1),
+                        new PdfNamespace(StandardNamespaces.PDF_1_7).setSchema(schema1),
+                        "cmp_nameSpaceDuplication_PDF1.7.pdf"
+                },
+                new Object[] {
+                        PdfVersion.PDF_1_7,
+                        "PDF1.7_same_role_mapping",
+                        new PdfNamespace(StandardNamespaces.PDF_1_7).setNamespaceRoleMap(roleMapNs),
+                        new PdfNamespace(StandardNamespaces.PDF_1_7).setNamespaceRoleMap(roleMapNs),
+                        "cmp_nameSpaceDuplication_PDF1.7.pdf"
+                },
+                new Object[] {
+                        PdfVersion.PDF_1_7,
+                        "PDF1.7_same_diff_schema",
+                        new PdfNamespace(StandardNamespaces.PDF_1_7),
+                        new PdfNamespace(StandardNamespaces.PDF_1_7).setSchema(schema1),
+                        "cmp_nameSpaceDuplication_PDF1.7.pdf"
+                }
+        );
     }
     
     @Test
@@ -211,7 +275,9 @@ public class TagTreePointerTest extends ExtendedITextTest {
         } catch (PdfException e) {
             exceptionMessage = e.getMessage();
         }
-        assertEquals(KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_REMOVED_ELEMENT_USE_MOVE_TO_ROOT, exceptionMessage);
+        Assertions.assertEquals(
+                KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_REMOVED_ELEMENT_USE_MOVE_TO_ROOT,
+                exceptionMessage);
 
         tagPointerCopy.moveToRoot().moveToKid(StandardRoles.TABLE);
 
@@ -226,14 +292,16 @@ public class TagTreePointerTest extends ExtendedITextTest {
         } catch (PdfException e) {
             exceptionMessage = e.getMessage();
         }
-        assertEquals(KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_FLUSHED_ELEMENT_USE_MOVE_TO_ROOT, exceptionMessage);
+        Assertions.assertEquals(
+                KernelExceptionMessageConstant.TAG_TREE_POINTER_IS_IN_INVALID_STATE_IT_POINTS_AT_FLUSHED_ELEMENT_USE_MOVE_TO_ROOT,
+                exceptionMessage);
 
         try {
             tagPointerCopy.moveToKid(0);
         } catch (PdfException e) {
             exceptionMessage = e.getMessage();
         }
-        assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_FLUSHED_KID, exceptionMessage);
+        Assertions.assertEquals(KernelExceptionMessageConstant.CANNOT_MOVE_TO_FLUSHED_KID, exceptionMessage);
 
         document.close();
     }
@@ -291,14 +359,13 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         TagTreePointer tagPointer = new TagTreePointer(document);
         tagPointer.setRole(StandardRoles.PART);
-        assertEquals(tagPointer.getRole(), "Part");
+        Assertions.assertEquals("Part", tagPointer.getRole());
         tagPointer.moveToKid(StandardRoles.TABLE).getProperties().setLanguage("en-US");
         tagPointer.moveToKid(StandardRoles.P);
         String actualText1 = "Some looong latin text";
         tagPointer.getProperties().setActualText(actualText1);
 
         WaitingTagsManager waitingTagsManager = document.getTagStructureContext().getWaitingTagsManager();
-//        assertNull(waitingTagsManager.getAssociatedObject(tagPointer));
         Object associatedObj = new Object();
         waitingTagsManager.assignWaitingState(tagPointer, associatedObj);
 
@@ -307,7 +374,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         waitingTagsManager.tryMovePointerToWaitingTag(tagPointer, associatedObj);
         tagPointer.setRole(StandardRoles.DIV);
         tagPointer.getProperties().setLanguage("en-Us");
-        assertEquals(tagPointer.getProperties().getActualText(), actualText1);
+        Assertions.assertEquals(actualText1, tagPointer.getProperties().getActualText());
 
         document.close();
 
@@ -514,7 +581,9 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         document.close();
 
-        assertEquals(KernelExceptionMessageConstant.CANNOT_FLUSH_DOCUMENT_ROOT_TAG_BEFORE_DOCUMENT_IS_CLOSED, exceptionMessage);
+        Assertions.assertEquals(
+                KernelExceptionMessageConstant.CANNOT_FLUSH_DOCUMENT_ROOT_TAG_BEFORE_DOCUMENT_IS_CLOSED,
+                exceptionMessage);
         compareResult("tagStructureFlushingTest01.pdf", "taggedDocument.pdf", "diffFlushing01_");
     }
 
@@ -529,10 +598,10 @@ public class TagTreePointerTest extends ExtendedITextTest {
         tagStructure.flushPageTags(document.getPage(1));
 
         List<IStructureNode> kids = document.getStructTreeRoot().getKids();
-        assertTrue(!((PdfStructElem)kids.get(0)).getPdfObject().isFlushed());
-        assertTrue(!((PdfStructElem)kids.get(0).getKids().get(0)).getPdfObject().isFlushed());
+        Assertions.assertFalse(((PdfStructElem) kids.get(0)).getPdfObject().isFlushed());
+        Assertions.assertFalse(((PdfStructElem) kids.get(0).getKids().get(0)).getPdfObject().isFlushed());
         PdfArray rowsTags = (PdfArray) ((PdfStructElem) kids.get(0).getKids().get(0)).getK();
-        assertTrue(rowsTags.get(0).isFlushed());
+        Assertions.assertTrue(rowsTags.get(0).isFlushed());
 
         document.close();
 
@@ -550,8 +619,8 @@ public class TagTreePointerTest extends ExtendedITextTest {
         document.getPage(1).flush();
 
         PdfArray kids = document.getStructTreeRoot().getKidsObject();
-        assertFalse(kids.get(0).isFlushed());
-        assertTrue(kids.getAsDictionary(0).getAsDictionary(PdfName.K).isFlushed());
+        Assertions.assertFalse(kids.get(0).isFlushed());
+        Assertions.assertTrue(kids.getAsDictionary(0).getAsDictionary(PdfName.K).isFlushed());
 
         document.close();
 
@@ -574,8 +643,8 @@ public class TagTreePointerTest extends ExtendedITextTest {
         document.getPage(2).flush();
 
         PdfArray kids = document.getStructTreeRoot().getKidsObject();
-        assertFalse(kids.get(0).isFlushed());
-        assertTrue(kids.getAsDictionary(0).getAsDictionary(PdfName.K).isFlushed());
+        Assertions.assertFalse(kids.get(0).isFlushed());
+        Assertions.assertTrue(kids.getAsDictionary(0).getAsDictionary(PdfName.K).isFlushed());
 
         document.close();
 
@@ -910,7 +979,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
             TagTreePointer ptrHello = ctx
                     .getTagPointerById("hello-element".getBytes(StandardCharsets.UTF_8));
             PdfStructureAttributes layoutAttrs = ptrHello.getProperties().getAttributesList().get(0);
-            assertEquals("Inline", layoutAttrs.getAttributeAsEnum("Placement"));
+            Assertions.assertEquals("Inline", layoutAttrs.getAttributeAsEnum("Placement"));
         }
     }
 
@@ -924,7 +993,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         byte[] helloId = "hello-element".getBytes(StandardCharsets.UTF_8);
         TagTreePointer ptrHello = ctx.getTagPointerByIdString("hello-element");
-        assertArrayEquals(ptrHello.getProperties().getStructureElementId(), helloId);
+        Assertions.assertArrayEquals(ptrHello.getProperties().getStructureElementId(), helloId);
     }
 
     @Test
@@ -937,7 +1006,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         TagTreePointer ptrHello = ctx.getTagPointerByIdString("hello-element");
         // the parent is a P without ID -> we should get null
         ptrHello.moveToParent();
-        assertNull(ptrHello.getProperties().getStructureElementId());
+        Assertions.assertNull(ptrHello.getProperties().getStructureElementId());
     }
 
     @Test
@@ -949,7 +1018,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
 
         TagTreePointer ptrHello = ctx.getTagPointerByIdString("hello-element");
         TagTreePointer ptrWorld = ctx.getTagPointerByIdString("world-element");
-        assertFalse(ptrHello.isPointingToSameTag(ptrWorld));
+        Assertions.assertFalse(ptrHello.isPointingToSameTag(ptrWorld));
     }
 
     @Test
@@ -959,7 +1028,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         PdfDocument readPdfDoc = new PdfDocument(r);
         TagStructureContext ctx = readPdfDoc.getTagStructureContext();
         TagTreePointer ptrNone = ctx.getTagPointerById("nonexistent-element".getBytes(StandardCharsets.UTF_8));
-        assertNull(ptrNone);
+        Assertions.assertNull(ptrNone);
     }
 
     @Test
@@ -981,7 +1050,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
             TagTreePointer ptrHello = ctx.getTagPointerById(helloId);
             // remove the ID
             ptrHello.getProperties().setStructureElementId(null);
-            assertNull(ctx.getTagPointerById(helloId));
+            Assertions.assertNull(ctx.getTagPointerById(helloId));
         }
     }
 
@@ -1000,7 +1069,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
                 PdfDocument pdfDoc = new PdfDocument(r, w)) {
             PdfStructIdTree tree = pdfDoc.getStructTreeRoot().getIdTree();
             tree.removeEntry(new PdfString("i-dont-exist"));
-            assertFalse(tree.isModified());
+            Assertions.assertFalse(tree.isModified());
         }
     }
 
@@ -1023,7 +1092,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
             TagTreePointer ptrHello = ctx.getTagPointerById(helloId);
             // remove the ID
             ptrHello.getProperties().setStructureElementIdString(null);
-            assertNull(ctx.getTagPointerById(helloId));
+            Assertions.assertNull(ctx.getTagPointerById(helloId));
         }
     }
 
@@ -1036,7 +1105,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
                 PdfDocument documentRead = new PdfDocument(r)) {
 
             TagStructureContext ctx = documentRead.getTagStructureContext();
-            assertNull(ctx.getTagPointerByIdString("hello-element"));
+            Assertions.assertNull(ctx.getTagPointerByIdString("hello-element"));
         }
     }
 
@@ -1051,7 +1120,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
             TagStructureContext ctx = documentRead.getTagStructureContext();
             byte[] id = "world-element".getBytes(StandardCharsets.UTF_8);
             byte[] retrieved = ctx.getTagPointerById(id).getProperties().getStructureElementId();
-            assertArrayEquals(id, retrieved);
+            Assertions.assertArrayEquals(id, retrieved);
         }
     }
 
@@ -1075,7 +1144,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
             TagTreePointer ptrHello = ctx.getTagPointerById(helloId);
             // modify the ID to a new value
             ptrHello.getProperties().setStructureElementId(helloId2);
-            assertTrue(ptrHello.isPointingToSameTag(ctx.getTagPointerById(helloId2)));
+            Assertions.assertTrue(ptrHello.isPointingToSameTag(ctx.getTagPointerById(helloId2)));
         }
     }
 
@@ -1097,7 +1166,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
             TagStructureContext ctx = documentToModify.getTagStructureContext();
             TagTreePointer ptrHello = ctx.getTagPointerById(helloId);
             ptrHello.getProperties().setStructureElementId(helloId);
-            assertFalse(documentToModify.getStructTreeRoot().getIdTree().isModified());
+            Assertions.assertFalse(documentToModify.getStructTreeRoot().getIdTree().isModified());
         }
     }
 
@@ -1123,7 +1192,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
             // modify the ID to a new value
             ptrWorld.getProperties().setStructureElementId(helloId);
             // this should clobber the old value and trigger a warning
-            assertTrue(ptrWorld.isPointingToSameTag(ctx.getTagPointerById(helloId)));
+            Assertions.assertTrue(ptrWorld.isPointingToSameTag(ctx.getTagPointerById(helloId)));
         }
     }
 
@@ -1137,7 +1206,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
             TagStructureContext ctx = documentRead.getTagStructureContext();
             byte[] id = "hello2-element".getBytes(StandardCharsets.UTF_8);
             byte[] retrieved = ctx.getTagPointerById(id).getProperties().getStructureElementId();
-            assertArrayEquals(id, retrieved);
+            Assertions.assertArrayEquals(id, retrieved);
         }
     }
 
@@ -1150,7 +1219,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
                 PdfDocument documentRead = new PdfDocument(r)) {
 
             TagStructureContext ctx = documentRead.getTagStructureContext();
-            assertNull(ctx.getTagPointerByIdString("hello-element"));
+            Assertions.assertNull(ctx.getTagPointerByIdString("hello-element"));
         }
     }
 
@@ -1165,7 +1234,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
             TagStructureContext ctx = documentRead.getTagStructureContext();
             byte[] id = "world-element".getBytes(StandardCharsets.UTF_8);
             byte[] retrieved = ctx.getTagPointerById(id).getProperties().getStructureElementId();
-            assertArrayEquals(id, retrieved);
+            Assertions.assertArrayEquals(id, retrieved);
         }
     }
 
@@ -1363,6 +1432,62 @@ public class TagTreePointerTest extends ExtendedITextTest {
         }
     }
 
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("nameSpaceDuplicationArguments")
+    public void nameSpaceDuplicationTest(PdfVersion pdfVersion, String descriptor,
+            PdfNamespace namespaceFirst, PdfNamespace namespaceSecond, String cmpFileName) throws Exception {
+        Assertions.assertNotSame(namespaceFirst, namespaceSecond);
+        Assertions.assertEquals(namespaceFirst.getNamespaceName(), namespaceSecond.getNamespaceName());
+
+        String fileName = "nameSpaceDuplication_" + descriptor + ".pdf";
+        try (PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + fileName,
+                new WriterProperties().setPdfVersion(pdfVersion)).setCompressionLevel(
+                CompressionConstants.NO_COMPRESSION);
+                PdfDocument document = new PdfDocument(writer)) {
+            document.setTagged();
+            document.addNewPage();
+            TagTreePointer pointer = new TagTreePointer(document);
+
+            AccessibilityProperties properties1 = new DefaultAccessibilityProperties("P");
+            properties1.setNamespace(namespaceFirst);
+            pointer.addTag(properties1);
+
+            // to add both tags on the same level
+            pointer.moveToParent();
+
+            AccessibilityProperties properties2 = new DefaultAccessibilityProperties("Div");
+            properties2.setNamespace(namespaceSecond);
+            pointer.addTag(properties2);
+        }
+
+        compareResult(fileName, cmpFileName, "diffNSDup01_");
+    }
+
+    @Test
+    public void defaultNSWithExistedCustomSchemaTest() throws Exception {
+        String fileName = "defaultNSWithExistedCustomSchema.pdf";
+        try (PdfWriter writer = CompareTool.createTestPdfWriter(destinationFolder + fileName,
+                new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0))
+                .setCompressionLevel(CompressionConstants.NO_COMPRESSION);
+                PdfDocument document = new PdfDocument(new PdfReader(sourceFolder + fileName), writer)) {
+            TagTreePointer pointer = new TagTreePointer(document);
+
+            AccessibilityProperties properties1 = new DefaultAccessibilityProperties("P");
+            PdfNamespace namespaceWithSchema = new PdfNamespace(StandardNamespaces.PDF_1_7);
+            namespaceWithSchema.setSchema(PdfFileSpec.wrapFileSpecObject(
+                            new PdfString("https://itextpdf.com/customSchema")));
+            properties1.setNamespace(namespaceWithSchema);
+            pointer.addTag(properties1);
+
+            AccessibilityProperties properties2 = new DefaultAccessibilityProperties("P");
+            PdfNamespace namespaceAsDefault = new PdfNamespace(StandardNamespaces.PDF_1_7);
+            properties2.setNamespace(namespaceAsDefault);
+            pointer.addTag(properties2);
+        }
+
+        compareResult(fileName, "cmp_" + fileName, "diffNSDup01_");
+    }
+
     private void compareResult(String outFileName, String cmpFileName, String diffNamePrefix)
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         CompareTool compareTool = new CompareTool();
@@ -1377,7 +1502,7 @@ public class TagTreePointerTest extends ExtendedITextTest {
         errorMessage += taggedStructureDifferences == null ? "" : taggedStructureDifferences + "\n";
         errorMessage += contentDifferences == null ? "" : contentDifferences;
         if (!errorMessage.isEmpty()) {
-            fail(errorMessage);
+            Assertions.fail(errorMessage);
         }
     }
 

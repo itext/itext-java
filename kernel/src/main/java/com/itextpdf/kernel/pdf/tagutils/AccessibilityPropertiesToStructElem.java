@@ -29,18 +29,32 @@ import com.itextpdf.kernel.pdf.PdfName;
 import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.kernel.pdf.PdfString;
+import com.itextpdf.kernel.pdf.PdfVersion;
+import com.itextpdf.kernel.pdf.tagging.PdfNamespace;
 import com.itextpdf.kernel.pdf.tagging.PdfStructElem;
 import com.itextpdf.kernel.pdf.tagging.PdfStructureAttributes;
 import java.util.List;
 
 final class AccessibilityPropertiesToStructElem {
 
-    static void apply(AccessibilityProperties properties, PdfStructElem elem) {
+    static void apply(AccessibilityProperties properties, PdfStructElem elem, TagStructureContext tagStructureContext) {
         setTextualAids(properties, elem);
         setAttributes(properties.getAttributesList(), elem);
 
-        if (properties.getNamespace() != null) {
-            elem.setNamespace(properties.getNamespace());
+        PdfNamespace elementNamespace = properties.getNamespace();
+        // namespaces are supported only in PDF 2.0 and later, so no point in setting them for earlier versions of PDF
+        if (elementNamespace != null
+                && PdfVersion.PDF_2_0.compareTo(tagStructureContext.getDocument().getPdfVersion()) <= 0) {
+            // Avoid namespace duplication. Since the proper fetching of the exactly same namespace
+            // is not an easy task, we will just avoid duplication of simple namespaces (without role map and schema)
+            // for now.
+            if (elementNamespace.getNamespaceRoleMap() == null && elementNamespace.getSchema() == null) {
+                PdfNamespace candidate = tagStructureContext.fetchNamespace(elementNamespace.getNamespaceName());
+                if (candidate.getNamespaceRoleMap() == null && candidate.getSchema() == null) {
+                    elementNamespace = candidate;
+                }
+            }
+            elem.setNamespace(elementNamespace);
         }
         if (properties.getStructureElementId() != null) {
             elem.setStructureElementId(new PdfString(properties.getStructureElementId()));

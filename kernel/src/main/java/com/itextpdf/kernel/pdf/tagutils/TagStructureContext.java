@@ -672,9 +672,10 @@ public class TagStructureContext {
 
     private void actualizeNamespacesInStructTreeRoot() {
         if (namespaces.size() > 0) {
+            Set<PdfDictionary> newNamespaces = new LinkedHashSet<>(namespaces);
+            normalizeDefaultNS(newNamespaces);
             PdfStructTreeRoot structTreeRoot = getDocument().getStructTreeRoot();
             PdfArray rootNamespaces = structTreeRoot.getNamespacesObject();
-            Set<PdfDictionary> newNamespaces = new LinkedHashSet<>(namespaces);
             for (int i = 0; i < rootNamespaces.size(); ++i) {
                 newNamespaces.remove(rootNamespaces.getAsDictionary(i));
             }
@@ -683,6 +684,22 @@ public class TagStructureContext {
             }
             if (!newNamespaces.isEmpty()) {
                 structTreeRoot.setModified();
+            }
+        }
+    }
+
+    private void normalizeDefaultNS(Set<PdfDictionary> newNamespaces) {
+        for (PdfDictionary nsDict : namespaces) {
+            PdfNamespace ns = new PdfNamespace(nsDict);
+            // replace newly created default ns with the one that is already registered in the document
+            if (StandardNamespaces.getDefault().equals(ns.getNamespaceName())
+                    && ns.getSchema() == null
+                    && ns.getNamespaceRoleMap() == null) {
+                // register default
+                PdfNamespace fromDoc = PdfNamespace.getDefault(getDocument());
+                if (fromDoc.getSchema() == null && fromDoc.getNamespaceRoleMap() == null) {
+                    newNamespaces.remove(nsDict);
+                }
             }
         }
     }

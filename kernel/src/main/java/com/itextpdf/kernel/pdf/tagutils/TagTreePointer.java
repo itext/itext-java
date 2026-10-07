@@ -228,9 +228,7 @@ public class TagTreePointer {
      * @return this {@link TagTreePointer} instance.
      */
     public TagTreePointer addTag(int index, String role) {
-        tagStructureContext.throwExceptionIfRoleIsInvalid(role, currentNamespace);
-        setNextNewKidIndex(index);
-        setCurrentStructElem(addNewKid(role));
+        addTag(index, new DefaultAccessibilityProperties(role));
         return this;
     }
 
@@ -735,7 +733,7 @@ public class TagTreePointer {
      * @param properties the properties to be applied to the current tag.
      */
     public void applyProperties(AccessibilityProperties properties) {
-        AccessibilityPropertiesToStructElem.apply(properties, getCurrentStructElem());
+        AccessibilityPropertiesToStructElem.apply(properties, getCurrentStructElem(), tagStructureContext);
     }
 
     private int getNextNewKidPosition() {
@@ -744,15 +742,9 @@ public class TagTreePointer {
         return nextPos;
     }
 
-    private PdfStructElem addNewKid(String role) {
-        PdfStructElem kid = new PdfStructElem(getDocument(), PdfStructTreeRoot.convertRoleToPdfName(role));
-        processKidNamespace(kid);
-        return addNewKid(kid);
-    }
-
     private PdfStructElem addNewKid(AccessibilityProperties properties) {
         PdfStructElem kid = new PdfStructElem(getDocument(), PdfStructTreeRoot.convertRoleToPdfName(properties.getRole()));
-        AccessibilityPropertiesToStructElem.apply(properties, kid);
+        AccessibilityPropertiesToStructElem.apply(properties, kid, tagStructureContext);
         processKidNamespace(kid);
         return addNewKid(kid);
     }
