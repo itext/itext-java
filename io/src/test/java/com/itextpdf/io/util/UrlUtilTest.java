@@ -115,6 +115,27 @@ public class UrlUtilTest extends ExtendedITextTest {
     }
 
 
+    // Checks that a redirect to a protocol other than http(s) isn't followed: otherwise a remote
+    // server could answer a resource request with a redirect to a file url and make iText read a
+    // local file instead.
+    @Test
+    public void getFinalConnectionRedirectToFileProtocolTest() throws Exception {
+        String localFileUrl = new File("./src/test/resources/com/itextpdf/io/util/textFile.dat")
+                .getAbsoluteFile().toURI().toURL().toExternalForm();
+        RedirectingServer server = new RedirectingServer(localFileUrl);
+        try {
+            server.start();
+            URL initialUrl = new URL("http://127.0.0.1:" + server.getPort() + "/resource.dat");
+
+            Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
+                    () -> UrlUtil.getInputStreamOfFinalConnection(initialUrl, 5000, 5000));
+            Assertions.assertEquals("Redirect to the \"file\" protocol is not allowed.",
+                    e.getMessage());
+        } finally {
+            server.shutdown();
+        }
+    }
+
     @Test
     // Android-Conversion-Ignore-Test (TODO DEVSIX-7371 investigate different behavior of a few iTextCore tests on Java and Android)
     public void getBaseUriTest() throws IOException {
@@ -173,6 +194,38 @@ public class UrlUtilTest extends ExtendedITextTest {
                 () -> UrlUtil.getInputStreamOfFinalConnection(url, 500, 0)
         );
         Assertions.assertEquals("connect timed out", StringNormalizer.toLowerCase(e.getMessage()));
+    }
+
+    private static class RedirectingServer extends Thread {
+        private final ServerSocket serverSocket;
+        private final String location;
+
+        RedirectingServer(String location) throws IOException {
+            this.serverSocket = new ServerSocket(0, 10, Inet4Address.getLoopbackAddress());
+            this.location = location;
+            setDaemon(true);
+        }
+
+        public int getPort() {
+            return serverSocket.getLocalPort();
+        }
+
+        @Override
+        public void run() {
+            try (Socket clientSocket = serverSocket.accept()) {
+                clientSocket.getInputStream().read(new byte[1024]);
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                out.print("HTTP/1.1 302 Found\r\nLocation: " + location
+                        + "\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+                out.flush();
+            } catch (IOException ignored) {
+                // The socket is closed as soon as the test is over.
+            }
+        }
+
+        public void shutdown() throws IOException {
+            serverSocket.close();
+        }
     }
 
     private static class TestResource extends Thread {
