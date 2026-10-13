@@ -12,6 +12,17 @@ We follow the procedure of Coordinated Vulnerability Disclosure (CVD) and, to pr
 2. **Provide a detailed description** of the vulnerability, including steps to reproduce it, if possible.
 3. **Include any relevant information** such as the version of iText Core you are using, your operating system, and any other pertinent details.
 
+## PDF signature validation
+
+iText Core does **not validate digital signatures** whenever a PDF is opened. Simply loading a document with `PdfDocument`/`PdfReader` does not verify signature integrity or certificate chains, and does not reject a document merely because its signatures are invalid or missing.
+
+In practice, this means that:
+
+- A successfully loaded PDF must **not** be assumed to be authentic, unmodified or signed by a trusted party.
+- Reports that iText "accepts" or opens a document with an invalid or forged signature are not considered security vulnerabilities as this is expected behavior, and is not, by itself, a security vulnerability.
+
+Instead, applications that rely on signatures must verify them explicitly using the `sign` module of iText Core, for example with `ValidatorChainBuilder`/`SignatureValidator` according to their own trust policy and must decide on how to treat documents that fail validation.
+
 ## Security Updates and Patches
 
  When a vulnerability is reported, we will:
