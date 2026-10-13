@@ -198,6 +198,11 @@ The AGPL is a copyleft license, which means that any derivative work must also b
 
 Contact [Sales] for more info.
 
+### Markdown to PDF
+
+Along with the release of iText Core 9.8.0, we also launched a free [GitHub Action](https://github.com/marketplace/actions/itext-markdown2pdf) 
+for open-source developers to easily convert any .md file to a **fully-accessible PDF/UA-2** document.
+
 [agpl]: LICENSE.md
 
 [building]: BUILDING.md
