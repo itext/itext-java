@@ -84,6 +84,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
      */
     private static final Pattern SPLIT_PATTERN = Pattern.compile("(?=[mlhvcsqtaz])", Pattern.CASE_INSENSITIVE);
 
+    private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
+
     /**
      * The {@link ClosePath} shape keeping track of the initial point set by a {@link MoveTo} operation.
      * The original value is {@code null}, and must be set via a {@link MoveTo} operation before it may be drawn.
@@ -183,13 +185,16 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
      * @param pathProperties The property operator and all arguments as an array of {@link String}s
      * @param previousShape  The previous shape which can affect the positioning of the current shape. If no previous
      *                       shape exists {@code null} is passed.
-     * @return a {@link List} of each {@link IPathShape} that should be drawn to represent the operator.
+     * @param shapes         the {@link List} to which each {@link IPathShape} that should be drawn to represent
+     *                       the operator is added
+     *
+     * @return {@code false} if the operator contains an error after which the rest of the path must not be rendered,
+     * {@code true} otherwise
      */
-    private List<IPathShape> processPathOperator(String[] pathProperties, IPathShape previousShape) {
-        List<IPathShape> shapes = new ArrayList<>();
+    private boolean processPathOperator(String[] pathProperties, IPathShape previousShape, List<IPathShape> shapes) {
         if (pathProperties.length == 0 || pathProperties[0].isEmpty()
                 || SvgPathShapeFactory.getArgumentCount(pathProperties[0]) < 0) {
-            return shapes;
+            return true;
         }
 
         int argumentCount = SvgPathShapeFactory.getArgumentCount(pathProperties[0]);
@@ -198,16 +203,21 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
                 throw new SvgProcessingException(SvgExceptionMessageConstant.INVALID_CLOSEPATH_OPERATOR_USE);
             }
             shapes.add(zOperator);
-            return shapes;
+            return true;
         }
+        boolean isArc = "a".equals(pathProperties[0]) || "A".equals(pathProperties[0]);
         for (int index = 1; index < pathProperties.length; index += argumentCount) {
             if (index + argumentCount > pathProperties.length) {
-                break;
+                // Per the SVG error handling rules, the path is rendered up to the arc segment containing an error
+                return !isArc;
+            }
+            if (isArc && !(isValidArcFlag(pathProperties[index + 3]) && isValidArcFlag(pathProperties[index + 4]))) {
+                return false;
             }
             IPathShape pathShape = SvgPathShapeFactory.createPathShape(pathProperties[0]);
             if (pathShape instanceof MoveTo) {
                 shapes.addAll(addMoveToShapes(pathShape, pathProperties, previousShape));
-                return shapes;
+                return true;
             }
 
             String[] shapeCoordinates = getShapeCoordinates(pathShape, previousShape,
@@ -220,7 +230,12 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
             }
             previousShape = pathShape;
         }
-        return shapes;
+        boolean isArcWithoutArguments = isArc && pathProperties.length == 1;
+        return !isArcWithoutArguments;
+    }
+
+    private static boolean isValidArcFlag(String flag) {
+        return "0".equals(flag) || "1".equals(flag);
     }
 
     private List<IPathShape> addMoveToShapes(IPathShape pathShape, String[] pathProperties,
@@ -256,8 +271,8 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
      * Processes the {@link SvgConstants.Attributes#D} {@link PathSvgNodeRenderer#attributesAndStyles} and converts them
      * into one or more {@link IPathShape} objects to be drawn on the canvas.
      * <p>
-     * Each individual operator is passed to {@link PathSvgNodeRenderer#processPathOperator(String[], IPathShape)} to be
-     * processed individually.
+     * Each individual operator is passed to
+     * {@link PathSvgNodeRenderer#processPathOperator(String[], IPathShape, List)} to be processed individually.
      *
      * @return a {@link Collection} of each {@link IPathShape} that should be drawn to represent the path.
      */
@@ -266,10 +281,15 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
         List<IPathShape> shapes = new ArrayList<>();
 
         for (String parsedResult : parsedResults) {
-            String[] pathProperties = parsedResult.split(" +");
+            String[] pathProperties = SPACES_PATTERN.split(parsedResult);
             IPathShape previousShape = shapes.size() == 0 ? null : shapes.get(shapes.size() - 1);
-            List<IPathShape> operatorShapes = processPathOperator(pathProperties, previousShape);
-            shapes.addAll(operatorShapes);
+            // https://www.w3.org/TR/SVG2/paths.html#PathDataErrorHandling:
+            // "The general rule for error handling in path data is that the SVG user agent shall render a 'path'
+            // element up to (but not including) the path command containing the first error in the path data
+            // specification."
+            if (!processPathOperator(pathProperties, previousShape, shapes)) {
+                break;
+            }
         }
         return shapes;
     }
@@ -305,8 +325,10 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
             if (!instTrim.isEmpty()) {
                 char instruction = instTrim.charAt(0);
                 String temp = instruction + SPACE_CHAR + instTrim.substring(1).replace(",", SPACE_CHAR).trim();
-                // Do a run-through for decimal point separation
                 temp = separateDecimalPoints(temp);
+                if (instruction == 'a' || instruction == 'A') {
+                    temp = separateArcFlags(temp);
+                }
                 result.add(temp);
             }
         }
@@ -314,11 +336,32 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
         return result;
     }
 
+    static String separateArcFlags(String command) {
+        String[] tokens = SPACES_PATTERN.split(command.trim());
+        StringBuilder result = new StringBuilder(tokens[0]);
+        int arcArgumentCount = SvgPathShapeFactory.getArgumentCount(SvgConstants.Attributes.PATH_DATA_ELLIPTICAL_ARC_A);
+        int arcArgumentIndex = 0;
+        for (int i = 1; i < tokens.length; ++i) {
+            String token = tokens[i];
+            int argumentStart = 0;
+            while (argumentStart < token.length() && (arcArgumentIndex == 3 || arcArgumentIndex == 4)
+                    && (token.charAt(argumentStart) == '0' || token.charAt(argumentStart) == '1')) {
+                result.append(SPACE_CHAR).append(token.charAt(argumentStart++));
+                ++arcArgumentIndex;
+            }
+            if (argumentStart < token.length()) {
+                result.append(SPACE_CHAR).append(token.substring(argumentStart));
+                arcArgumentIndex = (arcArgumentIndex + 1) % arcArgumentCount;
+            }
+        }
+        return result.toString();
+    }
+
     /**
      * Iterate over the input string and separate numbers from each other with space chars
      */
     String separateDecimalPoints(String input) {
-        // If a space or minus sign is found reset
+        // If a space or sign is found reset
         // If a another point is found, add an extra space on before the point
         StringBuilder res = new StringBuilder();
         // We are now among the digits to the right of the decimal point
@@ -328,16 +371,16 @@ public class PathSvgNodeRenderer extends AbstractSvgNodeRenderer implements IMar
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             // Resetting flags
-            if (c == '-' || Character.isWhitespace(c)) {
+            if (c == '-' || c == '+' || Character.isWhitespace(c)) {
                 fractionalPartAfterDecimalPoint = false;
             }
             if (Character.isWhitespace(c)) {
                 exponentSignMagnitude = false;
             }
 
-            // Add extra space before the next number starting from '.', or before the next number starting with '-'
+            // Add extra space before the next number starting from '.', '-' or '+'
             if (endsWithNonWhitespace(res) && (c == '.' && fractionalPartAfterDecimalPoint ||
-                    c == '-' && !exponentSignMagnitude)) {
+                    (c == '-' || c == '+') && !exponentSignMagnitude)) {
                 res.append(" ");
             }
 

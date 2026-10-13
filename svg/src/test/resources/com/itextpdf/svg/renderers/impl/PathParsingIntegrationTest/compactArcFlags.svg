@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
+    <g fill="none" stroke="black" stroke-width="2">
+        <path d="M10 30a20 10 0 0040 0"/>
+        <path d="M70 30a20 10 0 0140 0"/>
+        <path d="M130 30A20 10 0 10170 30"/>
+        <path d="M190 30A20 10 0 11230 30"/>
+        <path d="M10 80a20 10 0 0140 0 20 10 0 0040 0"/>
+        <path d="M130 80a2e1 1E1 0 01+4e1 -1e1"/>
+        <path d="M10 130a20 10 0 01.5-.6"/>
+    </g>
+</svg>

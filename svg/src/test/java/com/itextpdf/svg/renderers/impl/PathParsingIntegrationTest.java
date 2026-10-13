@@ -178,6 +178,30 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
+    public void compactArcFlags() throws IOException, InterruptedException {
+        // The arc "a2e1 1E1 ..." is rendered as a straight line: its radii are parsed as 0, because
+        // CssTypesValidationUtils#isNumber does not accept numbers with an exponent
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "compactArcFlags");
+    }
+
+    @Test
+    public void signedArcParameters() throws IOException, InterruptedException {
+        // The arc "a-2e1,-1E1,..." is rendered as a straight line: its radii are parsed as 0, because
+        // CssTypesValidationUtils#isNumber does not accept numbers with an exponent
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "signedArcParameters");
+    }
+
+    @Test
+    public void compactArcCutouts() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "compactArcCutouts");
+    }
+
+    @Test
+    public void compactArcRelativeSegments() throws IOException, InterruptedException {
+        convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "compactArcRelativeSegments");
+    }
+
+    @Test
     public void pathAFlags() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "pathAFlags");
     }
@@ -188,21 +212,17 @@ public class PathParsingIntegrationTest extends SvgIntegrationTest {
     }
 
     @Test
-    //TODO: update cmp when DEVSIX-3010 and DEVSIX-3011 fixed
     public void pathAOutOfRange() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "pathAOutOfRange");
     }
 
     @Test
-    //TODO: update cmp when DEVSIX-3010 fixed
     public void arcs_end_point() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "arcsEndPoint");
     }
 
     @Test
-    //TODO: update cmp when DEVSIX-3011 fixed
     public void flags_out_of_range() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "flags_out_of_range");
     }
 }
-

@@ -24,8 +24,11 @@ package com.itextpdf.svg.renderers.impl;
 
 import com.itextpdf.svg.SvgConstants;
 import com.itextpdf.svg.exceptions.SvgProcessingException;
+import com.itextpdf.svg.renderers.path.IPathShape;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,6 +38,314 @@ import java.util.Collection;
 
 @Tag("UnitTest")
 public class PathParsingTest extends ExtendedITextTest {
+
+    @Test
+    public void compactArcFlagsTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 10 0 0020 0");
+        Assertions.assertEquals(Arrays.asList("M 0 0", "a 10 10 0 0 0 20 0"),
+                path.parsePathOperations());
+        Assertions.assertEquals(2, path.getShapes().size());
+    }
+
+    @Test
+    public void compactArcFlagCombinationsTest() {
+        for (String flags : Arrays.asList("00", "01", "10", "11")) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, "A10 20 30 " + flags + "40 50");
+            Assertions.assertEquals(Arrays.asList("A 10 20 30 " + flags.charAt(0) + " "
+                    + flags.charAt(1) + " 40 50"), path.parsePathOperations());
+        }
+    }
+
+    @Test
+    public void compactArcRepeatedArgumentsTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 01-30.5.6 10 20 0 10.5-.6");
+        Assertions.assertEquals(Arrays.asList("M 0 0", "a 10 20 0 0 1 -30.5 .6 10 20 0 1 0 .5 -.6"),
+                path.parsePathOperations());
+        Assertions.assertEquals(3, path.getShapes().size());
+    }
+
+    @Test
+    public void compactArcExponentsAndSignsTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "A1e+1,2E-1,-3e1,01+4e-1 -5E+1");
+        Assertions.assertEquals(Arrays.asList("A 1e+1 2E-1 -3e1 0 1 +4e-1 -5E+1"),
+                path.parsePathOperations());
+    }
+
+    @Test
+    public void separatedArcFlagsTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "a 10,20,30,0,1,40,50");
+        Assertions.assertEquals(Arrays.asList("a 10 20 30 0 1 40 50"), path.parsePathOperations());
+    }
+
+    @Test
+    public void incompleteArcArgumentsTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 01");
+        Assertions.assertEquals(Arrays.asList("M 0 0", "a 10 20 0 0 1"), path.parsePathOperations());
+        Assertions.assertEquals(1, path.getShapes().size());
+    }
+
+    @Test
+    public void malformedArcArgumentTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 01--30 40");
+        Assertions.assertEquals(Arrays.asList("M 0 0", "a 10 20 0 0 1 - -30 40"), path.parsePathOperations());
+    }
+
+    @Test
+    public void malformedArcTailStopsRenderingTest() {
+        for (String tail : Arrays.asList(".", "-", "e")) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 01 30 40 " + tail + "l10 10");
+            Collection<IPathShape> shapes = path.getShapes();
+            Assertions.assertEquals(2, shapes.size());
+            IPathShape arc = shapes.toArray(new IPathShape[0])[1];
+            Assertions.assertEquals(30, arc.getEndingPoint().getX());
+            Assertions.assertEquals(40, arc.getEndingPoint().getY());
+        }
+    }
+
+    @Test
+    public void percentageArcRadiusTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M0 0a50% 50% 0 0 1 10 10l20 20");
+        Assertions.assertEquals(Arrays.asList("M 0 0", "a 50% 50% 0 0 1 10 10", "l 20 20"),
+                path.parsePathOperations());
+    }
+
+    @Test
+    public void malformedArcExponentTest() {
+        for (String exponent : Arrays.asList("30e", "30e+", "30E", "30E-")) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 01 " + exponent + " 40");
+            Assertions.assertEquals(Arrays.asList("M 0 0", "a 10 20 0 0 1 " + exponent + " 40"),
+                    path.parsePathOperations());
+        }
+    }
+
+    @Test
+    public void decimalArcFlagsTest() {
+        String[][] cases = {
+                {"1.0 1", "1 .0 1"}, {"0.5 1", "0 .5 1"}, {".5 1", ".5 1"}, {"1 .5", "1 .5"}};
+        for (String[] testCase : cases) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 " + testCase[0] + " 30 40l5 6");
+            Assertions.assertEquals(Arrays.asList("M 0 0", "a 10 20 0 " + testCase[1] + " 30 40", "l 5 6"),
+                    path.parsePathOperations());
+        }
+    }
+
+    @Test
+    public void malformedArcExponentSuffixUsesSharedSplitterTest() {
+        for (String suffix : Arrays.asList("e", "E", "e.", "E.")) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 0130 40" + suffix + "l5 6");
+            Assertions.assertEquals(Arrays.asList("M 0 0", "a 10 20 0 0 1 30 40"
+                    + suffix, "l 5 6"),
+                    path.parsePathOperations());
+        }
+    }
+
+    @Test
+    public void incompleteSignedArcExponentUsesSharedSplitterTest() {
+        for (String suffix : Arrays.asList("e+", "E-")) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 0130 40" + suffix + "l5 6");
+            Assertions.assertEquals(Arrays.asList("M 0 0", "a 10 20 0 0 1 30 40" + suffix, "l 5 6"),
+                    path.parsePathOperations());
+        }
+    }
+
+    @Test
+    public void outOfRangeArcFlagsTest() {
+        for (String flag : Arrays.asList("2", "-1", "+1")) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 " + flag + " 1 30 40");
+            Assertions.assertEquals(1, path.getShapes().size());
+            path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 1 " + flag + " 30 40");
+            Assertions.assertEquals(1, path.getShapes().size());
+        }
+    }
+
+    @Test
+    public void outOfRangeArcFlagsStopRenderingTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 0 1 30 40 10 20 0 -1 0 50 60l5 6Z");
+        Assertions.assertEquals(2, path.getShapes().size());
+    }
+
+    @Test
+    public void incompleteArcGroupStopsRenderingTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 0130 40 10 20 0l5 6");
+        Assertions.assertEquals(Arrays.asList("M 0 0", "a 10 20 0 0 1 30 40 10 20 0", "l 5 6"),
+                path.parsePathOperations());
+        Assertions.assertEquals(2, path.getShapes().size());
+    }
+
+    @Test
+    public void arcEndPointWithExtraNumberStopsRenderingTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M 50 200 a -100 -50 15 1 1 250.7 50.8.9999 Z");
+        IPathShape[] shapes = path.getShapes().toArray(new IPathShape[0]);
+        Assertions.assertEquals(2, shapes.length);
+        Assertions.assertEquals(250.8, shapes[1].getEndingPoint().getY(), 1e-6);
+    }
+
+    @Test
+    public void arcWithoutArgumentsStopsRenderingTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M0 0a l5 6");
+        Assertions.assertEquals(Arrays.asList("M 0 0", "a", "l 5 6"), path.parsePathOperations());
+        Assertions.assertEquals(1, path.getShapes().size());
+    }
+
+    @Test
+    public void signedArcRadiiAndRotationTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "a-10+20-45 1 0 30 40");
+        Assertions.assertEquals(Arrays.asList("a -10 +20 -45 1 0 30 40"), path.parsePathOperations());
+    }
+
+    @Test
+    public void arcNumberProductionTest() {
+        // fractional-constant ::= (digit* "." digit+) | digit+, exponent ::= ("e" | "E") sign? digit+
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "a.5 5 5.5 0 0 1e5 1E-5 1 1e+5 0 1 1 0.6.5");
+        Assertions.assertEquals(Arrays.asList("a .5 5 5.5 0 0 1e5 1E-5 1 1e+5 0 1 1 0.6 .5"),
+                path.parsePathOperations());
+    }
+
+    @Test
+    public void arcNumberIsNotSplitToCompleteArgumentTest() {
+        // "3040" is a single number, so the arc lacks its y coordinate
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "a10 20 0 0 1 3040");
+        Assertions.assertEquals(Arrays.asList("a 10 20 0 0 1 3040"), path.parsePathOperations());
+    }
+
+    @Test
+    public void arcCommaWspTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "a10 ,20, 0\t,\n0\r1\f30 , 40,10 20 0 0 1 30 40");
+        Assertions.assertEquals(Arrays.asList("a 10 20 0 0 1 30 40 10 20 0 0 1 30 40"),
+                path.parsePathOperations());
+    }
+
+    @Test
+    public void arcCommasUseSharedSplitterTest() {
+        String[][] cases = {
+                {"a10,,20 0 0 1 30 40", "a 10 20 0 0 1 30 40"},
+                {"a,10 20 0 0 1 30 40", "a 10 20 0 0 1 30 40"},
+                {"a10 20 0 0 1 30 40,", "a 10 20 0 0 1 30 40"},
+                {"a10 20 0 0 1 30 40,,10 20 0 0 1 30 40", "a 10 20 0 0 1 30 40 10 20 0 0 1 30 40"}};
+        for (String[] testCase : cases) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, "M0 0" + testCase[0] + "l5 6");
+            Assertions.assertEquals(Arrays.asList("M 0 0", testCase[1], "l 5 6"), path.parsePathOperations());
+        }
+    }
+
+    @Test
+    public void compactArcFlagsAcrossTokensTest() {
+        for (String arguments : Arrays.asList("004.547", "0 04.547", "00 4.547", "0 0 4.547")) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, "M0 0a2.274 2.274 0 " + arguments + " 0");
+            Assertions.assertEquals(Arrays.asList("M 0 0", "a 2.274 2.274 0 0 0 4.547 0"),
+                    path.parsePathOperations(), arguments);
+        }
+    }
+
+    @Test
+    public void arcWithIncompleteTrailingDecimalTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M0 0a10 20 0 0 1 30.l5 6");
+        Assertions.assertEquals(Arrays.asList("M 0 0", "a 10 20 0 0 1 30.", "l 5 6"), path.parsePathOperations());
+    }
+
+    @Test
+    public void longIncompleteArcNumberTest() {
+        String digits = new String(new char[50000]).replace('\0', '1');
+        String[][] cases = {
+                {"a" + digits, "a " + digits},
+                {"a10 20 0 0 1 30 40 " + digits, "a 10 20 0 0 1 30 40 " + digits}};
+        for (String[] testCase : cases) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, "M0 0" + testCase[0] + "l5 6");
+            Assertions.assertEquals(Arrays.asList("M 0 0", testCase[1], "l 5 6"), path.parsePathOperations());
+        }
+    }
+
+    @Test
+    public void separateArcFlagsWithRepeatedSpacesTest() {
+        String[][] cases = {
+                {"a  10 20 0  0040 50", "a 10 20 0 0 0 40 50"},
+                {"a 10 20 0  0  040 50", "a 10 20 0 0 0 40 50"},
+                {"a 10 20 0  00  40 50", "a 10 20 0 0 0 40 50"},
+                {"a 10 20 0  0  0  40 50", "a 10 20 0 0 0 40 50"},
+                {"a 10 20 0 0040 50  10 20 0 1  160 70", "a 10 20 0 0 0 40 50 10 20 0 1 1 60 70"}};
+        for (String[] testCase : cases) {
+            Assertions.assertEquals(testCase[1], PathSvgNodeRenderer.separateArcFlags(testCase[0]));
+        }
+    }
+
+    @Test
+    public void longWhitespaceRunInArcTest() {
+        String spaces = new String(new char[50000]).replace('\0', ' ');
+        String[][] cases = {
+                {"a 1" + spaces + "x", "a 1 x"},
+                {"a 10 20 0 0 1 30 40" + spaces + "x", "a 10 20 0 0 1 30 40 x"}};
+        for (String[] testCase : cases) {
+            Assertions.assertEquals(testCase[1], PathSvgNodeRenderer.separateArcFlags(testCase[0]));
+        }
+        Assertions.assertEquals("a 10 20 0 0 1 30 40", PathSvgNodeRenderer.separateArcFlags(
+                "a 10" + spaces + "20 0 0 1 30" + spaces + "40"));
+    }
+
+    @Test
+    public void separateArcFlagsEmptyAndIncompleteInputTest() {
+        String[][] cases = {
+                {"", ""},
+                {"   ", ""},
+                {"a", "a"},
+                {"A  ", "A"},
+                {"a 10", "a 10"},
+                {"a 10 20 0", "a 10 20 0"},
+                {"a 10 20 0 0", "a 10 20 0 0"},
+                {"a 10 20 0 01", "a 10 20 0 0 1"}};
+        for (String[] testCase : cases) {
+            Assertions.assertEquals(testCase[1], PathSvgNodeRenderer.separateArcFlags(testCase[0]));
+        }
+    }
+
+    @Test
+    public void truncatedArcPathParsingTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M0 0a");
+        Assertions.assertEquals(Arrays.asList("M 0 0", "a"), path.parsePathOperations());
+    }
+
+    @Test
+    public void compactArcFlagsAfterCommaTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "a10,20,0,01,30,40");
+        Assertions.assertEquals(Arrays.asList("a 10 20 0 0 1 30 40"), path.parsePathOperations());
+    }
+
+    @Test
+    public void compactArcFollowingRelativeLineTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        path.setAttribute(SvgConstants.Attributes.D, "M10 10a10 20 0 0130 40l5 6");
+        IPathShape[] shapes = path.getShapes().toArray(new IPathShape[0]);
+        Assertions.assertEquals(3, shapes.length);
+        Assertions.assertEquals(45, shapes[2].getEndingPoint().getX());
+        Assertions.assertEquals(56, shapes[2].getEndingPoint().getY());
+    }
 
     @Test
     public void pathParsingOperatorEmptyTest() {
@@ -184,6 +495,46 @@ public class PathParsingTest extends ExtendedITextTest {
         String expected = "40 -50";
         String actual = path.separateDecimalPoints(input);
         Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void plusSignNumberBoundariesTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        String[][] cases = {
+                {"10+20", "10 +20"},
+                {"1.5+.6", "1.5 +.6"},
+                {"+1+2", "+1 +2"},
+                {"1+.5.6+7", "1 +.5 .6 +7"},
+                {"+1e+3\t-2E-4", "+1e+3\t-2E-4"}};
+        for (String[] testCase : cases) {
+            Assertions.assertEquals(testCase[1], path.separateDecimalPoints(testCase[0]), testCase[0]);
+        }
+    }
+
+    @Test
+    public void exponentBoundaryHandlingIsUnchangedTest() {
+        PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+        for (String input : Arrays.asList("1e5-3", "1E-5+3", "1e+5-3", "1e5.6", "1e-3.4")) {
+            Assertions.assertEquals(input, path.separateDecimalPoints(input));
+        }
+    }
+
+    @Test
+    public void compactNonArcCommandsTest() {
+        String[][] cases = {
+                {"M10+20", "M 10 +20"},
+                {"L10+3", "L 10 +3"},
+                {"H1+3", "H 1 +3"},
+                {"V1+.6", "V 1 +.6"},
+                {"C1-4+5-6.5.6+7", "C 1 -4 +5 -6.5 .6 +7"},
+                {"S1+2-3+4", "S 1 +2 -3 +4"},
+                {"Q1.5.5+3-4", "Q 1.5 .5 +3 -4"},
+                {"T1+3", "T 1 +3"}};
+        for (String[] testCase : cases) {
+            PathSvgNodeRenderer path = new PathSvgNodeRenderer();
+            path.setAttribute(SvgConstants.Attributes.D, testCase[0]);
+            Assertions.assertEquals(Collections.singletonList(testCase[1]), path.parsePathOperations(), testCase[0]);
+        }
     }
 
     @Test

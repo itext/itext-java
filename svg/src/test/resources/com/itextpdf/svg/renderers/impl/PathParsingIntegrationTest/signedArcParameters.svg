@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
+    <g fill="none" stroke="black" stroke-width="2">
+        <path d="M20 60 a-30+20-30 1 0 60 0"/>
+        <path d="M130 60 a+30-20+30 0 1 60 0"/>
+        <path d="M20 130 a-2e1,-1E1,-4.5e1,1,1,+60,0"/>
+    </g>
+</svg>
