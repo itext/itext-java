@@ -144,8 +144,8 @@ public abstract class AbstractMacIntegrityProtector {
             byte[] actualMessageDigest = macContainerReader.parseMessageDigest().getEncoded();
             byte[] actualMac = macContainerReader.parseMac();
 
-            if (!Arrays.equals(expectedMac, actualMac) ||
-                    !Arrays.equals(expectedMessageDigest, actualMessageDigest)) {
+            if (!MessageDigest.isEqual(expectedMac, actualMac) ||
+                    !MessageDigest.isEqual(expectedMessageDigest, actualMessageDigest)) {
                 throw new MacValidationException(KernelExceptionMessageConstant.MAC_VALIDATION_FAILED);
             }
         } catch (PdfException e) {
