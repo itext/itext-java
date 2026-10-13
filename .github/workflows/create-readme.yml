@@ -1,0 +1,29 @@
+name: README to PDF
+
+on:
+  workflow_dispatch:                           # lets you run it manually from the Actions tab
+  push:
+    paths:
+      - '**.md'                                # optional: rebuild whenever .md files change
+      - '.github/workflows/create-readme.yml'  # optional: rebuild whenever this .yml file changes
+
+permissions:
+  contents: read
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: itext/markdown2pdf-gh-action@v1.0.0
+        id: convert
+        with:
+          input: 'README.md'
+          output: 'dist/README.pdf'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: itext-markdown2pdf-output
+          path: ${{ steps.convert.outputs.output-path }}
+          if-no-files-found: error
