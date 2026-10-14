@@ -334,7 +334,7 @@ public class DocumentRevisionsValidator {
             // We don't need to populate validation report in case of exceptions, it will happen later
             createDocumentAndPerformOperation(documentRevisions.get(0), document, new ValidationReport(),
                     firstRevisionDocument -> {
-                        if (isLinearizedPdf(document)) {
+                        if (isLinearizedPdf(firstRevisionDocument)) {
                             Set<PdfIndirectReference> mergedModifiedReferences =
                                     new HashSet<>(documentRevisions.get(0).getModifiedObjects());
                             mergedModifiedReferences.addAll(documentRevisions.get(1).getModifiedObjects());
@@ -405,16 +405,22 @@ public class DocumentRevisionsValidator {
         return new RASInputStream(source);
     }
 
-    private static boolean isLinearizedPdf(PdfDocument originalDocument) {
-        for (int i = 0; i < originalDocument.getNumberOfPdfObjects(); ++i) {
-            PdfObject object = originalDocument.getPdfObject(i);
+    private static boolean isLinearizedPdf(PdfDocument firstRevisionDocument) {
+        // The first revision (0 revision if linearized) must not contain any signatures, not linearized otherwise
+        if (!new SignatureUtil(firstRevisionDocument).getSignatureNames().isEmpty()) {
+            return false;
+        }
+
+        for (int i = 0; i < firstRevisionDocument.getNumberOfPdfObjects(); ++i) {
+            PdfObject object = firstRevisionDocument.getPdfObject(i);
             if (object instanceof PdfDictionary) {
                 PdfDictionary dictionary = (PdfDictionary) object;
-                if (dictionary.containsKey(new PdfName("Linearized"))) {
+                if (dictionary.containsKey(PdfName.Linearized)) {
                     return true;
                 }
             }
         }
+
         return false;
     }
 

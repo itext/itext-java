@@ -500,6 +500,7 @@ public class PdfName extends PdfPrimitiveObject implements Comparable<PdfName> {
     public static final PdfName Lighten = createDirectName("Lighten");
     public static final PdfName Limits = createDirectName("Limits");
     public static final PdfName Line = createDirectName("Line");
+    public static final PdfName Linearized = createDirectName("Linearized");
     public static final PdfName LineArrow = createDirectName("LineArrow");
     public static final PdfName LineHeight = createDirectName("LineHeight");
     public static final PdfName LineNum = createDirectName("LineNum");
