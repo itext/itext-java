@@ -25,9 +25,15 @@ package com.itextpdf.signatures.validation.v1;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.validation.v1.context.CertificateSource;
 import com.itextpdf.signatures.validation.v1.context.CertificateSources;
@@ -39,21 +45,21 @@ import com.itextpdf.signatures.validation.v1.report.ReportItem.ReportItemStatus;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport;
 import com.itextpdf.signatures.validation.v1.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.BouncyCastleIntegrationTest;
-
-import java.io.IOException;
-import java.security.Security;
-
-import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.security.Security;
+import java.util.Arrays;
 
 @Tag("BouncyCastleIntegrationTest")
 public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/v1/DocumentRevisionsValidatorIntegrationTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/validation/v1/DocumentRevisionsValidatorIntegrationTest/";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private ValidatorChainBuilder builder;
@@ -63,6 +69,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     @BeforeAll
     public static void before() {
         Security.addProvider(FACTORY.getProvider());
+        createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
 
     public void setUp(boolean continueValidationAfterFail) {
@@ -71,7 +78,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     public static Iterable<Object[]> CreateParameters() {
-        return Arrays.asList(new Object[] {false}, new Object[] {true});
+        return Arrays.asList(new Object[]{false}, new Object[]{true});
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
@@ -104,6 +111,58 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
                     .hasNumberOfFailures(0).hasNumberOfLogs(0));
 
             Assertions.assertEquals(AccessPermissions.ANNOTATION_MODIFICATION, validator.getAccessPermissions());
+        }
+    }
+
+    @Test
+    public void fakeLinearizedMarkerInjectedBeforeSigningTest() throws IOException {
+        setUp(false);
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "linearizedInjectedBeforeSigning.pdf"),
+                new PdfWriter(DESTINATION_FOLDER + "fakelinearizedInjectedBeforeSigning.pdf"),
+                new StampingProperties().useAppendMode());
+             Document doc = new Document(pdfDoc)) {
+            doc.add(new Paragraph("Extra content to make the signature invalid."));
+        }
+
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(DESTINATION_FOLDER + "fakelinearizedInjectedBeforeSigning.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.PAGE_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void fakeLinearizedMarkerInjectedAfterSigningTest() throws IOException {
+        setUp(false);
+        try (PdfDocument pdfDoc = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "signedDocNoModifications.pdf"),
+                new PdfWriter(DESTINATION_FOLDER + "fakeLinearizedMarkerInjectedAfterSigning.pdf"),
+                new StampingProperties().useAppendMode());
+             Document doc = new Document(pdfDoc)) {
+            PdfDictionary marker = new PdfDictionary();
+            marker.put(PdfName.Linearized, new PdfNumber(1));
+            marker.makeIndirect(pdfDoc);
+
+            doc.add(new Paragraph("Extra content to make the signature invalid."));
+        }
+
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(DESTINATION_FOLDER + "fakeLinearizedMarkerInjectedAfterSigning.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.PAGE_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
         }
     }
 
