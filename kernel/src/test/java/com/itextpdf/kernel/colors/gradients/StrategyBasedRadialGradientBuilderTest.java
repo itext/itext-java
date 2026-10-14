@@ -185,6 +185,18 @@ public class StrategyBasedRadialGradientBuilderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void radialGradientEllipseClosestCornerAtBottomTest() {
+        Rectangle targetBoundingBox = new Rectangle(0, 0, 100, 100);
+        StrategyBasedRadialGradientBuilder gradient = new StrategyBasedRadialGradientBuilder()
+                .setCenterStrategy(true, 0.5, true, true, 0, true)
+                .setRadiusFromCenterStrategy(false, GradientStrategy.CLOSEST_CORNER);
+        gradient.addStopColor(new GradientColorStop(ColorConstants.RED.getColorValue(), 0, OffsetType.RELATIVE));
+        gradient.addStopColor(new GradientColorStop(ColorConstants.BLUE.getColorValue(), 1, OffsetType.RELATIVE));
+
+        Assertions.assertNull(gradient.buildColor(targetBoundingBox, null, null));
+    }
+
+    @Test
     public void builderFarthestSideEllipseTest() throws IOException, InterruptedException {
         IGradientBuilder gradientBuilder = new StrategyBasedRadialGradientBuilder()
                 .setCenterStrategy(true, 0.3, true, true, 0.2, true)

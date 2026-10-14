@@ -32,7 +32,10 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.File;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +53,15 @@ public class LinearGradientSvgNodeRendererTest extends SvgIntegrationTest {
     @Test
     public void circleTest() throws IOException, InterruptedException, java.io.IOException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "circle");
+    }
+
+    // TODO DEVSIX-10290 remove assertion when fixed and use convertAndCompareSinglePage
+    @Test
+    @Disabled("DEVSIX-10290")
+    public void selfReferentialGradientCausesStackOverflowError() {
+        Assertions.assertThrows(StackOverflowError.class, () -> convertToSinglePage(
+                new File(SOURCE_FOLDER + "selfReferentialGradient.svg"),
+                new File(DESTINATION_FOLDER + "selfReferentialGradient.pdf")));
     }
 
     @Test

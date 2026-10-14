@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+    <defs>
+        <marker id="recursive" markerWidth="8" markerHeight="8">
+            <path d="M0 0 L8 4 L0 8 Z" fill="red" marker-end="url(#recursive)"/>
+        </marker>
+    </defs>
+    <path d="M10 10 L90 10" stroke="black" marker-end="url(#recursive)"/>
+</svg>

@@ -30,8 +30,11 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.File;
 import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -98,6 +101,15 @@ public class PatternTest extends SvgIntegrationTest {
     @Test
     public void hrefBasicReferenceTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "hrefBasicReference");
+    }
+
+    // TODO DEVSIX-10290 remove assertion when fixed and use convertAndCompareSinglePage
+    @Test
+    @Disabled("DEVSIX-10290")
+    public void selfReferentialPatternCausesStackOverflowError() {
+        Assertions.assertThrows(StackOverflowError.class, () -> convertToSinglePage(
+                new File(SOURCE_FOLDER + "selfReferentialPattern.svg"),
+                new File(DESTINATION_FOLDER + "selfReferentialPattern.pdf")));
     }
 
     @Test

@@ -403,9 +403,9 @@ public class StrategyBasedRadialGradientBuilder extends AbstractRadialGradientBu
         } else {
             double xDiff = Math.abs(corner.getX() - center.getX());
             double yDiff = Math.abs(corner.getY() - center.getY());
-            double aspectRatio = yDiff / xDiff;
-            double xR = Math.sqrt(xDiff * xDiff + (yDiff / aspectRatio) * (yDiff / aspectRatio));
-            double yR = aspectRatio * xR;
+            double sqrtTwo = Math.sqrt(2D);
+            double xR = sqrtTwo * xDiff;
+            double yR = sqrtTwo * yDiff;
             return new double[] {xR, yR};
         }
     }

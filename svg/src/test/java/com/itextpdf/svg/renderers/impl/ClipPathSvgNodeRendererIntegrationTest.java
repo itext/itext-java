@@ -28,8 +28,11 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.TestUtil;
 
+import java.io.File;
 import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -53,6 +56,24 @@ public class ClipPathSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void invalidClipPathTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "invalidClipPath");
+    }
+
+    // TODO DEVSIX-10290 remove assertion when fixed and use convertAndCompareSinglePage
+    @Test
+    @Disabled("DEVSIX-10290")
+    public void selfReferentialClipPathCausesStackOverflowError() {
+        Assertions.assertThrows(StackOverflowError.class, () -> convertToSinglePage(
+                new File(SOURCE_FOLDER + "selfReferentialClipPath.svg"),
+                new File(DESTINATION_FOLDER + "selfReferentialClipPath.pdf")));
+    }
+
+    // TODO DEVSIX-10290 remove assertion when fixed and use convertAndCompareSinglePage
+    @Test
+    @Disabled("DEVSIX-10290")
+    public void mutuallyReferentialClipPathsCauseStackOverflowError() {
+        Assertions.assertThrows(StackOverflowError.class, () -> convertToSinglePage(
+                new File(SOURCE_FOLDER + "mutuallyReferentialClipPaths.svg"),
+                new File(DESTINATION_FOLDER + "mutuallyReferentialClipPaths.pdf")));
     }
 
     @Test

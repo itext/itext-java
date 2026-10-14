@@ -30,9 +30,12 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.File;
 import java.io.IOException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -62,6 +65,15 @@ public class MarkerSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void markerPathAngleOrientTest() throws IOException, InterruptedException {
         convertAndCompare(SOURCE_FOLDER, DESTINATION_FOLDER, "markerPathAngleOrient");
+    }
+
+    // TODO DEVSIX-10290 remove assertion when fixed and use convertAndCompareSinglePage
+    @Disabled("DEVSIX-10290")
+    @Test
+    public void selfReferentialMarkerCausesStackOverflowError() {
+        Assertions.assertThrows(StackOverflowError.class, () -> convertToSinglePage(
+                new File(SOURCE_FOLDER + "selfReferentialMarker.svg"),
+                new File(DESTINATION_FOLDER + "selfReferentialMarker.pdf")));
     }
 
     @Test

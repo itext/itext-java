@@ -27,8 +27,13 @@ import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
 import com.itextpdf.test.TestUtil;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -63,6 +68,26 @@ public class GroupSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
     @Test
     public void nestedGroupTest() throws IOException, InterruptedException {
         convertAndCompareSinglePage(SOURCE_FOLDER, DESTINATION_FOLDER, "nestedGroup");
+    }
+
+    // TODO DEVSIX-10276 remove assertion when fixed
+    @Test
+    @Disabled("DEVSIX-10276")
+    public void deeplyNestedSvgGroupsCauseStackOverflowError() {
+        StringBuilder svg = new StringBuilder("<svg xmlns=\"http://www.w3.org/2000/svg\" "
+                + "width=\"100\" height=\"100\">");
+        for (int i = 0; i < 5000; i++) {
+            svg.append("<g>");
+        }
+        svg.append("<rect width=\"10\" height=\"10\" fill=\"red\"/>");
+        for (int i = 0; i < 5000; i++) {
+            svg.append("</g>");
+        }
+        svg.append("</svg>");
+
+        byte[] svgBytes = svg.toString().getBytes(StandardCharsets.UTF_8);
+        Assertions.assertThrows(StackOverflowError.class,
+                () -> convertToSinglePage(new ByteArrayInputStream(svgBytes), new ByteArrayOutputStream()));
     }
 
     @Test
