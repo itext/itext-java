@@ -633,7 +633,7 @@
               <includes>
                 <include>**/*.java</include>
               </includes>
-              <groups>SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest,UnitTest</groups>
+              <groups>SlowTest,PerformanceTest,IntegrationTest,BouncyCastleIntegrationTest,SampleTest</groups>
               <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
               <argLine>@{jacoco.agent.argLine}</argLine>
               <threadCount>1</threadCount>
