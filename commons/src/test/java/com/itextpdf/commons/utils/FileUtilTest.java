@@ -25,6 +25,7 @@ package com.itextpdf.commons.utils;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,8 +34,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Set;
 
 @Tag("UnitTest")
 public class FileUtilTest extends ExtendedITextTest {
@@ -126,5 +130,34 @@ public class FileUtilTest extends ExtendedITextTest {
     public void constructFileByDirectoryAndNameTest() {
         Assertions.assertNotNull(FileUtil.constructFileByDirectoryAndName(
                 SOURCE_FOLDER, ""));
+    }
+
+    @Test
+    public void createTempFileInDirectoryIsOwnerOnlyTest() throws IOException {
+        Assumptions.assumeTrue(FileSystems.getDefault().supportedFileAttributeViews().contains("posix"));
+        File tempFile = FileUtil.createTempFile(DESTINATION_FOLDER);
+        try {
+            assertOwnerOnlyPermissions(Files.getPosixFilePermissions(tempFile.toPath()));
+        } finally {
+            Assertions.assertTrue(tempFile.delete());
+        }
+    }
+
+    @Test
+    public void createTempFileWithPrefixIsOwnerOnlyTest() throws IOException {
+        Assumptions.assumeTrue(FileSystems.getDefault().supportedFileAttributeViews().contains("posix"));
+        File tempFile = FileUtil.createTempFile("pdf", ".tmp");
+        try {
+            assertOwnerOnlyPermissions(Files.getPosixFilePermissions(tempFile.toPath()));
+        } finally {
+            Assertions.assertTrue(tempFile.delete());
+        }
+    }
+
+    private static void assertOwnerOnlyPermissions(Set<PosixFilePermission> permissions) {
+        Assertions.assertFalse(permissions.contains(PosixFilePermission.GROUP_READ));
+        Assertions.assertFalse(permissions.contains(PosixFilePermission.GROUP_WRITE));
+        Assertions.assertFalse(permissions.contains(PosixFilePermission.OTHERS_READ));
+        Assertions.assertFalse(permissions.contains(PosixFilePermission.OTHERS_WRITE));
     }
 }
