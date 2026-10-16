@@ -292,7 +292,7 @@ public final class FileUtil {
     public static File createTempFile(String path) throws IOException {
         File tempFile = new File(path);
         if (tempFile.isDirectory()) {
-            tempFile = File.createTempFile("pdf", null, tempFile);
+            tempFile = Files.createTempFile(tempFile.toPath(), "pdf", null).toFile();
         }
         return tempFile;
     }
@@ -414,7 +414,7 @@ public final class FileUtil {
      * 
      * <p>
      * Note, that this method creates temporary file with provided file's prefix and postfix
-     * using {@link File#createTempFile(String, String)}.
+     * using {@link Files#createTempFile(String, String, FileAttribute[])}.
      *
      * @param tempFilePrefix  the prefix of the copied file's name
      * @param tempFilePostfix the postfix of the copied file's name
@@ -424,7 +424,7 @@ public final class FileUtil {
      * @throws IOException signals that an I/O exception has occurred.
      */
     public static File createTempFile(String tempFilePrefix, String tempFilePostfix) throws IOException {
-        return File.createTempFile(tempFilePrefix, tempFilePostfix);
+        return Files.createTempFile(tempFilePrefix, tempFilePostfix).toFile();
     }
 
     /**
