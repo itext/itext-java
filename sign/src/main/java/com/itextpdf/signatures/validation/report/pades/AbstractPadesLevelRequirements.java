@@ -43,54 +43,54 @@ import java.util.function.Predicate;
  */
 abstract class AbstractPadesLevelRequirements {
 
-    public static final String COMMITMENT_TYPE_AND_REASON_SHALL_NOT_BE_USED_TOGETHER = "commitment-type-indication "
+    static final String COMMITMENT_TYPE_AND_REASON_SHALL_NOT_BE_USED_TOGETHER = "commitment-type-indication "
             + "or the reason dictionary item cannot be present together";
-    public static final String SIGNED_DATA_CERTIFICATES_MUST_BE_INCLUDED = "SignedData.certificates must be included";
-    public static final String SIGNED_DATA_CERTIFICATES_MUST_INCLUDE_SIGNING_CERTIFICATE = "SignedData.certificates "
+    static final String SIGNED_DATA_CERTIFICATES_MUST_BE_INCLUDED = "SignedData.certificates must be included";
+    static final String SIGNED_DATA_CERTIFICATES_MUST_INCLUDE_SIGNING_CERTIFICATE = "SignedData.certificates "
             + "must include signing certificate";
-    public static final String SIGNED_DATA_CERTIFICATES_SHOULD_INCLUDE_THE_ENTIRE_CERTIFICATE_CHAIN = "SignedData"
+    static final String SIGNED_DATA_CERTIFICATES_SHOULD_INCLUDE_THE_ENTIRE_CERTIFICATE_CHAIN = "SignedData"
             + ".certificates should include the entire certificate chain";
-    public static final String SIGNED_DATA_CERTIFICATES_SHOULD_INCLUDE_THE_ENTIRE_CERTIFICATE_CHAIN_AND_INCLUDE_CA =
+    static final String SIGNED_DATA_CERTIFICATES_SHOULD_INCLUDE_THE_ENTIRE_CERTIFICATE_CHAIN_AND_INCLUDE_CA =
             SIGNED_DATA_CERTIFICATES_SHOULD_INCLUDE_THE_ENTIRE_CERTIFICATE_CHAIN
                     + " including the certificate authority";
-    public static final String CMS_CONTENT_TYPE_MUST_BE_ID_DATA = "CMS content-type entry value is not id-data";
-    public static final String CMS_MESSAGE_DIGEST_IS_MISSING = "CMS message-digest is missing";
-    public static final String CLAIMED_TIME_OF_SIGNING_SHALL_NOT_BE_INCLUDED_IN_THE_CMS = "Claimed time of signing "
+    static final String CMS_CONTENT_TYPE_MUST_BE_ID_DATA = "CMS content-type entry value is not id-data";
+    static final String CMS_MESSAGE_DIGEST_IS_MISSING = "CMS message-digest is missing";
+    static final String CLAIMED_TIME_OF_SIGNING_SHALL_NOT_BE_INCLUDED_IN_THE_CMS = "Claimed time of signing "
             + "shall not be included in the CMS";
-    public static final String DICTIONARY_ENTRY_M_IS_MISSING = "Dictionary entry M is missing";
-    public static final String DICTIONARY_ENTRY_M_IS_NOT_IN_THE_CORRECT_FORMAT = "Dictionary entry M is not in the "
+    static final String DICTIONARY_ENTRY_M_IS_MISSING = "Dictionary entry M is missing";
+    static final String DICTIONARY_ENTRY_M_IS_NOT_IN_THE_CORRECT_FORMAT = "Dictionary entry M is not in the "
             + "correct format";
-    public static final String CONTENTS_ENTRY_IS_MISSING_FROM_THE_SIGNATURE_DICTIONARY = "Contents entry is missing "
+    static final String CONTENTS_ENTRY_IS_MISSING_FROM_THE_SIGNATURE_DICTIONARY = "Contents entry is missing "
             + "from the signature dictionary";
-    public static final String FILTER_ENTRY_IS_MISSING_FROM_THE_SIGNATURE_DICTIONARY = "Filter entry is missing from "
+    static final String FILTER_ENTRY_IS_MISSING_FROM_THE_SIGNATURE_DICTIONARY = "Filter entry is missing from "
             + "the signature dictionary";
-    public static final String BYTE_RANGE_ENTRY_IS_MISSING_FROM_THE_SIGNATURE_DICTIONARY = "ByteRange entry is "
+    static final String BYTE_RANGE_ENTRY_IS_MISSING_FROM_THE_SIGNATURE_DICTIONARY = "ByteRange entry is "
             + "missing from the signature dictionary";
-    public static final String FILTER_ENTRY_IS_MISSING_FROM_THE_SIGNATURE_DICTIONARY1 = "SubFilter entry is missing "
+    static final String FILTER_ENTRY_IS_MISSING_FROM_THE_SIGNATURE_DICTIONARY1 = "SubFilter entry is missing "
             + "from the signature dictionary";
-    public static final String CERT_ENTRY_IS_ADDED_TO_THE_SIGNATURE_DICTIONARY = "Cert entry is added to the "
+    static final String CERT_ENTRY_IS_ADDED_TO_THE_SIGNATURE_DICTIONARY = "Cert entry is added to the "
             + "signature dictionary";
-    public static final String A_DISCOURAGED_HASH_OR_SIGNING_ALGORITHM_WAS_USED = "A hash or signing "
+    static final String A_DISCOURAGED_HASH_OR_SIGNING_ALGORITHM_WAS_USED = "A hash or signing "
             + "algorithm was used that is not allowed according to ETSI 119 312 :\n";
-    public static final String A_FORBIDDEN_HASH_OR_SIGNING_ALGORITHM_WAS_USED = "A hash or signing "
+    static final String A_FORBIDDEN_HASH_OR_SIGNING_ALGORITHM_WAS_USED = "A hash or signing "
             + "algorithm was used that is not allowed according to ETSI 319 142-1 :\n";
-    public static final String SIGNED_ATTRIBUTES_MUST_CONTAIN_SINGING_CERTIFICATE =
+    static final String SIGNED_ATTRIBUTES_MUST_CONTAIN_SINGING_CERTIFICATE =
             "The singing certificate must be added as a signed attribute";
-    public static final String SIGNED_ATTRIBUTES_SHOULD_CONTAIN_SIGNING_CERTIFICATE_V2 =
+    static final String SIGNED_ATTRIBUTES_SHOULD_CONTAIN_SIGNING_CERTIFICATE_V2 =
             "The singing certificate should be added as a singing-certificate-v2 signed attribute";
-    public static final String THERE_MUST_BE_A_SIGNATURE_OR_DOCUMENT_TIMESTAMP_AVAILABLE = "There must be a signature "
+    static final String THERE_MUST_BE_A_SIGNATURE_OR_DOCUMENT_TIMESTAMP_AVAILABLE = "There must be a signature "
             + "or document timestamp available";
-    public static final String DSS_DICTIONARY_IS_MISSING = "A DSS dictionary is missing";
-    public static final String ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING = "Issuer for the following certificates is "
+    static final String DSS_DICTIONARY_IS_MISSING = "A DSS dictionary is missing";
+    static final String ISSUER_FOR_THESE_CERTIFICATES_IS_MISSING = "Issuer for the following certificates is "
             + "missing:\n";
-    public static final String ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS = "Issuer for the following certificates is "
+    static final String ISSUER_FOR_THESE_CERTIFICATES_IS_NOT_IN_DSS = "Issuer for the following certificates is "
             + "missing from the DSS dictionary:\n";
-    public static final String REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING = "Revocation data for the "
+    static final String REVOCATION_DATA_FOR_THESE_CERTIFICATES_IS_MISSING = "Revocation data for the "
             + "following certificates is missing:\n";
-    public static final String REVOCATION_DATA_FOR_THESE_CERTIFICATES_NOT_TIMESTAMPED = "Revocation data for the "
+    static final String REVOCATION_DATA_FOR_THESE_CERTIFICATES_NOT_TIMESTAMPED = "Revocation data for the "
             + "following certificates is not timestamped:\n";
-    public static final String DOCUMENT_TIMESTAMP_IS_MISSING = "A document timestamp is missing";
-    public static final String DSS_IS_NOT_COVERED_BY_TIMESTAMP = "The DSS entry is not covered by a document timestamp";
+    static final String DOCUMENT_TIMESTAMP_IS_MISSING = "A document timestamp is missing";
+    static final String DSS_IS_NOT_COVERED_BY_TIMESTAMP = "The DSS entry is not covered by a document timestamp";
 
     private static final Map<PAdESLevel, LevelChecks> CHECKS = new HashMap<>();
     private static final PAdESLevel[] PADES_LEVELS =
@@ -99,62 +99,62 @@ abstract class AbstractPadesLevelRequirements {
     private final Map<PAdESLevel, Collection<String>> warnings = new HashMap<>();
     private final String name;
     //section 6.2.1
-    protected List<String> discouragedAlgorithmUsage = new ArrayList<String>();
-    protected List<String> forbiddenAlgorithmUsage = new ArrayList<String>();
+    List<String> discouragedAlgorithmUsage = new ArrayList<String>();
+    List<String> forbiddenAlgorithmUsage = new ArrayList<String>();
     // Table 1 row 1
-    protected boolean signedDataCertificatesPresent;
+    boolean signedDataCertificatesPresent;
     // Table 1 row 1 note a
-    protected boolean signatureCertificatesContainsSigningCertificate;
+    boolean signatureCertificatesContainsSigningCertificate;
     // Table 1 row 1 note b
-    protected boolean signatureCertificatesContainsCertificatePathIncludingCA;
+    boolean signatureCertificatesContainsCertificatePathIncludingCA;
     // Table 1 row 1 note b
-    protected boolean signatureCertificatesContainsCertificatePath;
+    boolean signatureCertificatesContainsCertificatePath;
     // Table 1 row 2 note c
-    protected boolean contentTypeValueIsIdData;
+    boolean contentTypeValueIsIdData;
     // Table 1 row 3
-    protected boolean messageDigestPresent;
+    boolean messageDigestPresent;
     // Table 1 row 7
-    protected boolean commitmentTypeIndicationPresent;
+    boolean commitmentTypeIndicationPresent;
     // Table 1 row 9
-    protected boolean essSigningCertificateV1Present;
+    boolean essSigningCertificateV1Present;
     // Table 1 row 10
-    protected boolean essSigningCertificateV2Present;
+    boolean essSigningCertificateV2Present;
     // Table 1 row 12
-    protected boolean dictionaryEntryMPresent;
+    boolean dictionaryEntryMPresent;
     // Table 1 row 12 note g
-    protected boolean dictionaryEntryMHasCorrectFormat;
+    boolean dictionaryEntryMHasCorrectFormat;
     // Table 1 row 13
-    protected boolean cmsSigningTimeAttributePresent;
+    boolean cmsSigningTimeAttributePresent;
     // Table 1 row 14
-    protected boolean dictionaryEntryContentsPresent;
+    boolean dictionaryEntryContentsPresent;
     // Table 1 row 15
-    protected boolean dictionaryEntryFilterPresent;
+    boolean dictionaryEntryFilterPresent;
     // Table 1 row 16
-    protected boolean dictionaryEntryByteRangePresent;
+    boolean dictionaryEntryByteRangePresent;
     // Table 1 row 17
-    protected boolean dictionaryEntrySubFilterPresent;
+    boolean dictionaryEntrySubFilterPresent;
     // Table 1 row 17 note l
-    protected boolean signatureDictionaryEntrySubFilterValueIsETSICadesDetached;
+    boolean signatureDictionaryEntrySubFilterValueIsETSICadesDetached;
     // Table 1 row 19
-    protected boolean dictionaryEntryReasonPresent;
+    boolean dictionaryEntryReasonPresent;
     // Table 1 row 22
-    protected boolean dictionaryEntryCertPresent;
+    boolean dictionaryEntryCertPresent;
     // Table 1 row 23n
-    protected boolean poeSignaturePresent;
+    boolean poeSignaturePresent;
     // Table 1 row 25
-    protected boolean documentTimestampPresent;
+    boolean documentTimestampPresent;
     // Table 1 row 27
-    protected boolean isDSSPresent;
+    boolean isDSSPresent;
     // Table 1 row 29
-    protected boolean poeDssPresent;
+    boolean poeDssPresent;
     // Table 1 row 30 note x
-    protected List<X509Certificate> certificateIssuerMissing = new ArrayList<>();
-    protected List<X509Certificate> certificatesIssuerNotInDSS = new ArrayList<>();
-    protected List<X509Certificate> revocationDataNotInDSS = new ArrayList<>();
-    protected List<X509Certificate> revocationDataNotTimestamped = new ArrayList<>();
+    List<X509Certificate> certificateIssuerMissing = new ArrayList<>();
+    List<X509Certificate> certificatesIssuerNotInDSS = new ArrayList<>();
+    List<X509Certificate> revocationDataNotInDSS = new ArrayList<>();
+    List<X509Certificate> revocationDataNotTimestamped = new ArrayList<>();
     // Table 1 row 30 note y
-    protected boolean timestampDictionaryEntrySubFilterValueEtsiRfc3161;
-    protected boolean signatureIsValid = false;
+    boolean timestampDictionaryEntrySubFilterValueEtsiRfc3161;
+    boolean signatureIsValid = false;
 
     static {
         LevelChecks bbChecks = new LevelChecks();
@@ -256,7 +256,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @return the signature name
      */
-    public String getSignatureName() {
+    String getSignatureName() {
         return name;
     }
 
@@ -267,7 +267,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @return the highest achieved level
      */
-    public PAdESLevel getHighestAchievedPadesLevel(Iterable<PAdESLevelReport> timestampReports) {
+    PAdESLevel getHighestAchievedPadesLevel(Iterable<PAdESLevelReport> timestampReports) {
         for (PAdESLevel level : PADES_LEVELS) {
             Set<String> messages = new HashSet<>();
             this.nonConformaties.put(level, messages);
@@ -321,7 +321,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param message a message about a non-approved, according to ETSI TS 119 312, algorithm being used
      */
-    public void addDiscouragedAlgorithmUsage(String message) {
+    void addDiscouragedAlgorithmUsage(String message) {
         this.discouragedAlgorithmUsage.add(message);
     }
 
@@ -330,7 +330,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param message a message about a forbidden, according to ETSI TS 319 142, algorithm being used
      */
-    public void addForbiddenAlgorithmUsage(String message) {
+    void addForbiddenAlgorithmUsage(String message) {
         this.forbiddenAlgorithmUsage.add(message);
     }
 
@@ -340,7 +340,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param signedDataCertificatesPresent whether the signatures container contains the certificate entry
      */
-    public void setSignedDataCertificatesPresent(boolean signedDataCertificatesPresent) {
+    void setSignedDataCertificatesPresent(boolean signedDataCertificatesPresent) {
         this.signedDataCertificatesPresent = signedDataCertificatesPresent;
     }
 
@@ -350,7 +350,7 @@ abstract class AbstractPadesLevelRequirements {
      * @param signatureCertificatesContainsSigningCertificate whether the signatures container contains
      *                                                        the certificate chain includes the signing certificate
      */
-    public void setSignatureCertificatesContainsSigningCertificate(
+    void setSignatureCertificatesContainsSigningCertificate(
             boolean signatureCertificatesContainsSigningCertificate) {
         this.signatureCertificatesContainsSigningCertificate = signatureCertificatesContainsSigningCertificate;
     }
@@ -361,7 +361,7 @@ abstract class AbstractPadesLevelRequirements {
      * @param signedDataCertificatesContainsCertificatePath whether the signatures container contains
      *                                                      the certificate chain
      */
-    public void setSignedDataCertificatesContainsCertificatePath(
+    void setSignedDataCertificatesContainsCertificatePath(
             boolean signedDataCertificatesContainsCertificatePath) {
         this.signatureCertificatesContainsCertificatePath = signedDataCertificatesContainsCertificatePath;
     }
@@ -372,7 +372,7 @@ abstract class AbstractPadesLevelRequirements {
      * @param signatureCertificatesContainsCertificatePathIncludingCA whether the signatures containers contains the
      *                                                                certificate chain includes the CA
      */
-    public void setSignatureCertificatesContainsCertificatePathIncludingCA(
+    void setSignatureCertificatesContainsCertificatePathIncludingCA(
             boolean signatureCertificatesContainsCertificatePathIncludingCA) {
         this.signatureCertificatesContainsCertificatePathIncludingCA =
                 signatureCertificatesContainsCertificatePathIncludingCA;
@@ -384,7 +384,7 @@ abstract class AbstractPadesLevelRequirements {
      * @param signatureCertificatesContainsCertificatePath whether the signatures container
      *                                                     contains the certificate path
      */
-    public void setSignatureCertificatesContainsCertificatePath(boolean signatureCertificatesContainsCertificatePath) {
+    void setSignatureCertificatesContainsCertificatePath(boolean signatureCertificatesContainsCertificatePath) {
         this.signatureCertificatesContainsCertificatePath = signatureCertificatesContainsCertificatePath;
     }
 
@@ -394,7 +394,7 @@ abstract class AbstractPadesLevelRequirements {
      * @param contentTypeValueIsIdData whether the CMS signed attributes contain the content type and
      *                                 whether that content type is IdData.
      */
-    public void setContentTypeValueIsIdData(boolean contentTypeValueIsIdData) {
+    void setContentTypeValueIsIdData(boolean contentTypeValueIsIdData) {
         this.contentTypeValueIsIdData = contentTypeValueIsIdData;
     }
 
@@ -403,7 +403,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param messageDigestPresent whether the CMS signed attributes contain the MessageDigest
      */
-    public void setMessageDigestPresent(boolean messageDigestPresent) {
+    void setMessageDigestPresent(boolean messageDigestPresent) {
         this.messageDigestPresent = messageDigestPresent;
     }
 
@@ -412,7 +412,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param commitmentTypeIndicationPresent whether the CMS signed attributes contain the commitment type indication
      */
-    public void setCommitmentTypeIndicationPresent(boolean commitmentTypeIndicationPresent) {
+    void setCommitmentTypeIndicationPresent(boolean commitmentTypeIndicationPresent) {
         this.commitmentTypeIndicationPresent = commitmentTypeIndicationPresent;
     }
 
@@ -422,7 +422,7 @@ abstract class AbstractPadesLevelRequirements {
      * @param essSigningCertificatePresent whether the CMS signed attributes contain the
      *                                     signing certificate in V1 format
      */
-    public void setEssSigningCertificateV1Present(boolean essSigningCertificatePresent) {
+    void setEssSigningCertificateV1Present(boolean essSigningCertificatePresent) {
         this.essSigningCertificateV1Present = essSigningCertificatePresent;
     }
 
@@ -432,7 +432,7 @@ abstract class AbstractPadesLevelRequirements {
      * @param essSigningCertificateV2Present  whether the CMS signed attributes contain the
      *                                        signing certificate in V2 format
      */
-    public void setEssSigningCertificateV2Present(boolean essSigningCertificateV2Present) {
+    void setEssSigningCertificateV2Present(boolean essSigningCertificateV2Present) {
         this.essSigningCertificateV2Present = essSigningCertificateV2Present;
     }
 
@@ -441,7 +441,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param dictionaryEntryMPresent  whether the signature dictionary contains the M entry
      */
-    public void setDictionaryEntryMPresent(boolean dictionaryEntryMPresent) {
+    void setDictionaryEntryMPresent(boolean dictionaryEntryMPresent) {
         this.dictionaryEntryMPresent = dictionaryEntryMPresent;
     }
 
@@ -450,7 +450,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param dictionaryEntryMHasCorrectFormat whether the signature dictionary entry M is correctly formatted
      */
-    public void setDictionaryEntryMHasCorrectFormat(boolean dictionaryEntryMHasCorrectFormat) {
+    void setDictionaryEntryMHasCorrectFormat(boolean dictionaryEntryMHasCorrectFormat) {
         this.dictionaryEntryMHasCorrectFormat = dictionaryEntryMHasCorrectFormat;
     }
 
@@ -459,7 +459,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param cmsSigningTimeAttributePresent whether the CMS signed attributes contains the signing time attribute
      */
-    public void setCmsSigningTimeAttributePresent(boolean cmsSigningTimeAttributePresent) {
+    void setCmsSigningTimeAttributePresent(boolean cmsSigningTimeAttributePresent) {
         this.cmsSigningTimeAttributePresent = cmsSigningTimeAttributePresent;
     }
 
@@ -468,7 +468,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param dictionaryEntryContentsPresent  whether the signature dictionary contains the Contents entry
      */
-    public void setDictionaryEntryContentsPresent(boolean dictionaryEntryContentsPresent) {
+    void setDictionaryEntryContentsPresent(boolean dictionaryEntryContentsPresent) {
         this.dictionaryEntryContentsPresent = dictionaryEntryContentsPresent;
     }
 
@@ -477,7 +477,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param dictionaryEntryFilterPresent whether the signature dictionary contains the Filter entry
      */
-    public void setDictionaryEntryFilterPresent(boolean dictionaryEntryFilterPresent) {
+    void setDictionaryEntryFilterPresent(boolean dictionaryEntryFilterPresent) {
         this.dictionaryEntryFilterPresent = dictionaryEntryFilterPresent;
     }
 
@@ -486,7 +486,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param dictionaryEntryByteRangePresent whether the signature dictionary contains the byte range entry
      */
-    public void setDictionaryEntryByteRangePresent(boolean dictionaryEntryByteRangePresent) {
+    void setDictionaryEntryByteRangePresent(boolean dictionaryEntryByteRangePresent) {
         this.dictionaryEntryByteRangePresent = dictionaryEntryByteRangePresent;
     }
 
@@ -495,7 +495,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param dictionaryEntrySubFilterPresent whether the signature dictionary contains the Subfilter entry
      */
-    public void setDictionaryEntrySubFilterPresent(boolean dictionaryEntrySubFilterPresent) {
+    void setDictionaryEntrySubFilterPresent(boolean dictionaryEntrySubFilterPresent) {
         this.dictionaryEntrySubFilterPresent = dictionaryEntrySubFilterPresent;
     }
 
@@ -505,7 +505,7 @@ abstract class AbstractPadesLevelRequirements {
      * @param signatureDictionaryEntrySubFilterValueIsETSICadesDetached  whether the signature dictionary entry
      *                                                                   SubFilter has value ETSI.CAdES.detached
      */
-    public void setSignatureDictionaryEntrySubFilterValueIsETSICadesDetached(
+    void setSignatureDictionaryEntrySubFilterValueIsETSICadesDetached(
             boolean signatureDictionaryEntrySubFilterValueIsETSICadesDetached) {
         this.signatureDictionaryEntrySubFilterValueIsETSICadesDetached =
                 signatureDictionaryEntrySubFilterValueIsETSICadesDetached;
@@ -517,7 +517,7 @@ abstract class AbstractPadesLevelRequirements {
      * @param timestampDictionaryEntrySubFilterValueEtsiRfc3161 whether the signature dictionary entry SubFilter
      *                                                          has value ETSI.RFC3161
      */
-    public void setTimestampDictionaryEntrySubFilterValueEtsiRfc3161(
+    void setTimestampDictionaryEntrySubFilterValueEtsiRfc3161(
             boolean timestampDictionaryEntrySubFilterValueEtsiRfc3161) {
         this.timestampDictionaryEntrySubFilterValueEtsiRfc3161 = timestampDictionaryEntrySubFilterValueEtsiRfc3161;
     }
@@ -527,7 +527,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param dictionaryEntryReasonPresent whether the signature dictionary contains the entry Reason
      */
-    public void setDictionaryEntryReasonPresent(boolean dictionaryEntryReasonPresent) {
+    void setDictionaryEntryReasonPresent(boolean dictionaryEntryReasonPresent) {
         this.dictionaryEntryReasonPresent = dictionaryEntryReasonPresent;
     }
 
@@ -536,7 +536,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param dictionaryEntryCertPresent whether the signature dictionary contains the entry Cert
      */
-    public void setDictionaryEntryCertPresent(boolean dictionaryEntryCertPresent) {
+    void setDictionaryEntryCertPresent(boolean dictionaryEntryCertPresent) {
         this.dictionaryEntryCertPresent = dictionaryEntryCertPresent;
     }
 
@@ -545,7 +545,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param poeSignaturePresent whether there is a Proof of existence covering the signature
      */
-    public void setPoeSignaturePresent(boolean poeSignaturePresent) {
+    void setPoeSignaturePresent(boolean poeSignaturePresent) {
         this.poeSignaturePresent = poeSignaturePresent;
     }
 
@@ -554,7 +554,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param documentTimestampPresent  whether there is a document timestamp covering the signature
      */
-    public void setDocumentTimestampPresent(boolean documentTimestampPresent) {
+    void setDocumentTimestampPresent(boolean documentTimestampPresent) {
         this.documentTimestampPresent = documentTimestampPresent;
     }
 
@@ -563,7 +563,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param isDSSPresent whether there is a DSS covering the signature
      */
-    public void setDSSPresent(boolean isDSSPresent) {
+    void setDSSPresent(boolean isDSSPresent) {
         this.isDSSPresent = isDSSPresent;
     }
 
@@ -572,7 +572,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param certificateUnderInvestigation a certificate for which the issuer missing in the DSS
      */
-    public void addCertificateIssuerNotInDSS(X509Certificate certificateUnderInvestigation) {
+    void addCertificateIssuerNotInDSS(X509Certificate certificateUnderInvestigation) {
         certificatesIssuerNotInDSS.add(certificateUnderInvestigation);
     }
 
@@ -581,7 +581,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param certificateUnderInvestigation a certificate for which the issuer missing in the DSS
      */
-    public void addCertificateIssuerMissing(X509Certificate certificateUnderInvestigation) {
+    void addCertificateIssuerMissing(X509Certificate certificateUnderInvestigation) {
         certificateIssuerMissing.add(certificateUnderInvestigation);
     }
 
@@ -590,7 +590,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param certificateUnderInvestigation a certificate for which no revocation data was available in the DSS
      */
-    public void addRevocationDataNotInDSS(X509Certificate certificateUnderInvestigation) {
+    void addRevocationDataNotInDSS(X509Certificate certificateUnderInvestigation) {
         revocationDataNotInDSS.add(certificateUnderInvestigation);
     }
 
@@ -599,7 +599,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param poeDssPresent whether there is a Proof of Existence covering the DSS
      */
-    public void setPoeDssPresent(boolean poeDssPresent) {
+    void setPoeDssPresent(boolean poeDssPresent) {
         this.poeDssPresent = poeDssPresent;
     }
 
@@ -608,7 +608,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param certificateUnderInvestigation a certificate for which no revocation data was available in the DSS
      */
-    public void addRevocationDataNotTimestamped(X509Certificate certificateUnderInvestigation) {
+    void addRevocationDataNotTimestamped(X509Certificate certificateUnderInvestigation) {
         revocationDataNotTimestamped.add(certificateUnderInvestigation);
     }
 
@@ -617,7 +617,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @param validationSucceeded whether the signature validation was successful
      */
-    public void setValidationSucceeded(boolean validationSucceeded) {
+    void setValidationSucceeded(boolean validationSucceeded) {
         signatureIsValid = validationSucceeded;
     }
 
@@ -626,7 +626,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @return all non conformaties per level, the SHALL HAVE rules that were broken, per PAdES level
      */
-    public Map<PAdESLevel, Collection<String>> getNonConformaties() {
+    Map<PAdESLevel, Collection<String>> getNonConformaties() {
         return nonConformaties;
     }
 
@@ -635,7 +635,7 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @return all warnings, the SHOULD HAVE rules that were broken, per PAdES level
      */
-    public Map<PAdESLevel, Collection<String>> getWarnings() {
+    Map<PAdESLevel, Collection<String>> getWarnings() {
         return warnings;
     }
 
@@ -644,9 +644,9 @@ abstract class AbstractPadesLevelRequirements {
      *
      * @return the specific rules sets from the implementors
      */
-    protected abstract Map<PAdESLevel, LevelChecks> getChecks();
+    abstract Map<PAdESLevel, LevelChecks> getChecks();
 
-    protected static CheckAndMessage createRevocationDssUsageCheck() {
+    static CheckAndMessage createRevocationDssUsageCheck() {
         return new CheckAndMessage(
                 // is DSS is not present, there will be a non conformity reported fot it.
                 // Reporting on all missing data makes no sense in this case.
@@ -663,7 +663,7 @@ abstract class AbstractPadesLevelRequirements {
                 });
     }
 
-    protected static CheckAndMessage createCertificatesDssUsageCheck() {
+    static CheckAndMessage createCertificatesDssUsageCheck() {
         return new CheckAndMessage(
                 // if DSS is not present, there will be a non conformity reported fot it.
                 // Reporting on all missing data makes no sense in this case.
@@ -680,7 +680,7 @@ abstract class AbstractPadesLevelRequirements {
                 });
     }
 
-    protected static CheckAndMessage createRevocationDssPoECoverage() {
+    static CheckAndMessage createRevocationDssPoECoverage() {
         return new CheckAndMessage(r -> r.revocationDataNotTimestamped.isEmpty(), r -> {
             StringBuilder message = new StringBuilder();
             if (!r.revocationDataNotTimestamped.isEmpty()) {
@@ -693,7 +693,7 @@ abstract class AbstractPadesLevelRequirements {
         });
     }
 
-    protected static CheckAndMessage createCertificateExternalRetrievalCheck() {
+    static CheckAndMessage createCertificateExternalRetrievalCheck() {
         return new CheckAndMessage(
                 r -> r.certificateIssuerMissing.isEmpty(),
                 r -> {

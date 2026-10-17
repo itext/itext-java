@@ -29,10 +29,10 @@ import com.itextpdf.layout.properties.Property;
 import com.itextpdf.layout.properties.RenderingMode;
 
 class LineHeightHelper {
-    public static final int ASCENDER_INDEX = 0;
-    public static final int DESCENDER_INDEX = 1;
-    public static final int XHEIGHT_INDEX = 2;
-    public static final int LEADING_INDEX = 3;
+    static final int ASCENDER_INDEX = 0;
+    static final int DESCENDER_INDEX = 1;
+    static final int XHEIGHT_INDEX = 2;
+    static final int LEADING_INDEX = 3;
     private static final float DEFAULT_LINE_HEIGHT_COEFF = 1.15f;
 
     private LineHeightHelper() {

@@ -36,6 +36,8 @@ import com.itextpdf.signatures.testutils.client.TestOcspClient;
 import com.itextpdf.signatures.validation.ValidatorChainBuilder;
 import com.itextpdf.signatures.validation.mocks.MockResourceRetriever;
 import com.itextpdf.test.ExtendedITextTest;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,11 +53,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
 import java.util.concurrent.TimeUnit;
-
-import com.itextpdf.test.annotations.LogMessage;
-import com.itextpdf.test.annotations.LogMessages;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -63,7 +61,7 @@ import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.Timeout.ThreadMode;
 
 @Tag("BouncyCastleIntegrationTest")
-class IssuingCertificateRetrieverTest extends ExtendedITextTest {
+public class IssuingCertificateRetrieverTest extends ExtendedITextTest {
     private static final String CERTS_SRC = "./src/test/resources/com/itextpdf/signatures/certs/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/IssuingCertificateRetrieverTest/";
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();

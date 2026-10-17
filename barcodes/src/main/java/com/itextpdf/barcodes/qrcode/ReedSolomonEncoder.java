@@ -32,7 +32,7 @@ final class ReedSolomonEncoder {
      *
      * @param field the galois field
      */
-    public ReedSolomonEncoder(GF256 field) {
+    ReedSolomonEncoder(GF256 field) {
         if (!GF256.QR_CODE_FIELD.equals(field)) {
             throw new UnsupportedOperationException("Only QR Code is supported at this time");
         }
@@ -59,7 +59,7 @@ final class ReedSolomonEncoder {
      * @param toEncode data to encode
      * @param ecBytes error correction bytes
      */
-    public void encode(int[] toEncode, int ecBytes) {
+    void encode(int[] toEncode, int ecBytes) {
         if (ecBytes == 0) {
             throw new IllegalArgumentException("No error correction bytes");
         }

@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Tag("UnitTest")
-class PdfAllowedTagRelationsTest extends ExtendedITextTest {
+public class PdfAllowedTagRelationsTest extends ExtendedITextTest {
 
     @Test
     public void isRelationAllowed() {

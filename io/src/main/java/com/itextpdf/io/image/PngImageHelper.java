@@ -79,57 +79,57 @@ class PngImageHelper {
     /**
      * Some PNG specific values.
      */
-    public static final int[] PNGID = {137, 80, 78, 71, 13, 10, 26, 10};
+    static final int[] PNGID = {137, 80, 78, 71, 13, 10, 26, 10};
 
     /**
      * A PNG marker.
      */
-    public static final String IHDR = "IHDR";
+    static final String IHDR = "IHDR";
 
     /**
      * A PNG marker.
      */
-    public static final String PLTE = "PLTE";
+    static final String PLTE = "PLTE";
 
     /**
      * A PNG marker.
      */
-    public static final String IDAT = "IDAT";
+    static final String IDAT = "IDAT";
 
     /**
      * A PNG marker.
      */
-    public static final String IEND = "IEND";
+    static final String IEND = "IEND";
 
     /**
      * A PNG marker.
      */
-    public static final String tRNS = "tRNS";
+    static final String tRNS = "tRNS";
 
     /**
      * A PNG marker.
      */
-    public static final String pHYs = "pHYs";
+    static final String pHYs = "pHYs";
 
     /**
      * A PNG marker.
      */
-    public static final String gAMA = "gAMA";
+    static final String gAMA = "gAMA";
 
     /**
      * A PNG marker.
      */
-    public static final String cHRM = "cHRM";
+    static final String cHRM = "cHRM";
 
     /**
      * A PNG marker.
      */
-    public static final String sRGB = "sRGB";
+    static final String sRGB = "sRGB";
 
     /**
      * A PNG marker.
      */
-    public static final String iCCP = "iCCP";
+    static final String iCCP = "iCCP";
 
     private static final int TRANSFERSIZE = 4096;
     private static final int PNG_FILTER_NONE = 0;
@@ -141,7 +141,7 @@ class PngImageHelper {
             PngImageHelperConstants.RELATIVE_COLORIMETRIC, PngImageHelperConstants.SATURATION,
             PngImageHelperConstants.ABSOLUTE_COLORMETRIC};
 
-    public static void processImage(ImageData image) {
+    static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.PNG)
             throw new IllegalArgumentException("PNG image expected");
         PngParameters png;
@@ -753,7 +753,7 @@ class PngImageHelper {
      * @param pngStream an <CODE>InputStream</CODE>
      * @return the value of an <CODE>int</CODE>
      */
-    public static int getInt(InputStream pngStream) throws java.io.IOException {
+    static int getInt(InputStream pngStream) throws java.io.IOException {
         return (pngStream.read() << 24) + (pngStream.read() << 16)
                 + (pngStream.read() << 8) + pngStream.read();
     }
@@ -764,7 +764,7 @@ class PngImageHelper {
      * @param pngStream an <CODE>InputStream</CODE>
      * @return the value of an <CODE>int</CODE>
      */
-    public static int getWord(InputStream pngStream) throws java.io.IOException {
+    static int getWord(InputStream pngStream) throws java.io.IOException {
         return (pngStream.read() << 8) + pngStream.read();
     }
 
@@ -774,7 +774,7 @@ class PngImageHelper {
      * @param pngStream an <CODE>InputStream</CODE>
      * @return the value of an <CODE>int</CODE>
      */
-    public static String getString(InputStream pngStream) throws java.io.IOException {
+    static String getString(InputStream pngStream) throws java.io.IOException {
         StringBuilder buf = new StringBuilder();
         for (int i = 0; i < 4; i++) {
             buf.append((char) pngStream.read());

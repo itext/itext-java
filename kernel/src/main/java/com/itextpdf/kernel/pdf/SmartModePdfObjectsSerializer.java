@@ -41,18 +41,18 @@ class SmartModePdfObjectsSerializer {
         }
     }
 
-    public void saveSerializedObject(SerializedObjectContent serializedContent, PdfIndirectReference objectReference) {
+    void saveSerializedObject(SerializedObjectContent serializedContent, PdfIndirectReference objectReference) {
         serializedContentToObj.put(serializedContent, objectReference);
     }
 
-    public PdfIndirectReference getSavedSerializedObject(SerializedObjectContent serializedContent) {
+    PdfIndirectReference getSavedSerializedObject(SerializedObjectContent serializedContent) {
         if (serializedContent != null) {
             return serializedContentToObj.get(serializedContent);
         }
         return null;
     }
 
-    public SerializedObjectContent serializeObject(PdfObject obj) {
+    SerializedObjectContent serializeObject(PdfObject obj) {
         if (!obj.isStream() && !obj.isDictionary()) {
             return null;
         }

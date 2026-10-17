@@ -33,7 +33,7 @@ abstract class AbstractFormattedPlaceholderPopulator implements IPlaceholderPopu
     /**
      * Escaping character.
      */
-    protected static final char APOSTROPHE = '\'';
+    static final char APOSTROPHE = '\'';
 
     private static final char ESCAPE_CHARACTER = '\\';
     private static final char A_UPPERCASE = 'A';
@@ -59,7 +59,7 @@ abstract class AbstractFormattedPlaceholderPopulator implements IPlaceholderPopu
      *
      * @throws IllegalArgumentException if there is no closing apostrophe
      */
-    protected int attachQuotedString(int index, StringBuilder builder, char[] formatArray) {
+    int attachQuotedString(int index, StringBuilder builder, char[] formatArray) {
         boolean isEscaped = false;
         index++;
         while (index < formatArray.length && (formatArray[index] != APOSTROPHE || isEscaped)) {
@@ -86,7 +86,7 @@ abstract class AbstractFormattedPlaceholderPopulator implements IPlaceholderPopu
      *
      * @return <code>true</code> if character is a latin letter and <code>false</code> otherwise
      */
-    protected final boolean isLetter(char ch) {
+    final boolean isLetter(char ch) {
         return (A_LOWERCASE <= ch && Z_LOWERCASE >= ch) ||
                 (A_UPPERCASE <= ch && Z_UPPERCASE >= ch);
     }

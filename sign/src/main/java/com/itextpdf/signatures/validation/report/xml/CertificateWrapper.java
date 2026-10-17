@@ -58,7 +58,7 @@ class CertificateWrapper extends AbstractCollectableObject {
         return Objects.hash(certificate);
     }
 
-    public String getBase64ASN1Structure() {
+    String getBase64ASN1Structure() {
         try {
             return EncodingUtil.toBase64(certificate.getEncoded());
         } catch (CertificateEncodingException e) {

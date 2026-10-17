@@ -65,7 +65,7 @@ class XmlPivotsHandler implements IDefaultXmlHandler {
         }
     }
 
-    public List<String> getPivots() {
+    List<String> getPivots() {
         return new ArrayList<>(pivots);
     }
 

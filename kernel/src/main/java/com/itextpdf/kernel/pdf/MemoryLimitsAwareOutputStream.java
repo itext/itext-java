@@ -50,7 +50,7 @@ class MemoryLimitsAwareOutputStream extends ByteArrayOutputStream {
      * Creates a new byte array output stream. The buffer capacity is
      * initially 32 bytes, though its size increases if necessary.
      */
-    public MemoryLimitsAwareOutputStream() {
+    MemoryLimitsAwareOutputStream() {
         super();
     }
 
@@ -61,7 +61,7 @@ class MemoryLimitsAwareOutputStream extends ByteArrayOutputStream {
      * @param size the initial size.
      * @throws IllegalArgumentException if size is negative.
      */
-    public MemoryLimitsAwareOutputStream(int size) {
+    MemoryLimitsAwareOutputStream(int size) {
         super(size);
     }
 
@@ -70,7 +70,7 @@ class MemoryLimitsAwareOutputStream extends ByteArrayOutputStream {
      *
      * @return the maximum size which can be occupied by this output stream.
      */
-    public long getMaxStreamSize() {
+    long getMaxStreamSize() {
         return maxStreamSize;
     }
 
@@ -80,7 +80,7 @@ class MemoryLimitsAwareOutputStream extends ByteArrayOutputStream {
      * @param maxStreamSize the maximum size which can be occupied by this output stream.
      * @return this {@link MemoryLimitsAwareOutputStream}
      */
-    public MemoryLimitsAwareOutputStream setMaxStreamSize(int maxStreamSize) {
+    MemoryLimitsAwareOutputStream setMaxStreamSize(int maxStreamSize) {
         this.maxStreamSize = maxStreamSize;
         return this;
     }

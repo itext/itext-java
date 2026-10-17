@@ -36,7 +36,7 @@ class CssPseudoClassLastChildSelectorItem extends CssPseudoClassChildSelectorIte
         super(CommonCssConstants.LAST_CHILD);
     }
 
-    public static CssPseudoClassLastChildSelectorItem getInstance() {
+    static CssPseudoClassLastChildSelectorItem getInstance() {
         return instance;
     }
 

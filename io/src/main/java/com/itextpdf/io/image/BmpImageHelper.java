@@ -102,7 +102,7 @@ final class BmpImageHelper {
      * Image is loaded and all image attributes are initialized and/or updated
      * @param image the image to process as a BMP image
      */
-    public static void processImage(ImageData image) {
+    static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.BMP)
             throw new IllegalArgumentException("BMP image expected");
         BmpParameters bmp;

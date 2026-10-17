@@ -39,7 +39,7 @@ class Xml2SomDatasets extends Xml2Som {
      *
      * @param n the datasets node
      */
-    public Xml2SomDatasets(Node n) {
+    Xml2SomDatasets(Node n) {
         order = new ArrayList<>();
         name2Node = new HashMap<>();
         stack = new Stack<>();
@@ -55,7 +55,7 @@ class Xml2SomDatasets extends Xml2Som {
      * @param shortName the short name
      * @return the new <CODE>Node</CODE> of the inserted name
      */
-    public Node insertNode(Node n, String shortName) {
+    Node insertNode(Node n, String shortName) {
         Stack<String> localStack = splitParts(shortName);
         org.w3c.dom.Document doc = n.getOwnerDocument();
         Node n2 = null;

@@ -71,7 +71,7 @@ final class ConvexHullArea {
      * If the input contains 0 or 1 points, returns the input list unchanged.
      * If all points are collinear, returns the two extreme points.
      */
-    public static List<Point> convexHull(List<Point> points) {
+    static List<Point> convexHull(List<Point> points) {
         List<Point> copiedPoints = new ArrayList<>(points);
         if (copiedPoints.size() <= 1) {
             return copiedPoints;

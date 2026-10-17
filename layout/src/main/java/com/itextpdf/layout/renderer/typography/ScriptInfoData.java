@@ -37,7 +37,7 @@ class ScriptInfoData {
         this.supportedScripts = new java.util.HashSet<>(initialSize);
     }
 
-    public Set<UnicodeScript> getSupportedScripts() {
+    Set<UnicodeScript> getSupportedScripts() {
         return Collections.unmodifiableSet(supportedScripts);
     }
 

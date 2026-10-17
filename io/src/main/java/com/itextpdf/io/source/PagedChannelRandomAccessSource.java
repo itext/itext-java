@@ -40,8 +40,8 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
 
     // these values were selected based on parametric testing with extracting text content from a 2.3GB file.  These settings resulted in the best improvement over
     // the single size MRU case (24% speed improvement)
-    public static final int DEFAULT_TOTAL_BUFSIZE = 1 << 26;
-    public static final int DEFAULT_MAX_OPEN_BUFFERS = 16;
+    static final int DEFAULT_TOTAL_BUFSIZE = 1 << 26;
+    static final int DEFAULT_MAX_OPEN_BUFFERS = 16;
 
     /**
      * The size of each of the buffers to use when mapping files into memory.  This must be greater than 0 and less than {@link Integer#MAX_VALUE}
@@ -65,7 +65,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * @param channel the channel to use as the backing store
      * @throws java.io.IOException if the channel cannot be opened or mapped
      */
-    public PagedChannelRandomAccessSource(FileChannel channel) throws java.io.IOException {
+    PagedChannelRandomAccessSource(FileChannel channel) throws java.io.IOException {
         this(channel, DEFAULT_TOTAL_BUFSIZE, DEFAULT_MAX_OPEN_BUFFERS);
     }
 
@@ -76,7 +76,7 @@ class PagedChannelRandomAccessSource extends GroupedRandomAccessSource implement
      * @param maxOpenBuffers open buffers
      * @throws java.io.IOException if the channel cannot be opened or mapped
      */
-    public PagedChannelRandomAccessSource(FileChannel channel, int totalBufferSize, int maxOpenBuffers) throws java.io.IOException {
+    PagedChannelRandomAccessSource(FileChannel channel, int totalBufferSize, int maxOpenBuffers) throws java.io.IOException {
         super(buildSources(channel, totalBufferSize/maxOpenBuffers));
         this.channel = channel;
         this.bufferSize = totalBufferSize/maxOpenBuffers;

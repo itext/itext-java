@@ -54,7 +54,7 @@ final class XmlCountryRetriever {
      *
      * @return a list of CountrySpecificLotl objects, each containing the scheme territory and TSL location.
      */
-    public List<CountrySpecificLotl> getAllCountriesLotlFilesLocation(InputStream data,
+    List<CountrySpecificLotl> getAllCountriesLotlFilesLocation(InputStream data,
             LotlFetchingProperties lotlFetchingProperties) {
         TSLLocationExtractor tslLocationExtractor = new TSLLocationExtractor();
         new XmlSaxProcessor().process(data, tslLocationExtractor);

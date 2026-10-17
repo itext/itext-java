@@ -78,7 +78,7 @@ final class Encoder {
      * @param qrCode QR code to store the result in
      * @throws WriterException
      */
-    public static void encode(String content, ErrorCorrectionLevel ecLevel, QRCode qrCode)
+    static void encode(String content, ErrorCorrectionLevel ecLevel, QRCode qrCode)
             throws WriterException {
         encode(content, ecLevel, null, qrCode);
     }
@@ -100,7 +100,7 @@ final class Encoder {
      * @param qrCode QR code to store the result in
      * @throws WriterException
      */
-    public static void encode(String content, ErrorCorrectionLevel ecLevel, Map<EncodeHintType, Object> hints,
+    static void encode(String content, ErrorCorrectionLevel ecLevel, Map<EncodeHintType, Object> hints,
                               QRCode qrCode) throws WriterException {
 
         String encoding = hints == null ? null : (String) hints.get(EncodeHintType.CHARACTER_SET);
@@ -178,7 +178,7 @@ final class Encoder {
      * @param content content to examine
      * @return mode to use
      */
-    public static Mode chooseMode(String content) {
+    static Mode chooseMode(String content) {
         return chooseMode(content, null);
     }
 
@@ -190,7 +190,7 @@ final class Encoder {
      * @param encoding hint for the encoding to use
      * @return mode to use
      */
-    public static Mode chooseMode(String content, String encoding) {
+    static Mode chooseMode(String content, String encoding) {
         if ("Shift_JIS".equals(encoding)) {
             // Choose Kanji mode if all input are double-byte characters
             return isOnlyDoubleByteKanji(content) ? Mode.KANJI : Mode.BYTE;

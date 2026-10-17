@@ -42,14 +42,14 @@ class FootnotesContainer extends BlockElement<FootnotesContainer> {
     private final int pageNumber;
     private final Map<IPropertyContainer, TaggingHintKey> footnoteTaggingHints = new HashMap<>();
 
-    protected DefaultAccessibilityProperties tagProperties;
+    DefaultAccessibilityProperties tagProperties;
 
     /**
      * Creates new {@link FootnotesContainer} instance.
      *
      * @param pageNum number of the page to which this container will be added
      */
-    public FootnotesContainer(int pageNum) {
+    FootnotesContainer(int pageNum) {
         this.pageNumber = pageNum;
         this.setNeutralRole();
     }
@@ -61,7 +61,7 @@ class FootnotesContainer extends BlockElement<FootnotesContainer> {
      *
      * @return this same {@link FootnotesContainer} instance
      */
-    public FootnotesContainer add(Footnote footnote, TaggingHintKey taggingHint) {
+    FootnotesContainer add(Footnote footnote, TaggingHintKey taggingHint) {
         this.childElements.add(footnote);
         footnoteTaggingHints.put(footnote, taggingHint);
         return this;
@@ -72,7 +72,7 @@ class FootnotesContainer extends BlockElement<FootnotesContainer> {
      *
      * @param otherContainer the other FootnotesContainer to add the footnotes from
      */
-    public void addFootnotesFromOtherContainer(FootnotesContainer otherContainer) {
+    void addFootnotesFromOtherContainer(FootnotesContainer otherContainer) {
         for (IElement childElement : otherContainer.childElements) {
             if (childElement instanceof Footnote) {
                 add((Footnote) childElement, otherContainer.footnoteTaggingHints.get(childElement));

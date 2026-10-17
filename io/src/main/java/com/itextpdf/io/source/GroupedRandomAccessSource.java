@@ -52,7 +52,7 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
      * Constructs a new {@link GroupedRandomAccessSource} based on the specified set of sources
      * @param sources the sources used to build this group
      */
-    public GroupedRandomAccessSource(IRandomAccessSource[] sources) throws java.io.IOException {
+    GroupedRandomAccessSource(IRandomAccessSource[] sources) throws java.io.IOException {
         this.sources = new SourceEntry[sources.length];
 
         long totalSize = 0;
@@ -75,7 +75,7 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
      * @param offset the offset
      * @return the index of the input source that contains the specified offset, or 0 if unknown
      */
-    protected int getStartingSourceIndex(long offset){
+    int getStartingSourceIndex(long offset){
         if (offset >= currentSourceEntry.firstByte)
             return currentSourceEntry.index;
 
@@ -116,7 +116,7 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
      * @param source the source that is no longer the active source
      * @throws java.io.IOException if there are any problems
      */
-    protected void sourceReleased(IRandomAccessSource source) throws java.io.IOException{
+    void sourceReleased(IRandomAccessSource source) throws java.io.IOException{
         // by default, do nothing
     }
 
@@ -125,7 +125,7 @@ class GroupedRandomAccessSource implements IRandomAccessSource {
      * @param source the source that is about to become the active source
      * @throws java.io.IOException if there are any problems
      */
-    protected void sourceInUse(IRandomAccessSource source) throws java.io.IOException{
+    void sourceInUse(IRandomAccessSource source) throws java.io.IOException{
         // by default, do nothing
     }
 

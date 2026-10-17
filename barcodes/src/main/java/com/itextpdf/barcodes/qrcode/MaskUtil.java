@@ -26,7 +26,7 @@ final class MaskUtil {
      * @param matrix ByteMatrix to apply the penalty rule to
      * @return the rule 1 penalty
      */
-    public static int applyMaskPenaltyRule1(ByteMatrix matrix) {
+    static int applyMaskPenaltyRule1(ByteMatrix matrix) {
         return applyMaskPenaltyRule1Internal(matrix, true) + applyMaskPenaltyRule1Internal(matrix, false);
     }
 
@@ -38,7 +38,7 @@ final class MaskUtil {
      * @param matrix ByteMatrix to apply the penalty rule to
      * @return the rule 2 penalty
      */
-    public static int applyMaskPenaltyRule2(ByteMatrix matrix) {
+    static int applyMaskPenaltyRule2(ByteMatrix matrix) {
         int penalty = 0;
         byte[][] array = matrix.getArray();
         int width = matrix.getWidth();
@@ -61,7 +61,7 @@ final class MaskUtil {
      * @param matrix ByteMatrix to apply the penalty rule to
      * @return the rule 3 penalty
      */
-    public static int applyMaskPenaltyRule3(ByteMatrix matrix) {
+    static int applyMaskPenaltyRule3(ByteMatrix matrix) {
         int penalty = 0;
         byte[][] array = matrix.getArray();
         int width = matrix.getWidth();
@@ -129,7 +129,7 @@ final class MaskUtil {
      * @param matrix Bytematrix to apply the rule to
      * @return the rule 4 penalty
      */
-    public static int applyMaskPenaltyRule4(ByteMatrix matrix) {
+    static int applyMaskPenaltyRule4(ByteMatrix matrix) {
         int numDarkCells = 0;
         byte[][] array = matrix.getArray();
         int width = matrix.getWidth();
@@ -156,7 +156,7 @@ final class MaskUtil {
      * @param y height-coordinate
      * @return the mask bit at that position
      */
-    public static boolean getDataMaskBit(int maskPattern, int x, int y) {
+    static boolean getDataMaskBit(int maskPattern, int x, int y) {
         if (!QRCode.isValidMaskPattern(maskPattern)) {
             throw new IllegalArgumentException("Invalid mask pattern");
         }

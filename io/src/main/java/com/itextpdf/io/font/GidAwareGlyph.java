@@ -35,7 +35,7 @@ class GidAwareGlyph extends Glyph {
      * @param unicode the Unicode code point
      * @param bbox    the glyph bounding box
      */
-    public GidAwareGlyph(int code, int width, int unicode, int[] bbox) {
+    GidAwareGlyph(int code, int width, int unicode, int[] bbox) {
         super(code, width, unicode, bbox);
     }
 
@@ -44,7 +44,7 @@ class GidAwareGlyph extends Glyph {
      *
      * @param index the glyph identifier
      */
-    public void setGid(int index) {
+    void setGid(int index) {
         this.gid = index;
     }
 
@@ -53,7 +53,7 @@ class GidAwareGlyph extends Glyph {
      *
      * @return the glyph identifier
      */
-    public int getGid() {
+    int getGid() {
         return gid;
     }
 }

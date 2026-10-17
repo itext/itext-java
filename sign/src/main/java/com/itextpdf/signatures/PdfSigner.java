@@ -1605,7 +1605,7 @@ public class PdfSigner {
             this.reader = null;
         }
 
-        public void apply(ISignatureDataProvider signatureDataProvider) throws IOException, GeneralSecurityException {
+        void apply(ISignatureDataProvider signatureDataProvider) throws IOException, GeneralSecurityException {
             StampingProperties properties = new StampingProperties().preserveEncryption();
             properties.registerDependency(IMacContainerLocator.class, () -> new SignatureMacContainerLocator());
             // This IdleOutputStream writer does nothing and only required to be able to apply MAC if needed.
@@ -1681,7 +1681,7 @@ public class PdfSigner {
             document.close();
         }
 
-        public InputStream getDataToSign() throws IOException {
+        InputStream getDataToSign() throws IOException {
             return new RASInputStream(new RandomAccessSourceFactory().createRanged(readerSource, gaps));
         }
     }

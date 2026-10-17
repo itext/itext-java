@@ -24,7 +24,7 @@ final class BitArray {
     private int[] bits;
     private final int size;
 
-    public BitArray(int size) {
+    BitArray(int size) {
         if (size < 1) {
             throw new IllegalArgumentException("size must be at least 1");
         }
@@ -32,7 +32,7 @@ final class BitArray {
         this.bits = makeArray(size);
     }
 
-    public int getSize() {
+    int getSize() {
         return size;
     }
 
@@ -40,7 +40,7 @@ final class BitArray {
      * @param i bit to get.
      * @return true iff bit i is set
      */
-    public boolean get(int i) {
+    boolean get(int i) {
         return (bits[i >> 5] & (1 << (i & 0x1F))) != 0;
     }
 
@@ -49,7 +49,7 @@ final class BitArray {
      *
      * @param i bit to set
      */
-    public void set(int i) {
+    void set(int i) {
         bits[i >> 5] |= 1 << (i & 0x1F);
     }
 
@@ -58,7 +58,7 @@ final class BitArray {
      *
      * @param i bit to set
      */
-    public void flip(int i) {
+    void flip(int i) {
         bits[i >> 5] ^= 1 << (i & 0x1F);
     }
 
@@ -69,14 +69,14 @@ final class BitArray {
      * @param newBits the new value of the next 32 bits. Note again that the least-significant bit
      * corresponds to bit i, the next-least-significant to i+1, and so on.
      */
-    public void setBulk(int i, int newBits) {
+    void setBulk(int i, int newBits) {
         bits[i >> 5] = newBits;
     }
 
     /**
      * Clears all bits (sets to false).
      */
-    public void clear() {
+    void clear() {
         int max = bits.length;
         for (int i = 0; i < max; i++) {
             bits[i] = 0;
@@ -92,7 +92,7 @@ final class BitArray {
      * @return true iff all bits are set or not set in range, according to value argument
      * @throws IllegalArgumentException if end is less than or equal to start
      */
-    public boolean isRange(int start, int end, boolean value) {
+    boolean isRange(int start, int end, boolean value) {
         if (end < start) {
             throw new IllegalArgumentException();
         }
@@ -132,14 +132,14 @@ final class BitArray {
      * @return underlying array of ints. The first element holds the first 32 bits, and the least
      *         significant bit is bit 0.
      */
-    public int[] getBitArray() {
+    int[] getBitArray() {
         return bits;
     }
 
     /**
      * Reverses all bits in the array.
      */
-    public void reverse() {
+    void reverse() {
         int[] newBits = new int[bits.length];
         int size = this.size;
         for (int i = 0; i < size; i++) {

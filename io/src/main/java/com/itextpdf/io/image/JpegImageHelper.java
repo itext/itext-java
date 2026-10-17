@@ -105,7 +105,7 @@ class JpegImageHelper {
      *
      * @param image the image to process as a JPEG image
      */
-    public static void processImage(ImageData image) {
+    static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.JPEG)
             throw new IllegalArgumentException("JPEG image expected");
         InputStream jpegStream = null;

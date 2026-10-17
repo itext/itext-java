@@ -36,7 +36,7 @@ class CssPseudoClassLastOfTypeSelectorItem extends CssPseudoClassChildSelectorIt
         super(CommonCssConstants.LAST_OF_TYPE);
     }
 
-    public static CssPseudoClassLastOfTypeSelectorItem getInstance() {
+    static CssPseudoClassLastOfTypeSelectorItem getInstance() {
         return instance;
     }
 

@@ -42,7 +42,7 @@ abstract class TableBorders {
      * The amount of the lists is the number of rows + 1, the size of each of these lists
      * corresponds to the number of columns.
      */
-    protected List<List<Border>> horizontalBorders = new ArrayList<>();
+    List<List<Border>> horizontalBorders = new ArrayList<>();
 
     /**
      * Vertical borders of the table.
@@ -52,24 +52,24 @@ abstract class TableBorders {
      * The amount of the lists is the number of columns + 1, the size of each of these lists
      * corresponds to the number of rows.
      */
-    protected List<List<Border>> verticalBorders = new ArrayList<>();
+    List<List<Border>> verticalBorders = new ArrayList<>();
 
     /**
      * The number of the table's columns.
      */
-    protected final int numberOfColumns;
+    final int numberOfColumns;
 
     /**
      * The outer borders of the table (as body).
      */
-    protected Border[] tableBoundingBorders = new Border[4];
+    Border[] tableBoundingBorders = new Border[4];
 
     /**
      * All the cells of the table.
      *
      * Each item of the list represents a row and consists of its cells.
      */
-    protected List<CellRenderer[]> rows;
+    List<CellRenderer[]> rows;
 
     /**
      * The first row, which should be processed on this area.
@@ -77,7 +77,7 @@ abstract class TableBorders {
      * The value of this field varies from area to area.
      * It's zero-based and inclusive.
      */
-    protected int startRow;
+    int startRow;
     /**
      * The last row, which should be processed on this area.
      *
@@ -85,24 +85,24 @@ abstract class TableBorders {
      * It's zero-based and inclusive. The last border will have index (finishRow+1) because
      * the number of borders is greater by one than the number of rows
      */
-    protected int finishRow;
+    int finishRow;
 
     /**
      * The width of the widest left border.
      */
-    protected float leftBorderMaxWidth;
+    float leftBorderMaxWidth;
 
     /**
      * The width of the widest right border.
      */
-    protected float rightBorderMaxWidth;
+    float rightBorderMaxWidth;
 
     /**
      * The number of rows flushed to the table.
      *
      * Its value is zero for regular tables. The field makes sense only for large tables.
      */
-    protected int largeTableIndexOffset = 0;
+    int largeTableIndexOffset = 0;
 
     public TableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
         this.rows = rows;
@@ -117,49 +117,49 @@ abstract class TableBorders {
     // region abstract
 
     // region draw
-    protected abstract TableBorders drawHorizontalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor);
+    abstract TableBorders drawHorizontalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor);
 
-    protected abstract TableBorders drawVerticalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor);
+    abstract TableBorders drawVerticalBorder(PdfCanvas canvas, TableBorderDescriptor borderDescriptor);
     // endregion
 
     // region area occupation
-    protected abstract TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
+    abstract TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
 
-    protected abstract TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+    abstract TableBorders applyTopTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
 
-    protected abstract TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
+    abstract TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean isEmpty, boolean force, boolean reverse);
 
-    protected abstract TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
+    abstract TableBorders applyBottomTableBorder(Rectangle occupiedBox, Rectangle layoutBox, boolean reverse);
 
-    protected abstract TableBorders applyLeftAndRightTableBorder(Rectangle layoutBox, boolean reverse);
+    abstract TableBorders applyLeftAndRightTableBorder(Rectangle layoutBox, boolean reverse);
 
-    protected abstract TableBorders skipFooter(Border[] borders);
+    abstract TableBorders skipFooter(Border[] borders);
 
-    protected abstract TableBorders skipHeader(Border[] borders);
+    abstract TableBorders skipHeader(Border[] borders);
 
-    protected abstract TableBorders collapseTableWithFooter(TableBorders footerBordersHandler, boolean hasContent);
+    abstract TableBorders collapseTableWithFooter(TableBorders footerBordersHandler, boolean hasContent);
 
-    protected abstract TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean updateBordersHandler);
+    abstract TableBorders collapseTableWithHeader(TableBorders headerBordersHandler, boolean updateBordersHandler);
 
-    protected abstract TableBorders fixHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox);
+    abstract TableBorders fixHeaderOccupiedArea(Rectangle occupiedBox, Rectangle layoutBox);
 
-    protected abstract TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse);
+    abstract TableBorders applyCellIndents(Rectangle box, float topIndent, float rightIndent, float bottomIndent, float leftIndent, boolean reverse);
     // endregion
 
     // region getters
-    abstract public List<Border> getVerticalBorder(int index);
+    abstract List<Border> getVerticalBorder(int index);
 
-    abstract public List<Border> getHorizontalBorder(int index);
+    abstract List<Border> getHorizontalBorder(int index);
 
-    protected abstract float getCellVerticalAddition(float[] indents);
+    abstract float getCellVerticalAddition(float[] indents);
     // endregion
 
-    protected abstract void buildBordersArrays(CellRenderer cell, int row, int col);
+    abstract void buildBordersArrays(CellRenderer cell, int row, int col);
 
-    protected abstract TableBorders updateBordersOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer);
+    abstract TableBorders updateBordersOnNewPage(boolean isOriginalNonSplitRenderer, boolean isFooterOrHeader, TableRenderer currentRenderer, TableRenderer headerRenderer, TableRenderer footerRenderer);
     // endregion
 
-    protected TableBorders processAllBordersAndEmptyRows() {
+    TableBorders processAllBordersAndEmptyRows() {
         CellRenderer[] currentRow;
         int numOfRowsToRemove = 0;
         if (!rows.isEmpty()) {
@@ -211,7 +211,7 @@ abstract class TableBorders {
     }
 
     // region init
-    protected TableBorders initializeBorders() {
+    TableBorders initializeBorders() {
         List<Border> tempBorders;
         // initialize vertical borders
         while (numberOfColumns + 1 > verticalBorders.size()) {
@@ -234,7 +234,7 @@ abstract class TableBorders {
     // endregion
 
     // region setters
-    protected TableBorders setTableBoundingBorders(Border[] borders) {
+    TableBorders setTableBoundingBorders(Border[] borders) {
         tableBoundingBorders = new Border[4];
         if (null != borders) {
             for (int i = 0; i < borders.length; i++) {
@@ -244,33 +244,33 @@ abstract class TableBorders {
         return this;
     }
 
-    protected TableBorders setRowRange(int startRow, int finishRow) {
+    TableBorders setRowRange(int startRow, int finishRow) {
         this.startRow = startRow;
         this.finishRow = finishRow;
         return this;
     }
 
-    protected TableBorders setStartRow(int row) {
+    TableBorders setStartRow(int row) {
         this.startRow = row;
         return this;
     }
 
-    protected TableBorders setFinishRow(int row) {
+    TableBorders setFinishRow(int row) {
         this.finishRow = row;
         return this;
     }
     // endregion
 
     // region getters
-    public float getLeftBorderMaxWidth() {
+    float getLeftBorderMaxWidth() {
         return leftBorderMaxWidth;
     }
 
-    public float getRightBorderMaxWidth() {
+    float getRightBorderMaxWidth() {
         return rightBorderMaxWidth;
     }
 
-    public float getMaxTopWidth() {
+    float getMaxTopWidth() {
         float width = 0;
         Border widestBorder = getWidestHorizontalBorder(startRow);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
@@ -279,7 +279,7 @@ abstract class TableBorders {
         return width;
     }
 
-    public float getMaxBottomWidth() {
+    float getMaxBottomWidth() {
         float width = 0;
         Border widestBorder = getWidestHorizontalBorder(finishRow + 1);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
@@ -288,7 +288,7 @@ abstract class TableBorders {
         return width;
     }
 
-    public float getMaxRightWidth() {
+    float getMaxRightWidth() {
         float width = 0;
         Border widestBorder = getWidestVerticalBorder(verticalBorders.size() - 1);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
@@ -297,7 +297,7 @@ abstract class TableBorders {
         return width;
     }
 
-    public float getMaxLeftWidth() {
+    float getMaxLeftWidth() {
         float width = 0;
         Border widestBorder = getWidestVerticalBorder(0);
         if (null != widestBorder && widestBorder.getWidth() >= width) {
@@ -306,55 +306,55 @@ abstract class TableBorders {
         return width;
     }
 
-    public Border getWidestVerticalBorder(int col) {
+    Border getWidestVerticalBorder(int col) {
         return TableBorderUtil.getWidestBorder(getVerticalBorder(col));
     }
 
-    public Border getWidestVerticalBorder(int col, int start, int end) {
+    Border getWidestVerticalBorder(int col, int start, int end) {
         return TableBorderUtil.getWidestBorder(getVerticalBorder(col), start, end);
     }
 
-    public Border getWidestHorizontalBorder(int row) {
+    Border getWidestHorizontalBorder(int row) {
         return TableBorderUtil.getWidestBorder(getHorizontalBorder(row));
     }
 
-    public Border getWidestHorizontalBorder(int row, int start, int end) {
+    Border getWidestHorizontalBorder(int row, int start, int end) {
         return TableBorderUtil.getWidestBorder(getHorizontalBorder(row), start, end);
     }
 
-    public List<Border> getFirstHorizontalBorder() {
+    List<Border> getFirstHorizontalBorder() {
         return getHorizontalBorder(startRow);
     }
 
-    public List<Border> getLastHorizontalBorder() {
+    List<Border> getLastHorizontalBorder() {
         return getHorizontalBorder(finishRow + 1);
     }
 
-    public List<Border> getFirstVerticalBorder() {
+    List<Border> getFirstVerticalBorder() {
         return getVerticalBorder(0);
     }
 
-    public List<Border> getLastVerticalBorder() {
+    List<Border> getLastVerticalBorder() {
         return getVerticalBorder(verticalBorders.size() - 1);
     }
 
-    public int getNumberOfColumns() {
+    int getNumberOfColumns() {
         return numberOfColumns;
     }
 
-    public int getStartRow() {
+    int getStartRow() {
         return startRow;
     }
 
-    public int getFinishRow() {
+    int getFinishRow() {
         return finishRow;
     }
 
-    public Border[] getTableBoundingBorders() {
+    Border[] getTableBoundingBorders() {
         return tableBoundingBorders;
     }
 
-    public float[] getCellBorderIndents(int row, int col, int rowspan, int colspan) {
+    float[] getCellBorderIndents(int row, int col, int rowspan, int colspan) {
         float[] indents = new float[4];
         List<Border> borderList;
         Border border;

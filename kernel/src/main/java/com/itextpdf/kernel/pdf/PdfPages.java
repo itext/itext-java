@@ -29,7 +29,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     private final PdfArray kids;
     private final PdfPages parent;
 
-    public PdfPages(int from, PdfDocument pdfDocument, PdfPages parent) {
+    PdfPages(int from, PdfDocument pdfDocument, PdfPages parent) {
         super(new PdfDictionary());
         if (pdfDocument.getWriter() != null) {
             getPdfObject().makeIndirect(pdfDocument);
@@ -47,11 +47,11 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    public PdfPages(int from, PdfDocument pdfDocument) {
+    PdfPages(int from, PdfDocument pdfDocument) {
         this(from, pdfDocument, null);
     }
 
-    public PdfPages(int from, int maxCount, PdfDictionary pdfObject, PdfPages parent) {
+    PdfPages(int from, int maxCount, PdfDictionary pdfObject, PdfPages parent) {
         super(pdfObject);
         setForbidRelease();
         this.from = from;
@@ -67,14 +67,14 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         pdfObject.put(PdfName.Type, PdfName.Pages);
     }
 
-    public void addPage(PdfDictionary page) {
+    void addPage(PdfDictionary page) {
         kids.add(page);
         incrementCount();
         page.put(PdfName.Parent, getPdfObject());
         page.setModified();
     }
 
-    public boolean addPage(int index, PdfPage pdfPage) {
+    boolean addPage(int index, PdfPage pdfPage) {
         if (index < from || index > from + getCount()) {
             return false;
         }
@@ -85,7 +85,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
-    public boolean removePage(int pageNum) {
+    boolean removePage(int pageNum) {
         if (pageNum < from || pageNum >= from + getCount()) {
             return false;
         }
@@ -94,7 +94,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         return true;
     }
 
-    public void addPages(PdfPages pdfPages) {
+    void addPages(PdfPages pdfPages) {
         kids.add(pdfPages.getPdfObject());
         count.setValue(count.intValue() + pdfPages.getCount());
         pdfPages.getPdfObject().put(PdfName.Parent, getPdfObject());
@@ -103,7 +103,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
     }
 
     // remove empty PdfPage.
-    public void removeFromParent() {
+    void removeFromParent() {
         if (parent != null) {
             assert getCount() == 0;
             parent.kids.remove(getPdfObject().getIndirectReference());
@@ -113,27 +113,27 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    public int getFrom() {
+    int getFrom() {
         return from;
     }
 
-    public int getCount() {
+    int getCount() {
         return count.intValue();
     }
 
-    public void correctFrom(int correction) {
+    void correctFrom(int correction) {
         from += correction;
     }
 
-    public PdfArray getKids() {
+    PdfArray getKids() {
         return getPdfObject().getAsArray(PdfName.Kids);
     }
 
-    public PdfPages getParent() {
+    PdfPages getParent() {
         return parent;
     }
 
-    public void incrementCount() {
+    void incrementCount() {
         count.increment();
         setModified();
         if (parent != null) {
@@ -141,7 +141,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    public void decrementCount() {
+    void decrementCount() {
         count.decrement();
         setModified();
         if (parent != null) {
@@ -149,7 +149,7 @@ class PdfPages extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
-    public int compareTo(int index) {
+    int compareTo(int index) {
         if (index < from) {
             return 1;
         }

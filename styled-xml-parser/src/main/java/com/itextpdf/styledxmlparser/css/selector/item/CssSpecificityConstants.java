@@ -34,12 +34,12 @@ final class CssSpecificityConstants {
     }
 
     /** The Constant ID_SPECIFICITY. */
-    public static final int ID_SPECIFICITY = 1 << 20;
+    static final int ID_SPECIFICITY = 1 << 20;
     
     /** The Constant CLASS_SPECIFICITY. */
-    public static final int CLASS_SPECIFICITY = 1 << 10;
+    static final int CLASS_SPECIFICITY = 1 << 10;
     
     /** The Constant ELEMENT_SPECIFICITY. */
-    public static final int ELEMENT_SPECIFICITY = 1;
+    static final int ELEMENT_SPECIFICITY = 1;
 
 }

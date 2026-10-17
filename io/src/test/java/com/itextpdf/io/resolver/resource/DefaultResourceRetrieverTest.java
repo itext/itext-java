@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
-class DefaultResourceRetrieverTest extends ExtendedITextTest {
+public class DefaultResourceRetrieverTest extends ExtendedITextTest {
     private final static String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/io/resolver/resource/";
 
 

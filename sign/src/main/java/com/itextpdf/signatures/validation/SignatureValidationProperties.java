@@ -22,11 +22,6 @@
  */
 package com.itextpdf.signatures.validation;
 
-import java.time.Duration;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.function.Consumer;
-
 import com.itextpdf.signatures.ICrlClient;
 import com.itextpdf.signatures.IOcspClient;
 import com.itextpdf.signatures.validation.context.CertificateSource;
@@ -43,9 +38,13 @@ import com.itextpdf.signatures.validation.extensions.KeyUsage;
 import com.itextpdf.signatures.validation.extensions.KeyUsageExtension;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -363,39 +362,39 @@ public class SignatureValidationProperties {
         private OnlineFetching onlineFetching;
         private List<CertificateExtension> requiredExtensions;
 
-        public ContextProperties() {
+        ContextProperties() {
             // Empty constructor.
         }
 
-        public Boolean getContinueAfterFailure() {
+        Boolean getContinueAfterFailure() {
             return continueAfterFailure;
         }
 
-        public void setContinueAfterFailure(Boolean continueAfterFailure) {
+        void setContinueAfterFailure(Boolean continueAfterFailure) {
             this.continueAfterFailure = continueAfterFailure;
         }
 
-        public Duration getFreshness() {
+        Duration getFreshness() {
             return freshness;
         }
 
-        public void setFreshness(Duration value) {
+        void setFreshness(Duration value) {
             freshness = value;
         }
 
-        public OnlineFetching getOnlineFetching() {
+        OnlineFetching getOnlineFetching() {
             return onlineFetching;
         }
 
-        public void setOnlineFetching(OnlineFetching onlineFetching) {
+        void setOnlineFetching(OnlineFetching onlineFetching) {
             this.onlineFetching = onlineFetching;
         }
 
-        public List<CertificateExtension> getRequiredExtensions() {
+        List<CertificateExtension> getRequiredExtensions() {
             return requiredExtensions;
         }
 
-        public void setRequiredExtensions(List<CertificateExtension> requiredExtensions) {
+        void setRequiredExtensions(List<CertificateExtension> requiredExtensions) {
             this.requiredExtensions = requiredExtensions;
         }
     }

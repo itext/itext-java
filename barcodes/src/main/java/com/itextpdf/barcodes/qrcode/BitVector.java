@@ -31,7 +31,7 @@ final class BitVector {
     /**
      * Create a bitvector usng the default size
      */
-    public BitVector() {
+    BitVector() {
         sizeInBits = 0;
         array = new byte[DEFAULT_SIZE_IN_BYTES];
     }
@@ -43,7 +43,7 @@ final class BitVector {
      * @param index index in the vector
      * @return bit value at "index"
      */
-    public int at(int index) {
+    int at(int index) {
         if (index < 0 || index >= sizeInBits) {
             throw new IllegalArgumentException("Bad index: " + index);
         }
@@ -54,7 +54,7 @@ final class BitVector {
     /**
      * @return the number of bits in the bit vector.
      */
-    public int size() {
+    int size() {
         return sizeInBits;
     }
 
@@ -62,7 +62,7 @@ final class BitVector {
     /**
      * @return the number of bytes in the bit vector.
      */
-    public int sizeInBytes() {
+    int sizeInBytes() {
         return (sizeInBits + 7) >> 3;
     }
 
@@ -72,7 +72,7 @@ final class BitVector {
      * Append the a bit to the bit vector
      * @param bit 0 or 1
      */
-    public void appendBit(int bit) {
+    void appendBit(int bit) {
         if (!(bit == 0 || bit == 1)) {
             throw new IllegalArgumentException("Bad bit");
         }
@@ -105,7 +105,7 @@ final class BitVector {
      * @param value int interpreted as bitvector
      * @param numBits 0 &lt;= numBits &lt;= 32.
      */
-    public void appendBits(int value, int numBits) {
+    void appendBits(int value, int numBits) {
         if (numBits < 0 || numBits > 32) {
             throw new IllegalArgumentException("Num bits must be between 0 and 32");
         }
@@ -128,7 +128,7 @@ final class BitVector {
      * Append a different BitVector to this BitVector
      * @param bits BitVector to append
      */
-    public void appendBitVector(BitVector bits) {
+    void appendBitVector(BitVector bits) {
         int size = bits.size();
         for (int i = 0; i < size; ++i) {
             appendBit(bits.at(i));
@@ -140,7 +140,7 @@ final class BitVector {
      * XOR the contents of this bitvector with the contetns of "other"
      * @param other Bitvector of equal length
      */
-    public void xor(BitVector other) {
+    void xor(BitVector other) {
         if (sizeInBits != other.size()) {
             throw new IllegalArgumentException("BitVector sizes don't match");
         }
@@ -180,7 +180,7 @@ final class BitVector {
      * sizeInBits - it will typically be larger for efficiency.
      * @return size of the array containing the bitvector
      */
-    public byte[] getArray() {
+    byte[] getArray() {
         return array;
     }
 

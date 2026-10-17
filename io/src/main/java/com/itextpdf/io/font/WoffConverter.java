@@ -38,7 +38,7 @@ class WoffConverter {
      *
      * @return {@code true} when the WOFF signature is present
      */
-    public static boolean isWoffFont(byte[] woffBytes) {
+    static boolean isWoffFont(byte[] woffBytes) {
         return bytesToUInt(woffBytes, 0) == woffSignature;
     }
 
@@ -52,7 +52,7 @@ class WoffConverter {
      * @throws java.io.IOException      if a compressed table cannot be read
      * @throws IllegalArgumentException if the WOFF structure is invalid
      */
-    public static byte[] convert(byte[] woffBytes) throws java.io.IOException {
+    static byte[] convert(byte[] woffBytes) throws java.io.IOException {
         int srcPos = 0;
         int destPos = 0;
 

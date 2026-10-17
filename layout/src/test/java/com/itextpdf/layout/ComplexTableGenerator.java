@@ -2266,7 +2266,7 @@ class ComplexTableGenerator {
 	}
 
 	static class GenerationContext {
-		public PdfDocument pdf;
-		public FontProvider fontProvider;
+		PdfDocument pdf;
+		FontProvider fontProvider;
 	}
 }

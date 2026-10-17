@@ -37,7 +37,7 @@ class AcroFieldsSearch extends Xml2Som {
      *
      * @param items the Collection
      */
-    public AcroFieldsSearch(Collection<String> items) {
+    AcroFieldsSearch(Collection<String> items) {
         inverseSearch = new HashMap<>();
         acroShort2LongName = new HashMap<>();
         for (String itemName : items) {
@@ -53,7 +53,7 @@ class AcroFieldsSearch extends Xml2Som {
      *
      * @return the mapping from short names to long names
      */
-    public Map<String, String> getAcroShort2LongName() {
+    Map<String, String> getAcroShort2LongName() {
         return acroShort2LongName;
     }
 
@@ -63,7 +63,7 @@ class AcroFieldsSearch extends Xml2Som {
      *
      * @param acroShort2LongName the mapping from short names to long names
      */
-    public void setAcroShort2LongName(Map<String, String> acroShort2LongName) {
+    void setAcroShort2LongName(Map<String, String> acroShort2LongName) {
         this.acroShort2LongName = acroShort2LongName;
     }
 }

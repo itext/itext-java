@@ -85,7 +85,7 @@ class ImagePdfBytesInfo {
     private OutputFileType outputFileType;
     private byte[] iccData;
 
-    public ImagePdfBytesInfo(PdfImageXObject imageXObject, ImageBytesRetrievalProperties properties) {
+    ImagePdfBytesInfo(PdfImageXObject imageXObject, ImageBytesRetrievalProperties properties) {
         this.properties = properties;
         this.imageXObject = imageXObject;
         if (properties.isApplyDecodeArray()
@@ -99,11 +99,11 @@ class ImagePdfBytesInfo {
         height = (int) imageXObject.getHeight();
     }
 
-    public OutputFileType getImageType() {
+    OutputFileType getImageType() {
         return outputFileType;
     }
 
-    public byte[] getProcessedImageData(byte[] intialBytes) throws IOException {
+    byte[] getProcessedImageData(byte[] intialBytes) throws IOException {
         if (channels > 1 && colorDepth != 8 && colorDepth != 16) {
             throw new com.itextpdf.io.exceptions.IOException(
                     KernelExceptionMessageConstant.COLOR_DEPTH_IS_NOT_SUPPORTED_FOR_COLORSPACE)

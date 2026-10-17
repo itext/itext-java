@@ -42,7 +42,7 @@ class Jbig2ImageHelper {
      * @param	ra	an random access file or array
      * @return	a byte array
      */
-    public static byte[] getGlobalSegment(RandomAccessFileOrArray ra ) {
+    static byte[] getGlobalSegment(RandomAccessFileOrArray ra ) {
         try {
             Jbig2SegmentReader sr = new Jbig2SegmentReader(ra);
             sr.read();
@@ -57,7 +57,7 @@ class Jbig2ImageHelper {
      *
      * @param jbig2 JBIG2 image data to process
      */
-    public static void processImage(ImageData jbig2) {
+    static void processImage(ImageData jbig2) {
         if (jbig2.getOriginalType() != ImageType.JBIG2)
             throw new IllegalArgumentException("JBIG2 image expected");
         Jbig2ImageData image = (Jbig2ImageData)jbig2;

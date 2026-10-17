@@ -73,7 +73,7 @@ class SimpleServiceContext implements IServiceContext, IJsonSerializable {
      *
      * @return deserialized {@link SimpleServiceContext}
      */
-    public static SimpleServiceContext fromJson(JsonValue jsonValue) {
+    static SimpleServiceContext fromJson(JsonValue jsonValue) {
         JsonObject simpleServiceContextJson = (JsonObject) jsonValue;
         JsonArray certificatesJson =
                 (JsonArray) simpleServiceContextJson.getField(JSON_KEY_CERTIFICATES);

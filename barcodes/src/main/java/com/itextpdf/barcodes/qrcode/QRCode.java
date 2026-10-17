@@ -24,7 +24,7 @@ package com.itextpdf.barcodes.qrcode;
  */
 final class QRCode {
 
-    public static final int NUM_MASK_PATTERNS = 8;
+    static final int NUM_MASK_PATTERNS = 8;
 
     private Mode mode;
     private ErrorCorrectionLevel ecLevel;
@@ -40,7 +40,7 @@ final class QRCode {
     /**
      * Create a QR-code object with unitialized parameters
      */
-    public QRCode() {
+    QRCode() {
         mode = null;
         ecLevel = null;
         version = -1;
@@ -57,7 +57,7 @@ final class QRCode {
      * Possible values: TERMINATOR, NUMERIC, ALPHANUMERIC, STRUCTURED_APPEND, BYTE, ECI, KANJI, FNC1_FIRST_POSITION, FNC2_SECOND_POSITION
      * @return Mode of the QR Code.
      */
-    public Mode getMode() {
+    Mode getMode() {
         return mode;
     }
 
@@ -65,7 +65,7 @@ final class QRCode {
      * Possible error correction level values ranked from lowest error correction capability to highest: L, M, Q, H
      * @return Error correction level of the QR Code.
      */
-    public ErrorCorrectionLevel getECLevel() {
+    ErrorCorrectionLevel getECLevel() {
         return ecLevel;
     }
 
@@ -73,56 +73,56 @@ final class QRCode {
      * Together with error correction level, the version determines the information capacity of the QR code. Higher version numbers correspond with higher capacity. Ranges from 1 to 40.
      * @return Version of the QR Code.
      */
-    public int getVersion() {
+    int getVersion() {
         return version;
     }
 
     /**
      * @return ByteMatrix width of the QR Code.
      */
-    public int getMatrixWidth() {
+    int getMatrixWidth() {
         return matrixWidth;
     }
 
     /**
      * @return Mask pattern of the QR Code.
      */
-    public int getMaskPattern() {
+    int getMaskPattern() {
         return maskPattern;
     }
 
     /**
      * @return Number of total bytes in the QR Code.
      */
-    public int getNumTotalBytes() {
+    int getNumTotalBytes() {
         return numTotalBytes;
     }
 
     /**
      * @return Number of data bytes in the QR Code.
      */
-    public int getNumDataBytes() {
+    int getNumDataBytes() {
         return numDataBytes;
     }
 
     /**
      * @return Number of error correction bytes in the QR Code.
      */
-    public int getNumECBytes() {
+    int getNumECBytes() {
         return numECBytes;
     }
 
     /**
      * @return Number of Reedsolomon blocks in the QR Code.
      */
-    public int getNumRSBlocks() {
+    int getNumRSBlocks() {
         return numRSBlocks;
     }
 
     /**
      * @return ByteMatrix data of the QR Code.
      */
-    public ByteMatrix getMatrix() {
+    ByteMatrix getMatrix() {
         return matrix;
     }
 
@@ -133,7 +133,7 @@ final class QRCode {
      * @param y height coordinate
      * @return 1 for a black cell, 0 for a white cell
      */
-    public int at(int x, int y) {
+    int at(int x, int y) {
         // The value must be zero or one.
         int value = matrix.get(x, y);
         if (!(value == 0 || value == 1)) {
@@ -147,7 +147,7 @@ final class QRCode {
      * Check the validity of all member variables
      * @return true if all variables are valid, false otherwise
      */
-    public boolean isValid() {
+    boolean isValid() {
         return
                 // First check if all version are not uninitialized.
                 mode != null &&
@@ -211,7 +211,7 @@ final class QRCode {
      * Possible modes: TERMINATOR, NUMERIC, ALPHANUMERIC, STRUCTURED_APPEND, BYTE, ECI, KANJI, FNC1_FIRST_POSITION, FNC2_SECOND_POSITION
      * @param value new data encoding mode
      */
-    public void setMode(Mode value) {
+    void setMode(Mode value) {
         mode = value;
     }
 
@@ -220,7 +220,7 @@ final class QRCode {
      * Possible error correction level values ranked from lowest error correction capability to highest: L, M, Q, H
      * @param value new error correction level
      */
-    public void setECLevel(ErrorCorrectionLevel value) {
+    void setECLevel(ErrorCorrectionLevel value) {
         ecLevel = value;
     }
 
@@ -230,7 +230,7 @@ final class QRCode {
      * Range: 1 to 40.
      * @param value the new version of the QR code
      */
-    public void setVersion(int value) {
+    void setVersion(int value) {
         version = value;
     }
 
@@ -238,7 +238,7 @@ final class QRCode {
      * Sets the width of the byte matrix
      * @param value the new width of the matrix
      */
-    public void setMatrixWidth(int value) {
+    void setMatrixWidth(int value) {
         matrixWidth = value;
     }
 
@@ -246,7 +246,7 @@ final class QRCode {
      * Set the masking pattern
      * @param value new masking pattern of the QR code
      */
-    public void setMaskPattern(int value) {
+    void setMaskPattern(int value) {
         maskPattern = value;
     }
 
@@ -254,7 +254,7 @@ final class QRCode {
      * Set the number of total bytes
      * @param value new number of total bytes
      */
-    public void setNumTotalBytes(int value) {
+    void setNumTotalBytes(int value) {
         numTotalBytes = value;
     }
 
@@ -262,7 +262,7 @@ final class QRCode {
      * Set the number of data bytes
      * @param value new number of data bytes
      */
-    public void setNumDataBytes(int value) {
+    void setNumDataBytes(int value) {
         numDataBytes = value;
     }
 
@@ -270,7 +270,7 @@ final class QRCode {
      * Set the number of error correction blocks
      * @param value new number of error correction blocks
      */
-    public void setNumECBytes(int value) {
+    void setNumECBytes(int value) {
         numECBytes = value;
     }
 
@@ -278,7 +278,7 @@ final class QRCode {
      * Set the number of Reed-Solomon blocks
      * @param value new number of Reed-Solomon blocks
      */
-    public void setNumRSBlocks(int value) {
+    void setNumRSBlocks(int value) {
         numRSBlocks = value;
     }
 
@@ -286,7 +286,7 @@ final class QRCode {
      * Set the byte-matrix
      * @param value the new byte-matrix
      */
-    public void setMatrix(ByteMatrix value) {
+    void setMatrix(ByteMatrix value) {
         matrix = value;
     }
 
@@ -295,7 +295,7 @@ final class QRCode {
      * @param maskPattern masking pattern to check
      * @return true if the pattern is valid, false otherwise
      */
-    public static boolean isValidMaskPattern(int maskPattern) {
+    static boolean isValidMaskPattern(int maskPattern) {
         return maskPattern >= 0 && maskPattern < NUM_MASK_PATTERNS;
     }
 

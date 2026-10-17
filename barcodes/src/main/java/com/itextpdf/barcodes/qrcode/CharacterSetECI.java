@@ -61,14 +61,14 @@ final class CharacterSetECI {
     /**
      * @return name of the encoding.
      */
-    public String getEncodingName() {
+    String getEncodingName() {
         return encodingName;
     }
 
     /**
      * @return the value of the encoding.
      */
-    public int getValue() {
+    int getValue() {
         return value;
     }
 
@@ -89,7 +89,7 @@ final class CharacterSetECI {
      * @return {@link CharacterSetECI} representing ECI for character encoding, or null if it is legal
      * but unsupported
      */
-    public static CharacterSetECI getCharacterSetECIByName(String name) {
+    static CharacterSetECI getCharacterSetECIByName(String name) {
         if (NAME_TO_ECI == null) {
             initialize();
         }

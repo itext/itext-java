@@ -50,7 +50,7 @@ class BitFile {
      * @param output destination for output data
      * @param blocks GIF LZW requires block counts for output data
      **/
-    public BitFile(OutputStream output, boolean blocks) {
+    BitFile(OutputStream output, boolean blocks) {
         this.output = output;
         this.blocks = blocks;
         buffer = new byte[256];
@@ -58,7 +58,7 @@ class BitFile {
         bitsLeft = 8;
     }
 
-    public void flush() throws IOException {
+    void flush() throws IOException {
         int numBytes = index + (bitsLeft == 8 ? 0 : 1);
         if (numBytes > 0) {
             if (blocks)
@@ -70,7 +70,7 @@ class BitFile {
         }
     }
 
-    public void writeBits(int bits, int numbits) throws IOException {
+    void writeBits(int bits, int numbits) throws IOException {
         int bitsWritten = 0;
         // gif block count
         int numBytes = 255;

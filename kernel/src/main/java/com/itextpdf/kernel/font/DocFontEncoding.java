@@ -47,7 +47,7 @@ class DocFontEncoding extends FontEncoding {
     protected DocFontEncoding() {
     }
 
-    public static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode) {
+    static FontEncoding createDocFontEncoding(PdfObject encoding, CMapToUnicode toUnicode) {
         if (encoding != null) {
             if (encoding.isName()) {
                 return FontEncoding.createFontEncoding(((PdfName) encoding).getValue());

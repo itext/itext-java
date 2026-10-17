@@ -28,16 +28,16 @@ class FlexItemInfo {
     private AbstractRenderer renderer;
     private Rectangle rectangle;
 
-    public FlexItemInfo(AbstractRenderer renderer, Rectangle rectangle) {
+    FlexItemInfo(AbstractRenderer renderer, Rectangle rectangle) {
         this.renderer = renderer;
         this.rectangle = rectangle;
     }
 
-    public AbstractRenderer getRenderer() {
+    AbstractRenderer getRenderer() {
         return renderer;
     }
 
-    public Rectangle getRectangle() {
+    Rectangle getRectangle() {
         return rectangle;
     }
 }

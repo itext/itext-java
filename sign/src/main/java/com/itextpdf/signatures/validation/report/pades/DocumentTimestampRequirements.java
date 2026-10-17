@@ -30,7 +30,7 @@ import java.util.Map;
  */
 class DocumentTimestampRequirements extends AbstractPadesLevelRequirements {
 
-    public static final String SUBFILTER_NOT_ETSI_RFC3161 = "Timestamp SubFilter entry value is not ETSI.RFC3161";
+    static final String SUBFILTER_NOT_ETSI_RFC3161 = "Timestamp SubFilter entry value is not ETSI.RFC3161";
 
     private static final Map<PAdESLevel, LevelChecks> CHECKS = new HashMap<PAdESLevel, LevelChecks>();
     private static final Map<PAdESLevel, LevelChecks> DSS_COVERED_TS_CHECKS = new HashMap<PAdESLevel, LevelChecks>();

@@ -44,19 +44,19 @@ class TableBorderDescriptor {
         this.mainCoordinateWidths = mainCoordinateWidths;
     }
 
-    public int getBorderIndex() {
+    int getBorderIndex() {
         return borderIndex;
     }
 
-    public float getMainCoordinateStart() {
+    float getMainCoordinateStart() {
         return mainCoordinateStart;
     }
 
-    public float getCrossCoordinate() {
+    float getCrossCoordinate() {
         return crossCoordinate;
     }
 
-    public float[] getMainCoordinateWidths() {
+    float[] getMainCoordinateWidths() {
         return mainCoordinateWidths;
     }
 }

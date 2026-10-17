@@ -143,7 +143,7 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
         return false;
     }
 
-    public int getMissingWidth() {
+    int getMissingWidth() {
         return missingWidth;
     }
 

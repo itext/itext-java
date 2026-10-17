@@ -36,7 +36,7 @@ class CssPseudoClassEmptySelectorItem extends CssPseudoClassSelectorItem {
         super(CommonCssConstants.EMPTY);
     }
 
-    public static CssPseudoClassEmptySelectorItem getInstance() {
+    static CssPseudoClassEmptySelectorItem getInstance() {
         return instance;
     }
 

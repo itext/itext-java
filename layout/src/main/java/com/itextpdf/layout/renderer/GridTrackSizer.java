@@ -1007,12 +1007,12 @@ class GridTrackSizer {
         float incurredIncrease;
         boolean isInfinityGrowable = false;
 
-        public float definiteGrowthLimit() {
+        float definiteGrowthLimit() {
             // For infinite growth limits, substitute the track's base size.
             return Float.compare(growthLimit, -1f) == 0 ? baseSize : growthLimit;
         }
 
-        public boolean isFlexibleTrack() {
+        boolean isFlexibleTrack() {
             // Flex is replaced by minmax in GridTrackSizer constructor
             if (value.getType() == ValueType.MINMAX) {
                 return ((MinMaxValue) value).getMax().getType() == ValueType.FLEX;
@@ -1020,14 +1020,14 @@ class GridTrackSizer {
             return false;
         }
 
-        public boolean hasAutoMax() {
+        boolean hasAutoMax() {
             if (value.getType() == ValueType.MINMAX) {
                 return ((MinMaxValue) value).getMax().getType() == ValueType.AUTO;
             }
             return value.getType() == ValueType.AUTO;
         }
 
-        public float getFlexFactor() {
+        float getFlexFactor() {
             // Flex is replaced by minmax in GridTrackSizer constructor
             if (value.getType() == ValueType.MINMAX) {
                 final BreadthValue max = ((MinMaxValue) value).getMax();
@@ -1036,7 +1036,7 @@ class GridTrackSizer {
             return 0f;
         }
 
-        public void ensureGrowthLimitIsNotLessThanBaseSize() {
+        void ensureGrowthLimitIsNotLessThanBaseSize() {
             if (Float.compare(growthLimit, -1) != 0 && growthLimit < baseSize) {
                 growthLimit = baseSize;
             }

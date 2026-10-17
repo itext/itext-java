@@ -92,7 +92,7 @@ class UriEncodeUtil {
      * @param s the original string
      * @return the encoded string
      */
-    public static String encode(String s) {
+    static String encode(String s) {
         return encode(s, dfltEncName);
     }
 
@@ -103,7 +103,7 @@ class UriEncodeUtil {
      * @param enc    the encoding
      * @return the encoded string
      */
-    public static String encode(String s, String enc) {
+    static String encode(String s, String enc) {
         boolean needToChange = false;
         StringBuffer out = new StringBuffer(s.length());
         Charset charset;

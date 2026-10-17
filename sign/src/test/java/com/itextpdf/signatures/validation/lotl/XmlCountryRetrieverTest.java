@@ -24,18 +24,17 @@ package com.itextpdf.signatures.validation.lotl;
 
 import com.itextpdf.test.ExtendedITextTest;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 
 @Tag("IntegrationTest")
-class XmlCountryRetrieverTest extends ExtendedITextTest {
+public class XmlCountryRetrieverTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/lotl" +
             "/XmlCertificateRetrieverTest/";

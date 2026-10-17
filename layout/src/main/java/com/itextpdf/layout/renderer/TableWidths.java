@@ -948,7 +948,7 @@ final class TableWidths {
             return str;
         }
 
-        public void setParent(TableRenderer tableRenderer) {
+        void setParent(TableRenderer tableRenderer) {
             if (region == HEADER) {
                 cell.setParent(tableRenderer.headerRenderer);
             } else if (region == FOOTER) {

@@ -44,7 +44,7 @@ final class InlineVerticalAlignmentHelper {
     private InlineVerticalAlignmentHelper() {
     }
 
-    public static void adjustChildrenYLineHtmlMode(LineRenderer lineRenderer) {
+    static void adjustChildrenYLineHtmlMode(LineRenderer lineRenderer) {
         float actualYLine = lineRenderer.occupiedArea.getBBox().getY() +
                 lineRenderer.occupiedArea.getBBox().getHeight() - lineRenderer.maxDescent;
 

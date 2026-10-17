@@ -1237,7 +1237,7 @@ public class PdfUATableTest extends ExtendedITextTest {
             super(owner);
         }
 
-        public PdfStructureAttributes addPdfObject(PdfName headers, PdfArray pdfObjects) {
+        PdfStructureAttributes addPdfObject(PdfName headers, PdfArray pdfObjects) {
             getPdfObject().put(headers, pdfObjects);
             setModified();
             return this;

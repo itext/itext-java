@@ -51,7 +51,7 @@ final class OcgPropertiesCopier {
      * @param destinationDocument document to which OCGs should be copied
      * @param sourceToDestPageMapping page mapping, linking source pages to destination ones
      */
-    public static void copyOCGProperties(PdfDocument sourceDocument, PdfDocument destinationDocument,
+    static void copyOCGProperties(PdfDocument sourceDocument, PdfDocument destinationDocument,
                                          Map<PdfPage, PdfPage> sourceToDestPageMapping) {
         try {
             // Configs are not copied

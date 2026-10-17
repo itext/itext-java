@@ -203,7 +203,7 @@ final class MatrixUtil {
     //
     // JAVAPORT: We shouldn't need to do this at all. The code should be rewritten to begin encoding
     // with the ByteMatrix initialized all to zero.
-    public static void clearMatrix(ByteMatrix matrix) {
+    static void clearMatrix(ByteMatrix matrix) {
         matrix.clear((byte) 0xff);
     }
 
@@ -217,7 +217,7 @@ final class MatrixUtil {
      * @param maskPattern masking pattern
      * @param matrix      Bytematrix in which the output will be stored
      */
-    public static void buildMatrix(BitVector dataBits, ErrorCorrectionLevel ecLevel, int version,
+    static void buildMatrix(BitVector dataBits, ErrorCorrectionLevel ecLevel, int version,
                                    int maskPattern, ByteMatrix matrix) throws WriterException {
         clearMatrix(matrix);
         embedBasicPatterns(version, matrix);
@@ -240,7 +240,7 @@ final class MatrixUtil {
      * @param version Version of the QR code, [1 .. 40]
      * @param matrix  Bytematrix in which the output will be stored
      */
-    public static void embedBasicPatterns(int version, ByteMatrix matrix) throws WriterException {
+    static void embedBasicPatterns(int version, ByteMatrix matrix) throws WriterException {
         // Let's get started with embedding big squares at corners.
         embedPositionDetectionPatternsAndSeparators(matrix);
         // Then, embed the dark dot at the left bottom corner.
@@ -259,7 +259,7 @@ final class MatrixUtil {
      * @param maskPattern the masking pattern
      * @param matrix      Bytematrix in which the output will be stored
      */
-    public static void embedTypeInfo(ErrorCorrectionLevel ecLevel, int maskPattern, ByteMatrix matrix)
+    static void embedTypeInfo(ErrorCorrectionLevel ecLevel, int maskPattern, ByteMatrix matrix)
             throws WriterException {
         BitVector typeInfoBits = new BitVector();
         makeTypeInfoBits(ecLevel, maskPattern, typeInfoBits);
@@ -300,7 +300,7 @@ final class MatrixUtil {
      * @param matrix Byte matrix representing the QR code
      * @throws WriterException
      */
-    public static void maybeEmbedVersionInfo(int version, ByteMatrix matrix) throws WriterException {
+    static void maybeEmbedVersionInfo(int version, ByteMatrix matrix) throws WriterException {
 
         // Version info is necessary if version >= 7.
         if (version < 7) {
@@ -338,7 +338,7 @@ final class MatrixUtil {
      * @param matrix Byte matrix representing the QR code
      * @throws WriterException
      */
-    public static void embedDataBits(BitVector dataBits, int maskPattern, ByteMatrix matrix)
+    static void embedDataBits(BitVector dataBits, int maskPattern, ByteMatrix matrix)
             throws WriterException {
         int bitIndex = 0;
         int direction = -1;
@@ -405,7 +405,7 @@ final class MatrixUtil {
      * @param value bitstring as integer
      * @return the position of the most significant bit set to 1 in the bit-representation of value
      */
-    public static int findMSBSet(int value) {
+    static int findMSBSet(int value) {
         int numDigits = 0;
         while (value != 0) {
             value >>>= 1;
@@ -443,7 +443,7 @@ final class MatrixUtil {
      * @param value the bitstring to calculate the BCH Code from
      * @param poly the polynomial in GF[2^n] to use
      */
-    public static int calculateBCHCode(int value, int poly) {
+    static int calculateBCHCode(int value, int poly) {
         // If poly is "1 1111 0010 0101" (version info poly), msbSetInPoly is 13. We'll subtract 1
         // from 13 to make it 12.
         int msbSetInPoly = findMSBSet(poly);
@@ -464,7 +464,7 @@ final class MatrixUtil {
      * @param bits Vactor of bits to contain the result
      * @throws WriterException
      */
-    public static void makeTypeInfoBits(ErrorCorrectionLevel ecLevel, int maskPattern, BitVector bits)
+    static void makeTypeInfoBits(ErrorCorrectionLevel ecLevel, int maskPattern, BitVector bits)
             throws WriterException {
         if (!QRCode.isValidMaskPattern(maskPattern)) {
             throw new WriterException("Invalid mask pattern");
@@ -495,7 +495,7 @@ final class MatrixUtil {
      * @param bits Vector of bits to contain the result
      * @throws WriterException
      */
-    public static void makeVersionInfoBits(int version, BitVector bits) throws WriterException {
+    static void makeVersionInfoBits(int version, BitVector bits) throws WriterException {
         bits.appendBits(version, 6);
         int bchCode = calculateBCHCode(version, VERSION_INFO_POLY);
         bits.appendBits(bchCode, 12);

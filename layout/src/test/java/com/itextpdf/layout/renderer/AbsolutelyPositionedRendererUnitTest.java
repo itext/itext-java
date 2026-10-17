@@ -77,7 +77,7 @@ public class AbsolutelyPositionedRendererUnitTest extends ExtendedITextTest {
     }
 
     static class CustomRenderer extends DivRenderer {
-        public int counter = 0;
+        int counter = 0;
 
         public CustomRenderer(Div modelElement) {
             super(modelElement);

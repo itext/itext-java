@@ -110,7 +110,7 @@ class FontRegisterProvider {
         return getFontProgram(fontName, cached);
     }
 
-    protected void registerStandardFonts() {
+    void registerStandardFonts() {
         fontNames.put(StringNormalizer.toLowerCase(StandardFonts.COURIER), StandardFonts.COURIER);
         fontNames.put(StringNormalizer.toLowerCase(StandardFonts.COURIER_BOLD), StandardFonts.COURIER_BOLD);
         fontNames.put(StringNormalizer.toLowerCase(StandardFonts.COURIER_OBLIQUE), StandardFonts.COURIER_OBLIQUE);
@@ -127,7 +127,7 @@ class FontRegisterProvider {
         fontNames.put(StringNormalizer.toLowerCase(StandardFonts.ZAPFDINGBATS), StandardFonts.ZAPFDINGBATS);
     }
 
-    protected void registerStandardFontFamilies() {
+    void registerStandardFontFamilies() {
         List<String> family;
         family = new ArrayList<>();
         family.add(StandardFonts.COURIER);
@@ -155,7 +155,7 @@ class FontRegisterProvider {
         fontFamilies.put(StringNormalizer.toLowerCase(StandardFontFamilies.ZAPFDINGBATS), family);
     }
 
-    protected FontProgram getFontProgram(String fontName, boolean cached) throws java.io.IOException {
+    FontProgram getFontProgram(String fontName, boolean cached) throws java.io.IOException {
         FontProgram fontProgram = null;
         fontName = fontNames.get(StringNormalizer.toLowerCase(fontName));
         if (fontName != null) {
@@ -394,12 +394,12 @@ class FontRegisterProvider {
         return fontNames.containsKey(StringNormalizer.toLowerCase(fontname));
     }
 
-    public void clearRegisteredFonts() {
+    void clearRegisteredFonts() {
         fontNames.clear();
         registerStandardFonts();
     }
 
-    public void clearRegisteredFontFamilies() {
+    void clearRegisteredFontFamilies() {
         fontFamilies.clear();
         registerStandardFontFamilies();
     }

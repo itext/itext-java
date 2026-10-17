@@ -215,7 +215,7 @@ public class PdfAPageTest extends ExtendedITextTest {
         EndPageEventHandler() {
         }
 
-        public int getCounter() {
+        int getCounter() {
             return counter;
         }
 

@@ -29,7 +29,7 @@ import java.util.Map;
 class ValidationObjects {
     private final Map<CollectableObject, CollectableObject> objects = new HashMap<>();
 
-    public <T extends CollectableObject> T addObject(T object) {
+    <T extends CollectableObject> T addObject(T object) {
         Object existing = objects.get(object);
         if (existing != null) {
             return (T) existing;
@@ -38,7 +38,7 @@ class ValidationObjects {
         return object;
     }
 
-    public Collection<CollectableObject> getObjects() {
+    Collection<CollectableObject> getObjects() {
         return objects.values();
     }
 }

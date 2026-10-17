@@ -57,7 +57,7 @@ class PdfPagesTree {
      *
      * @param pdfCatalog a {@link PdfCatalog} which will be used to create the tree
      */
-    public PdfPagesTree(PdfCatalog pdfCatalog) {
+    PdfPagesTree(PdfCatalog pdfCatalog) {
         this.document = pdfCatalog.getDocument();
         this.parents = new ArrayList<>();
         IPageTreeListFactory pageTreeFactory = document.getDiContainer().getInstance(IPageTreeListFactory.class);
@@ -91,7 +91,7 @@ class PdfPagesTree {
      * @param pageNum one-based index of the element to return
      * @return the {@link PdfPage} at the specified position in this list
      */
-    public PdfPage getPage(int pageNum) {
+    PdfPage getPage(int pageNum) {
         if (pageNum < 1 || pageNum > getNumberOfPages()) {
             throw new IndexOutOfBoundsException(MessageFormatUtil.format(
                     KernelExceptionMessageConstant.REQUESTED_PAGE_NUMBER_IS_OUT_OF_BOUNDS, pageNum));
@@ -132,7 +132,7 @@ class PdfPagesTree {
      * @param pageDictionary page's PdfDictionary
      * @return the {@code PdfPage} object, that wraps {@code pageDictionary}.
      */
-    public PdfPage getPage(PdfDictionary pageDictionary) {
+    PdfPage getPage(PdfDictionary pageDictionary) {
         int pageNum = getPageNumber(pageDictionary);
         if (pageNum > 0) {
             return getPage(pageNum);
@@ -146,7 +146,7 @@ class PdfPagesTree {
      *
      * @return total number of pages
      */
-    public int getNumberOfPages() {
+    int getNumberOfPages() {
         return pageRefs.size();
     }
 
@@ -154,7 +154,7 @@ class PdfPagesTree {
      * Returns the index of the first occurrence of the specified page
      * in this tree, or 0 if this tree does not contain the page.
      */
-    public int getPageNumber(PdfPage page) {
+    int getPageNumber(PdfPage page) {
         return pages.indexOf(page) + 1;
     }
 
@@ -162,7 +162,7 @@ class PdfPagesTree {
      * Returns the index of the first occurrence of the page in this tree
      * specified by its PdfDictionary, or 0 if this tree does not contain the page.
      */
-    public int getPageNumber(PdfDictionary pageDictionary) {
+    int getPageNumber(PdfDictionary pageDictionary) {
         int pageNum = pageRefs.indexOf(pageDictionary.getIndirectReference());
         if (pageNum >= 0) {
             return pageNum + 1;
@@ -184,7 +184,7 @@ class PdfPagesTree {
      *
      * @param pdfPage a {@link PdfPage} to be added
      */
-    public void addPage(PdfPage pdfPage) {
+    void addPage(PdfPage pdfPage) {
         PdfPages pdfPages;
         if (root != null) {
             // in this case we save tree structure
@@ -216,7 +216,7 @@ class PdfPagesTree {
      * @param index   one-base index of the page
      * @param pdfPage {@link PdfPage} to insert.
      */
-    public void addPage(int index, PdfPage pdfPage) {
+    void addPage(int index, PdfPage pdfPage) {
         --index;
         if (index > pageRefs.size()) {
             throw new IndexOutOfBoundsException("index");
@@ -244,7 +244,7 @@ class PdfPagesTree {
      * @param pageNum the one-based index of the PdfPage to be removed
      * @return the page that was removed from the list
      */
-    public PdfPage removePage(int pageNum) {
+    PdfPage removePage(int pageNum) {
         PdfPage pdfPage = getPage(pageNum);
         if (pdfPage.isFlushed()) {
             LOGGER.warn(() -> IoLogMessageConstant.REMOVING_PAGE_HAS_ALREADY_BEEN_FLUSHED);
@@ -271,7 +271,7 @@ class PdfPagesTree {
      * @return root {@link PdfPages}
      * @throws PdfException in case empty document
      */
-    protected PdfObject generateTree() {
+    PdfObject generateTree() {
         if (pageRefs.isEmpty()) {
             LOGGER.info(() -> IoLogMessageConstant.ATTEMPT_TO_GENERATE_PDF_PAGES_TREE_WITHOUT_ANY_PAGES);
             document.addNewPage();
@@ -299,20 +299,20 @@ class PdfPagesTree {
         return root.getPdfObject();
     }
 
-    protected void clearPageRefs() {
+    void clearPageRefs() {
         pageRefs = null;
         pages = null;
     }
 
-    protected List<PdfPages> getParents() {
+    List<PdfPages> getParents() {
         return parents;
     }
 
-    protected PdfPages getRoot() {
+    PdfPages getRoot() {
         return root;
     }
 
-    protected PdfPages findPageParent(PdfPage pdfPage) {
+    PdfPages findPageParent(PdfPage pdfPage) {
         int pageNum = getPageNumber(pdfPage) - 1;
         int parentIndex = findPageParent(pageNum);
         return parents.get(parentIndex);

@@ -42,7 +42,7 @@ class SignatureIdentifier extends AbstractIdentifiableObject {
     private final Date signingDate;
     private final CertificateWrapper signingCertificate;
 
-    public SignatureIdentifier(ValidationObjects signatureValidationObjects, CMSContainer signature,
+    SignatureIdentifier(ValidationObjects signatureValidationObjects, CMSContainer signature,
                                String signatureName, Date signingDate) {
         super("S");
         this.signature = signature;
@@ -52,11 +52,11 @@ class SignatureIdentifier extends AbstractIdentifiableObject {
                 new CertificateWrapper(signature.getSignerInfo().getSigningCertificate()));
     }
 
-    public String getDigestMethodAlgorithm() {
+    String getDigestMethodAlgorithm() {
         return "http://www.w3.org/2001/04/xmlenc#sha256";
     }
 
-    public String getDigestValue() {
+    String getDigestValue() {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              DataOutputStream dos = new DataOutputStream(bos)) {
             dos.writeLong(DateTimeUtil.getRelativeTime(signingDate));
@@ -74,15 +74,15 @@ class SignatureIdentifier extends AbstractIdentifiableObject {
         }
     }
 
-    public String getBase64SignatureValue() {
+    String getBase64SignatureValue() {
         return EncodingUtil.toBase64(signature.getSignerInfo().getSignatureData());
     }
 
-    public boolean isHashOnly() {
+    boolean isHashOnly() {
         return false;
     }
 
-    public boolean isDocHashOnly() {
+    boolean isDocHashOnly() {
         return false;
     }
 

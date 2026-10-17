@@ -44,7 +44,7 @@ class CssPseudoClassIsSelectorItem extends CssPseudoClassForgivingSelectorListSe
         return max;
     }
 
-    public static CssPseudoClassIsSelectorItem createIsSelectorItem(String arguments) {
+    static CssPseudoClassIsSelectorItem createIsSelectorItem(String arguments) {
         List<ICssSelector> selectors = parseSelectorListWithoutPseudoElements(arguments, true);
         if (selectors == null) {
             return null;

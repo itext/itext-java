@@ -60,32 +60,32 @@ abstract class AbstractTrueTypeFontModifier {
      * is 54 we should write 2 extra zeroes at the end, and it should be taken into account for calculating the start
      * offset of the next table (but not the length of the current table).
      */
-    protected Map<String, int[]> tableDirectory;
+    Map<String, int[]> tableDirectory;
     /**
      * Contains glyph data from `glyf` table. The key is the GID (glyph ID) and the value is a raw data of glyph.
      */
-    protected Map<Integer, byte[]> glyphDataMap;
+    Map<Integer, byte[]> glyphDataMap;
     /**
      * Contains font tables which have been changed during the modification. The key is the name of table which has
      * been changed and the value is raw data of the modified table.
      */
-    protected final Map<String, byte[]> modifiedTables = new HashMap<>();
+    final Map<String, byte[]> modifiedTables = new HashMap<>();
 
     /**
      * Font raw data on which new modified font will be built.
      */
-    protected RandomAccessFileOrArray raf;
+    RandomAccessFileOrArray raf;
     /**
      * Table directory offset which corresponds to font's raw data from {@link #raf}.
      */
-    protected int directoryOffset;
+    int directoryOffset;
     /**
      * the name of font which will be modified
      */
-    protected final String fontName;
+    final String fontName;
 
-    protected Map<Integer, byte[]> horizontalMetricMap;
-    protected int numberOfHMetrics;
+    Map<Integer, byte[]> horizontalMetricMap;
+    int numberOfHMetrics;
 
     private FontRawData outFont;
     private final String[] tableNames;
@@ -124,7 +124,7 @@ abstract class AbstractTrueTypeFontModifier {
 
     abstract int mergeTables() throws java.io.IOException;
 
-    protected int createModifiedTables() throws java.io.IOException {
+    int createModifiedTables() throws java.io.IOException {
         int[] activeGlyphs = new int[glyphDataMap.size()];
         int i = 0;
         int glyfSize = 0;

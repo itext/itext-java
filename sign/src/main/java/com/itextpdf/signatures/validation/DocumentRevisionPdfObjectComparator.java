@@ -48,7 +48,7 @@ final class DocumentRevisionPdfObjectComparator {
     }
 
 
-    public static boolean isSameReference(PdfIndirectReference indirectReference1,
+    static boolean isSameReference(PdfIndirectReference indirectReference1,
             PdfIndirectReference indirectReference2) {
         if (indirectReference1 == null || indirectReference2 == null) {
             return false;
@@ -57,16 +57,16 @@ final class DocumentRevisionPdfObjectComparator {
                 && indirectReference1.getGenNumber() == indirectReference2.getGenNumber();
     }
 
-    public static boolean comparePdfObjects(PdfObject pdfObject1, PdfObject pdfObject2,
+    static boolean comparePdfObjects(PdfObject pdfObject1, PdfObject pdfObject2,
             Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
         return comparePdfObjects(pdfObject1, pdfObject2, new ArrayList<>(), usuallyModifiedObjects);
     }
 
-    public static boolean isMaxGenerationObject(PdfIndirectReference indirectReference) {
+    static boolean isMaxGenerationObject(PdfIndirectReference indirectReference) {
         return indirectReference.getObjNumber() == 0 && indirectReference.getGenNumber() == PdfXrefTable.MAX_GENERATION;
     }
 
-    public static boolean comparePdfDictionaries(PdfDictionary dictionary1, PdfDictionary dictionary2,
+    static boolean comparePdfDictionaries(PdfDictionary dictionary1, PdfDictionary dictionary2,
             List<Tuple2<PdfObject, PdfObject>> visitedObjects,
             Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects) {
         Set<Map.Entry<PdfName, PdfObject>> entrySet1 = dictionary1.entrySet();

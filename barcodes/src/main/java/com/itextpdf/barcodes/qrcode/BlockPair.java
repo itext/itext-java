@@ -31,14 +31,14 @@ final class BlockPair {
     /**
      * @return data block of the pair
      */
-    public ByteArray getDataBytes() {
+    ByteArray getDataBytes() {
         return dataBytes;
     }
 
     /**
      * @return error correction block of the pair
      */
-    public ByteArray getErrorCorrectionBytes() {
+    ByteArray getErrorCorrectionBytes() {
         return errorCorrectionBytes;
     }
 

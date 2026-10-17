@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("UnitTest")
-class LotlFetchingPropertiesTest extends ExtendedITextTest {
+public class LotlFetchingPropertiesTest extends ExtendedITextTest {
 
     @Test
     public void testAddCountryName() {

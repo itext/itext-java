@@ -25,20 +25,18 @@ package com.itextpdf.signatures.validation.lotl;
 import com.itextpdf.io.resolver.resource.IResourceRetriever;
 import com.itextpdf.test.ExtendedITextTest;
 
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag("IntegrationTest")
-class EuropeanLotlFetcherTest extends ExtendedITextTest {
+public class EuropeanLotlFetcherTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER_LOTL = "./src/test/resources/com/itextpdf/signatures/validation" +
             "/lotl/LotlState2025_08_08/";
 

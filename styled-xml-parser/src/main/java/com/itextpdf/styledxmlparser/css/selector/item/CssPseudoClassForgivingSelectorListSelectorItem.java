@@ -35,7 +35,7 @@ import java.util.List;
  * Base class for pseudo-classes that accept a forgiving selector list (e.g. :is(), :where()).
  */
 abstract class CssPseudoClassForgivingSelectorListSelectorItem extends CssPseudoClassSelectorItem {
-    protected final List<ICssSelector> selectorList;
+    final List<ICssSelector> selectorList;
 
     protected CssPseudoClassForgivingSelectorListSelectorItem(String pseudoClass, List<ICssSelector> selectorList,
                                                               String argumentsString) {

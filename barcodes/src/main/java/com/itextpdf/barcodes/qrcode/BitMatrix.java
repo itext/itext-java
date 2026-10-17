@@ -35,11 +35,11 @@ final class BitMatrix {
     private final int[] bits;
 
     // A helper to construct a square matrix.
-    public BitMatrix(int dimension) {
+    BitMatrix(int dimension) {
         this(dimension, dimension);
     }
 
-    public BitMatrix(int width, int height) {
+    BitMatrix(int width, int height) {
         if (width < 1 || height < 1) {
             throw new IllegalArgumentException("Both dimensions must be greater than 0");
         }
@@ -60,7 +60,7 @@ final class BitMatrix {
      * @param y The vertical component (i.e. which row)
      * @return value of given bit in matrix
      */
-    public boolean get(int x, int y) {
+    boolean get(int x, int y) {
         int offset = y * rowSize + (x >> 5);
         return ((bits[offset] >>> (x & 0x1f)) & 1) != 0;
     }
@@ -71,7 +71,7 @@ final class BitMatrix {
      * @param x The horizontal component (i.e. which column)
      * @param y The vertical component (i.e. which row)
      */
-    public void set(int x, int y) {
+    void set(int x, int y) {
         int offset = y * rowSize + (x >> 5);
         bits[offset] |= 1 << (x & 0x1f);
     }
@@ -82,7 +82,7 @@ final class BitMatrix {
      * @param x The horizontal component (i.e. which column)
      * @param y The vertical component (i.e. which row)
      */
-    public void flip(int x, int y) {
+    void flip(int x, int y) {
         int offset = y * rowSize + (x >> 5);
         bits[offset] ^= 1 << (x & 0x1f);
     }
@@ -90,7 +90,7 @@ final class BitMatrix {
     /**
      * Clears all bits (sets to false).
      */
-    public void clear() {
+    void clear() {
         int max = bits.length;
         for (int i = 0; i < max; i++) {
             bits[i] = 0;
@@ -105,7 +105,7 @@ final class BitMatrix {
      * @param width The width of the region
      * @param height The height of the region
      */
-    public void setRegion(int left, int top, int width, int height) {
+    void setRegion(int left, int top, int width, int height) {
         if (top < 0 || left < 0) {
             throw new IllegalArgumentException("Left and top must be nonnegative");
         }
@@ -133,7 +133,7 @@ final class BitMatrix {
      * @return The resulting BitArray - this reference should always be used even when passing
      *         your own row
      */
-    public BitArray getRow(int y, BitArray row) {
+    BitArray getRow(int y, BitArray row) {
         if (row == null || row.getSize() < width) {
             row = new BitArray(width);
         }
@@ -147,14 +147,14 @@ final class BitMatrix {
     /**
      * @return The width of the matrix
      */
-    public int getWidth() {
+    int getWidth() {
         return width;
     }
 
     /**
      * @return The height of the matrix
      */
-    public int getHeight() {
+    int getHeight() {
         return height;
     }
 
@@ -164,7 +164,7 @@ final class BitMatrix {
      *
      * @return row/column dimension of this matrix
      */
-    public int getDimension() {
+    int getDimension() {
         if (width != height) {
             throw new RuntimeException("Can't call getDimension() on a non-square matrix");
         }

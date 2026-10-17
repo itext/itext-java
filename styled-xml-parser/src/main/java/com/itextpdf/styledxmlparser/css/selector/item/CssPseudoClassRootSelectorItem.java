@@ -36,7 +36,7 @@ class CssPseudoClassRootSelectorItem extends CssPseudoClassSelectorItem {
         super(CommonCssConstants.ROOT);
     }
 
-    public static CssPseudoClassRootSelectorItem getInstance() {
+    static CssPseudoClassRootSelectorItem getInstance() {
         return instance;
     }
 

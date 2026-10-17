@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
 import org.w3c.dom.NodeList;
 
 @Tag("BouncyCastleIntegrationTest")
-class XmlReportGeneratorTest extends ExtendedITextTest {
+public class XmlReportGeneratorTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/signatures/validation/SignatureValidatorTest/";
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();

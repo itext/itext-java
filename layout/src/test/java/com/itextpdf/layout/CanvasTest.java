@@ -419,7 +419,7 @@ public class CanvasTest extends ExtendedITextTest {
         }
 
 
-        public boolean getDrawingOnPage(){
+        boolean getDrawingOnPage(){
             return this.drawingOnPage;
         }
     }

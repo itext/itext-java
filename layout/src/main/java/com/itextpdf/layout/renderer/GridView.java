@@ -46,13 +46,13 @@ class GridView {
         this.grid = grid;
     }
 
-    public boolean hasNext() {
+    boolean hasNext() {
         return cursor.y < grid.getRows().length - bottomMargin
                 && cursor.x < grid.getRows()[0].length - rightMargin
                 && hasNext;
     }
 
-    public Pos next() {
+    Pos next() {
         //If cell has fixed both x and y, then no need to iterate over the grid.
         if (isFixed()) {
             hasNext = false;
@@ -180,11 +180,11 @@ class GridView {
         /**
          * column index.
          */
-        protected int x;
+        int x;
         /**
          * row index.
          */
-        protected int y;
+        int y;
 
         /**
          * Creates a position from two integers.
@@ -207,11 +207,11 @@ class GridView {
             this.x = other.x;
         }
 
-        public int getX() {
+        int getX() {
             return x;
         }
 
-        public int getY() {
+        int getY() {
             return y;
         }
     }
@@ -233,7 +233,7 @@ class GridView {
             this.densePacking = densePacking;
         }
 
-        public void setX(int x) {
+        void setX(int x) {
             if (densePacking) {
                 this.x = Math.max(x, 0);
             } else if (this.x > x && x != -1) {
@@ -246,7 +246,7 @@ class GridView {
             }
         }
 
-        public void setY(int y) {
+        void setY(int y) {
             if (densePacking) {
                 this.y = Math.max(y, 0);
             } else if (this.y > y && y != -1) {
@@ -266,7 +266,7 @@ class GridView {
          * @param flow flow which determines in which axis cursor will be increased
          * @param boundaries grid view boundaries
          */
-        public void increment(Grid.GridOrder flow, Pos boundaries) {
+        void increment(Grid.GridOrder flow, Pos boundaries) {
             if (Grid.GridOrder.ROW.equals(flow)) {
                 ++x;
                 if (x == boundaries.x) {
@@ -282,7 +282,7 @@ class GridView {
             }
         }
 
-        public void reset() {
+        void reset() {
             this.x = 0;
             this.y = 0;
         }

@@ -28,7 +28,7 @@ final class ByteArray {
     /**
      * Creates a new ByteArray instance with size 0.
      */
-    public ByteArray() {
+    ByteArray() {
         bytes = null;
         size = 0;
     }
@@ -38,7 +38,7 @@ final class ByteArray {
      *
      * @param size size of the array
      */
-    public ByteArray(int size) {
+    ByteArray(int size) {
         bytes = new byte[size];
         this.size = size;
     }
@@ -48,7 +48,7 @@ final class ByteArray {
      *
      * @param byteArray the byte[]
      */
-    public ByteArray(byte[] byteArray) {
+    ByteArray(byte[] byteArray) {
         bytes = byteArray;
         size = bytes.length;
     }
@@ -58,7 +58,7 @@ final class ByteArray {
      * @param index The index in the array to access.
      * @return The unsigned value of the byte as an int.
      */
-    public int at(int index) {
+    int at(int index) {
         return bytes[index] & 0xff;
     }
 
@@ -67,21 +67,21 @@ final class ByteArray {
      * @param index position in the byte-array
      * @param value new value
      */
-    public void set(int index, int value) {
+    void set(int index, int value) {
         bytes[index] = (byte) value;
     }
 
     /**
      * @return size of the array
      */
-    public int size() {
+    int size() {
         return size;
     }
 
     /**
      * @return true if size is equal to 0, false otherwise
      */
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return size == 0;
     }
 
@@ -89,7 +89,7 @@ final class ByteArray {
      * Append a byte to the end of the array. If the array is too small, it's capacity is doubled.
      * @param value byte to append.
      */
-    public void appendByte(int value) {
+    void appendByte(int value) {
         if (size == 0 || size >= bytes.length) {
             int newSize = Math.max(INITIAL_SIZE, size << 1);
             reserve(newSize);
@@ -102,7 +102,7 @@ final class ByteArray {
      * Increase the capacity of the array to "capacity" if the current capacity is smaller
      * @param capacity the new capacity
      */
-    public void reserve(int capacity) {
+    void reserve(int capacity) {
         if (bytes == null || bytes.length < capacity) {
             byte[] newArray = new byte[capacity];
             if (bytes != null) {
@@ -118,7 +118,7 @@ final class ByteArray {
      * @param offset offset to start at
      * @param count number of bytes to copy
      */
-    public void set(byte[] source, int offset, int count) {
+    void set(byte[] source, int offset, int count) {
         bytes = new byte[count];
         size = count;
         for (int x = 0; x < count; x++) {

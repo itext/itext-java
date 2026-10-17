@@ -30,7 +30,7 @@ class AwtImageDataFactory {
      * @param color if different from <CODE>null</CODE> the transparency pixels are replaced by this color
      * @return RawImage
      */
-    public static ImageData create(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
+    static ImageData create(java.awt.Image image, java.awt.Color color) throws java.io.IOException {
         return AwtImageDataFactory.create(image, color, false);
     }
 
@@ -41,7 +41,7 @@ class AwtImageDataFactory {
      * @param forceBW if <CODE>true</CODE> the image is treated as black and white
      * @return RawImage
      */
-    public static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
+    static ImageData create(java.awt.Image image, java.awt.Color color, boolean forceBW) throws java.io.IOException {
         if (image instanceof java.awt.image.BufferedImage) {
             java.awt.image.BufferedImage bi = (java.awt.image.BufferedImage) image;
             if (bi.getType() == java.awt.image.BufferedImage.TYPE_BYTE_BINARY && bi.getColorModel().getPixelSize() == 1) {

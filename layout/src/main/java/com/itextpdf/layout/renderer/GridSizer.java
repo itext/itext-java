@@ -75,7 +75,7 @@ class GridSizer {
     /**
      * Resolves grid track sizes.
      */
-    public void sizeGrid() {
+    void sizeGrid() {
         // 1. First, the track sizing algorithm is used to resolve the sizes of the grid columns.
         resolveGridColumns();
         // 2. Next, the track sizing algorithm resolves the sizes of the grid rows.
@@ -88,7 +88,7 @@ class GridSizer {
      *
      * @return grid container height covered by row template
      */
-    public float getContainerHeight() {
+    float getContainerHeight() {
         return containerHeight;
     }
 

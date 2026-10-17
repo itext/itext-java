@@ -65,7 +65,7 @@ final class Jpeg2000ImageHelper {
      *
      * @param image JPEG 2000 image data to process
      */
-    public static void processImage(ImageData image) {
+    static void processImage(ImageData image) {
         if (image.getOriginalType() != ImageType.JPEG2000)
             throw new IllegalArgumentException("JPEG2000 image expected");
         processParameters((Jpeg2000ImageData) image);

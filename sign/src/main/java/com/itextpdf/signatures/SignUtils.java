@@ -305,7 +305,7 @@ final class SignUtils {
         signature.setParameter(spec);
     }
 
-    public static void updateVerifier(Signature signature, byte[] attr) throws SignatureException {
+    static void updateVerifier(Signature signature, byte[] attr) throws SignatureException {
         signature.update(attr);
     }
 

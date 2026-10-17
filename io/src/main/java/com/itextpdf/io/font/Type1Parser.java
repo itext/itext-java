@@ -54,14 +54,14 @@ class Type1Parser {
      * @param pfb the PFB file if the input is made with a <CODE>byte</CODE> array
      * @param metricsPath the name of one of the 14 built-in fonts or the location of an AFM file. The file must end in '.afm'
      */
-    public Type1Parser(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) {
+    Type1Parser(String metricsPath, String binaryPath, byte[] afm, byte[] pfb) {
         this.afmData = afm;
         this.pfbData = pfb;
         this.afmPath = metricsPath;
         this.pfbPath = binaryPath;
     }
 
-    public RandomAccessFileOrArray getMetricsFile() throws java.io.IOException {
+    RandomAccessFileOrArray getMetricsFile() throws java.io.IOException {
         isBuiltInFont = false;
         if (StandardFonts.isStandardFont(afmPath)) {
             isBuiltInFont = true;
@@ -119,7 +119,7 @@ class Type1Parser {
         }
     }
 
-    public RandomAccessFileOrArray getPostscriptBinary() throws java.io.IOException {
+    RandomAccessFileOrArray getPostscriptBinary() throws java.io.IOException {
         if (pfbData != null) {
             return new RandomAccessFileOrArray(sourceFactory.createSource(pfbData));
         } else if (pfbPath != null && StringNormalizer.toLowerCase(pfbPath).endsWith(".pfb")) {
@@ -130,11 +130,11 @@ class Type1Parser {
         }
     }
 
-    public boolean isBuiltInFont() {
+    boolean isBuiltInFont() {
         return isBuiltInFont;
     }
 
-    public String getAfmPath() {
+    String getAfmPath() {
         return afmPath;
     }
 

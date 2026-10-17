@@ -61,7 +61,7 @@ class SignatureValidationStatus {
     /**
      * Creates an empty {@link SignatureValidationStatus} instance.
      */
-    public SignatureValidationStatus() {
+    SignatureValidationStatus() {
         // Declaring default constructor explicitly to avoid removing it unintentionally.
     }
 
@@ -70,14 +70,14 @@ class SignatureValidationStatus {
      *
      * @param mainIndication {@link MainIndication} value
      */
-    public void setMainIndication(MainIndication mainIndication) {
+    void setMainIndication(MainIndication mainIndication) {
         this.mainIndication = mainIndication;
     }
 
     /**
      * Gets the main status indication.
      */
-    public MainIndication getMainIndication() {
+    MainIndication getMainIndication() {
         return mainIndication;
     }
 
@@ -86,7 +86,7 @@ class SignatureValidationStatus {
      *
      * @return validation status as string
      */
-    public String getMainIndicationAsString() {
+    String getMainIndicationAsString() {
         return MAIN_INDICATION_VALUE_MAP.get(mainIndication);
     }
 
@@ -95,7 +95,7 @@ class SignatureValidationStatus {
      *
      * @param subIndication {@link SubIndication} value
      */
-    public void setSubIndication(SubIndication subIndication) {
+    void setSubIndication(SubIndication subIndication) {
         this.subIndication = subIndication;
         this.subIndicationSet = true;
     }
@@ -105,7 +105,7 @@ class SignatureValidationStatus {
      *
      * @return {@link SubIndication} value
      */
-    public SubIndication getSubIndication() {
+    SubIndication getSubIndication() {
         return subIndication;
     }
 
@@ -114,7 +114,7 @@ class SignatureValidationStatus {
      *
      * @return sub-indication value as string
      */
-    public String getSubIndicationAsString() {
+    String getSubIndicationAsString() {
         if (!subIndicationSet) {
             return null;
         }
@@ -127,7 +127,7 @@ class SignatureValidationStatus {
      * @param reason message reason as string
      * @param messageType {@link MessageType}
      */
-    public void addMessage(String reason, MessageType messageType) {
+    void addMessage(String reason, MessageType messageType) {
         this.messages.add(new Tuple2<>(reason, MESSAGE_TYPE_VALUE_MAP.get(messageType)));
     }
 
@@ -136,7 +136,7 @@ class SignatureValidationStatus {
      *
      * @return Collection of reported messages
      */
-    public Collection<Tuple2<String, String>> getMessages() {
+    Collection<Tuple2<String, String>> getMessages() {
         return messages;
     }
 

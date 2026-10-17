@@ -320,7 +320,7 @@ class Grid {
          * @param explicitColumnCount explicit column count of a grid
          * @return current builder instance
          */
-        public Builder columns(int explicitColumnCount) {
+        Builder columns(int explicitColumnCount) {
             this.explicitColumnCount = explicitColumnCount;
             return this;
         }
@@ -332,7 +332,7 @@ class Grid {
          * @param explicitRowCount explicit height of a grid
          * @return current builder instance
          */
-        public Builder rows(int explicitRowCount) {
+        Builder rows(int explicitRowCount) {
             this.explicitRowCount = explicitRowCount;
             return this;
         }
@@ -343,7 +343,7 @@ class Grid {
          * @param flow iteration flow
          * @return current builder instance
          */
-        public Builder flow(GridFlow flow) {
+        Builder flow(GridFlow flow) {
             this.flow = flow;
             return this;
         }
@@ -353,7 +353,7 @@ class Grid {
          *
          * @return new {@code Grid} instance.
          */
-        public Grid build() {
+        Grid build() {
             //Those values are atomic, because primitive values stored on stack and can't be passed inside lambda
             //and wrapper types are immutable, so have to use mutable analogue.
             //Using long for .NET porting compatibility

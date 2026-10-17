@@ -34,14 +34,14 @@ import com.itextpdf.styledxmlparser.node.INode;
 import java.util.List;
 
 class CssPseudoClassNotSelectorItem extends CssPseudoClassSelectorItem {
-    protected final List<ICssSelector> selectorList;
+    final List<ICssSelector> selectorList;
 
     CssPseudoClassNotSelectorItem(List<ICssSelector> selectorList, String argumentsString) {
         super(CommonCssConstants.NOT, argumentsString);
         this.selectorList = selectorList;
     }
 
-    public static CssPseudoClassNotSelectorItem createNotSelectorItem(String arguments) {
+    static CssPseudoClassNotSelectorItem createNotSelectorItem(String arguments) {
         List<ICssSelector> selectors = parseSelectorListWithoutPseudoElements(arguments, false);
         if (selectors == null) {
             return null;
@@ -60,7 +60,7 @@ class CssPseudoClassNotSelectorItem extends CssPseudoClassSelectorItem {
         return max;
     }
 
-    public List<ICssSelectorItem> getArgumentsSelector() {
+    List<ICssSelectorItem> getArgumentsSelector() {
         return CssSelectorParser.parseSelectorItems(arguments);
     }
 

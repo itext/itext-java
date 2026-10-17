@@ -22,9 +22,9 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 
 
 class PdfObjectStream extends PdfStream {
@@ -33,19 +33,19 @@ class PdfObjectStream extends PdfStream {
     /**
      * Max number of objects in object stream.
      */
-    public static final int MAX_OBJ_STREAM_SIZE = 200;
+    static final int MAX_OBJ_STREAM_SIZE = 200;
 
     /**
      * Current object stream size (number of objects inside).
      */
-    protected PdfNumber size = new PdfNumber(0);
+    PdfNumber size = new PdfNumber(0);
 
     /**
      * Stream containing object indices, a heading part of object stream.
      */
-    protected PdfOutputStream indexStream;
+    PdfOutputStream indexStream;
 
-    public PdfObjectStream(PdfDocument doc) {
+    PdfObjectStream(PdfDocument doc) {
         this(doc, new ByteArrayOutputStream());
         indexStream = new PdfOutputStream(new ByteArrayOutputStream());
     }
@@ -79,7 +79,7 @@ class PdfObjectStream extends PdfStream {
      *
      * @param object object to add.
      */
-    public void addObject(PdfObject object) {
+    void addObject(PdfObject object) {
         if (size.intValue() == MAX_OBJ_STREAM_SIZE) {
             throw new PdfException(KernelExceptionMessageConstant.PDF_OBJECT_STREAM_REACH_MAX_SIZE);
         }
@@ -101,11 +101,11 @@ class PdfObjectStream extends PdfStream {
      *
      * @return object stream size.
      */
-    public int getSize() {
+    int getSize() {
         return size.intValue();
     }
 
-    public PdfOutputStream getIndexStream() {
+    PdfOutputStream getIndexStream() {
         return indexStream;
     }
 

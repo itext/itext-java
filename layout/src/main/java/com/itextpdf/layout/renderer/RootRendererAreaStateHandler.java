@@ -35,7 +35,7 @@ class RootRendererAreaStateHandler {
     private List<Rectangle> storedPreviousFloatRenderAreas = null;
     private List<Rectangle> storedNextFloatRenderAreas = null;
 
-    public boolean attemptGoBackToStoredPreviousStateAndStoreNextState(RootRenderer rootRenderer) {
+    boolean attemptGoBackToStoredPreviousStateAndStoreNextState(RootRenderer rootRenderer) {
         boolean result = false;
         if (storedPreviousArea != null) {
             storedNextArea = rootRenderer.currentArea;
@@ -53,7 +53,7 @@ class RootRendererAreaStateHandler {
         return result;
     }
 
-    public boolean attemptGoForwardToStoredNextState(RootRenderer rootRenderer) {
+    boolean attemptGoForwardToStoredNextState(RootRenderer rootRenderer) {
         if (storedNextArea != null) {
             rootRenderer.currentArea = storedNextArea;
             rootRenderer.floatRendererAreas = storedNextFloatRenderAreas;
@@ -66,7 +66,7 @@ class RootRendererAreaStateHandler {
         }
     }
 
-    public RootRendererAreaStateHandler storePreviousState(RootRenderer rootRenderer) {
+    RootRendererAreaStateHandler storePreviousState(RootRenderer rootRenderer) {
         storedPreviousArea = rootRenderer.currentArea;
         storedPreviousFloatRenderAreas = new ArrayList<>(rootRenderer.floatRendererAreas);
         return this;

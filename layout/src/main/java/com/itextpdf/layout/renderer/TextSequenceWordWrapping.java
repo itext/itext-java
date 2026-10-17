@@ -46,7 +46,7 @@ final class TextSequenceWordWrapping {
     private TextSequenceWordWrapping() {
     }
 
-    public static boolean isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(IRenderer childRenderer) {
+    static boolean isTextRendererAndRequiresSpecialScriptPreLayoutProcessing(IRenderer childRenderer) {
         return childRenderer instanceof TextRenderer
                 && ((TextRenderer) childRenderer).getSpecialScriptsWordBreakPoints() == null
                 && ((TextRenderer) childRenderer).textContainsSpecialScriptGlyphs(false)
@@ -88,7 +88,7 @@ final class TextSequenceWordWrapping {
      * @param childPos index of the childRenderer in LineRenderer#childRenderers
      * from which the a continuous sequence of TextRenderer containing special scripts starts
      */
-    public static void processSpecialScriptPreLayout(LineRenderer lineRenderer, int childPos) {
+    static void processSpecialScriptPreLayout(LineRenderer lineRenderer, int childPos) {
         SpecialScriptsContainingTextRendererSequenceInfo info =
                 getSpecialScriptsContainingTextRendererSequenceInfo(lineRenderer, childPos);
         int numberOfSequentialTextRenderers = info.numberOfSequentialTextRenderers;
@@ -101,7 +101,7 @@ final class TextSequenceWordWrapping {
                 possibleBreakPointsGlobal, indicesOfFloating);
     }
 
-    public static void updateTextSequenceLayoutResults(Map<Integer, LayoutResult> textRendererLayoutResults,
+    static void updateTextSequenceLayoutResults(Map<Integer, LayoutResult> textRendererLayoutResults,
                                                        boolean specialScripts,
                                                        IRenderer childRenderer, int childPos,
                                                        LayoutResult childResult) {
@@ -111,7 +111,7 @@ final class TextSequenceWordWrapping {
         }
     }
 
-    public static void resetTextSequenceIfItEnded(
+    static void resetTextSequenceIfItEnded(
             Map<Integer, LayoutResult> textRendererLayoutResults, boolean specialScripts, IRenderer childRenderer,
             int childPos, MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper,
             boolean noSoftWrap, AbstractWidthHandler widthHandler, boolean isVerticalWriting) {
@@ -138,7 +138,7 @@ final class TextSequenceWordWrapping {
         }
     }
 
-    public static LineAscentDescentState updateTextRendererSequenceAscentDescent(
+    static LineAscentDescentState updateTextRendererSequenceAscentDescent(
             LineRenderer lineRenderer, Map<Integer, float[]> textRendererSequenceAscentDescent, int childPos,
             float[] childAscentDescent, LineAscentDescentState preTextSequenceAscentDescent) {
         IRenderer childRenderer = getRenderer(lineRenderer, childPos);
@@ -156,7 +156,7 @@ final class TextSequenceWordWrapping {
         return preTextSequenceAscentDescent;
     }
 
-    public static MinMaxWidthOfTextRendererSequenceHelper updateTextRendererSequenceMinMaxWidth(
+    static MinMaxWidthOfTextRendererSequenceHelper updateTextRendererSequenceMinMaxWidth(
             LineRenderer lineRenderer,
             AbstractWidthHandler widthHandler, int childPos,
             MinMaxWidthOfTextRendererSequenceHelper minMaxWidthOfTextRendererSequenceHelper, boolean anythingPlaced,
@@ -181,7 +181,7 @@ final class TextSequenceWordWrapping {
         }
     }
 
-    public static LastFittingChildRendererData getIndexAndLayoutResultOfTheLastTextRendererWithNoSpecialScripts(
+    static LastFittingChildRendererData getIndexAndLayoutResultOfTheLastTextRendererWithNoSpecialScripts(
             LineRenderer lineRenderer,
             int childPos, Map<Integer, LayoutResult> textSequenceLayoutResults, boolean wasParentsHeightClipped,
             boolean isOverflowFit, boolean floatsPlaced) {
@@ -286,7 +286,7 @@ final class TextSequenceWordWrapping {
         }
     }
 
-    public static LastFittingChildRendererData getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts
+    static LastFittingChildRendererData getIndexAndLayoutResultOfTheLastTextRendererContainingSpecialScripts
             (LineRenderer lineRenderer, int childPos, Map<Integer, LayoutResult> specialScriptLayoutResults,
              boolean wasParentsHeightClipped, boolean isOverflowFit) {
         int indexOfRendererContainingLastFullyFittingWord = childPos;
@@ -418,7 +418,7 @@ final class TextSequenceWordWrapping {
      * @param overflowProperty either {@link Property#OVERFLOW_X} for horizontal text
      * or {@link Property#OVERFLOW_Y} for vertical text
      */
-    public static void preprocessTextSequenceOverflow(LineRenderer lineRenderer,
+    static void preprocessTextSequenceOverflow(LineRenderer lineRenderer,
                                                       boolean textSequenceOverflowProcessing, IRenderer childRenderer,
                                                       boolean wasOverflowChanged, OverflowPropertyValue oldOverflow,
                                                       int overflowProperty) {
@@ -452,7 +452,7 @@ final class TextSequenceWordWrapping {
      * @param overflowProperty either {@link Property#OVERFLOW_X} for horizontal text
      * or {@link Property#OVERFLOW_Y} for vertical text
      */
-    public static boolean postprocessTextSequenceOverflow(LineRenderer lineRenderer,
+    static boolean postprocessTextSequenceOverflow(LineRenderer lineRenderer,
                                                           boolean textSequenceOverflowProcessing,
                                                           int childPos, IRenderer childRenderer,
                                                           LayoutResult childResult, boolean wasOverflowChanged,
@@ -741,9 +741,9 @@ final class TextSequenceWordWrapping {
     }
 
     static class MinMaxWidthOfTextRendererSequenceHelper {
-        public float minWidthPreSequence;
-        public float textIndent;
-        public boolean anythingPlacedBeforeTextRendererSequence;
+        float minWidthPreSequence;
+        float textIndent;
+        boolean anythingPlacedBeforeTextRendererSequence;
 
         public MinMaxWidthOfTextRendererSequenceHelper(float minWidthPreSequence, float textIndent,
                                                        boolean anythingPlacedBeforeTextRendererSequence) {
@@ -755,8 +755,8 @@ final class TextSequenceWordWrapping {
     }
 
     static class LastFittingChildRendererData {
-        public int childIndex;
-        public LayoutResult childLayoutResult;
+        int childIndex;
+        LayoutResult childLayoutResult;
 
         public LastFittingChildRendererData(int childIndex, LayoutResult childLayoutResult) {
             this.childIndex = childIndex;
@@ -769,8 +769,8 @@ final class TextSequenceWordWrapping {
     // sequentialTextContent - converted to String and concatenated TextRenderer#text-s;
     // indicesOfFloating - indices of ignored floating child renderers of this LineRenderer
     static class SpecialScriptsContainingTextRendererSequenceInfo {
-        public int numberOfSequentialTextRenderers;
-        public String sequentialTextContent;
+        int numberOfSequentialTextRenderers;
+        String sequentialTextContent;
         List<Integer> indicesOfFloating;
 
         public SpecialScriptsContainingTextRendererSequenceInfo

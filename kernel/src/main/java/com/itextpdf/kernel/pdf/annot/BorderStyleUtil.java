@@ -45,7 +45,7 @@ class BorderStyleUtil {
      * @param style The new value for the annotation's border style.
      * @return Updated border style dictionary entry.
      */
-    public static final PdfDictionary setStyle(PdfDictionary bs, PdfName style) {
+    static final PdfDictionary setStyle(PdfDictionary bs, PdfName style) {
         if (null == bs) {
             bs = new PdfDictionary();
         }
@@ -63,7 +63,7 @@ class BorderStyleUtil {
      *                    shall be used in drawing a dashed border.
      * @return Updated border style dictionary entry.
      */
-    public static final PdfDictionary setDashPattern(PdfDictionary bs, PdfArray dashPattern) {
+    static final PdfDictionary setDashPattern(PdfDictionary bs, PdfArray dashPattern) {
         if (null == bs) {
             bs = new PdfDictionary();
         }

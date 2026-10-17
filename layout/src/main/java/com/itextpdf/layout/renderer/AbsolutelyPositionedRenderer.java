@@ -88,7 +88,7 @@ class AbsolutelyPositionedRenderer implements IRenderer {
         return dummyRenderer.layout(copiedContext);
     }
 
-    public IRenderer getWrappedRenderer() {
+    IRenderer getWrappedRenderer() {
         return wrappedRenderer;
     }
 

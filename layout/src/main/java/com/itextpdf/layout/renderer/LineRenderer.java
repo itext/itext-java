@@ -2052,23 +2052,23 @@ public class LineRenderer extends AbstractRenderer {
             starterNonTextRenderers = new ArrayList<>();
         }
 
-        public List<RendererGlyph> getLineGlyphs() {
+        List<RendererGlyph> getLineGlyphs() {
             return lineGlyphs;
         }
 
-        public List<IRenderer> getInsertAfterAndRemove(TextRenderer afterRenderer) {
+        List<IRenderer> getInsertAfterAndRemove(TextRenderer afterRenderer) {
             return insertAfter.remove(afterRenderer);
         }
 
-        public List<IRenderer> getStarterNonTextRenderers() {
+        List<IRenderer> getStarterNonTextRenderers() {
             return starterNonTextRenderers;
         }
 
-        public void addLineGlyph(RendererGlyph glyph) {
+        void addLineGlyph(RendererGlyph glyph) {
             lineGlyphs.add(glyph);
         }
 
-        public void addInsertAfter(TextRenderer afterRenderer, IRenderer toInsert) {
+        void addInsertAfter(TextRenderer afterRenderer, IRenderer toInsert) {
             if (afterRenderer == null) {
                 // null indicates that there were no previous renderers
                 starterNonTextRenderers.add(toInsert);

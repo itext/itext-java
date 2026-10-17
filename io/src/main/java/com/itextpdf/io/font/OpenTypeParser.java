@@ -161,52 +161,52 @@ class OpenTypeParser implements Closeable {
     /**
      * The file name.
      */
-    protected String fileName;
+    String fileName;
     /**
      * The file in use.
      */
-    protected RandomAccessFileOrArray raf;
+    RandomAccessFileOrArray raf;
     /**
      * The index for the TTC font. It is -1 {@code int} for a TTF file.
      */
-    protected int ttcIndex = -1;
+    int ttcIndex = -1;
     /**
      * The offset from the start of the file to the table directory.
      * It is 0 for TTF and may vary for TTC depending on the chosen font.
      */
-    protected int directoryOffset;
+    int directoryOffset;
     /**
      * The font name. This name is usually extracted from the table 'name' with the 'Name ID' 6.
      */
-    protected String fontName;
+    String fontName;
     /**
      * All the names of the Names-Table.
      */
-    protected Map<Integer, List<String[]>> allNameEntries;
+    Map<Integer, List<String[]>> allNameEntries;
 
     /**
      * Indicate, that the font contains 'CFF ' table.
      */
-    protected boolean cff = false;
+    boolean cff = false;
     /**
      * Offset to 'CFF ' table.
      */
-    protected int cffOffset;
+    int cffOffset;
     /**
      * Length of 'CFF ' table.
      */
-    protected int cffLength;
+    int cffLength;
 
     private int[] glyphWidthsByIndex;
     private int[] locaTable;
     // In case of lenient mode parsing 'name' and 'OS/2' table can be missed
     private boolean isLenientMode = false;
 
-    protected HeaderTable head;
-    protected HorizontalHeader hhea;
-    protected WindowsMetrics os_2;
-    protected PostTable post;
-    protected CmapTable cmaps;
+    HeaderTable head;
+    HorizontalHeader hhea;
+    WindowsMetrics os_2;
+    PostTable post;
+    CmapTable cmaps;
 
     /**
      * Contains the location of the several tables. The key is the name of
@@ -214,7 +214,7 @@ class OpenTypeParser implements Closeable {
      * is the offset from the start of the file and position 1 is the length
      * of the table.
      */
-    protected Map<String, int[]> tables;
+    Map<String, int[]> tables;
 
     /**
      * Instantiates a new {@link OpenTypeParser} instance based on raw font data.
@@ -223,7 +223,7 @@ class OpenTypeParser implements Closeable {
      *
      * @throws java.io.IOException if any input/output issue occurs
      */
-    public OpenTypeParser(byte[] ttf) throws java.io.IOException {
+    OpenTypeParser(byte[] ttf) throws java.io.IOException {
         this(ttf, false);
     }
 
@@ -235,25 +235,25 @@ class OpenTypeParser implements Closeable {
      *
      * @throws java.io.IOException if any input/output issue occurs
      */
-    public OpenTypeParser(byte[] ttf, boolean isLenientMode) throws java.io.IOException {
+    OpenTypeParser(byte[] ttf, boolean isLenientMode) throws java.io.IOException {
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttf));
         this.isLenientMode = isLenientMode;
         initializeSfntTables();
     }
 
-    public OpenTypeParser(byte[] ttc, int ttcIndex) throws java.io.IOException {
+    OpenTypeParser(byte[] ttc, int ttcIndex) throws java.io.IOException {
         this.ttcIndex = ttcIndex;
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createSource(ttc));
         initializeSfntTables();
     }
 
-    public OpenTypeParser(String ttcPath, int ttcIndex) throws java.io.IOException {
+    OpenTypeParser(String ttcPath, int ttcIndex) throws java.io.IOException {
         this.ttcIndex = ttcIndex;
         raf = new RandomAccessFileOrArray(new RandomAccessSourceFactory().createBestSource(ttcPath));
         initializeSfntTables();
     }
 
-    public OpenTypeParser(String name) throws java.io.IOException {
+    OpenTypeParser(String name) throws java.io.IOException {
         String ttcName = getTTCName(name);
         this.fileName = ttcName;
         if (ttcName.length() < name.length()) {
@@ -266,7 +266,7 @@ class OpenTypeParser implements Closeable {
     /**
      * Gets the Postscript font name.
      */
-    public String getPsFontName() {
+    String getPsFontName() {
         if (fontName == null) {
             if (!allNameEntries.isEmpty()) {
                 List<String[]> names = allNameEntries.get(6);
@@ -281,35 +281,35 @@ class OpenTypeParser implements Closeable {
         return fontName;
     }
 
-    public Map<Integer, List<String[]>> getAllNameEntries() {
+    Map<Integer, List<String[]>> getAllNameEntries() {
         return allNameEntries;
     }
 
-    public PostTable getPostTable() {
+    PostTable getPostTable() {
         return post;
     }
 
-    public WindowsMetrics getOs_2Table() {
+    WindowsMetrics getOs_2Table() {
         return os_2;
     }
 
-    public HorizontalHeader getHheaTable() {
+    HorizontalHeader getHheaTable() {
         return hhea;
     }
 
-    public HeaderTable getHeadTable() {
+    HeaderTable getHeadTable() {
         return head;
     }
 
-    public CmapTable getCmapTable() {
+    CmapTable getCmapTable() {
         return cmaps;
     }
 
-    public int[] getGlyphWidthsByIndex() {
+    int[] getGlyphWidthsByIndex() {
         return glyphWidthsByIndex;
     }
 
-    public FontNames getFontNames() {
+    FontNames getFontNames() {
         FontNames fontNames = new FontNames();
         fontNames.setAllNames(getAllNameEntries());
         fontNames.setFontName(getPsFontName());
@@ -343,7 +343,7 @@ class OpenTypeParser implements Closeable {
         return fontNames;
     }
 
-    public boolean isCff() {
+    boolean isCff() {
         return cff;
     }
 
@@ -354,7 +354,7 @@ class OpenTypeParser implements Closeable {
      *
      * @throws java.io.IOException if any input/output issue occurs
      */
-    public byte[] getFullFont() throws java.io.IOException {
+    byte[] getFullFont() throws java.io.IOException {
         RandomAccessFileOrArray rf2 = null;
         try {
             rf2 = raf.createView();
@@ -380,7 +380,7 @@ class OpenTypeParser implements Closeable {
      *
      * @throws java.io.IOException if any input/output issue occurs
      */
-    public byte[] getGlyphDataForGid(int gid) throws java.io.IOException {
+    byte[] getGlyphDataForGid(int gid) throws java.io.IOException {
         int[] tableLocation = tables.get("glyf");
         if (tableLocation == null) {
             throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("glyf", fileName);
@@ -414,7 +414,7 @@ class OpenTypeParser implements Closeable {
      *
      * @throws java.io.IOException if any input/output issue occurs
      */
-    public byte[] getHorizontalMetricForGid(int gid) throws java.io.IOException {
+    byte[] getHorizontalMetricForGid(int gid) throws java.io.IOException {
         int[] tableLocation = tables.get("hmtx");
         if (tableLocation == null) {
             throw new IOException(IoExceptionMessageConstant.TABLE_DOES_NOT_EXISTS_IN).setMessageParams("hmtx", fileName);
@@ -452,7 +452,7 @@ class OpenTypeParser implements Closeable {
      *
      * @return a byte array
      */
-    public byte[] readCffFont() throws java.io.IOException {
+    byte[] readCffFont() throws java.io.IOException {
         if (!isCff()) {
             return null;
         }
@@ -512,7 +512,7 @@ class OpenTypeParser implements Closeable {
      *
      * @throws java.io.IOException if any input/output issue occurs
      */
-    public List<Integer> getFlatGlyphs(Set<Integer> glyphs) throws java.io.IOException {
+    List<Integer> getFlatGlyphs(Set<Integer> glyphs) throws java.io.IOException {
         Set<Integer> glyphsUsed = new HashSet<>(glyphs);
         List<Integer> glyphsInList = new ArrayList<>(glyphs);
 
@@ -645,7 +645,7 @@ class OpenTypeParser implements Closeable {
      *
      * @param all if {@code true}, all tables will be read, otherwise only 'head', 'name', and 'os/2'
      */
-    protected void loadTables(boolean all) throws java.io.IOException {
+    void loadTables(boolean all) throws java.io.IOException {
         readNameTable();
         readHeadTable();
         readOs_2Table();
@@ -669,7 +669,7 @@ class OpenTypeParser implements Closeable {
      * @param name the full name
      * @return the simple file name
      */
-    protected static String getTTCName(String name) {
+    static String getTTCName(String name) {
         if (name == null) {
             return null;
         }
@@ -680,7 +680,7 @@ class OpenTypeParser implements Closeable {
             return name.substring(0, idx + 4);
     }
 
-    protected void checkCff() {
+    void checkCff() {
         int[] tableLocation = tables.get("CFF ");
         if (tableLocation != null) {
             cff = true;
@@ -696,7 +696,7 @@ class OpenTypeParser implements Closeable {
      *
      * @throws java.io.IOException the font file could not be read.
      */
-    protected void readGlyphWidths() throws java.io.IOException {
+    void readGlyphWidths() throws java.io.IOException {
         int numberOfHMetrics = hhea.numberOfHMetrics;
         int unitsPerEm = head.unitsPerEm;
         int[] table_location = tables.get("hmtx");
@@ -729,7 +729,7 @@ class OpenTypeParser implements Closeable {
      * @param unitsPerEm {@link HeaderTable#unitsPerEm}.
      * @throws java.io.IOException the font file could not be read
      */
-    protected IntHashtable readKerning(int unitsPerEm) throws java.io.IOException {
+    IntHashtable readKerning(int unitsPerEm) throws java.io.IOException {
         int table_location[];
         table_location = tables.get("kern");
         IntHashtable kerning = new IntHashtable();
@@ -767,7 +767,7 @@ class OpenTypeParser implements Closeable {
      * @throws IOException the font is invalid
      * @throws java.io.IOException the font file could not be read
      */
-    protected int[][] readBbox(int unitsPerEm) throws java.io.IOException {
+    int[][] readBbox(int unitsPerEm) throws java.io.IOException {
         if (locaTable == null) {
             return null;
         }
@@ -796,7 +796,7 @@ class OpenTypeParser implements Closeable {
         return bboxes;
     }
 
-    protected int readNumGlyphs() throws java.io.IOException {
+    int readNumGlyphs() throws java.io.IOException {
         int[] table_location = tables.get("maxp");
         if (table_location == null) {
             return 65536;
@@ -1182,7 +1182,7 @@ class OpenTypeParser implements Closeable {
      * @param glyph the glyph to get the width of
      * @return the width of the glyph in normalized 1000 units (TrueTypeFont.UNITS_NORMALIZATION)
      */
-    protected int getGlyphWidth(int glyph) {
+    int getGlyphWidth(int glyph) {
         if (glyph >= glyphWidthsByIndex.length)
             glyph = glyphWidthsByIndex.length - 1;
         return glyphWidthsByIndex[glyph];

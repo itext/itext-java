@@ -300,11 +300,11 @@ public class HighlightItemsTest extends ExtendedITextTest {
             return new LinkedHashSet<>(Collections.singletonList(EventType.RENDER_TEXT));
         }
 
-        public List<Rectangle> getRectangles() {
+        List<Rectangle> getRectangles() {
             return rectangles;
         }
 
-        public void clear() {
+        void clear() {
             rectangles.clear();
         }
     }

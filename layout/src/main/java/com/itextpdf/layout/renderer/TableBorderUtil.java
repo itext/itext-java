@@ -33,7 +33,7 @@ final class TableBorderUtil {
     private TableBorderUtil() {
     }
 
-    public static Border getCellSideBorder(Cell cellModel, int borderType) {
+    static Border getCellSideBorder(Cell cellModel, int borderType) {
         Border cellModelSideBorder = cellModel.<Border>getProperty(borderType);
         if (null == cellModelSideBorder && !cellModel.hasProperty(borderType)) {
             cellModelSideBorder = cellModel.<Border>getDefaultProperty(borderType);
@@ -41,7 +41,7 @@ final class TableBorderUtil {
         return cellModelSideBorder;
     }
 
-    public static Border getWidestBorder(List<Border> borderList) {
+    static Border getWidestBorder(List<Border> borderList) {
         Border theWidestBorder = null;
         if (0 != borderList.size()) {
             for (Border border : borderList) {
@@ -53,7 +53,7 @@ final class TableBorderUtil {
         return theWidestBorder;
     }
 
-    public static Border getWidestBorder(List<Border> borderList, int start, int end) {
+    static Border getWidestBorder(List<Border> borderList, int start, int end) {
         Border theWidestBorder = null;
         if (0 != borderList.size()) {
             for (Border border : borderList.subList(start, end)) {
@@ -65,7 +65,7 @@ final class TableBorderUtil {
         return theWidestBorder;
     }
 
-    public static List<Border> createAndFillBorderList(Border border, int size) {
+    static List<Border> createAndFillBorderList(Border border, int size) {
         List<Border> borderList = new ArrayList<Border>();
         for (int i = 0; i < size; i++) {
             borderList.add(border);
@@ -73,7 +73,7 @@ final class TableBorderUtil {
         return borderList;
     }
 
-    public static List<Border> createAndFillBorderList(List<Border> originalList, Border borderToCollapse, int size) {
+    static List<Border> createAndFillBorderList(List<Border> originalList, Border borderToCollapse, int size) {
         List<Border> borderList;
         if (null != originalList) {
             borderList = new ArrayList<>(originalList.size() + size);

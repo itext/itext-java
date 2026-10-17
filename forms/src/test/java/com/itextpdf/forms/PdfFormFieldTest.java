@@ -2079,7 +2079,7 @@ public class PdfFormFieldTest extends ExtendedITextTest {
             setFieldName(formFieldName);
         }
 
-        public int getCounter() {
+        int getCounter() {
             return counter;
         }
 

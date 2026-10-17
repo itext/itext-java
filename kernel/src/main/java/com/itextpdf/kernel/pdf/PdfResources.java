@@ -564,7 +564,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
          * @return Type of resource. May be {@link PdfName#ColorSpace}, {@link PdfName#ExtGState},
          * {@link PdfName#Pattern}, {@link PdfName#Shading}, {@link PdfName#XObject}, {@link PdfName#Font}.
          */
-        public PdfName getResourceType() {
+        PdfName getResourceType() {
             return resourceType;
         }
 
@@ -574,7 +574,7 @@ public class PdfResources extends PdfObjectWrapper<PdfDictionary> {
          * @param resources the {@link PdfResources} object for which name will be generated.
          * @return new (unique) resource name.
          */
-        public PdfName generate(PdfResources resources) {
+        PdfName generate(PdfResources resources) {
             PdfName newName = new PdfName(prefix + counter++);
             PdfDictionary r = resources.getPdfObject();
             if (r.containsKey(resourceType)) {

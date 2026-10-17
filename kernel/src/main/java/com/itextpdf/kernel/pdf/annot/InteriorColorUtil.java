@@ -41,7 +41,7 @@ class InteriorColorUtil {
      * @return {@link Color} of either {@link DeviceGray}, {@link DeviceRgb} or {@link DeviceCmyk} type which defines
      * interior color of the annotation, or null if interior color is not specified.
      */
-    public static Color parseInteriorColor(PdfArray color) {
+    static Color parseInteriorColor(PdfArray color) {
         if (color == null) {
             return null;
         }

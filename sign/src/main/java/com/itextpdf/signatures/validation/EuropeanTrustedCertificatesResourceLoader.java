@@ -79,7 +79,7 @@ class EuropeanTrustedCertificatesResourceLoader {
      *
      * @return A list of X509Certificates.
      */
-    public List<Certificate> loadCertificates() {
+    List<Certificate> loadCertificates() {
         final ArrayList<Certificate> result = new ArrayList<>();
         for (EuropeanTrustedListConfiguration.PemCertificateWithHash pemContainer : configuration.getCertificates()) {
             Certificate certificate = CertificateUtil.readCertificatesFromPem(

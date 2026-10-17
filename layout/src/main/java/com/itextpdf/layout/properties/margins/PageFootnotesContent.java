@@ -33,7 +33,7 @@ class PageFootnotesContent extends AbstractPageContent {
      *
      * @param footnotesContent {@link FootnotesContainer} container with all page footnotes
      */
-    public PageFootnotesContent(FootnotesContainer footnotesContent) {
+    PageFootnotesContent(FootnotesContainer footnotesContent) {
         super(footnotesContent);
     }
 
@@ -42,7 +42,7 @@ class PageFootnotesContent extends AbstractPageContent {
      *
      * @param other {@link PageFootnotesContent} instance to copy
      */
-    public PageFootnotesContent(PageFootnotesContent other) {
+    PageFootnotesContent(PageFootnotesContent other) {
         super(other);
         this.pageNumber = other.pageNumber;
     }
@@ -54,7 +54,7 @@ class PageFootnotesContent extends AbstractPageContent {
      *
      * @return this same {@link PageFootnotesContent} instance
      */
-    public PageFootnotesContent setPageNumber(int pageNumber) {
+    PageFootnotesContent setPageNumber(int pageNumber) {
         this.pageNumber = pageNumber;
         return this;
     }
@@ -64,7 +64,7 @@ class PageFootnotesContent extends AbstractPageContent {
      *
      * @return page number for this {@link PageFootnotesContent}
      */
-    public int getPageNumber() {
+    int getPageNumber() {
         return pageNumber;
     }
 }

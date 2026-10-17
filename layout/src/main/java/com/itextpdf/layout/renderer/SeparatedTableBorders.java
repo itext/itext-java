@@ -201,7 +201,7 @@ class SeparatedTableBorders extends TableBorders {
         }
     }
 
-    protected boolean checkAndReplaceBorderInArray(List<List<Border>> borderArray, int i, int j, Border borderToAdd, boolean hasPriority) {
+    boolean checkAndReplaceBorderInArray(List<List<Border>> borderArray, int i, int j, Border borderToAdd, boolean hasPriority) {
         List<Border> borders = borderArray.get(i);
         Border neighbour = borders.get(j);
         if (neighbour == null) {

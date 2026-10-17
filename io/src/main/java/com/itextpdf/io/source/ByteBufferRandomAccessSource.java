@@ -53,21 +53,21 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
      *
      * @param byteBuffer the buffer to use as the backing store
      */
-    public ByteBufferRandomAccessSource(java.nio.ByteBuffer byteBuffer) {
+    ByteBufferRandomAccessSource(java.nio.ByteBuffer byteBuffer) {
         this.byteBuffer = byteBuffer;
     }
 
     /**
      * Enables ByteBuffer memory unmapping hack
      */
-    public static void enableByteBufferMemoryUnmapping() {
+    static void enableByteBufferMemoryUnmapping() {
         allowUnmapping = true;
     }
 
     /**
      * Disables ByteBuffer memory unmapping hack
      */
-    public static void disableByteBufferMemoryUnmapping() {
+    static void disableByteBufferMemoryUnmapping() {
         allowUnmapping = false;
     }
 
@@ -144,7 +144,7 @@ class ByteBufferRandomAccessSource implements IRandomAccessSource {
     /**
      * <code>true</code>, if this platform supports unmapping mmapped files.
      */
-    public static final boolean UNMAP_SUPPORTED;
+    static final boolean UNMAP_SUPPORTED;
 
     /**
      * Reference to a BufferCleaner that does unmapping; {@code null} if not supported.

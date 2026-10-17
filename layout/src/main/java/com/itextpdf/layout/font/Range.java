@@ -137,7 +137,7 @@ public class Range {
             return low - o.low;
         }
 
-        public int compareTo(int n) {
+        int compareTo(int n) {
             if (n < low) return 1;
             if (n > high) return -1;
             return 0;

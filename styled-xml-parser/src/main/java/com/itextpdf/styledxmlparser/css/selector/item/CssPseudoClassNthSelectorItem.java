@@ -53,7 +53,7 @@ class CssPseudoClassNthSelectorItem extends CssPseudoClassChildSelectorItem {
     /**
      * Gets the nth arguments.
      */
-    protected void getNthArguments() {
+    void getNthArguments() {
         if (arguments.matches("((-|\\+)?[0-9]*n(\\s*(-|\\+)\\s*[0-9]+)?|(-|\\+)?[0-9]+|odd|even)")) {
             if (arguments.equals("odd")) {
                 this.nthA = 2;
@@ -94,7 +94,7 @@ class CssPseudoClassNthSelectorItem extends CssPseudoClassChildSelectorItem {
      * @param children the children
      * @return true, if successful
      */
-    protected boolean resolveNth(INode node, List<INode> children) {
+    boolean resolveNth(INode node, List<INode> children) {
         if (!children.contains(node))
             return false;
         if (this.nthA > 0) {

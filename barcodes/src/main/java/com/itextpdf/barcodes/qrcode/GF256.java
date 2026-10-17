@@ -26,10 +26,10 @@ package com.itextpdf.barcodes.qrcode;
 final class GF256 {
 
     // x^8 + x^4 + x^3 + x^2 + 1
-    public static final GF256 QR_CODE_FIELD = new GF256(0x011D);
+    static final GF256 QR_CODE_FIELD = new GF256(0x011D);
 
     // x^8 + x^5 + x^3 + x^2 + 1
-    public static final GF256 DATA_MATRIX_FIELD = new GF256(0x012D);
+    static final GF256 DATA_MATRIX_FIELD = new GF256(0x012D);
 
     private final int[] expTable;
     private final int[] logTable;

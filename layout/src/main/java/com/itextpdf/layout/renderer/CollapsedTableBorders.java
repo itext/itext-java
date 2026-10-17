@@ -62,23 +62,23 @@ class CollapsedTableBorders extends TableBorders {
     private final Map<Integer, List<Border>> verticalBorderComputationResult;
 
     // region constructors
-    public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
+    CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders) {
         super(rows, numberOfColumns, tableBoundingBorders);
         verticalBorderComputationResult =  new HashMap<>();
     }
 
-    public CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders, int largeTableIndexOffset) {
+    CollapsedTableBorders(List<CellRenderer[]> rows, int numberOfColumns, Border[] tableBoundingBorders, int largeTableIndexOffset) {
         super(rows, numberOfColumns, tableBoundingBorders, largeTableIndexOffset);
         verticalBorderComputationResult = new HashMap<>();
     }
     // endregion
 
     // region getters
-    public List<Border> getTopBorderCollapseWith() {
+    List<Border> getTopBorderCollapseWith() {
         return topBorderCollapseWith;
     }
 
-    public List<Border> getBottomBorderCollapseWith() {
+    List<Border> getBottomBorderCollapseWith() {
         return bottomBorderCollapseWith;
     }
 
@@ -127,7 +127,7 @@ class CollapsedTableBorders extends TableBorders {
      *
      * @return vertical borders which cross the top horizontal border
      */
-    public List<Border> getVerticalBordersCrossingTopHorizontalBorder() {
+    List<Border> getVerticalBordersCrossingTopHorizontalBorder() {
         List<Border> borders = new ArrayList<>(numberOfColumns + 1);
         for (int i = 0; i <= numberOfColumns; i++) {
             final List<Border> verticalBorder = getVerticalBorder(i);
@@ -230,7 +230,7 @@ class CollapsedTableBorders extends TableBorders {
     // endregion
 
     // region setters
-    public CollapsedTableBorders setTopBorderCollapseWith(List<Border> topBorderCollapseWith) {
+    CollapsedTableBorders setTopBorderCollapseWith(List<Border> topBorderCollapseWith) {
         this.topBorderCollapseWith = new ArrayList<Border>();
         if (null != topBorderCollapseWith) {
             this.topBorderCollapseWith.addAll(topBorderCollapseWith);
@@ -238,7 +238,7 @@ class CollapsedTableBorders extends TableBorders {
         return this;
     }
 
-    public CollapsedTableBorders setBottomBorderCollapseWith(List<Border> bottomBorderCollapseWith,
+    CollapsedTableBorders setBottomBorderCollapseWith(List<Border> bottomBorderCollapseWith,
                                                              List<Border> verticalBordersCrossingBottomBorder) {
         this.bottomBorderCollapseWith = new ArrayList<Border>();
         if (null != bottomBorderCollapseWith) {
@@ -318,7 +318,7 @@ class CollapsedTableBorders extends TableBorders {
 
     }
 
-    protected void buildBordersArrays(CellRenderer cell, int row) {
+    void buildBordersArrays(CellRenderer cell, int row) {
         int colspan = (int) cell.getPropertyAsInteger(Property.COLSPAN);
         int rowspan = (int) cell.getPropertyAsInteger(Property.ROWSPAN);
         int colN = ((Cell) cell.getModelElement()).getCol();
@@ -349,7 +349,7 @@ class CollapsedTableBorders extends TableBorders {
     // endregion
 
     // region lowlevel
-    protected boolean checkAndReplaceBorderInArray(List<List<Border>> borderArray, int i, int j, Border borderToAdd, boolean hasPriority) {
+    boolean checkAndReplaceBorderInArray(List<List<Border>> borderArray, int i, int j, Border borderToAdd, boolean hasPriority) {
         List<Border> borders = borderArray.get(i);
         Border neighbour = borders.get(j);
         if (neighbour == null) {
@@ -514,7 +514,7 @@ class CollapsedTableBorders extends TableBorders {
      * @param tableBorder table border
      * @return the collapsed border
      */
-    public static Border getCollapsedBorder(Border cellBorder, Border tableBorder) {
+    static Border getCollapsedBorder(Border cellBorder, Border tableBorder) {
         if (null != tableBorder) {
             if (null == cellBorder || cellBorder.getWidth() < tableBorder.getWidth()) {
                 return tableBorder;
@@ -527,7 +527,7 @@ class CollapsedTableBorders extends TableBorders {
         }
     }
 
-    public static List<Border> getCollapsedList(List<Border> innerList, List<Border> outerList) {
+    static List<Border> getCollapsedList(List<Border> innerList, List<Border> outerList) {
         int size = Math.min(null == innerList ? 0 : innerList.size(), null == outerList ? 0 : outerList.size());
         List<Border> collapsedList = new ArrayList<Border>(size);
         for (int i = 0; i < size; i++) {

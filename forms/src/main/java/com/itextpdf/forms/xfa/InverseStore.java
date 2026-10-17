@@ -30,8 +30,8 @@ import java.util.List;
  * beginning from the lower hierarchy.
  */
 class InverseStore {
-    protected List<String> part = new ArrayList<>();
-    protected List<Object> follow = new ArrayList<>();
+    List<String> part = new ArrayList<>();
+    List<Object> follow = new ArrayList<>();
 
     /**
      * Gets the full name by traversing the hierarchy using only the
@@ -39,7 +39,7 @@ class InverseStore {
      *
      * @return the full name
      */
-    public String getDefaultName() {
+    String getDefaultName() {
         InverseStore store = this;
         while (true) {
             Object obj = store.follow.get(0);
@@ -58,7 +58,7 @@ class InverseStore {
      * @param name the name to search
      * @return <CODE>true</CODE> if a similitude was found
      */
-    public boolean isSimilar(String name) {
+    boolean isSimilar(String name) {
         int idx = name.indexOf('[');
         name = name.substring(0, idx + 1);
         for (int k = 0; k < part.size(); ++k) {

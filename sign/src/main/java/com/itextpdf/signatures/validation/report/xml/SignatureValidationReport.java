@@ -31,13 +31,13 @@ class SignatureValidationReport extends AbstractIdentifiableObject implements Su
     private final SignatureIdentifier signatureIdentifier;
     private SignatureValidationStatus status;
 
-    public SignatureValidationReport(ValidationObjects validationObjects, CMSContainer signature,
+    SignatureValidationReport(ValidationObjects validationObjects, CMSContainer signature,
                                      String signatureName, Date signingDate) {
         super("S");
         signatureIdentifier = new SignatureIdentifier(validationObjects, signature, signatureName, signingDate);
     }
 
-    public SignatureIdentifier getSignatureIdentifier() {
+    SignatureIdentifier getSignatureIdentifier() {
         return signatureIdentifier;
     }
 
@@ -46,7 +46,7 @@ class SignatureValidationReport extends AbstractIdentifiableObject implements Su
         this.status = status;
     }
 
-    public SignatureValidationStatus getSignatureValidationStatus() {
+    SignatureValidationStatus getSignatureValidationStatus() {
         return status;
     }
 

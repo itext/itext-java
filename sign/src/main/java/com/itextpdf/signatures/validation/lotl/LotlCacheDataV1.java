@@ -73,7 +73,7 @@ class LotlCacheDataV1 implements IJsonSerializable {
         this.timeStamps = timeStamps;
     }
 
-    public static LotlCacheDataV1 deserialize(InputStream inputStream) {
+    static LotlCacheDataV1 deserialize(InputStream inputStream) {
         try (InputStream is = inputStream;
              ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
 
@@ -91,27 +91,27 @@ class LotlCacheDataV1 implements IJsonSerializable {
         }
     }
 
-    public void serialize(OutputStream os) throws IOException {
+    void serialize(OutputStream os) throws IOException {
         os.write(toJson().toJson().getBytes(StandardCharsets.UTF_8));
     }
 
-    public EuropeanResourceFetcher.Result getEuropeanResourceFetcherCache() {
+    EuropeanResourceFetcher.Result getEuropeanResourceFetcherCache() {
         return europeanResourceFetcherCache;
     }
 
-    public Map<String, Long> getTimeStamps() {
+    Map<String, Long> getTimeStamps() {
         return timeStamps;
     }
 
-    public Result getPivotCache() {
+    Result getPivotCache() {
         return pivotCache;
     }
 
-    public Map<String, CountrySpecificLotlFetcher.Result> getCountrySpecificLotlCache() {
+    Map<String, CountrySpecificLotlFetcher.Result> getCountrySpecificLotlCache() {
         return countrySpecificLotlCache;
     }
 
-    public EuropeanLotlFetcher.Result getLotlCache() {
+    EuropeanLotlFetcher.Result getLotlCache() {
         return lotlCache;
     }
 

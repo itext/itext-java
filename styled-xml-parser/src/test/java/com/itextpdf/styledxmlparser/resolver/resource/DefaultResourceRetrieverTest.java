@@ -25,20 +25,19 @@ package com.itextpdf.styledxmlparser.resolver.resource;
 import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URL;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.URL;
-
 @Tag("IntegrationTest")
-class DefaultResourceRetrieverTest extends ExtendedITextTest {
+public class DefaultResourceRetrieverTest extends ExtendedITextTest {
 
     @Test
     // Android-Conversion-Ignore-Test DEVSIX-6459 Some different random connect exceptions on Android

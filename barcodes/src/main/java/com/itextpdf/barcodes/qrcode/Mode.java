@@ -22,19 +22,19 @@ package com.itextpdf.barcodes.qrcode;
 final class Mode {
 
     // Not really a mode...
-    public static final Mode TERMINATOR = new Mode(new int[]{0, 0, 0}, 0x00, "TERMINATOR");
-    public static final Mode NUMERIC = new Mode(new int[]{10, 12, 14}, 0x01, "NUMERIC");
-    public static final Mode ALPHANUMERIC = new Mode(new int[]{9, 11, 13}, 0x02, "ALPHANUMERIC");
+    static final Mode TERMINATOR = new Mode(new int[]{0, 0, 0}, 0x00, "TERMINATOR");
+    static final Mode NUMERIC = new Mode(new int[]{10, 12, 14}, 0x01, "NUMERIC");
+    static final Mode ALPHANUMERIC = new Mode(new int[]{9, 11, 13}, 0x02, "ALPHANUMERIC");
 
     // Not supported
-    public static final Mode STRUCTURED_APPEND = new Mode(new int[]{0, 0, 0}, 0x03, "STRUCTURED_APPEND");
-    public static final Mode BYTE = new Mode(new int[]{8, 16, 16}, 0x04, "BYTE");
+    static final Mode STRUCTURED_APPEND = new Mode(new int[]{0, 0, 0}, 0x03, "STRUCTURED_APPEND");
+    static final Mode BYTE = new Mode(new int[]{8, 16, 16}, 0x04, "BYTE");
 
     // character counts don't apply
-    public static final Mode ECI = new Mode(null, 0x07, "ECI");
-    public static final Mode KANJI = new Mode(new int[]{8, 10, 12}, 0x08, "KANJI");
-    public static final Mode FNC1_FIRST_POSITION = new Mode(null, 0x05, "FNC1_FIRST_POSITION");
-    public static final Mode FNC1_SECOND_POSITION = new Mode(null, 0x09, "FNC1_SECOND_POSITION");
+    static final Mode ECI = new Mode(null, 0x07, "ECI");
+    static final Mode KANJI = new Mode(new int[]{8, 10, 12}, 0x08, "KANJI");
+    static final Mode FNC1_FIRST_POSITION = new Mode(null, 0x05, "FNC1_FIRST_POSITION");
+    static final Mode FNC1_SECOND_POSITION = new Mode(null, 0x09, "FNC1_SECOND_POSITION");
 
     private final int[] characterCountBitsForVersions;
     private final int bits;
@@ -51,7 +51,7 @@ final class Mode {
      * @return {@link Mode} encoded by these bits
      * @throws IllegalArgumentException if bits do not correspond to a known mode
      */
-    public static Mode forBits(int bits) {
+    static Mode forBits(int bits) {
         switch (bits) {
             case 0x0:
                 return TERMINATOR;
@@ -81,7 +81,7 @@ final class Mode {
      * @return number of bits used, in this QR Code symbol {@link Version}, to encode the
      *         count of characters that will follow encoded in this {@link Mode}
      */
-    public int getCharacterCountBits(Version version) {
+    int getCharacterCountBits(Version version) {
         if (characterCountBitsForVersions == null) {
             throw new IllegalArgumentException("Character count doesn't apply to this mode");
         }
@@ -100,14 +100,14 @@ final class Mode {
     /**
      * @return the bits of the mode
      */
-    public int getBits() {
+    int getBits() {
         return bits;
     }
 
     /**
      * @return the name of the mode.
      */
-    public String getName() {
+    String getName() {
         return name;
     }
 

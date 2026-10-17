@@ -36,7 +36,7 @@ class CssPseudoClassFirstOfTypeSelectorItem extends CssPseudoClassChildSelectorI
         super(CommonCssConstants.FIRST_OF_TYPE);
     }
 
-    public static CssPseudoClassFirstOfTypeSelectorItem getInstance() {
+    static CssPseudoClassFirstOfTypeSelectorItem getInstance() {
         return instance;
     }
 

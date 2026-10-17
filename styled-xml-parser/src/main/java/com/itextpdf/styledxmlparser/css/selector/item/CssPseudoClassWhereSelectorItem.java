@@ -39,7 +39,7 @@ class CssPseudoClassWhereSelectorItem extends CssPseudoClassForgivingSelectorLis
         return 0;
     }
 
-    public static CssPseudoClassWhereSelectorItem createWhereSelectorItem(String arguments) {
+    static CssPseudoClassWhereSelectorItem createWhereSelectorItem(String arguments) {
         List<ICssSelector> selectors = parseSelectorListWithoutPseudoElements(arguments, true);
         if (selectors == null) {
             return null;

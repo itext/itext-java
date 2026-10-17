@@ -88,22 +88,22 @@ class ParentTreeHandler {
     /**
      * Gets a list of all marked content references on the page.
      */
-    public PageMcrsContainer getPageMarkedContentReferences(PdfPage page) {
+    PageMcrsContainer getPageMarkedContentReferences(PdfPage page) {
         return pageToPageMcrs.get(page.getPdfObject().getIndirectReference());
     }
 
     // Mind that this method searches among items contained in page's content stream  only
-    public PdfMcr findMcrByMcid(PdfDictionary pageDict, int mcid) {
+    PdfMcr findMcrByMcid(PdfDictionary pageDict, int mcid) {
         PageMcrsContainer pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
         return pageMcrs != null ? pageMcrs.getPageContentStreamsMcrs().get(mcid) : null;
     }
 
-    public PdfObjRef findObjRefByStructParentIndex(PdfDictionary pageDict, int structParentIndex) {
+    PdfObjRef findObjRefByStructParentIndex(PdfDictionary pageDict, int structParentIndex) {
         PageMcrsContainer pageMcrs = pageToPageMcrs.get(pageDict.getIndirectReference());
         return pageMcrs != null ? (PdfObjRef) pageMcrs.getObjRefs().get(structParentIndex) : null;
     }
 
-    public int getNextMcidForPage(PdfPage page) {
+    int getNextMcidForPage(PdfPage page) {
         PageMcrsContainer pageMcrs = getPageMarkedContentReferences(page);
         if (pageMcrs == null || pageMcrs.getPageContentStreamsMcrs().size() == 0) {
             return 0;
@@ -119,7 +119,7 @@ class ParentTreeHandler {
      * @param page {@link PdfPage} for which to create parent tree entry. Typically this page is flushed after this
      *             call.
      */
-    public void createParentTreeEntryForPage(PdfPage page) {
+    void createParentTreeEntryForPage(PdfPage page) {
         PageMcrsContainer mcrs = getPageMarkedContentReferences(page);
         if (mcrs == null) {
             return;
@@ -131,7 +131,7 @@ class ParentTreeHandler {
         }
     }
 
-    public void savePageStructParentIndexIfNeeded(PdfPage page) {
+    void savePageStructParentIndexIfNeeded(PdfPage page) {
         PdfIndirectReference indRef = page.getPdfObject().getIndirectReference();
         if (page.isFlushed() || pageToPageMcrs.get(indRef) == null) {
             return;
@@ -144,11 +144,11 @@ class ParentTreeHandler {
         }
     }
 
-    public PdfDictionary buildParentTree() {
+    PdfDictionary buildParentTree() {
         return (PdfDictionary) parentTree.buildTree().makeIndirect(structTreeRoot.getDocument());
     }
 
-    public void registerMcr(PdfMcr mcr) {
+    void registerMcr(PdfMcr mcr) {
         registerMcr(mcr, false);
     }
 
@@ -227,7 +227,7 @@ class ParentTreeHandler {
         }
     }
 
-    public void unregisterMcr(PdfMcr mcrToUnregister) {
+    void unregisterMcr(PdfMcr mcrToUnregister) {
         PdfDictionary pageDict = mcrToUnregister.getPageObject();
         if (pageDict == null) {
             // invalid mcr, ignore

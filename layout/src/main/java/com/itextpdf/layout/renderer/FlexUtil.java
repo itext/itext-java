@@ -69,7 +69,7 @@ final class FlexUtil {
      *
      * @return list of lines
      */
-    public static List<List<FlexItemInfo>> calculateChildrenRectangles(Rectangle flexContainerBBox,
+    static List<List<FlexItemInfo>> calculateChildrenRectangles(Rectangle flexContainerBBox,
                                                                        FlexContainerRenderer flexContainerRenderer) {
         Rectangle layoutBox = flexContainerBBox.clone();
         flexContainerRenderer.applyMarginsBordersPaddings(layoutBox, false);
@@ -1252,7 +1252,7 @@ final class FlexUtil {
             }
         }
 
-        public Rectangle toRectangle() {
+        Rectangle toRectangle() {
             return isColumnDirection ?
                     new Rectangle(xShift, yShift, getOuterCrossSize(crossSize), getOuterMainSize(mainSize)) :
                     new Rectangle(xShift, yShift, getOuterMainSize(mainSize), getOuterCrossSize(crossSize));

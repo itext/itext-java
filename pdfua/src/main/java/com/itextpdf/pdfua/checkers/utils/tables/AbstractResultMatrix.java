@@ -43,7 +43,7 @@ import java.util.Set;
  */
 abstract class AbstractResultMatrix<T> {
 
-    protected final ITableIterator<T> iterator;
+    final ITableIterator<T> iterator;
     // We can't use an array because it is not autoportable.
     private final List<T> cellMatrix;
     private final int rows;
@@ -70,7 +70,7 @@ abstract class AbstractResultMatrix<T> {
      *
      * @throws PdfUAConformanceException if the table doesn't have valid headers and scopes for the cells.
      */
-    public void checkValidTableTagging() {
+    void checkValidTableTagging() {
         final Set<String> knownIds = new HashSet<>();
         // We use boxed boolean array so we can don't duplicate our setCell methods.
         // But we fill default with false so we can avoid the null check.

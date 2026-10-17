@@ -354,7 +354,7 @@ public class SignDeferredTest extends ExtendedITextTest {
             this.subFilter = subFilter;
         }
 
-        public byte[] getDocBytesHash() {
+        byte[] getDocBytesHash() {
             return docBytesHash;
         }
 
@@ -395,7 +395,7 @@ public class SignDeferredTest extends ExtendedITextTest {
             super(reader, outputStream, properties);
         }
 
-        public void dummyClose(PdfDictionary content) throws IOException {
+        void dummyClose(PdfDictionary content) throws IOException {
             preClosed = true;
             exclusionLocations = new HashMap<>();
             exclusionLocations.put(PdfName.Contents, new PdfLiteral(1));

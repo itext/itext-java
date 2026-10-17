@@ -978,11 +978,11 @@ public abstract class AbstractSvgNodeRenderer implements ISvgNodeRenderer {
             }
         }
 
-        public float getOpacity() {
+        float getOpacity() {
             return opacity;
         }
 
-        public Color getColor() {
+        Color getColor() {
             return color;
         }
 

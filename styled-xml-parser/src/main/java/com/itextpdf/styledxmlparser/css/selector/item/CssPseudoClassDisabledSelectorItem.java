@@ -31,7 +31,7 @@ import com.itextpdf.styledxmlparser.node.INode;
 class CssPseudoClassDisabledSelectorItem extends CssPseudoClassSelectorItem {
     private static final CssPseudoClassDisabledSelectorItem instance = new CssPseudoClassDisabledSelectorItem();
 
-    public static CssPseudoClassDisabledSelectorItem getInstance() {
+    static CssPseudoClassDisabledSelectorItem getInstance() {
         return instance;
     }
 
