@@ -566,6 +566,272 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
         }
     }
 
+    @Test
+    public void twoSignaturesWithAppearancesTest() throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(true);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "simpleTaggedDoc.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.TOO_MANY_SIGNATURES_WITH_APPEARANCES)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void twoSignaturesWith1AppearanceTest() throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(true);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "2signatures1Appearance.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID)
+                    .hasNumberOfFailures(0));
+        }
+    }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
+    public void continueAfterStrictModeValidationFailureTest(boolean continueValidationAfterFail) throws IOException {
+        setUp(continueValidationAfterFail);
+        builder.getProperties().setStrictDocumentRevisionsValidation(true);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocRemoveStructTreeElement.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            if (continueValidationAfterFail) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(2)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.TOO_MANY_SIGNATURES_WITH_APPEARANCES)
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.STRUCT_TREE_ROOT_MODIFIED)
+                                .withStatus(ReportItemStatus.INVALID)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(1)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.TOO_MANY_SIGNATURES_WITH_APPEARANCES)
+                                .withStatus(ReportItemStatus.INVALID)));
+            }
+        }
+    }
+
+    @ParameterizedTest(name = "Strict validation mode: {0}")
+    @MethodSource("createParameters")
+    public void signatureAppearanceModifiedLevel2Test(boolean strictDocumentRevisionsValidation) throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(strictDocumentRevisionsValidation);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureAppearanceModifiedLevel2.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            if (strictDocumentRevisionsValidation) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(2)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(MessageFormatUtil.format(DocumentRevisionsValidator.FIELD_REMOVED,
+                                        "Signature1"))
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_ACROFORM_CHANGES)
+                                .withStatus(ReportItemStatus.INVALID)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+            }
+        }
+    }
+
+    @ParameterizedTest(name = "Strict validation mode: {0}")
+    @MethodSource("createParameters")
+    public void signatureAppearanceModifiedLevel3Test(boolean strictDocumentRevisionsValidation) throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(strictDocumentRevisionsValidation);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureAppearanceModifiedLevel3.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            if (strictDocumentRevisionsValidation) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(2)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(MessageFormatUtil.format(DocumentRevisionsValidator.FIELD_REMOVED,
+                                        "Signature1"))
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_ACROFORM_CHANGES)
+                                .withStatus(ReportItemStatus.INVALID)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+            }
+        }
+    }
+
+    @ParameterizedTest(name = "Strict validation mode: {0}")
+    @MethodSource("createParameters")
+    public void signatureAppearanceModifiedSplitFieldLevel2Test(boolean strictDocumentRevisionsValidation) throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(strictDocumentRevisionsValidation);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureAppearanceModifiedSplitFieldLevel2.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            if (strictDocumentRevisionsValidation) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(3)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.ANNOTATIONS_MODIFIED)
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(MessageFormatUtil.format(DocumentRevisionsValidator.FIELD_REMOVED,
+                                        "Signature1"))
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_ACROFORM_CHANGES)
+                                .withStatus(ReportItemStatus.INVALID)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+            }
+        }
+    }
+
+    @ParameterizedTest(name = "Strict validation mode: {0}")
+    @MethodSource("createParameters")
+    public void signatureAppearanceModifiedSplitFieldLevel3Test(boolean strictDocumentRevisionsValidation) throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(strictDocumentRevisionsValidation);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureAppearanceModifiedSplitFieldLevel3.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            if (strictDocumentRevisionsValidation) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(3)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.STRICT_ANNOTATIONS_MODIFIED)
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(MessageFormatUtil.format(DocumentRevisionsValidator.FIELD_REMOVED,
+                                        "Signature1"))
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_ACROFORM_CHANGES)
+                                .withStatus(ReportItemStatus.INVALID)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+            }
+        }
+    }
+
+    @Test
+    public void signatureAppearanceModifiedForSigningLevel2Test() throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(true);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureAppearanceModifiedForSigningLevel2.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+        }
+    }
+
+    @Test
+    public void signatureAppearanceModifiedForSigningLevel3Test() throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(true);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureAppearanceModifiedForSigningLevel3.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+        }
+    }
+
+    @ParameterizedTest(name = "Strict validation mode: {0}")
+    @MethodSource("createParameters")
+    public void signatureAppearanceAddedAsKidLevel2Test(boolean strictDocumentRevisionsValidation) throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(strictDocumentRevisionsValidation);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureAppearanceAddedAsKidLevel2.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            // We do not allow adding a new annotation as a kid of an existing signature field even in not strict mode.
+            // Though Acrobat allows.
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(3)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.ANNOTATIONS_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID))
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(MessageFormatUtil.format(DocumentRevisionsValidator.FIELD_REMOVED,
+                                    "Signature1"))
+                            .withStatus(ReportItemStatus.INVALID))
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_ACROFORM_CHANGES)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @ParameterizedTest(name = "Strict validation mode: {0}")
+    @MethodSource("createParameters")
+    public void signatureAppearanceAddedAsKidLevel3Test(boolean strictDocumentRevisionsValidation) throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(strictDocumentRevisionsValidation);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureAppearanceAddedAsKidLevel3.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            if (strictDocumentRevisionsValidation) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(3)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.STRICT_ANNOTATIONS_MODIFIED)
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(MessageFormatUtil.format(DocumentRevisionsValidator.FIELD_REMOVED,
+                                        "Signature1"))
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_ACROFORM_CHANGES)
+                                .withStatus(ReportItemStatus.INVALID)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+            }
+        }
+    }
+
+    @ParameterizedTest(name = "Strict validation mode: {0}")
+    @MethodSource("createParameters")
+    public void signatureAppearanceAddedAsKidToMergedFieldLevel3Test(boolean strictDocumentRevisionsValidation) throws IOException {
+        setUp(false);
+        builder.getProperties().setStrictDocumentRevisionsValidation(strictDocumentRevisionsValidation);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureAppearanceAddedAsKidToMergedFieldLevel3.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            if (strictDocumentRevisionsValidation) {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                        .hasNumberOfFailures(2)
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(MessageFormatUtil.format(DocumentRevisionsValidator.FIELD_REMOVED,
+                                        "Signature1"))
+                                .withStatus(ReportItemStatus.INVALID))
+                        .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                                .withMessage(DocumentRevisionsValidator.NOT_ALLOWED_ACROFORM_CHANGES)
+                                .withStatus(ReportItemStatus.INVALID)));
+            } else {
+                AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+            }
+        }
+    }
+
     @ParameterizedTest(name = "Continue validation after failure: {0}")
     @MethodSource("createParameters")
     public void simpleTaggedDocTest(boolean continueValidationAfterFail) throws IOException {

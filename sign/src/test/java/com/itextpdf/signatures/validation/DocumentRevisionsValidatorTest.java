@@ -538,6 +538,7 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
                     documentRevisions.get(documentRevisions.size() - 1), document, validationReport, validationContext);
 
             // Between these two revisions new unsigned signature field was added, it is not allowed.
+            // Acrobat allows it though.
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
                     .hasNumberOfFailures(2).hasNumberOfLogs(2)
                     .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)

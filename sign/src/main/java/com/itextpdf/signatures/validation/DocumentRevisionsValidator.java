@@ -83,6 +83,8 @@ public class DocumentRevisionsValidator {
             + "is higher than previous one specified. These access permissions will be ignored.";
     static final String ACROFORM_REMOVED = "AcroForm dictionary was removed from catalog.";
     static final String ANNOTATIONS_MODIFIED = "Field annotations were removed, added or unexpectedly modified.";
+    static final String STRICT_ANNOTATIONS_MODIFIED =
+            "Signature field appearance was modified or added in strict mode.";
     static final String BASE_VERSION_DECREASED =
             "Base version number in developer extension \"{0}\" dictionary was decreased.";
     static final String BASE_VERSION_EXTENSION_NOT_PARSABLE =
@@ -131,6 +133,8 @@ public class DocumentRevisionsValidator {
     static final String SIGNATURE_MODIFIED = "Signature {0} was unexpectedly modified.";
     static final String SIGNATURE_REVISION_NOT_FOUND =
             "Not possible to identify document revision corresponding to the first signature in the document.";
+    static final String TOO_MANY_SIGNATURES_WITH_APPEARANCES =
+            "The second signature with an appearance stream is not allowed.";
     static final String STRUCT_TREE_CONTENT_MODIFIED = "Struct tree content element is unexpectedly modified.";
     static final String STRUCT_TREE_ELEMENT_MODIFIED = "Struct tree element is unexpectedly modified.";
     static final String STRUCT_TREE_ROOT_ADDED =
@@ -156,6 +160,7 @@ public class DocumentRevisionsValidator {
     private IMetaInfo metaInfo = new ValidationMetaInfo();
     private AccessPermissions accessPermissions = AccessPermissions.ANNOTATION_MODIFICATION;
     private AccessPermissions requestedAccessPermissions = AccessPermissions.UNSPECIFIED;
+    private boolean strictDocumentRevisionsValidation;
     private ReportItemStatus unexpectedXrefChangesStatus = ReportItemStatus.INFO;
     private Set<PdfObject> checkedAnnots;
     private Set<PdfDictionary> newlyAddedFields;
@@ -259,6 +264,16 @@ public class DocumentRevisionsValidator {
             report.addReportItem(new ReportItem(DOC_MDP_CHECK, DOCUMENT_WITHOUT_SIGNATURES, ReportItemStatus.INFO));
             return report;
         }
+
+        strictDocumentRevisionsValidation = properties.getStrictDocumentRevisionsValidation(localContext);
+        if (strictDocumentRevisionsValidation && countSignatureAppearanceStreams(signatureUtil, signatures) > 1) {
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, TOO_MANY_SIGNATURES_WITH_APPEARANCES,
+                    ReportItemStatus.INVALID));
+            if (stopValidation(report, localContext)) {
+                return report;
+            }
+        }
+
         boolean updateAccessPermissions = true;
         boolean documentSigned = false;
         boolean certificationSignatureFound = false;
@@ -437,6 +452,62 @@ public class DocumentRevisionsValidator {
         return structTreeContent instanceof PdfDictionary ? ((PdfDictionary) structTreeContent).get(PdfName.Obj) : null;
     }
 
+    private static int countSignatureAppearanceStreams(SignatureUtil signatureUtil, List<String> signatures) {
+        int signaturesWithAppearances = 0;
+        for (String signatureName : signatures) {
+            PdfDictionary signatureField = signatureUtil.getSignatureFormFieldDictionary(signatureName);
+            if (hasSignatureAppearanceStream(signatureField)) {
+                signaturesWithAppearances++;
+            }
+        }
+        return signaturesWithAppearances;
+    }
+
+    private static boolean hasSignatureAppearanceStream(PdfDictionary signatureField) {
+        if (signatureField == null) {
+            return false;
+        }
+
+        PdfObject appearance = signatureField.get(PdfName.AP);
+        if (appearance != null) {
+            return true;
+        }
+
+        PdfArray kids = signatureField.getAsArray(PdfName.Kids);
+        if (kids != null) {
+            for (int i = 0; i < kids.size(); ++i) {
+                PdfDictionary kid = kids.getAsDictionary(i);
+                if (kid != null && hasSignatureAppearanceStream(kid)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isSignatureWidget(PdfDictionary widget) {
+        PdfName widgetType = widget.getAsName(PdfName.FT);
+        if (PdfName.Sig.equals(widgetType)) {
+            return true;
+        } else if (widgetType != null) {
+            return false;
+        }
+
+        PdfDictionary parent = widget.getAsDictionary(PdfName.Parent);
+        return parent != null && isSignatureWidget(parent);
+    }
+
+    private static boolean hasFieldValue(PdfDictionary widget) {
+        PdfObject fieldValue = widget.get(PdfName.V);
+        if (fieldValue != null) {
+            return true;
+        }
+
+        PdfDictionary parent = widget.getAsDictionary(PdfName.Parent);
+        return parent != null && hasFieldValue(parent);
+    }
+
     private boolean stopValidation(ValidationReport result, ValidationContext validationContext) {
         return !properties.getContinueAfterFailure(validationContext)
                 && result.getValidationResult() == ValidationResult.INVALID;
@@ -599,6 +670,7 @@ public class DocumentRevisionsValidator {
     private void resetClassFields() {
         lockedFields.clear();
         accessPermissions = AccessPermissions.ANNOTATION_MODIFICATION;
+        strictDocumentRevisionsValidation = false;
     }
 
     //
@@ -1147,8 +1219,9 @@ public class DocumentRevisionsValidator {
 
     private PdfDictionary retrieveTheSameField(Set<PdfDictionary> currFields, PdfDictionary previousField) {
         for (PdfDictionary currentField : currFields) {
-            PdfDictionary prevFormDict = copyFieldDictionary(previousField);
-            PdfDictionary currFormDict = copyFieldDictionary(currentField);
+            final boolean allowAPModification = allowAppearanceModification(previousField, currentField);
+            PdfDictionary prevFormDict = copyFieldDictionary(previousField, allowAPModification);
+            PdfDictionary currFormDict = copyFieldDictionary(currentField, allowAPModification);
             if (comparePdfObjects(prevFormDict, currFormDict, usuallyModifiedObjects) &&
                     compareIndirectReferencesObjNums(prevFormDict.get(PdfName.Parent), currFormDict.get(PdfName.Parent),
                             new ValidationReport(), "Form field parent") &&
@@ -1158,6 +1231,11 @@ public class DocumentRevisionsValidator {
             }
         }
         return null;
+    }
+
+    private boolean allowAppearanceModification(PdfDictionary prevField, PdfDictionary currField) {
+        return !strictDocumentRevisionsValidation || !isSignatureWidget(prevField) || !isSignatureWidget(currField)
+                || !hasFieldValue(prevField) || !hasFieldValue(currField);
     }
 
     /**
@@ -1249,8 +1327,10 @@ public class DocumentRevisionsValidator {
 
     private boolean compareWidgets(PdfArray prevFields, PdfArray currFields, ValidationReport report) {
         if (getAccessPermissions() == AccessPermissions.ANNOTATION_MODIFICATION) {
-            return true;
+            return !strictDocumentRevisionsValidation
+                    || verifySignatureWidgetAppearances(prevFields, currFields, report);
         }
+
         List<PdfDictionary> prevAnnots = populateWidgetAnnotations(prevFields);
         List<PdfDictionary> currAnnots = populateWidgetAnnotations(currFields);
         if (prevAnnots.size() != currAnnots.size()) {
@@ -1258,10 +1338,11 @@ public class DocumentRevisionsValidator {
             return false;
         }
         for (int i = 0; i < prevAnnots.size(); i++) {
+            final boolean allowAPModification = allowAppearanceModification(prevAnnots.get(i), currAnnots.get(i));
             PdfDictionary prevAnnot = new PdfDictionary(prevAnnots.get(i));
-            removeAppearanceRelatedProperties(prevAnnot);
+            removeAppearanceRelatedProperties(prevAnnot, allowAPModification);
             PdfDictionary currAnnot = new PdfDictionary(currAnnots.get(i));
-            removeAppearanceRelatedProperties(currAnnot);
+            removeAppearanceRelatedProperties(currAnnot, allowAPModification);
             if (!comparePdfObjects(prevAnnot, currAnnot, usuallyModifiedObjects) ||
                     !compareIndirectReferencesObjNums(
                             prevAnnots.get(i).get(PdfName.P), currAnnots.get(i).get(PdfName.P), report,
@@ -1276,6 +1357,53 @@ public class DocumentRevisionsValidator {
             checkedAnnots.add(currAnnots.get(i));
         }
         return true;
+    }
+
+    private boolean verifySignatureWidgetAppearances(PdfArray prevFields, PdfArray currFields, ValidationReport report) {
+        List<PdfDictionary> prevSignatureWidgets = populateWidgetAnnotations(prevFields).stream()
+                .filter(widget -> DocumentRevisionsValidator.isSignatureWidget(widget))
+                .collect(Collectors.toList());
+        List<PdfDictionary> currSignatureWidgets = populateWidgetAnnotations(currFields).stream()
+                .filter(widget -> DocumentRevisionsValidator.isSignatureWidget(widget))
+                .collect(Collectors.toList());
+
+        Set<PdfDictionary> currSignatureWidgetsSet = new HashSet<>(currSignatureWidgets);
+        List<PdfDictionary> matchedSignatureFields = new ArrayList<>(currSignatureWidgets.size());
+        for (PdfDictionary prevWidget : prevSignatureWidgets) {
+            PdfDictionary currWidget = retrieveTheSameField(currSignatureWidgetsSet, prevWidget);
+            if (currWidget == null) {
+                report.addReportItem(new ReportItem(DOC_MDP_CHECK, STRICT_ANNOTATIONS_MODIFIED, ReportItemStatus.INVALID));
+                return false;
+            }
+            matchedSignatureFields.add(getSignatureField(currWidget));
+            currSignatureWidgetsSet.remove(currWidget);
+        }
+
+        // Go over remaining widgets and check if they belong to previously signed fields.
+        // If yes, then it is not allowed to modify them (in strict mode), a new kid was added.
+        for (PdfDictionary currWidget : currSignatureWidgetsSet) {
+            if (belongsToField(currWidget, matchedSignatureFields)) {
+                report.addReportItem(new ReportItem(DOC_MDP_CHECK, STRICT_ANNOTATIONS_MODIFIED, ReportItemStatus.INVALID));
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static PdfDictionary getSignatureField(PdfDictionary widget) {
+        PdfDictionary field = widget.getAsDictionary(PdfName.Parent);
+        return field == null ? widget : field;
+    }
+
+    private static boolean belongsToField(PdfDictionary widget, List<PdfDictionary> signatureFields) {
+        PdfDictionary currField = getSignatureField(widget);
+        for (PdfDictionary field : signatureFields) {
+            if (field == currField) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean comparePages(PdfDictionary prevPages, PdfDictionary currPages, ValidationReport report) {
@@ -1546,34 +1674,38 @@ public class DocumentRevisionsValidator {
         return acroFormCopy;
     }
 
-    private PdfDictionary copyFieldDictionary(PdfDictionary field) {
+    private PdfDictionary copyFieldDictionary(PdfDictionary field, boolean allowAppearanceModification) {
         PdfDictionary formDict = new PdfDictionary(field);
         formDict.remove(PdfName.V);
         // Value for the choice fields could be specified by the /I key.
         formDict.remove(PdfName.I);
-        formDict.remove(PdfName.Parent);
         formDict.remove(PdfName.Kids);
         // Remove also annotation related properties (e.g. in case of the merged field).
-        removeAppearanceRelatedProperties(formDict);
+        removeAppearanceRelatedProperties(formDict, allowAppearanceModification);
         return formDict;
     }
 
-    private void removeAppearanceRelatedProperties(PdfDictionary annotDict) {
-        annotDict.remove(PdfName.P);
-        annotDict.remove(PdfName.Parent);
+    private void removeAppearanceRelatedProperties(PdfDictionary annotDict, boolean allowAppearanceModification) {
         if (getAccessPermissions() == AccessPermissions.FORM_FIELDS_MODIFICATION) {
-            annotDict.remove(PdfName.AP);
+            if (allowAppearanceModification) {
+                // Do not allow to modify AP of signature field in strict mode
+                annotDict.remove(PdfName.AP);
+            }
             annotDict.remove(PdfName.AS);
             annotDict.remove(PdfName.M);
             annotDict.remove(PdfName.F);
-        }
-        if (getAccessPermissions() == AccessPermissions.ANNOTATION_MODIFICATION) {
+        } else if (getAccessPermissions() == AccessPermissions.ANNOTATION_MODIFICATION) {
             for (PdfName key : new PdfDictionary(annotDict).keySet()) {
-                if (!PdfFormField.getFormFieldKeys().contains(key)) {
+                if (!PdfFormField.getFormFieldKeys().contains(key)
+                        && (!PdfName.AP.equals(key) || allowAppearanceModification)) {
+                    // Do not allow to modify AP of signature field in strict mode
                     annotDict.remove(key);
                 }
             }
         }
+
+        annotDict.remove(PdfName.P);
+        annotDict.remove(PdfName.Parent);
     }
 
     //

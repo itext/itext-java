@@ -52,6 +52,7 @@ import java.util.function.Function;
  */
 public class SignatureValidationProperties {
     public static final boolean DEFAULT_CONTINUE_AFTER_FAILURE = true;
+    public static final boolean DEFAULT_STRICT_DOCUMENT_REVISIONS_VALIDATION = false;
     public static final Duration DEFAULT_FRESHNESS_PRESENT_CRL = Duration.ofDays(30);
     public static final Duration DEFAULT_FRESHNESS_PRESENT_OCSP = Duration.ofDays(30);
     public static final Duration DEFAULT_FRESHNESS_HISTORICAL = Duration.ofMinutes(1);
@@ -66,6 +67,7 @@ public class SignatureValidationProperties {
      */
     public SignatureValidationProperties() {
         setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), DEFAULT_CONTINUE_AFTER_FAILURE);
+        setStrictDocumentRevisionsValidation(DEFAULT_STRICT_DOCUMENT_REVISIONS_VALIDATION);
         setRevocationOnlineFetching(ValidatorContexts.all(), CertificateSources.all(), TimeBasedContexts.all(),
                 DEFAULT_ONLINE_FETCHING);
 
@@ -157,6 +159,35 @@ public class SignatureValidationProperties {
             CertificateSources certificateSources, boolean value) {
         setParameterValueFor(validatorContexts.getSet(), certificateSources.getSet(), TimeBasedContexts.all().getSet(),
                 p -> p.setContinueAfterFailure(value));
+        return this;
+    }
+
+    /**
+     * Returns the strict document revisions validation setting for the provided context or the default context.
+     *
+     * @param validationContext the context for which to retrieve the strict document revisions validation setting
+     *
+     * @return the strict document revisions validation setting for the provided context or the default context
+     */
+    public boolean getStrictDocumentRevisionsValidation(ValidationContext validationContext) {
+        return this.<Boolean>getParametersValueFor(validationContext.getValidatorContext(),
+                validationContext.getCertificateSource(), validationContext.getTimeBasedContext(),
+                p -> p.getStrictDocumentRevisionsValidation());
+    }
+
+    /**
+     * Sets the strict document revisions validation setting for the provided context.
+     * <p>
+     * When enabled, document revisions validation forbids more than one signature with an appearance stream and
+     * also treats signature appearance stream modifications as invalid in the document revision checks.
+     *
+     * @param value the strict document revisions validation setting
+     *
+     * @return this same {@link SignatureValidationProperties} instance.
+     */
+    public final SignatureValidationProperties setStrictDocumentRevisionsValidation(boolean value) {
+        setParameterValueFor(ValidatorContexts.all().getSet(), CertificateSources.all().getSet(), TimeBasedContexts.all().getSet(),
+                p -> p.setStrictDocumentRevisionsValidation(value));
         return this;
     }
 
@@ -359,6 +390,7 @@ public class SignatureValidationProperties {
     static class ContextProperties {
         private Duration freshness;
         private Boolean continueAfterFailure;
+        private Boolean strictDocumentRevisionsValidation;
         private OnlineFetching onlineFetching;
         private List<CertificateExtension> requiredExtensions;
 
@@ -372,6 +404,14 @@ public class SignatureValidationProperties {
 
         void setContinueAfterFailure(Boolean continueAfterFailure) {
             this.continueAfterFailure = continueAfterFailure;
+        }
+
+        Boolean getStrictDocumentRevisionsValidation() {
+            return strictDocumentRevisionsValidation;
+        }
+
+        void setStrictDocumentRevisionsValidation(Boolean strictDocumentRevisionsValidation) {
+            this.strictDocumentRevisionsValidation = strictDocumentRevisionsValidation;
         }
 
         Duration getFreshness() {
