@@ -50,6 +50,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.security.MessageDigest;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -389,7 +391,7 @@ public class IssuingCertificateRetriever implements IIssuingCertificateRetriever
                         new ByteArrayInputStream(publicKeyInfo.getPublicKeyData().getBytes()),
                         DigestAlgorithms.getMessageDigest(DigestAlgorithms.SHA1, FACTORY.getProviderName()));
 
-                if (Arrays.equals(publicKeyHash, keyHash)) {
+                if (MessageDigest.isEqual(publicKeyHash, keyHash)) {
                     return Collections.singleton(cert);
                 }
             } catch (Exception ignored) {

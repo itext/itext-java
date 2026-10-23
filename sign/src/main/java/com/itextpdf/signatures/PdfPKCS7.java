@@ -142,7 +142,7 @@ public class PdfPKCS7 {
     /**
      * Assembles all the elements needed to create a signature, except for the data.
      *
-     * @param privKey         the private key
+     * @param privateKey      the private key
      * @param certChain       the certificate chain
      * @param interfaceDigest the interface digest
      * @param hashAlgorithm   the hash algorithm
@@ -152,7 +152,7 @@ public class PdfPKCS7 {
      * @throws NoSuchProviderException  on error
      * @throws NoSuchAlgorithmException on error
      */
-    public PdfPKCS7(PrivateKey privKey, Certificate[] certChain,
+    public PdfPKCS7(PrivateKey privateKey, Certificate[] certChain,
                     String hashAlgorithm, String provider, IExternalDigest interfaceDigest, boolean hasEncapContent)
             throws InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException {
         this.provider = provider;
@@ -174,8 +174,8 @@ public class PdfPKCS7 {
         digestalgos.add(digestAlgorithmOid);
 
         // find the signing algorithm
-        if (privKey != null) {
-            String signatureAlgo = SignUtils.getPrivateKeyAlgorithm(privKey);
+        if (privateKey != null) {
+            String signatureAlgo = SignUtils.getPrivateKeyAlgorithm(privateKey);
             String mechanismOid = SignatureMechanisms.getSignatureMechanismOid(signatureAlgo, hashAlgorithm);
             if (mechanismOid == null) {
                 throw new PdfException(SignExceptionMessageConstant.COULD_NOT_DETERMINE_SIGNATURE_MECHANISM_OID)
@@ -191,15 +191,15 @@ public class PdfPKCS7 {
         }
 
         // initialize the Signature object
-        if (privKey != null) {
-            sig = initSignature(privKey);
+        if (privateKey != null) {
+            sig = initSignature(privateKey);
         }
     }
 
     /**
      * Assembles all the elements needed to create a signature, except for the data.
      *
-     * @param privKey         the private key
+     * @param privateKey      the private key
      * @param certChain       the certificate chain
      * @param hashAlgorithm   the hash algorithm
      * @param provider        the provider or <code>null</code> for the default provider
@@ -208,10 +208,10 @@ public class PdfPKCS7 {
      * @throws NoSuchProviderException  on error
      * @throws NoSuchAlgorithmException on error
      */
-    public PdfPKCS7(PrivateKey privKey, Certificate[] certChain, String hashAlgorithm, String provider,
+    public PdfPKCS7(PrivateKey privateKey, Certificate[] certChain, String hashAlgorithm, String provider,
                     boolean hasEncapContent)
             throws InvalidKeyException, NoSuchProviderException, NoSuchAlgorithmException {
-        this(privKey, certChain, hashAlgorithm, provider, new BouncyCastleDigest(), hasEncapContent);
+        this(privateKey, certChain, hashAlgorithm, provider, new BouncyCastleDigest(), hasEncapContent);
     }
 
     // Constructors for validating existing signatures
@@ -398,7 +398,7 @@ public class PdfPKCS7 {
                         MessageDigest m2 = SignUtils.getMessageDigest("SHA-1");
                         byte[] signCertHash = m2.digest(enc2);
                         byte[] hs2 = cerv2.getCertHash();
-                        if (!Arrays.equals(signCertHash, hs2)) {
+                        if (!MessageDigest.isEqual(signCertHash, hs2)) {
                             throw new IllegalArgumentException(
                                     "Signing certificate doesn't match the ESS information.");
                         }
@@ -415,7 +415,7 @@ public class PdfPKCS7 {
                                 = SignUtils.getMessageDigest(DigestAlgorithms.getDigest(ai2.getAlgorithm().getId()));
                         byte[] signCertHash = m2.digest(enc2);
                         byte[] hs2 = cerv2.getCertHash();
-                        if (!Arrays.equals(signCertHash, hs2)) {
+                        if (!MessageDigest.isEqual(signCertHash, hs2)) {
                             throw new IllegalArgumentException(
                                     "Signing certificate doesn't match the ESS information.");
                         }
@@ -1347,7 +1347,7 @@ public class PdfPKCS7 {
                         // Ignore.
                     }
                     // Check that encapMessageContent is TSTInfo
-                    boolean isTSTInfo = Arrays.equals(tstInfo, encapMessageContent);
+                    boolean isTSTInfo = MessageDigest.isEqual(tstInfo, encapMessageContent);
                     if (!isTSTInfo) {
                         // This additional fallback is required in cases when encapMessageContent is ber encoded.
                         // In this method we re-encode it into der.
@@ -1355,14 +1355,15 @@ public class PdfPKCS7 {
                     }
                     IMessageImprint imprint = timeStampTokenInfo.getMessageImprint();
                     byte[] imphashed = imprint.getHashedMessage();
-                    verifySignedMessageContent = isTSTInfo && Arrays.equals(msgDigestBytes, imphashed);
+                    verifySignedMessageContent = isTSTInfo && MessageDigest.isEqual(msgDigestBytes, imphashed);
                 } else {
-                    verifySignedMessageContent = Arrays.equals(msgDigestBytes, encapMessageContent);
+                    verifySignedMessageContent = MessageDigest.isEqual(msgDigestBytes, encapMessageContent);
                 }
                 encContDigest.update(encapMessageContent);
-                encContDigestCompare = Arrays.equals(encContDigest.digest(), digestAttr);
+                encContDigestCompare = MessageDigest.isEqual(encContDigest.digest(), digestAttr);
             }
-            boolean absentEncContDigestCompare = Arrays.equals(msgDigestBytes, digestAttr);
+            boolean absentEncContDigestCompare = MessageDigest.isEqual(msgDigestBytes, digestAttr);
+
             boolean concludingDigestCompare = absentEncContDigestCompare || encContDigestCompare;
             boolean sigVerify = verifySigAttributes(sigAttr) || verifySigAttributes(sigAttrDer);
             verifyResult = concludingDigestCompare && sigVerify && verifySignedMessageContent;
@@ -1391,7 +1392,7 @@ public class PdfPKCS7 {
         String algOID = imprint.getHashAlgorithm().getAlgorithm().getId();
         byte[] md = SignUtils.getMessageDigest(DigestAlgorithms.getDigest(algOID)).digest(signatureValue);
         byte[] imphashed = imprint.getHashedMessage();
-        return Arrays.equals(md, imphashed);
+        return MessageDigest.isEqual(md, imphashed);
     }
 
     private boolean verifyTSTInfoDer(byte[] tstInfo) {

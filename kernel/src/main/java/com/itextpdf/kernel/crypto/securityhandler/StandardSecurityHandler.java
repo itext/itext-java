@@ -26,7 +26,6 @@ import com.itextpdf.io.source.ByteUtils;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.kernel.logs.KernelLogMessageConstant;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfEncryption;
 import com.itextpdf.kernel.pdf.PdfLiteral;
@@ -35,6 +34,7 @@ import com.itextpdf.kernel.pdf.PdfNumber;
 import com.itextpdf.kernel.pdf.PdfString;
 
 import java.security.MessageDigest;
+import java.util.Arrays;
 
 public abstract class StandardSecurityHandler extends SecurityHandler {
 
@@ -93,12 +93,26 @@ public abstract class StandardSecurityHandler extends SecurityHandler {
         return ByteUtils.getIsoBytes(string.getValue());
     }
 
+    /**
+     * Compares two byte arrays for equality up to a specified size.
+     *
+     * <p>
+     * This method is used to compare cryptographic values in a way that avoids timing attacks.
+     *
+     * @param ar1 the first byte array
+     * @param ar2 the second byte array
+     * @param size the number of bytes to compare
+     *
+     * @return {@code true} if the specified number of bytes in both arrays are equal, {@code false} otherwise.
+     * If any of the arrays is smaller than {@code size}, the method returns {@code false}
+     */
     protected static boolean equalsArray(byte[] ar1, byte[] ar2, int size) {
-        for (int k = 0; k < size; ++k) {
-            if (ar1[k] != ar2[k]) {
-                return false;
-            }
+        if (ar1.length < size || ar2.length < size) {
+            return false;
         }
-        return true;
+        byte[] ba1 = Arrays.copyOf(ar1, size);
+        byte[] ba2 = Arrays.copyOf(ar2, size);
+
+        return MessageDigest.isEqual(ba1, ba2);
     }
 }
