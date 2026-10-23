@@ -293,6 +293,7 @@ public class SharpenConfigMapping implements MappingConfiguration {
         configurator.mapMethod("java.security.cert.X509CRL.getIssuerX500Principal", "GetIssuerDN");
         configurator.mapMethod("java.security.cert.X509Extension.getCriticalExtensionOIDs", "GetCriticalExtensionOids");
         configurator.mapMethod("java.security.MessageDigest.getAlgorithm", "GetAlgorithmName");
+        configurator.mapMethod("java.security.MessageDigest.isEqual", "iText.Commons.Utils.JavaUtil.FixedTimeEquals", false);
 
         configurator.mapMethod("java.security.KeyPair.getPrivate", "GetPrivateKey");
         configurator.mapMethod("java.security.KeyPair.getPublic", "GetPublicKey");
