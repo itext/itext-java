@@ -453,6 +453,15 @@ public class PdfTokenizerTest extends ExtendedITextTest {
     }
 
     @Test
+    public void checkTruncatedPdfHeaderTest() throws IOException {
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
+                factory.createSource("%PDF-".getBytes(StandardCharsets.ISO_8859_1))));
+
+        Assertions.assertEquals("PDF-", tok.checkPdfHeader());
+    }
+
+    @Test
     public void getHeaderOffsetTest() throws IOException {
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(factory.createBestSource(sourceFolder + "test.pdf")));
