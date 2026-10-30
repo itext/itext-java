@@ -1038,12 +1038,12 @@ public class TextRenderer extends AbstractRenderer implements ILeafElementRender
             }
         }
 
-        super.draw(drawContext);
-
         boolean isRelativePosition = isRelativePosition();
         if (isRelativePosition) {
             applyRelativePositioningTranslation(false);
         }
+
+        super.draw(drawContext);
 
         if (line.getEnd() > line.getStart() || savedWordBreakAtLineEnding != null) {
             UnitValue fontSize = this.getPropertyAsUnitValue(Property.FONT_SIZE);

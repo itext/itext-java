@@ -163,7 +163,7 @@ public abstract class AbstractRenderer implements IRenderer {
     protected boolean isLastRendererForModelElement = true;
     protected Boolean isVerticalMode;
 
-    private boolean relativePositioningTranslationApplied = false;
+    private int relativePositioningApplyingCounter = 0;
 
     /**
      * Creates a renderer.
@@ -2031,8 +2031,16 @@ public abstract class AbstractRenderer implements IRenderer {
     }
 
     protected void applyRelativePositioningTranslation(boolean reverse) {
-        if (reverse != relativePositioningTranslationApplied) {
-            return;
+        if (!reverse) {
+            ++relativePositioningApplyingCounter;
+            if (relativePositioningApplyingCounter > 1) {
+                return;
+            }
+        } else {
+            --relativePositioningApplyingCounter;
+            if (relativePositioningApplyingCounter > 0) {
+                return;
+            }
         }
 
         float top = (float) this.getPropertyAsFloat(Property.TOP, 0f);
@@ -2048,8 +2056,6 @@ public abstract class AbstractRenderer implements IRenderer {
         if (dxRight != 0 || dyUp != 0) {
             move(dxRight, dyUp);
         }
-
-        relativePositioningTranslationApplied = !reverse;
     }
 
     protected void applyDestination(PdfDocument document) {
