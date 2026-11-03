@@ -23,10 +23,13 @@
 package com.itextpdf.kernel.pdf;
 
 import com.itextpdf.commons.actions.contexts.IMetaInfo;
+import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.source.PdfTokenizer;
 import com.itextpdf.io.source.RASInputStream;
 import com.itextpdf.io.source.RandomAccessFileOrArray;
 import com.itextpdf.io.source.WindowRandomAccessSource;
+import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
+import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.pdf.PdfReader.XrefProcessor;
 
 import java.io.IOException;
@@ -103,13 +106,45 @@ public class PdfRevisionsReader {
                     modifiedObjects.add(xrefTable.get(i));
                 }
             }
-            long eofOffset = tokenizer.getNextEof();
+            long eofOffset = findEofOffset(tokenizer);
             documentRevisions.add(new DocumentRevision(eofOffset, modifiedObjects));
             xrefTable.clearAllReferences();
         }
 
         List<DocumentRevision> getDocumentRevisions() {
             return documentRevisions;
+        }
+
+        private static long findEofOffset(PdfTokenizer tokenizer) throws IOException {
+            long savedPosition = tokenizer.getPosition();
+            long eofOffset;
+            try {
+                boolean startxrefFound = false;
+                eofOffset = -1;
+                // Go over tokens and look for %%EOF after startxref
+                while (tokenizer.nextToken()) {
+                    if (tokenizer.getTokenType() == PdfTokenizer.TokenType.Other
+                            && tokenizer.tokenValueEqualsTo(PdfTokenizer.Startxref)) {
+                        startxrefFound = true;
+                    } else if (startxrefFound) {
+                        if (tokenizer.getTokenType() == PdfTokenizer.TokenType.Number) {
+                            eofOffset = tokenizer.getNextEof();
+                            break;
+                        } else {
+                            throw new PdfException(
+                                    KernelExceptionMessageConstant.PDF_STARTXREF_IS_NOT_FOLLOWED_BY_A_NUMBER);
+                        }
+                    }
+                }
+            } finally {
+                tokenizer.seek(savedPosition);
+            }
+
+            if (eofOffset >= 0) {
+                return eofOffset;
+            }
+
+            throw new com.itextpdf.io.exceptions.IOException(IoExceptionMessageConstant.PDF_EOF_NOT_FOUND, tokenizer);
         }
     }
 }
