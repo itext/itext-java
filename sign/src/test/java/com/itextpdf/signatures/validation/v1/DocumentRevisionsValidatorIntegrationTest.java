@@ -77,12 +77,12 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
         builder.getProperties().setContinueAfterFailure(ValidatorContexts.all(), CertificateSources.all(), continueValidationAfterFail);
     }
 
-    public static Iterable<Object[]> CreateParameters() {
+    public static Iterable<Object[]> createParameters() {
         return Arrays.asList(new Object[]{false}, new Object[]{true});
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void noSignaturesDocTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "noSignaturesDoc.pdf"))) {
@@ -100,7 +100,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void linearizedDocTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "linearizedDoc.pdf"))) {
@@ -167,7 +167,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void multipleRevisionsDocumentWithoutPermissionsTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocumentWithoutPermissions.pdf"))) {
@@ -181,7 +181,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void multipleRevisionsDocumentWithPermissionsTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "multipleRevisionsDocumentWithPermissions.pdf"))) {
@@ -195,7 +195,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void eolNotIncludedIntoByteRangeTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "eolNotIncludedIntoByteRange.pdf"))) {
@@ -207,7 +207,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void twoCertificationSignaturesTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "twoCertificationSignatures.pdf"))) {
@@ -236,7 +236,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void signatureNotFoundTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "signatureNotFound.pdf"))) {
@@ -254,7 +254,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void differentFieldLockLevelsTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "differentFieldLockLevels.pdf"))) {
@@ -275,7 +275,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fieldLockLevelIncreaseTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockLevelIncrease.pdf"))) {
@@ -293,7 +293,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void certificationSignatureAfterApprovalTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "certificationSignatureAfterApproval.pdf"))) {
@@ -308,7 +308,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
 
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fieldLockChildModificationAllowedTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockChildModificationAllowed.pdf"))) {
@@ -320,7 +320,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fieldLockChildModificationNotAllowedTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockChildModificationNotAllowed.pdf"))) {
@@ -336,7 +336,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fieldLockRootModificationAllowedTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockRootModificationAllowed.pdf"))) {
@@ -348,7 +348,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fieldLockRootModificationNotAllowedTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockRootModificationNotAllowed.pdf"))) {
@@ -364,7 +364,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fieldLockSequentialExcludeValuesTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockSequentialExcludeValues.pdf"))) {
@@ -380,7 +380,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fieldLockSequentialIncludeValuesTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockSequentialIncludeValues.pdf"))) {
@@ -409,7 +409,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fieldLockKidsRemovedAndAddedTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fieldLockKidsRemovedAndAdded.pdf"))) {
@@ -436,7 +436,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void pageAndParentIndirectReferenceModifiedTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "pageAndParentIndirectReferenceModified.pdf"))) {
@@ -452,7 +452,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void lockedSignatureFieldModifiedTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "lockedSignatureFieldModified.pdf"))) {
@@ -468,7 +468,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void lockedFieldRemoveAddKidsEntryTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "lockedFieldRemoveAddKidsEntry.pdf"))) {
@@ -495,7 +495,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void removedLockedFieldTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removedLockedField.pdf"))) {
@@ -511,7 +511,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void danglingWidgetAnnotationTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "danglingWidgetAnnotation.pdf"))) {
@@ -530,7 +530,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void removeAllThePageAnnotationsTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeAllAnnots.pdf"))) {
@@ -545,7 +545,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void removeAllTheFieldAnnotationsTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeFieldAnnots.pdf"))) {
@@ -560,7 +560,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void simpleTaggedDocTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "simpleTaggedDoc.pdf"))) {
@@ -572,7 +572,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void taggedDocAddAndRemoveAnnotationsTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocAddAndRemoveAnnotations.pdf"))) {
@@ -591,7 +591,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void taggedDocRemoveStructTreeElementTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocRemoveStructTreeElement.pdf"))) {
@@ -607,7 +607,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void taggedDocRemoveStructTreeAnnotationTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocRemoveStructTreeAnnotation.pdf"))) {
@@ -623,7 +623,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void taggedDocModifyAnnotationTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocModifyAnnotation.pdf"))) {
@@ -635,7 +635,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void taggedDocModifyAnnotationAndStructElementTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocModifyAnnotationAndStructElement.pdf"))) {
@@ -654,7 +654,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void taggedDocModifyAnnotationAndStructContentTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocModifyAnnotationAndStructContent.pdf"))) {
@@ -666,7 +666,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void taggedDocModifyStructElementTest(boolean continueValidationAfterFail) throws IOException {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "taggedDocModifyStructElement.pdf"))) {
@@ -685,7 +685,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void removeUnnamedFieldTest(boolean continueValidationAfterFail) throws Exception {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "removeUnnamedField.pdf"))) {
@@ -707,7 +707,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fullCompressionModeLevel1Test(boolean continueValidationAfterFail) throws Exception {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fullCompressionModeLevel1.pdf"))) {
@@ -722,7 +722,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fullCompressionModeLevel2Test(boolean continueValidationAfterFail) throws Exception {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fullCompressionModeLevel2.pdf"))) {
@@ -737,7 +737,7 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
     }
 
     @ParameterizedTest(name = "Continue validation after failure: {0}")
-    @MethodSource("CreateParameters")
+    @MethodSource("createParameters")
     public void fullCompressionModeLevel3Test(boolean continueValidationAfterFail) throws Exception {
         setUp(continueValidationAfterFail);
         try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "fullCompressionModeLevel3.pdf"))) {
@@ -748,6 +748,88 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
 
             AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID)
                     .hasNumberOfFailures(0).hasNumberOfLogs(0));
+        }
+    }
+
+    @Test
+    public void eofInTrailerTest() throws IOException {
+        setUp(false);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "eofTrailer.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.PAGE_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void validEofInTrailerTest() throws IOException {
+        setUp(false);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "validEofInTrailer.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+        }
+    }
+
+    @Test
+    public void eofInCommentTest() throws IOException {
+        setUp(false);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "eofComment.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.PAGE_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void startxrefInTrailerTest() throws IOException {
+        setUp(false);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "startxrefTrailer.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.PAGE_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void noStartXrefInLastRevisionTest() throws IOException {
+        setUp(false);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "noStartxref.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.DATA_AFTER_LAST_REVISION)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void whitespacesAfterEofTest() throws IOException {
+        setUp(false);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "whitespacesAfterEof.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
         }
     }
 }

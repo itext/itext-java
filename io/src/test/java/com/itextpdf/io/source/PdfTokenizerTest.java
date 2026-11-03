@@ -25,12 +25,13 @@ package com.itextpdf.io.source;
 import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.source.PdfTokenizer.TokenType;
 import com.itextpdf.test.ExtendedITextTest;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Tag;
+
 import static com.itextpdf.io.exceptions.IoExceptionMessageConstant.ERROR_AT_FILE_POINTER;
 
 @Tag("UnitTest")
@@ -41,7 +42,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
     @Test
     public void seekTest() throws IOException {
         String data = "/Name1 70";
-        TokenType[] expectedTypes = new TokenType[] {TokenType.Name, TokenType.Number, TokenType.EndOfFile};
+        TokenType[] expectedTypes = new TokenType[]{TokenType.Name, TokenType.Number, TokenType.EndOfFile};
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
@@ -76,12 +77,12 @@ public class PdfTokenizerTest extends ExtendedITextTest {
 
         tokenizer.seek(0);
         int symbol = tokenizer.peek();
-        Assertions.assertEquals((int)'/', symbol);
+        Assertions.assertEquals((int) '/', symbol);
         Assertions.assertEquals(0, tokenizer.getPosition());
 
         tokenizer.seek(7);
         symbol = tokenizer.peek();
-        Assertions.assertEquals((int)'7', symbol);
+        Assertions.assertEquals((int) '7', symbol);
         Assertions.assertEquals(7, tokenizer.getPosition());
 
         tokenizer.seek(9);
@@ -99,8 +100,8 @@ public class PdfTokenizerTest extends ExtendedITextTest {
 
         byte[] bigBuffer = new byte[13];
         read = tokenizer.peek(bigBuffer);
-        expected = new byte[] {(byte) 47, (byte) 78, (byte) 97, (byte) 109, (byte) 101, (byte) 49, (byte) 32,
-                               (byte) 55, (byte) 48, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+        expected = new byte[]{(byte) 47, (byte) 78, (byte) 97, (byte) 109, (byte) 101, (byte) 49, (byte) 32,
+                (byte) 55, (byte) 48, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
         Assertions.assertArrayEquals(expected, bigBuffer);
         Assertions.assertEquals(0, tokenizer.getPosition());
         Assertions.assertEquals(9, read);
@@ -177,7 +178,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))));
 
-        byte[] read = new byte[] {
+        byte[] read = new byte[]{
                 (byte) tok.read(), (byte) tok.read(), (byte) tok.read(),
                 (byte) tok.read(), (byte) tok.read(), (byte) tok.read(),
                 (byte) tok.read()
@@ -244,7 +245,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
 
     @Test
     public void getNextEofShortTextTest() throws IOException {
-        String data = "some text to test \ngetting end of\n file logic%%EOF";
+        String data = "some text to test \ngetting end of\n file logic\n%%EOF";
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
@@ -261,55 +262,73 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         for (int i = 0; i < 20; ++i) {
             stringBuilder.append(data);
         }
-        stringBuilder.append("%%EOF");
+        stringBuilder.append("\n%%EOF");
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(stringBuilder.toString().getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(data.length() * 20 + 5, eofPosition);
+            Assertions.assertEquals(data.length() * 20 + 1 + 5, eofPosition);
         }
     }
 
     @Test
     public void getNextEofWhichIsCutTest() throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
-        // We append 'a' 124 times because buffer has 128 bytes length.
-        // This way '%%EOF' is cut and first string only contains '%%EO'
-        for (int i = 0; i < 124; ++i) {
+        // We append 'a' 123 times and then a newline so that '%%EOF' starts at a line boundary.
+        // Buffer has 128 bytes length, so with the newline at position 123, '%%EOF' spans the chunk boundary.
+        for (int i = 0; i < 123; ++i) {
             stringBuilder.append("a");
         }
-        stringBuilder.append("%%EOF");
+        stringBuilder.append("\n%%EOF");
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(stringBuilder.toString().getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(124 + 5, eofPosition);
+            Assertions.assertEquals(123 + 1 + 5, eofPosition);
         }
     }
 
     @Test
     public void getNextEofSeveralEofTest() throws IOException {
-        String data = "some text %%EOFto test \nget%%EOFting end of\n fil%%EOFe logic%%EOF";
+        String data = "some text \n%%EOFto test \nget%%EOFting end of\n fil%%EOFe logic\n%%EOF";
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(data.indexOf("%%EOF") + 5, eofPosition);
+            Assertions.assertEquals(data.indexOf("\n%%EOF") + 1 + 5, eofPosition);
         }
     }
 
     @Test
     public void getNextEofFollowedByEOLTest() throws IOException {
-        String data = "some text to test \ngetting end of\n file logic%%EOF\n\r\r\n\r\r\n";
+        String data = "some text to test \ngetting end of\n file logic\n%%EOF\n\r\r\n\r\r\n";
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(data.indexOf("%%EOF") + 4 + 5, eofPosition);
+            Assertions.assertEquals(data.indexOf("\n%%EOF") + 1 + 4 + 5, eofPosition);
+        }
+    }
+
+    @Test
+    public void nextEofAtChunkBoundaryTest() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 123; ++i) {
+            sb.append("a");
+        }
+        sb.append("b%%EOF\n%%EOF");
+        String data = sb.toString();
+
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
+                factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
+            long eofPosition = tok.getNextEof();
+            int expectedEofStart = data.lastIndexOf("%%EOF");
+            Assertions.assertEquals(expectedEofStart + 5, eofPosition);
         }
     }
 
@@ -362,7 +381,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
                 factory.createSource("/Name1".getBytes(StandardCharsets.ISO_8859_1))));
 
         Exception e = Assertions.assertThrows(com.itextpdf.io.exceptions.IOException.class,
-                () ->  tok.throwError(ERROR_AT_FILE_POINTER, 0)
+                () -> tok.throwError(ERROR_AT_FILE_POINTER, 0)
         );
         Assertions.assertEquals(MessageFormatUtil.format(ERROR_AT_FILE_POINTER, 0), e.getMessage());
     }
@@ -562,57 +581,57 @@ public class PdfTokenizerTest extends ExtendedITextTest {
     @Test
     public void octalNumberLong1Test() {
         // 49 equal to string "1", octal 1 equals to 1 in decimal
-        byte[] bytes = new byte[] {92, 49};
+        byte[] bytes = new byte[]{92, 49};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assertions.assertArrayEquals(new byte[] {1}, result);
+        Assertions.assertArrayEquals(new byte[]{1}, result);
     }
 
     @Test
     public void octalNumberLong2Test() {
         // 49 50 equal to string "12", octal 12 equals to 10 in decimal
-        byte[] bytes = new byte[] {92, 49, 50};
+        byte[] bytes = new byte[]{92, 49, 50};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assertions.assertArrayEquals(new byte[] {10}, result);
+        Assertions.assertArrayEquals(new byte[]{10}, result);
     }
 
     @Test
     public void octalNumberLong3Test() {
         // 49 50 51 equal to string "123", octal 123 equals to 83 in decimal
-        byte[] bytes = new byte[] {92, 49, 50, 51};
+        byte[] bytes = new byte[]{92, 49, 50, 51};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assertions.assertArrayEquals(new byte[] {83}, result);
+        Assertions.assertArrayEquals(new byte[]{83}, result);
     }
 
     @Test
     public void slashAfterShortOctalTest() {
         // \0\(
-        byte[] bytes = new byte[] {92, 48, 92, 40};
+        byte[] bytes = new byte[]{92, 48, 92, 40};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assertions.assertArrayEquals(new byte[] {0, 40}, result);
+        Assertions.assertArrayEquals(new byte[]{0, 40}, result);
     }
 
     @Test
     public void notOctalAfterShortOctalTest() {
         // \0&
-        byte[] bytes = new byte[] {92, 48, 26};
+        byte[] bytes = new byte[]{92, 48, 26};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assertions.assertArrayEquals(new byte[] {0, 26}, result);
+        Assertions.assertArrayEquals(new byte[]{0, 26}, result);
     }
 
     @Test
     public void notOctalAfterShortOctalTest2() {
         // \12&
-        byte[] bytes = new byte[] {92, 49, 50, 26};
+        byte[] bytes = new byte[]{92, 49, 50, 26};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, false);
-        Assertions.assertArrayEquals(new byte[] {10, 26}, result);
+        Assertions.assertArrayEquals(new byte[]{10, 26}, result);
     }
 
     @Test
     public void twoShortOctalsWithGarbageTest() {
         // \0\23 + 4 which should not be taken into account
-        byte[] bytes = new byte[] {92, 48, 92, 50, 51, 52};
+        byte[] bytes = new byte[]{92, 48, 92, 50, 51, 52};
         byte[] result = PdfTokenizer.decodeStringContent(bytes, 0, 4, false);
-        Assertions.assertArrayEquals(new byte[] {0, 19}, result);
+        Assertions.assertArrayEquals(new byte[]{0, 19}, result);
     }
 
     private void checkTokenTypes(String data, TokenType... expectedTypes) throws Exception {
