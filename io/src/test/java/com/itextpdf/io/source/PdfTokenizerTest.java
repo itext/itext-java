@@ -244,7 +244,7 @@ public class PdfTokenizerTest extends ExtendedITextTest {
 
     @Test
     public void getNextEofShortTextTest() throws IOException {
-        String data = "some text to test \ngetting end of\n file logic%%EOF";
+        String data = "some text to test \ngetting end of\n file logic\n%%EOF";
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
@@ -261,55 +261,73 @@ public class PdfTokenizerTest extends ExtendedITextTest {
         for (int i = 0; i < 20; ++i) {
             stringBuilder.append(data);
         }
-        stringBuilder.append("%%EOF");
+        stringBuilder.append("\n%%EOF");
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(stringBuilder.toString().getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(data.length() * 20 + 5, eofPosition);
+            Assertions.assertEquals(data.length() * 20 + 1 + 5, eofPosition);
         }
     }
 
     @Test
     public void getNextEofWhichIsCutTest() throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
-        // We append 'a' 124 times because buffer has 128 bytes length.
-        // This way '%%EOF' is cut and first string only contains '%%EO'
-        for (int i = 0; i < 124; ++i) {
+        // We append 'a' 123 times and then a newline so that '%%EOF' starts at a line boundary.
+        // Buffer has 128 bytes length, so with the newline at position 123, '%%EOF' spans the chunk boundary.
+        for (int i = 0; i < 123; ++i) {
             stringBuilder.append("a");
         }
-        stringBuilder.append("%%EOF");
+        stringBuilder.append("\n%%EOF");
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(stringBuilder.toString().getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(124 + 5, eofPosition);
+            Assertions.assertEquals(123 + 1 + 5, eofPosition);
         }
     }
 
     @Test
     public void getNextEofSeveralEofTest() throws IOException {
-        String data = "some text %%EOFto test \nget%%EOFting end of\n fil%%EOFe logic%%EOF";
+        String data = "some text \n%%EOFto test \nget%%EOFting end of\n fil%%EOFe logic\n%%EOF";
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(data.indexOf("%%EOF") + 5, eofPosition);
+            Assertions.assertEquals(data.indexOf("\n%%EOF") + 1 + 5, eofPosition);
         }
     }
 
     @Test
     public void getNextEofFollowedByEOLTest() throws IOException {
-        String data = "some text to test \ngetting end of\n file logic%%EOF\n\r\r\n\r\r\n";
+        String data = "some text to test \ngetting end of\n file logic\n%%EOF\n\r\r\n\r\r\n";
 
         RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
         try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
                 factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
             long eofPosition = tok.getNextEof();
-            Assertions.assertEquals(data.indexOf("%%EOF") + 4 + 5, eofPosition);
+            Assertions.assertEquals(data.indexOf("\n%%EOF") + 1 + 4 + 5, eofPosition);
+        }
+    }
+
+    @Test
+    public void nextEofAtChunkBoundaryTest() throws IOException {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 123; ++i) {
+            sb.append("a");
+        }
+        sb.append("b%%EOF\n%%EOF");
+        String data = sb.toString();
+
+        RandomAccessSourceFactory factory = new RandomAccessSourceFactory();
+        try (PdfTokenizer tok = new PdfTokenizer(new RandomAccessFileOrArray(
+                factory.createSource(data.getBytes(StandardCharsets.ISO_8859_1))))) {
+            long eofPosition = tok.getNextEof();
+            int expectedEofStart = data.lastIndexOf("%%EOF");
+            Assertions.assertEquals(expectedEofStart + 5, eofPosition);
         }
     }
 
