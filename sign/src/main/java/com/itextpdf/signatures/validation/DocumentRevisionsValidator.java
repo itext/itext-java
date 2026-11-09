@@ -59,6 +59,7 @@ import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResu
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -157,6 +158,10 @@ public class DocumentRevisionsValidator {
     private static final float EPS = 1e-5f;
     private static final PdfDictionary DUMMY_STRUCT_TREE_ELEMENT =
             new PdfDictionary(Collections.singletonMap(PdfName.K, (PdfObject) new PdfArray()));
+
+    private static final List<PdfName> INHERITABLE_FIELD_PROPERTIES = Collections.unmodifiableList(
+            Arrays.asList(PdfName.FT, PdfName.Ff, PdfName.DV, PdfName.AA, PdfName.DA, PdfName.Q, PdfName.V,
+                    PdfName.MaxLen));
 
     private final Set<String> lockedFields = new HashSet<>();
     private final SignatureValidationProperties properties;
@@ -510,6 +515,7 @@ public class DocumentRevisionsValidator {
     }
 
     private static boolean isSignatureWidget(PdfDictionary widget) {
+        // We are safe from endless recursion here because we fix it on forms level
         PdfName widgetType = widget.getAsName(PdfName.FT);
         if (PdfName.Sig.equals(widgetType)) {
             return true;
@@ -522,6 +528,7 @@ public class DocumentRevisionsValidator {
     }
 
     private static boolean hasFieldValue(PdfDictionary widget) {
+        // We are safe from endless recursion here because we fix it on forms level
         PdfObject fieldValue = widget.get(PdfName.V);
         if (fieldValue != null) {
             return true;
@@ -529,6 +536,16 @@ public class DocumentRevisionsValidator {
 
         PdfDictionary parent = widget.getAsDictionary(PdfName.Parent);
         return parent != null && hasFieldValue(parent);
+    }
+
+    private static PdfObject getEffectiveFieldProperty(PdfDictionary field, PdfName key) {
+        // We are safe from endless recursion here because we fix it on forms level
+        PdfObject value = field.get(key);
+        if (value != null) {
+            return value;
+        }
+        PdfDictionary parent = field.getAsDictionary(PdfName.Parent);
+        return parent != null ? getEffectiveFieldProperty(parent, key) : null;
     }
 
     private boolean stopValidation(ValidationReport result, ValidationContext validationContext) {
@@ -1121,18 +1138,37 @@ public class DocumentRevisionsValidator {
             return false;
         }
 
-        PdfObject prevValue = previousField.get(PdfName.V);
-        PdfObject currValue = currentField.get(PdfName.V);
+        PdfObject prevValue = getEffectiveFieldProperty(previousField, PdfName.V);
+        PdfObject currValue = getEffectiveFieldProperty(currentField, PdfName.V);
         if (PdfName.Sig.equals(currentField.getAsName(PdfName.FT))) {
             if (!compareSignatureDictionaries(prevValue, currValue, report)) {
                 report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
                         LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
                 return false;
             }
-        } else if (!comparePdfObjects(prevValue, currValue, usuallyModifiedObjects)) {
-            report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
-                    LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
-            return false;
+        } else {
+            if (!comparePdfObjects(prevValue, currValue, usuallyModifiedObjects)) {
+                report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                        LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
+                return false;
+            }
+        }
+
+        // Here we check all inheritable and inherited field properties, except for V, which is checked above.
+        // Not inherited are checked in the previous step, so we don't need to check them here.
+        for (PdfName inheritedKey : INHERITABLE_FIELD_PROPERTIES) {
+            if (PdfName.V.equals(inheritedKey)
+                    || previousField.get(inheritedKey) != null || currentField.get(inheritedKey) != null) {
+                continue;
+            }
+
+            PdfObject prevInherited = getEffectiveFieldProperty(previousField, inheritedKey);
+            PdfObject currInherited = getEffectiveFieldProperty(currentField, inheritedKey);
+            if (!comparePdfObjects(prevInherited, currInherited, usuallyModifiedObjects)) {
+                report.addReportItem(new ReportItem(FIELD_MDP_CHECK, MessageFormatUtil.format(
+                        LOCKED_FIELD_MODIFIED, fieldName), ReportItemStatus.INVALID));
+                return false;
+            }
         }
 
         if (!compareIndirectReferencesObjNums(previousField.get(PdfName.P), currentField.get(PdfName.P), report,

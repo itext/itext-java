@@ -25,6 +25,7 @@ package com.itextpdf.signatures.validation;
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.commons.utils.MessageFormatUtil;
+import com.itextpdf.forms.logs.FormsLogMessageConstants;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
@@ -46,6 +47,8 @@ import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.TestUtil;
+import com.itextpdf.test.annotations.LogMessage;
+import com.itextpdf.test.annotations.LogMessages;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -1186,4 +1189,48 @@ public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest
         }
     }
 
+    @Test
+    public void fieldLockParentInheritedValueChangedTest() throws IOException {
+        setUp(false);
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "fieldLockParentInheritedValueChanged.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "group.child")
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    public void fieldLockParentDAChangedTest() throws IOException {
+        setUp(false);
+        try (PdfDocument document = new PdfDocument(
+                new PdfReader(SOURCE_FOLDER + "fieldLockParentDAChanged.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasNumberOfFailures(1).hasNumberOfLogs(1)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.FIELD_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.LOCKED_FIELD_MODIFIED, i -> "group.child")
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(
+            messageTemplate = FormsLogMessageConstants.FORM_FIELD_HAS_CYCLED_PARENT_STRUCTURE, count = 4))
+    public void parentRecursionTest() throws IOException {
+        setUp(false);
+        try (PdfDocument document = new PdfDocument(new PdfReader(SOURCE_FOLDER + "parentRecursion.pdf"))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            ValidationReport report = validator.validateAllDocumentRevisions(validationContext, document);
+
+            AssertValidationReport.assertThat(report, a -> a.hasStatus(ValidationResult.VALID));
+        }
+    }
 }

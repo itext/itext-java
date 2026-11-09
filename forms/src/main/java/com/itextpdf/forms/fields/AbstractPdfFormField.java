@@ -475,10 +475,10 @@ public abstract class AbstractPdfFormField extends PdfObjectWrapper<PdfDictionar
         PdfDictionary parentDict = getParent();
         if (parentDict != null) {
             PdfFormField parentField = getParentField();
+            if (parentField == null) {
+                parentField = PdfFormField.makeFormField(getParent(), getDocument());
+            }
             if (!visited.contains(parentField)) {
-                if (parentField == null) {
-                    parentField = PdfFormField.makeFormField(getParent(), getDocument());
-                }
                 visited.add(parentField);
                 PdfString pName = parentField.getFieldName(visited);
                 if (pName != null) {
