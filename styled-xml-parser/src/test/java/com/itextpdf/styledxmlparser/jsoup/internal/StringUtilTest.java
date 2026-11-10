@@ -127,6 +127,12 @@ public class StringUtilTest extends ExtendedITextTest {
         Assertions.assertEquals("http://example.com/b/c/g#s/../x", resolve("http://example.com/b/c/d;p?q", "g#s/../x"));
     }
 
+    @Test public void stripsControlCharsFromUrls() {
+        // control chars are stripped before resolution, matching how browsers interpret such urls
+        Assertions.assertEquals("https://example.com/foo", resolve("\nhttps://\texample.com/", "/fo\to"));
+        Assertions.assertEquals("", resolve("https://example.com/", "ja\tva\tscript\n:alert(1)"));
+    }
+
     @Test
     public void isAscii() {
         Assertions.assertTrue(StringUtil.isAscii(""));
