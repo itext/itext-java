@@ -94,4 +94,14 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
 
         Assert.assertFalse(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
     }
+
+    @Test
+    public void generateNewDocumentIdIsRandomTest() {
+        byte[] first = PdfEncryption.generateNewDocumentId();
+        byte[] second = PdfEncryption.generateNewDocumentId();
+
+        Assert.assertEquals(16, first.length);
+        Assert.assertEquals(16, second.length);
+        Assert.assertFalse(java.util.Arrays.equals(first, second));
+    }
 }
