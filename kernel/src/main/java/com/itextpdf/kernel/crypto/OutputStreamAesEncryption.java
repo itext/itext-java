@@ -24,10 +24,11 @@ package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.kernel.PdfException;
 import java.io.IOException;
+import java.security.SecureRandom;
 
 public class OutputStreamAesEncryption extends OutputStreamEncryption {
 
-    private static final SecureRandomHolder RNG = new SecureRandomHolder();
+    private static final SecureRandom RNG = new SecureRandom();
 
     protected AESCipher cipher;
     private boolean finished;
@@ -43,7 +44,7 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
         super(out);
 
         byte[] iv = new byte[16];
-        RNG.getSecureRandom().nextBytes(iv);
+        RNG.nextBytes(iv);
 
         byte[] nkey = new byte[len];
         System.arraycopy(key, off, nkey, 0, len);
