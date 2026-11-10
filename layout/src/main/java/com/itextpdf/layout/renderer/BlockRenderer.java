@@ -422,6 +422,9 @@ public abstract class BlockRenderer extends AbstractRenderer {
             splitRenderer = createSplitRenderer(layoutResult);
             splitRenderer.childRenderers = new ArrayList<>(childRenderers);
             replaceSplitRendererKidFloats(waitingFloatsSplitRenderers, splitRenderer);
+            if (overflowRenderer != null) {
+                handlePositionedRenderers(layoutResult, splitRenderer, overflowRenderer);
+            }
 
             float usedHeight = occupiedArea.getBBox().getHeight();
             if (!includeFloatsInOccupiedArea) {
