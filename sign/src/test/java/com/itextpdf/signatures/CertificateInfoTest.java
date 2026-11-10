@@ -81,13 +81,13 @@ public class CertificateInfoTest extends ExtendedITextTest {
     public void getIssuerFieldsExceptionTest() {
         Exception exception =
                 Assert.assertThrows(PdfException.class, () -> CertificateInfo.getIssuer(new byte[] {4, 8, 15, 16, 23, 42}));
-        Assert.assertEquals("corrupted stream - out of bounds length found: 8 >= 6", exception.getCause().getMessage());
+        Assert.assertEquals("corrupted stream - out of bounds length found: 8 > 6", exception.getCause().getMessage());
     }
 
     @Test
     public void getSubjectExceptionTest() {
         Exception exception =
                 Assert.assertThrows(PdfException.class, () -> CertificateInfo.getSubject(new byte[] {4, 8, 15, 16, 23, 42}));
-        Assert.assertEquals("corrupted stream - out of bounds length found: 8 >= 6", exception.getCause().getMessage());
+        Assert.assertEquals("corrupted stream - out of bounds length found: 8 > 6", exception.getCause().getMessage());
     }
 }
