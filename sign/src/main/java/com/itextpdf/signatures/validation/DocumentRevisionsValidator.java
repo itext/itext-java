@@ -128,6 +128,9 @@ public class DocumentRevisionsValidator {
     static final String REVISIONS_RETRIEVAL_FAILED = "Wasn't possible to retrieve document revisions.";
     static final String REVISIONS_RETRIEVAL_FAILED_UNEXPECTEDLY =
             "Unexpected exception while retrieving document revisions.";
+    static final String DATA_AFTER_LAST_REVISION =
+            "PDF document contains data after the last revision's %%EOF marker. "
+            + "This data is not covered by any known revision and may represent hidden modifications.";
     static final String SIGNATURE_MODIFIED = "Signature {0} was unexpectedly modified.";
     static final String SIGNATURE_REVISION_NOT_FOUND =
             "Not possible to identify document revision corresponding to the first signature in the document.";
@@ -253,6 +256,26 @@ public class DocumentRevisionsValidator {
             return report;
         }
         mergeRevisionsInLinearizedDocument(document, documentRevisions);
+
+        // Check if there is any non-whitespace data after the last %%EOF
+        if (!documentRevisions.isEmpty()) {
+            try {
+                RandomAccessFileOrArray raf = document.getReader().getSafeFile();
+                long fileLength = raf.length();
+                long lastEofOffset = documentRevisions.get(documentRevisions.size() - 1).getEofOffset();
+                if (lastEofOffset < fileLength && hasNonWhitespaceBytesAfter(raf, lastEofOffset, fileLength)) {
+                    report.addReportItem(
+                            new ReportItem(DOC_MDP_CHECK, DATA_AFTER_LAST_REVISION, ReportItemStatus.INVALID));
+                    if (stopValidation(report, localContext)) {
+                        return report;
+                    }
+                }
+            } catch (IOException | RuntimeException e) {
+                report.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION, e,
+                        ReportItemStatus.INDETERMINATE));
+            }
+        }
+
         SignatureUtil signatureUtil = new SignatureUtil(document);
         List<String> signatures = new ArrayList<>(signatureUtil.getSignatureNames());
         if (signatures.isEmpty()) {
@@ -334,7 +357,7 @@ public class DocumentRevisionsValidator {
             // We don't need to populate validation report in case of exceptions, it will happen later
             createDocumentAndPerformOperation(documentRevisions.get(0), document, new ValidationReport(),
                     firstRevisionDocument -> {
-                        if (isLinearizedPdf(document)) {
+                        if (isLinearizedPdf(firstRevisionDocument)) {
                             Set<PdfIndirectReference> mergedModifiedReferences =
                                     new HashSet<>(documentRevisions.get(0).getModifiedObjects());
                             mergedModifiedReferences.addAll(documentRevisions.get(1).getModifiedObjects());
@@ -405,16 +428,22 @@ public class DocumentRevisionsValidator {
         return new RASInputStream(source);
     }
 
-    private static boolean isLinearizedPdf(PdfDocument originalDocument) {
-        for (int i = 0; i < originalDocument.getNumberOfPdfObjects(); ++i) {
-            PdfObject object = originalDocument.getPdfObject(i);
+    private static boolean isLinearizedPdf(PdfDocument firstRevisionDocument) {
+        // The first revision (0 revision if linearized) must not contain any signatures, not linearized otherwise
+        if (!new SignatureUtil(firstRevisionDocument).getSignatureNames().isEmpty()) {
+            return false;
+        }
+
+        for (int i = 0; i < firstRevisionDocument.getNumberOfPdfObjects(); ++i) {
+            PdfObject object = firstRevisionDocument.getPdfObject(i);
             if (object instanceof PdfDictionary) {
                 PdfDictionary dictionary = (PdfDictionary) object;
-                if (dictionary.containsKey(new PdfName("Linearized"))) {
+                if (dictionary.containsKey(PdfName.Linearized)) {
                     return true;
                 }
             }
         }
+
         return false;
     }
 
@@ -434,6 +463,19 @@ public class DocumentRevisionsValidator {
     private boolean stopValidation(ValidationReport result, ValidationContext validationContext) {
         return !properties.getContinueAfterFailure(validationContext)
                 && result.getValidationResult() == ValidationResult.INVALID;
+    }
+
+    private static boolean hasNonWhitespaceBytesAfter(RandomAccessFileOrArray raf, long from, long to)
+            throws IOException {
+        raf.seek(from);
+        while (raf.getPosition() < to) {
+            int b = raf.read();
+            // PDF whitespace: NUL, TAB, LF, FF, CR, SPACE (ISO 32000 table 1)
+            if (b != 0x00 && b != 0x09 && b != 0x0A && b != 0x0C && b != 0x0D && b != 0x20) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateApprovalSignatureAccessPermissions(PdfDictionary signatureField, ValidationReport report) {
