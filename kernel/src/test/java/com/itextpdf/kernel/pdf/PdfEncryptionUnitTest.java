@@ -184,4 +184,14 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
 
         Assertions.assertEquals(expectedFileId,fileId);
     }
+
+    @Test
+    public void generateNewDocumentIdIsRandomTest() {
+        byte[] first = PdfEncryption.generateNewDocumentId();
+        byte[] second = PdfEncryption.generateNewDocumentId();
+
+        Assertions.assertEquals(64, first.length);
+        Assertions.assertEquals(64, second.length);
+        Assertions.assertFalse(java.util.Arrays.equals(first, second));
+    }
 }
