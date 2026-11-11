@@ -66,9 +66,9 @@ public class DocumentTest extends ExtendedITextTest {
 
     @Test
     public void testOutputEncoding() {
-        Document doc = Jsoup.parse("<p title=Ï€>Ï€ & < > </p>");
+        Document doc = Jsoup.parse("<p title=π>π & < > </p>");
         // default is utf-8
-        assertEquals("<p title=\"Ï€\">Ï€ &amp; &lt; &gt; </p>", doc.body().html());
+        assertEquals("<p title=\"π\">π &amp; &lt; &gt; </p>", doc.body().html());
         assertEquals("UTF-8", doc.outputSettings().charset().name());
 
         doc.outputSettings().charset("ascii");
@@ -83,7 +83,7 @@ public class DocumentTest extends ExtendedITextTest {
     public void testXhtmlReferences() {
         Document doc = Jsoup.parse("&lt; &gt; &amp; &quot; &apos; &times;");
         doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
-        assertEquals("&lt; &gt; &amp; \" ' Ã—", doc.body().html());
+        assertEquals("&lt; &gt; &amp; \" ' ×", doc.body().html());
     }
 
     @Test

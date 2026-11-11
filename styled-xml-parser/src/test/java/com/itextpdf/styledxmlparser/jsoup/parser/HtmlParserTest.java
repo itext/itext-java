@@ -761,7 +761,7 @@ public class HtmlParserTest extends ExtendedITextTest {
         // (as defined in html5.) However in practise that lead to spurious matches against the author's intent.
         String html = "One &clubsuite; &clubsuit;";
         Document doc = Jsoup.parse(html);
-        assertEquals(StringUtil.normaliseWhitespace("One &amp;clubsuite; â™£"), doc.body().html());
+        assertEquals(StringUtil.normaliseWhitespace("One &amp;clubsuite; ♣"), doc.body().html());
     }
 
     @Test public void relaxedBaseEntityMatchAndStrictExtendedMatch() {
@@ -901,16 +901,16 @@ public class HtmlParserTest extends ExtendedITextTest {
     }
 
     @Test public void testSupportsNonAsciiTags() {
-        String body = "<é€²æ—æŽ¨ç§»ã‚°ãƒ©ãƒ•>Yes</é€²æ—æŽ¨ç§»ã‚°ãƒ©ãƒ•><Ñ€ÑƒÑÑÐºÐ¸Ð¹-Ñ‚ÑÐ³>Correct</<Ñ€ÑƒÑÑÐºÐ¸Ð¹-Ñ‚ÑÐ³>";
+        String body = "<進捗推移グラフ>Yes</進捗推移グラフ><русский-тэг>Correct</<русский-тэг>";
         Document doc = Jsoup.parse(body);
-        Elements els = doc.select("é€²æ—æŽ¨ç§»ã‚°ãƒ©ãƒ•");
+        Elements els = doc.select("進捗推移グラフ");
         assertEquals("Yes", els.text());
-        els = doc.select("Ñ€ÑƒÑÑÐºÐ¸Ð¹-Ñ‚ÑÐ³");
+        els = doc.select("русский-тэг");
         assertEquals("Correct", els.text());
     }
 
     @Test public void testSupportsPartiallyNonAsciiTags() {
-        String body = "<div>Check</divÃ¡>";
+        String body = "<div>Check</divá>";
         Document doc = Jsoup.parse(body);
         Elements els = doc.select("div");
         assertEquals("Check", els.text());

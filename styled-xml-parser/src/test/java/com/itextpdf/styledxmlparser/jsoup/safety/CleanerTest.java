@@ -222,7 +222,7 @@ public class CleanerTest extends ExtendedITextTest {
 
         assertEquals("<div><p>&bernou;</p></div>", customOut);
         assertEquals("<div>\n" +
-            " <p>â„¬</p>\n" +
+            " <p>ℬ</p>\n" +
             "</div>", defaultOut);
 
         os.charset("ASCII");
@@ -243,7 +243,7 @@ public class CleanerTest extends ExtendedITextTest {
     }
 
     @Test public void cleansInternationalText() {
-        assertEquals("Ð¿Ñ€Ð¸Ð²ÐµÑ‚", Jsoup.clean("Ð¿Ñ€Ð¸Ð²ÐµÑ‚", Whitelist.none()));
+        assertEquals("привет", Jsoup.clean("привет", Whitelist.none()));
     }
 
     @Test

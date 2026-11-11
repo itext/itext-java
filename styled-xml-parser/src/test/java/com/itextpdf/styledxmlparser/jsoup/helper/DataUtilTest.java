@@ -77,7 +77,7 @@ public class DataUtilTest extends ExtendedITextTest {
 
     @Test
     public void shouldReturnNullForIllegalCharsetNames() {
-        assertEquals(null, DataUtil.getCharsetFromContentType("text/html; charset=$HJKDFÂ§$/("));
+        assertEquals(null, DataUtil.getCharsetFromContentType("text/html; charset=$HJKDF§$/("));
     }
 
     @Test
@@ -117,21 +117,21 @@ public class DataUtilTest extends ExtendedITextTest {
         File in = ParseTest.getFile("/bomtests/bom_utf16be.html");
         Document doc = Jsoup.parse(in, null, "http://example.com");
         assertTrue(doc.title().contains("UTF-16BE"));
-        assertTrue(doc.text().contains("ê°€ê°ê°‚ê°ƒê°„ê°…"));
+        assertTrue(doc.text().contains("가각갂갃간갅"));
 
         in = ParseTest.getFile("/bomtests/bom_utf16le.html");
         doc = Jsoup.parse(in, null, "http://example.com");
         assertTrue(doc.title().contains("UTF-16LE"));
-        assertTrue(doc.text().contains("ê°€ê°ê°‚ê°ƒê°„ê°…"));
+        assertTrue(doc.text().contains("가각갂갃간갅"));
 
         in = ParseTest.getFile("/bomtests/bom_utf32be.html");
         doc = Jsoup.parse(in, null, "http://example.com");
         assertTrue(doc.title().contains("UTF-32BE"));
-        assertTrue(doc.text().contains("ê°€ê°ê°‚ê°ƒê°„ê°…"));
+        assertTrue(doc.text().contains("가각갂갃간갅"));
 
         in = ParseTest.getFile("/bomtests/bom_utf32le.html");
         doc = Jsoup.parse(in, null, "http://example.com");
         assertTrue(doc.title().contains("UTF-32LE"));
-        assertTrue(doc.text().contains("ê°€ê°ê°‚ê°ƒê°„ê°…"));
+        assertTrue(doc.text().contains("가각갂갃간갅"));
     }
 }

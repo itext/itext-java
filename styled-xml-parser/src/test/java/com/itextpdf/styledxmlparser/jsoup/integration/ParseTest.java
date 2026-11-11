@@ -40,8 +40,8 @@ public class ParseTest extends ExtendedITextTest {
         File in = getFile("/htmltests/smh-biz-article-1.html");
         Document doc = Jsoup.parse(in, "UTF-8",
                 "http://www.smh.com.au/business/the-boards-next-fear-the-female-quota-20100106-lteq.html");
-        assertEquals("The boardâ€™s next fear: the female quota",
-                doc.title()); // note that the apos in the source is a literal â€™ (8217), not escaped or '
+        assertEquals("The board’s next fear: the female quota",
+                doc.title()); // note that the apos in the source is a literal ’ (8217), not escaped or '
         assertEquals("en", doc.select("html").attr("xml:lang"));
 
         Elements articleBody = doc.select(".articleBody > *");
@@ -98,7 +98,7 @@ public class ParseTest extends ExtendedITextTest {
         Element a = doc.select("a[href=t/2322m2]").first();
         assertEquals("http://www.yahoo.co.jp/_ylh=X3oDMTB0NWxnaGxsBF9TAzIwNzcyOTYyNjUEdGlkAzEyBHRtcGwDZ2Ex/t/2322m2",
                 a.attr("abs:href")); // session put into <base>
-        assertEquals("å…¨å›½ã€äººæ°—ã®é§…ãƒ©ãƒ³ã‚­ãƒ³ã‚°", a.text());
+        assertEquals("全国、人気の駅ランキング", a.text());
     }
 
     private static final String newsHref = "http://news.baidu.com";
@@ -110,17 +110,17 @@ public class ParseTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(in, null,
                 "http://www.baidu.com"); // http charset is gb2312, but NOT specifying it, to test http-equiv parse
         Element submit = doc.select("#su").first();
-        assertEquals("ç™¾åº¦ä¸€ä¸‹", submit.attr("value"));
+        assertEquals("百度一下", submit.attr("value"));
 
         // test from attribute match
-        submit = doc.select("input[value=ç™¾åº¦ä¸€ä¸‹]").first();
+        submit = doc.select("input[value=百度一下]").first();
         assertEquals("su", submit.id());
-        Element newsLink = doc.select("a:contains(æ–°)").first();
+        Element newsLink = doc.select("a:contains(新)").first();
         assertEquals(newsHref, newsLink.absUrl("href"));
 
         // check auto-detect from meta
         assertEquals("GB2312", doc.outputSettings().charset().displayName());
-        assertEquals("<title>ç™¾åº¦ä¸€ä¸‹ï¼Œä½ å°±çŸ¥é“      </title>", doc.select("title").outerHtml());
+        assertEquals("<title>百度一下，你就知道      </title>", doc.select("title").outerHtml());
 
         doc.outputSettings().charset("ascii");
         assertEquals("<title>&#x767e;&#x5ea6;&#x4e00;&#x4e0b;&#xff0c;&#x4f60;&#x5c31;&#x77e5;&#x9053;      </title>",
@@ -135,7 +135,7 @@ public class ParseTest extends ExtendedITextTest {
                 "http://www.baidu.com/"); // http charset is gb2312, but NOT specifying it, to test http-equiv parse
         // check auto-detect from meta
         assertEquals("GB2312", doc.outputSettings().charset().displayName());
-        assertEquals("<title>ç™¾åº¦ä¸€ä¸‹ï¼Œä½ å°±çŸ¥é“</title>", doc.select("title").outerHtml());
+        assertEquals("<title>百度一下，你就知道</title>", doc.select("title").outerHtml());
     }
 
     @Test
@@ -143,20 +143,20 @@ public class ParseTest extends ExtendedITextTest {
         // test that <meta charset="gb2312"> works
         File in = getFile("/htmltests/meta-charset-1.html");
         Document doc = Jsoup.parse(in, null, "http://example.com/"); //gb2312, has html5 <meta charset>
-        assertEquals("æ–°", doc.text());
+        assertEquals("新", doc.text());
         assertEquals("GB2312", doc.outputSettings().charset().displayName());
 
         // double check, no charset, falls back to utf8 which is incorrect
         in = getFile("/htmltests/meta-charset-2.html"); //
         doc = Jsoup.parse(in, null, "http://example.com"); // gb2312, no charset
         assertEquals("UTF-8", doc.outputSettings().charset().displayName());
-        assertFalse("æ–°".equals(doc.text()));
+        assertFalse("新".equals(doc.text()));
 
         // confirm fallback to utf8
         in = getFile("/htmltests/meta-charset-3.html");
         doc = Jsoup.parse(in, null, "http://example.com/"); // utf8, no charset
         assertEquals("UTF-8", doc.outputSettings().charset().displayName());
-        assertEquals("æ–°", doc.text());
+        assertEquals("新", doc.text());
     }
 
     @Test

@@ -127,7 +127,7 @@ public class XmlTreeBuilderTest extends ExtendedITextTest {
         InputStream inStream = new FileInputStream(xmlFile.getAbsolutePath());
         Document doc = Jsoup.parse(inStream, null, "http://example.com/", Parser.xmlParser());
         assertEquals("ISO-8859-1", doc.charset().name());
-        assertEquals("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?> <data>Ã¤Ã¶Ã¥Ã©Ã¼</data>",
+        assertEquals("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?> <data>äöåéü</data>",
             TextUtil.stripNewlines(doc.html()));
     }
 
