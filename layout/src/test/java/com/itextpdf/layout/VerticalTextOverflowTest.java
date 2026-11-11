@@ -54,7 +54,7 @@ import java.util.Collection;
 @Tag("IntegrationTest")
 public class VerticalTextOverflowTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/VerticalTextOverflowTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/VerticalTextOverflowTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/VerticalTextOverflowTest/";
     private static final String EXPANDED_FONT =
             "./src/test/resources/com/itextpdf/layout/fonts/BioRhymeExpanded-Regular.ttf";
 

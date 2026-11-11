@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 public class SurrPairTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/SurrPairTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/SurrPairTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/SurrPairTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

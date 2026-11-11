@@ -54,7 +54,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class TableMultiPageRenderingTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/TableMultiPageRenderingTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/TableMultiPageRenderingTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/TableMultiPageRenderingTest/";
     private static final float MARGIN = 36f;
     private static final PageSize SHORT_PAGE = new PageSize(PageSize.A4.getWidth(), 180);
 

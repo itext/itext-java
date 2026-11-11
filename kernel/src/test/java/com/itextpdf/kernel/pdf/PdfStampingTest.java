@@ -60,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PdfStampingTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/PdfStampingTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/PdfStampingTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/PdfStampingTest/";
 
     @BeforeAll
     public static void beforeClass() {

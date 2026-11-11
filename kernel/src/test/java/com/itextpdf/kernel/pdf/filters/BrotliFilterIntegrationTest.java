@@ -51,7 +51,7 @@ public class BrotliFilterIntegrationTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/filters"
             + "/BrotliFilterIntegrationTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/kernel/filters/BrotliFilterIntegrationTest/";
+            "./target/test/com/itextpdf/kernel/filters/BrotliFilterIntegrationTest/";
 
     @Test
     public void decodeBrotliWithDecodeParmsTest() throws IOException, java.io.IOException {

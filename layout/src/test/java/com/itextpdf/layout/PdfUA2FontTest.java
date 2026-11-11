@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Tag("IntegrationTest")
 public class PdfUA2FontTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PdfUA2FontTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/PdfUA2FontTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/PdfUA2FontTest/";
     public static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

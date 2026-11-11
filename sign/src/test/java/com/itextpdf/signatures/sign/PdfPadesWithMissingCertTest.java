@@ -65,7 +65,7 @@ public class PdfPadesWithMissingCertTest extends ExtendedITextTest {
 
     private static final String certsSrc = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithMissingCertTest/certs/";
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/signatures/sign/PdfPadesWithMissingCertTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/signatures/sign/PdfPadesWithMissingCertTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/signatures/sign/PdfPadesWithMissingCertTest/";
 
     private static final char[] PASSWORD = "testpassphrase".toCharArray();
 

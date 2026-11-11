@@ -58,7 +58,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class PdfAColorTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfAColorTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfAColorTest/";
 
     public static Object[] pdfAConformanceLevels() {
         return new Object[] {

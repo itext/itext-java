@@ -65,7 +65,7 @@ public class DefaultLayoutTest extends ExtendedITextTest {
     public static float EPS = 0.001f;
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/DefaultLayoutTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/DefaultLayoutTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/DefaultLayoutTest/";
 
     @BeforeAll
     public static void beforeClass() {

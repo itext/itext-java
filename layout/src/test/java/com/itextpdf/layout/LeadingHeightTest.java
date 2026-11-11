@@ -56,7 +56,7 @@ import org.junit.jupiter.api.Test;
 public class LeadingHeightTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/LeadingHeightTest/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/LeadingHeightTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/LeadingHeightTest/";
 
     private static final int HEIGHT_LESS_THAN_REQUIRED = -2;
     private static final int HEIGHT_IS_NOT_SET = -1;

@@ -70,7 +70,7 @@ import java.util.Collections;
 @Tag("IntegrationTest")
 public class VerticalTextTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/VerticalTextTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/VerticalTextTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/VerticalTextTest/";
     private static final String EXPANDED_FONT =
             "./src/test/resources/com/itextpdf/layout/fonts/BioRhymeExpanded-Regular.ttf";
 

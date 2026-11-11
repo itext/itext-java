@@ -61,7 +61,7 @@ import java.util.Arrays;
 @Tag("BouncyCastleIntegrationTest")
 public class DocumentRevisionsValidatorIntegrationTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/signatures/validation/DocumentRevisionsValidatorIntegrationTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/signatures/validation/DocumentRevisionsValidatorIntegrationTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/signatures/validation/DocumentRevisionsValidatorIntegrationTest/";
 
     private static final IBouncyCastleFactory FACTORY = BouncyCastleFactoryCreator.getFactory();
     private ValidatorChainBuilder builder;

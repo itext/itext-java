@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 public class GeoChartsTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/GeoChartsTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/GeoChartsTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/googlecharts/GeoChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 
 public abstract class W3CWoff2DecodeTest extends Woff2DecodeTest{
     private static final String W3C_FONT_FOLDER = "./src/test/resources/com/itextpdf/io/font/w3c/";
-    private static final String W3C_DESTINATION_FOLDER = TestUtil.getOutputPath() + "/io/font/w3c/";
+    private static final String W3C_DESTINATION_FOLDER = "./target/test/com/itextpdf/io/font/w3c/";
 
     protected abstract String getFontName();
 

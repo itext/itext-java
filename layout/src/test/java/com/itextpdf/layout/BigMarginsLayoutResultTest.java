@@ -58,7 +58,7 @@ public class BigMarginsLayoutResultTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/layout/BigMarginsLayoutResultTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/layout/BigMarginsLayoutResultTest/";
+            "./target/test/com/itextpdf/layout/BigMarginsLayoutResultTest/";
 
     private static final float A4_HEIGHT = PageSize.A4.getHeight();
     private static final float A4_WIDTH  = PageSize.A4.getWidth();

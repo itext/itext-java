@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 public class LineSeparatorTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/LineSeparatorTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/LineSeparatorTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/LineSeparatorTest/";
 
     @BeforeAll
     public static void beforeClass() {

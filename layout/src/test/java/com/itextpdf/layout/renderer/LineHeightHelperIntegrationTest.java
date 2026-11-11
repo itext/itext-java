@@ -46,7 +46,7 @@ public class LineHeightHelperIntegrationTest extends ExtendedITextTest {
 
     private static final String FONTS = "./src/test/resources/com/itextpdf/layout/fonts/";
     private static final String CMP = "./src/test/resources/com/itextpdf/layout/LineHeightHelperIntegrationTest/";
-    private static final String DESTINATION = TestUtil.getOutputPath() + "/layout/LineHeightHelperTest/";
+    private static final String DESTINATION = "./target/test/com/itextpdf/layout/LineHeightHelperTest/";
     private static final String TEXT_SAMPLE = "Effects present letters inquiry no an removed or friends. "
             + "Desire behind latter me though in. Supposing shameless am he engrossed up additions. "
             + "My possible peculiar together to. Desire so better am cannot he up before points. "

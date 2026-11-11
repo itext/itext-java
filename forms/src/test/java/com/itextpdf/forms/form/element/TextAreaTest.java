@@ -52,7 +52,7 @@ public class TextAreaTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/TextAreaTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/forms/form/element/TextAreaTest/";
+            "./target/test/com/itextpdf/forms/form/element/TextAreaTest/";
 
     @BeforeAll
     public static void beforeClass() {

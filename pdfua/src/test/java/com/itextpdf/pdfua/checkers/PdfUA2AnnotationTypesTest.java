@@ -69,7 +69,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @Tag("IntegrationTest")
 public class PdfUA2AnnotationTypesTest extends ExtendedITextTest {
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUA2AnnotationTypesTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUA2AnnotationTypesTest/";
 
     @BeforeAll
     public static void beforeClass() {

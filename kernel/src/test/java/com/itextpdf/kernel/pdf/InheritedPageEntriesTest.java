@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class InheritedPageEntriesTest extends ExtendedITextTest {
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/InheritedPageEntriesTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/InheritedPageEntriesTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/InheritedPageEntriesTest/";
 
     @BeforeAll

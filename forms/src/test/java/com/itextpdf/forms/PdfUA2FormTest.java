@@ -71,7 +71,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PdfUA2FormTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/forms/PdfUA2FormTest/";
     public static final String FONT_FOLDER = "./src/test/resources/com/itextpdf/forms/fonts/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/forms//PdfUA2FormTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/forms//PdfUA2FormTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class PdfA2OCPropertiesTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfA2OCPropertiesTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfA2OCPropertiesTest/";
 
     @BeforeAll
     public static void beforeClass() {

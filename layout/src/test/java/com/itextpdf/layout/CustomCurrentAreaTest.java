@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class CustomCurrentAreaTest extends ExtendedITextTest {
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/CustomCurrentAreaTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/CustomCurrentAreaTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/CustomCurrentAreaTest/";
 
     @BeforeAll

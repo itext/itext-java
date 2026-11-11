@@ -46,7 +46,7 @@ import java.io.IOException;
 @Tag("IntegrationTest")
 public class VerticalTextMinMaxWidthTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/VerticalTextMinMaxWidthTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/VerticalTextMinMaxWidthTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/VerticalTextMinMaxWidthTest/";
 
     @BeforeAll
     public static void beforeClass() {

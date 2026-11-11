@@ -49,7 +49,7 @@ public class PdfAAppendModeTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
     private static final String TEST_DIR_NAME = "PdfAAppendModeTest/";
     private static final String CMP_FOLDER = SOURCE_FOLDER + "cmp/" + TEST_DIR_NAME;
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/" + TEST_DIR_NAME;
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/" + TEST_DIR_NAME;
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll

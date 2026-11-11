@@ -54,7 +54,7 @@ public class ComboBoxFieldTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/ComboBoxFieldTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/forms/form/element/ComboBoxFieldTest/";
+            "./target/test/com/itextpdf/forms/form/element/ComboBoxFieldTest/";
 
     @BeforeAll
     public static void beforeClass() {

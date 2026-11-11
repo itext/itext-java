@@ -52,7 +52,7 @@ import org.junit.jupiter.api.Test;
 public class GlyphBboxCalculationTest extends ExtendedITextTest {
 
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/canvas/parser/GlyphBboxCalculationTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/canvas/parser/GlyphBboxCalculationTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/canvas/parser/GlyphBboxCalculationTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -69,7 +69,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Tag("IntegrationTest")
 public class PdfUACanvasXObjectTest extends ExtendedITextTest {
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfua/PdfUACanvasXObjectTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfua/PdfUACanvasXObjectTest/";
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfua/PdfUACanvasXObjectTest/";
 
     private static final String DOG = "./src/test/resources/com/itextpdf/pdfua/img/DOG.bmp";

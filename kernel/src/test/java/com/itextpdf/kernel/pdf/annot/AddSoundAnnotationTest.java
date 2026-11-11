@@ -46,7 +46,7 @@ public class AddSoundAnnotationTest extends ExtendedITextTest {
     public static final String sourceFolder =
             "./src/test/resources/com/itextpdf/kernel/pdf/annot/AddSoundAnnotationTest/";
     public static final String destinationFolder =
-            TestUtil.getOutputPath() + "/kernel/pdf/annot/AddSoundAnnotationTest/";
+            "./target/test/com/itextpdf/kernel/pdf/annot/AddSoundAnnotationTest/";
 
     private static final String RIFF_TAG = "RIFF";
 

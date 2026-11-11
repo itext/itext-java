@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 
 @Tag("IntegrationTest")
 public class ImageFormatsTest extends ExtendedITextTest {
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/kernel/pdf/ImageFormatsTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/kernel/pdf/ImageFormatsTest/";
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/kernel/pdf/ImageFormatsTest/";
 
     @BeforeAll

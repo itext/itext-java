@@ -44,7 +44,7 @@ import org.w3c.dom.Node;
 public class XFAFormTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/forms/xfa/XFAFormTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/forms/xfa/XFAFormTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/forms/xfa/XFAFormTest/";
     public static final String XML = sourceFolder + "xfa.xml";
 
     @BeforeAll

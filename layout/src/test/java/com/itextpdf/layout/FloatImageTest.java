@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
 @Tag("IntegrationTest")
 public class FloatImageTest extends ExtendedITextTest {
     private static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FloatImageTest/";
-    private static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FloatImageTest/";
+    private static final String destinationFolder = "./target/test/com/itextpdf/layout/FloatImageTest/";
 
     @BeforeAll
     public static void beforeClass() {

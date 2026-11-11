@@ -54,7 +54,7 @@ import java.util.Collection;
 @Tag("IntegrationTest")
 public class VerticalTextRTLTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/VerticalTextRTLTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/VerticalTextRTLTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/VerticalTextRTLTest/";
 
     @BeforeAll
     public static void beforeClass() {

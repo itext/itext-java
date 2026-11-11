@@ -72,7 +72,6 @@ public class XmlReportGenerator {
             ParserConfigurationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         // To be compliant, completely disable DOCTYPE declaration:
-        docFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); // Android-Conversion-Skip-Line (this feature is not supported in Android SDK)
         docFactory.setExpandEntityReferences(false);
         docFactory.setNamespaceAware(true);
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -97,9 +96,6 @@ public class XmlReportGenerator {
 
         // Convert to pretty printed xml.
         TransformerFactory tf = TransformerFactory.newInstance();
-        tf.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", ""); // Android-Conversion-Skip-Line (this attribute is not supported in Android SDK)
-        tf.setAttribute("http://javax.xml.XMLConstants/property/accessExternalStylesheet", ""); // Android-Conversion-Skip-Line (this attribute is not supported in Android SDK)
-        tf.setAttribute("indent-number", 2); // Android-Conversion-Skip-Line (this attribute is not supported in Android SDK)
         Transformer trans = tf.newTransformer();
         trans.setOutputProperty(OutputKeys.INDENT, "yes");
         trans.transform(new DOMSource(doc), new StreamResult(writer));

@@ -103,7 +103,7 @@ import org.junit.jupiter.api.Test;
 public class PdfAFormFieldTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/pdfa/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/pdfa/PdfAFormFieldTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/pdfa/PdfAFormFieldTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/pdfa/fonts/";
 
     @BeforeAll

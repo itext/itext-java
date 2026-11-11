@@ -47,7 +47,7 @@ public class CompressionStrategyTest extends ExtendedITextTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/CompressionStrategyTest/";
 
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/CompressionStrategyTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/CompressionStrategyTest/";
 
     @BeforeAll
     public static void beforeClass() {

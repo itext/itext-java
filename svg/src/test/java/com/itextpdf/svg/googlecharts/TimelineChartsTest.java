@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 public class TimelineChartsTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/googlecharts/TimelineChartsTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/googlecharts/TimelineChartsTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/googlecharts/TimelineChartsTest/";
 
     @BeforeAll
     public static void beforeClass() {

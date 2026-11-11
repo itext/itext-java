@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Tag;
 @Tag("IntegrationTest")
 public class PdfDocumentAppendModeTest extends ExtendedITextTest {
 
-    public static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/kernel/pdf/PdfDocumentAppendModeTest/";
+    public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/kernel/pdf/PdfDocumentAppendModeTest/";
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/kernel/pdf/PdfDocumentAppendModeTest/";
 
     @BeforeAll

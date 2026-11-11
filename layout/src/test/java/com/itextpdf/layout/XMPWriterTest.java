@@ -57,7 +57,7 @@ import org.junit.jupiter.api.Test;
 public class XMPWriterTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/XMPWriterTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/XMPWriterTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/XMPWriterTest/";
     public static final String DOG = "./src/test/resources/com/itextpdf/layout/XMPWriterTest/dog.bmp";
     public static final String FONT = "./src/test/resources/com/itextpdf/layout/fonts/FreeSans.ttf";
     public static final String FOX = "./src/test/resources/com/itextpdf/layout/XMPWriterTest/fox.bmp";

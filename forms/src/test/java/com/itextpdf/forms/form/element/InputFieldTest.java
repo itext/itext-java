@@ -58,7 +58,7 @@ public class InputFieldTest extends ExtendedITextTest {
     public static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/forms/form/element/InputFieldTest/";
     public static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/forms/form/element/InputFieldTest/";
+            "./target/test/com/itextpdf/forms/form/element/InputFieldTest/";
 
     @BeforeAll
     public static void beforeClass() {

@@ -57,7 +57,7 @@ import java.util.Map;
 public class VerticalTextCjkTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/VerticalTextCjkTest/";
     private static final String FONTS_FOLDER = "./src/test/resources/com/itextpdf/layout/fonts/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/layout/VerticalTextCjkTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/VerticalTextCjkTest/";
 
     private static final String NOTO_SANS_SC = FONTS_FOLDER + "NotoSansCJKsc-Regular.otf";
     private static final String NOTO_SANS_SC_BOLD = FONTS_FOLDER + "NotoSansCJKsc-Bold.otf";

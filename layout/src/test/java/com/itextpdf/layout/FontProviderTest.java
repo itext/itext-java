@@ -77,7 +77,7 @@ public class FontProviderTest extends ExtendedITextTest {
     }
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/FontProviderTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/FontProviderTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/FontProviderTest/";
     public static final String fontsFolder = "./src/test/resources/com/itextpdf/layout/fonts/";
 
     @BeforeAll

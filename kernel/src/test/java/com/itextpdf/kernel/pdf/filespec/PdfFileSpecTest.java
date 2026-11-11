@@ -45,7 +45,7 @@ public class PdfFileSpecTest extends ExtendedITextTest {
     private static final String SOURCE_FOLDER =
             "./src/test/resources/com/itextpdf/kernel/pdf/filespec/PdfFileSpecTest/";
     private static final String DESTINATION_FOLDER =
-            TestUtil.getOutputPath() + "/kernel/pdf/filespec/PdfFileSpecTest/";
+            "./target/test/com/itextpdf/kernel/pdf/filespec/PdfFileSpecTest/";
 
     private static final int DUPLICATE_ADDS = 2;
     // 1MB payload

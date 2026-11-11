@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 @Tag("IntegrationTest")
 public class BaselineTest extends SvgIntegrationTest {
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/css/BaselineTest/";
-    private static final String DESTINATION_FOLDER = TestUtil.getOutputPath() + "/svg/css/BaselineTest/";
+    private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/css/BaselineTest/";
 
     @BeforeAll
     public static void beforeClass() {

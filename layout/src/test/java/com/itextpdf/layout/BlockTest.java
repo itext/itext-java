@@ -66,7 +66,7 @@ import org.junit.jupiter.api.Test;
 public class BlockTest extends ExtendedITextTest {
 
     public static final String sourceFolder = "./src/test/resources/com/itextpdf/layout/BlockTest/";
-    public static final String destinationFolder = TestUtil.getOutputPath() + "/layout/BlockTest/";
+    public static final String destinationFolder = "./target/test/com/itextpdf/layout/BlockTest/";
 
     @BeforeAll
     public static void beforeClass() {
