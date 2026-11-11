@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -25,15 +25,14 @@ package com.itextpdf.svg.renderers.impl;
 import com.itextpdf.svg.processors.impl.SvgConverterProperties;
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
 import java.io.IOException;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class GroupSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/renderers/impl/GroupRendererTest/";
@@ -41,7 +40,7 @@ public class GroupSvgNodeRendererIntegrationTest extends SvgIntegrationTest {
 
     private SvgConverterProperties properties;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }

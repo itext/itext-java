@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -61,6 +61,7 @@ import com.itextpdf.kernel.pdf.annot.da.StandardAnnotationFont;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.filespec.PdfFileSpec;
 import com.itextpdf.kernel.pdf.tagging.StandardRoles;
+import com.itextpdf.kernel.pdf.tagutils.TagTreePointer;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.itextpdf.kernel.xmp.XMPException;
@@ -69,7 +70,6 @@ import com.itextpdf.kernel.xmp.XMPMetaFactory;
 import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
 import com.itextpdf.test.pdfa.VeraPdfValidator; // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
 
 import java.io.ByteArrayInputStream;
@@ -77,19 +77,19 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
     public static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/layout/PdfUA2AnnotationsTest/";
     public static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/layout/PdfUA2AnnotationsTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         createOrClearDestinationFolder(DESTINATION_FOLDER);
     }
@@ -115,8 +115,9 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
 
     @Test
-    public void pdfUA2LinkAnnotNoAltTest() throws IOException, XMPException {
-        String outFile = DESTINATION_FOLDER + "pdfuaLinkAnnotationTest.pdf";
+    public void pdfUA2LinkAnnotNoAltTest() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "pdfuaLinkAnnotationNoAltTest.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_pdfuaLinkAnnotationNoAltTest.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
@@ -130,7 +131,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             paragraph.add(link);
             new Document(pdfDocument).add(paragraph);
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        compareAndValidate(outFile, cmpFile);
     }
 
     @Test
@@ -174,7 +175,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             annot.setContents("Hello world");
             pdfPage.addAnnotation(annot);
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
 
@@ -199,8 +200,9 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfUA2RubberStampNoContentsAnnotationsTest() throws IOException, XMPException {
-        String outFile = DESTINATION_FOLDER + "pdfuaRubberstampAnnotationTest.pdf";
+    public void pdfUA2RubberStampNoContentsAnnotationsTest() throws IOException, XMPException, InterruptedException {
+        String outFile = DESTINATION_FOLDER + "pdfuaRubberstampNoContentAnnotationTest.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_pdfuaRubberstampNoContentAnnotationTest.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
@@ -211,10 +213,11 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(stamp);
             pdfPage.flush();
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        compareAndValidate(outFile, cmpFile);
     }
 
     @Test
+    //TODO DEVSIX-8807 Kernel: addAnnotation method doesn't annotate content elements with Annot tag when PDF version is 2.0
     public void pdfUA2ScreenAnnotationsTest() throws IOException, XMPException {
         String outFile = DESTINATION_FOLDER + "pdfuaScreenAnnotationTest.pdf";
 
@@ -227,7 +230,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(screen);
             pdfPage.flush();
         }
-        Assert.assertNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -242,7 +245,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             pdfPage.addAnnotation(screen);
             pdfPage.flush();
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -276,7 +279,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -297,8 +300,9 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
     }
 
     @Test
-    public void pdfUA2RedactionNoContentsAnnotationsTest() throws IOException, XMPException {
+    public void pdfUA2RedactionNoContentsAnnotationsTest() throws IOException, XMPException, InterruptedException {
         String outFile = DESTINATION_FOLDER + "pdfuaRedactionNoContentsAnnotationTest.pdf";
+        String cmpFile = SOURCE_FOLDER + "cmp_pdfuaRedactionNoContentsAnnotationTest.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
@@ -311,13 +315,13 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        compareAndValidate(outFile, cmpFile);
     }
 
     @Test
+    //TODO DEVSIX-8807 Kernel: addAnnotation method doesn't annotate content elements with Annot tag when PDF version is 2.0
     public void pdfUA23DAnnotationsTest() throws IOException, XMPException, InterruptedException {
         String outFile = DESTINATION_FOLDER + "pdfua3DAnnotationTest.pdf";
-        String cmpFile = SOURCE_FOLDER + "cmp_pdfua3DAnnotationTest.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
@@ -328,7 +332,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        compareAndValidate(outFile, cmpFile);
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -345,7 +349,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -379,7 +383,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -421,7 +425,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfTrapNetworkAnnotation annot = new PdfTrapNetworkAnnotation(PageSize.A4, form);
             pdfPage.addAnnotation(annot);
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -435,7 +439,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             PdfAnnotation annot = new PdfSoundAnnotation(new Rectangle(100, 100, 100, 100), new PdfStream());
             pdfPage.addAnnotation(annot);
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -456,13 +460,13 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
             new Document(pdfDocument).add(paragraph);
         }
 
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
+    //TODO DEVSIX-8807 Kernel: addAnnotation method doesn't annotate content elements with Annot tag when PDF version is 2.0
     public void pdfUA2TabAnnotationsTest() throws IOException, XMPException, InterruptedException {
         String outFile = DESTINATION_FOLDER + "pdfuaMultipleAnnotsTabAnnotationTest.pdf";
-        String cmpFile = SOURCE_FOLDER + "cmp_pdfuaMultipleAnnotsTabAnnotationTest.pdf";
 
         try (PdfDocument pdfDocument = new PdfDocument(
                 new PdfWriter(outFile, new WriterProperties().setPdfVersion(PdfVersion.PDF_2_0)))) {
@@ -475,12 +479,12 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             for (int i = 0; i < pdfDocument.getNumberOfPages(); i++) {
                 PdfDictionary pageObject = pdfDocument.getPage(i+1).getPdfObject();
-                Assert.assertTrue(pageObject.containsKey(PdfName.Tabs));
+                Assertions.assertTrue(pageObject.containsKey(PdfName.Tabs));
                 PdfObject pageT = pageObject.get(PdfName.Tabs);
-                Assert.assertEquals(PdfName.S, pageT);
+                Assertions.assertEquals(PdfName.S, pageT);
             }
         }
-        compareAndValidate(outFile, cmpFile);
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -497,7 +501,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     @Test
@@ -514,7 +518,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
 
             pdfPage.flush();
         }
-        Assert.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNotNull(new VeraPdfValidator().validate(outFile));// Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
     }
 
     private void createSimplePdfUA2Document(PdfDocument pdfDocument) throws IOException, XMPException {
@@ -529,7 +533,7 @@ public class PdfUA2AnnotationsTest extends ExtendedITextTest {
     }
 
     private void compareAndValidate(String outPdf, String cmpPdf) throws IOException, InterruptedException {
-        Assert.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
+        Assertions.assertNull(new VeraPdfValidator().validate(outPdf)); // Android-Conversion-Skip-Line (TODO DEVSIX-7377 introduce pdf\a validation on Android)
         String result = new CompareTool().compareByContent(outPdf, cmpPdf, DESTINATION_FOLDER, "diff_");
         if (result != null) {
             fail(result);

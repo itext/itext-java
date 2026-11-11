@@ -1,25 +1,7 @@
 /*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
-    Authors: Apryse Software.
-
-    This program is offered under a commercial and under the AGPL license.
-    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
-
-    AGPL licensing:
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+    This file is part of jsoup, see NOTICE.txt in the root of the repository.
+    It may contain modifications beyond the original version.
+*/
 package com.itextpdf.styledxmlparser.jsoup.integration;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
@@ -28,15 +10,14 @@ import com.itextpdf.styledxmlparser.jsoup.nodes.Attribute;
 import com.itextpdf.styledxmlparser.jsoup.nodes.Element;
 import com.itextpdf.styledxmlparser.jsoup.safety.Safelist;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 /**
  Check that we can extend Safelist methods
  */
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class SafelistExtensionTest extends ExtendedITextTest {
     @Test public void canCustomizeSafeTests() {
         OpenSafelist openSafelist = new OpenSafelist(Safelist.relaxed());
@@ -47,8 +28,8 @@ public class SafelistExtensionTest extends ExtendedITextTest {
         String openClean = Jsoup.clean(html, openSafelist);
         String clean = Jsoup.clean(html, safelist);
 
-        Assert.assertEquals("<p><opentag openattr=\"\">Hello</opentag></p>", TextUtil.stripNewlines(openClean));
-        Assert.assertEquals("<p>Hello</p>", clean);
+        Assertions.assertEquals("<p><opentag openattr=\"\">Hello</opentag></p>", TextUtil.stripNewlines(openClean));
+        Assertions.assertEquals("<p>Hello</p>", clean);
     }
 
     // passes tags and attributes starting with "open"

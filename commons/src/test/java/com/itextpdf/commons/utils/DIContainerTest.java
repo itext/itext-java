@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,27 +23,26 @@
 package com.itextpdf.commons.utils;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class DIContainerTest extends ExtendedITextTest {
 
     @Test
     public void testGetRegisteredInstance() {
         DIContainer di = new DIContainer();
         di.register(String.class, "hello");
-        Assert.assertEquals("hello", di.getInstance(String.class));
+        Assertions.assertEquals("hello", di.getInstance(String.class));
     }
 
     @Test
     public void testRegisterDefaultInstance() {
         DIContainer.registerDefault(String.class, () -> "hello");
         DIContainer di = new DIContainer();
-        Assert.assertEquals("hello", di.getInstance(String.class));
+        Assertions.assertEquals("hello", di.getInstance(String.class));
     }
 
 }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -690,9 +690,9 @@ public class PdfExtGState extends PdfObjectWrapper<PdfDictionary> {
     public Boolean isBlackPointCompensationUsed() {
         PdfName useBlackPointCompensation = getPdfObject().getAsName(PdfName.UseBlackPtComp);
         if (PdfName.ON.equals(useBlackPointCompensation)) {
-            return true;
+            return Boolean.TRUE;
         } else if (PdfName.OFF.equals(useBlackPointCompensation)) {
-            return false;
+            return Boolean.FALSE;
         } else {
             return null;
         }

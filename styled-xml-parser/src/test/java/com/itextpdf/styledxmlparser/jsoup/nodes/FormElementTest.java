@@ -1,41 +1,22 @@
 /*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
-    Authors: Apryse Software.
-
-    This program is offered under a commercial and under the AGPL license.
-    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
-
-    AGPL licensing:
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+    This file is part of jsoup, see NOTICE.txt in the root of the repository.
+    It may contain modifications beyond the original version.
+*/
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.helper.KeyVal;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.util.List;
 
 /**
  * Tests for FormElement
  */
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class FormElementTest extends ExtendedITextTest {
 
     @Test
@@ -46,7 +27,7 @@ public class FormElementTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(html);
 
         FormElement form = (FormElement) doc.select("form").first();
-        Assert.assertEquals(8, form.elements().size());
+        Assertions.assertEquals(8, form.elements().size());
     }
 
     @Test public void createsFormData() {
@@ -61,13 +42,13 @@ public class FormElementTest extends ExtendedITextTest {
         FormElement form = (FormElement) doc.select("form").first();
         List<KeyVal> data = form.formData();
 
-        Assert.assertEquals(6, data.size());
-        Assert.assertEquals("one=two", data.get(0).toString());
-        Assert.assertEquals("three=four", data.get(1).toString());
-        Assert.assertEquals("three=five", data.get(2).toString());
-        Assert.assertEquals("six=seven", data.get(3).toString());
-        Assert.assertEquals("seven=on", data.get(4).toString()); // set
-        Assert.assertEquals("eight=on", data.get(5).toString()); // default
+        Assertions.assertEquals(6, data.size());
+        Assertions.assertEquals("one=two", data.get(0).toString());
+        Assertions.assertEquals("three=four", data.get(1).toString());
+        Assertions.assertEquals("three=five", data.get(2).toString());
+        Assertions.assertEquals("six=seven", data.get(3).toString());
+        Assertions.assertEquals("seven=on", data.get(4).toString()); // set
+        Assertions.assertEquals("eight=on", data.get(5).toString()); // default
         // nine should not appear, not checked checkbox
         // ten should not appear, disabled
         // eleven should not appear, button
@@ -77,17 +58,17 @@ public class FormElementTest extends ExtendedITextTest {
         String html = "<form><input name=test value=foo name=test2 value=bar>";
         Document doc = Jsoup.parse(html);
         FormElement form = (FormElement) doc.selectFirst("form");
-        Assert.assertEquals("test=foo", form.formData().get(0).toString());
+        Assertions.assertEquals("test=foo", form.formData().get(0).toString());
     }
 
     @Test public void formsAddedAfterParseAreFormElements() {
         Document doc = Jsoup.parse("<body />");
         doc.body().html("<form action='http://example.com/search'><input name='q' value='search'>");
         Element formEl = doc.select("form").first();
-        Assert.assertTrue(formEl instanceof FormElement);
+        Assertions.assertTrue(formEl instanceof FormElement);
 
         FormElement form = (FormElement) formEl;
-        Assert.assertEquals(1, form.elements().size());
+        Assertions.assertEquals(1, form.elements().size());
     }
 
     @Test public void controlsAddedAfterParseAreLinkedWithForms() {
@@ -97,20 +78,20 @@ public class FormElementTest extends ExtendedITextTest {
         Element formEl = doc.select("form").first();
         formEl.append("<input name=foo value=bar>");
 
-        Assert.assertTrue(formEl instanceof FormElement);
+        Assertions.assertTrue(formEl instanceof FormElement);
         FormElement form = (FormElement) formEl;
-        Assert.assertEquals(1, form.elements().size());
+        Assertions.assertEquals(1, form.elements().size());
 
         List<KeyVal> data = form.formData();
-        Assert.assertEquals("foo=bar", data.get(0).toString());
+        Assertions.assertEquals("foo=bar", data.get(0).toString());
     }
 
     @Test public void usesOnForCheckboxValueIfNoValueSet() {
         Document doc = Jsoup.parse("<form><input type=checkbox checked name=foo></form>");
         FormElement form = (FormElement) doc.select("form").first();
         List<KeyVal> data = form.formData();
-        Assert.assertEquals("on", data.get(0).value());
-        Assert.assertEquals("foo", data.get(0).key());
+        Assertions.assertEquals("on", data.get(0).value());
+        Assertions.assertEquals("foo", data.get(0).key());
     }
 
     @Test public void adoptedFormsRetainInputs() {
@@ -129,10 +110,10 @@ public class FormElementTest extends ExtendedITextTest {
         Document doc = Jsoup.parse(html);
         FormElement form = (FormElement) doc.select("form").first();
         List<KeyVal> data = form.formData();
-        Assert.assertEquals(3, data.size());
-        Assert.assertEquals("user", data.get(0).key());
-        Assert.assertEquals("pass", data.get(1).key());
-        Assert.assertEquals("login", data.get(2).key());
+        Assertions.assertEquals(3, data.size());
+        Assertions.assertEquals("user", data.get(0).key());
+        Assertions.assertEquals("pass", data.get(1).key());
+        Assertions.assertEquals("login", data.get(2).key());
     }
 
     @Test public void removeFormElement() {
@@ -151,9 +132,9 @@ public class FormElementTest extends ExtendedITextTest {
         pass.remove();
 
         List<KeyVal> data = form.formData();
-        Assert.assertEquals(2, data.size());
-        Assert.assertEquals("user", data.get(0).key());
-        Assert.assertEquals("login", data.get(1).key());
-        Assert.assertNull(doc.selectFirst("input[name=pass]"));
+        Assertions.assertEquals(2, data.size());
+        Assertions.assertEquals("user", data.get(0).key());
+        Assertions.assertEquals("login", data.get(1).key());
+        Assertions.assertNull(doc.selectFirst("input[name=pass]"));
     }
 }

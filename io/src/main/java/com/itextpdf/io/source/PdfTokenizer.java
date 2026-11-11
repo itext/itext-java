@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,11 +26,12 @@ import com.itextpdf.commons.utils.MessageFormatUtil;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 import com.itextpdf.io.logs.IoLogMessageConstant;
-
-import java.io.Closeable;
-import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.Closeable;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class PdfTokenizer implements Closeable {
 
@@ -141,6 +142,27 @@ public class PdfTokenizer implements Closeable {
         return file.read();
     }
 
+    /**
+     * Gets the next byte of pdf source without moving source position.
+     *
+     * @return the byte, or -1 if EOF is reached
+     * @throws java.io.IOException in case of any reading error.
+     */
+    public int peek() throws java.io.IOException {
+        return file.peek();
+    }
+
+    /**
+     * Gets the next {@code buffer.length} bytes of pdf source without moving source position.
+     *
+     * @param buffer buffer to store read bytes
+     * @return the number of read bytes. If it is less than {@code buffer.length} it means EOF has been reached.
+     * @throws java.io.IOException in case of any reading error.
+     */
+    public int peek(byte[] buffer) throws java.io.IOException {
+        return file.peek(buffer);
+    }
+
     public String readString(int size) throws java.io.IOException {
         StringBuilder buf = new StringBuilder();
         int ch;
@@ -242,9 +264,9 @@ public class PdfTokenizer implements Closeable {
     }
 
     /**
-     * Gets next %%EOF marker in current PDF file.
+     * Gets the position right after the next %%EOF marker in current PDF file.
      *
-     * @return next %%EOF marker position
+     * @return the position after the %%EOF marker, including up to 4 following CR/LF bytes
      *
      * @throws java.io.IOException in case of input-output related exceptions during PDF document reading
      */
@@ -254,10 +276,38 @@ public class PdfTokenizer implements Closeable {
         do {
             long currentPosition = file.getPosition();
             str = readString(arrLength);
-            long eofPosition = str.indexOf("%%EOF");
-            if (eofPosition >= 0) {
-                // 6 stands for '%%EOF' length + 1
-                return currentPosition + eofPosition + 6;
+            int searchFrom = 0;
+            int eofPosition;
+            while ((eofPosition = str.indexOf("%%EOF", searchFrom)) >= 0) {
+                // Check that %%EOF starts at the beginning of the line according to PDF spec 7.5.5
+                long absoluteEofPos = currentPosition + eofPosition;
+                boolean lineStartsWithEof;
+                if (eofPosition > 0) {
+                    char preceding = str.charAt(eofPosition - 1);
+                    lineStartsWithEof = preceding == '\n' || preceding == '\r';
+                } else {
+                    // eofPosition == 0: check the byte just before this chunk in the file
+                    lineStartsWithEof = absoluteEofPos == 0 || isLineEndingAt(absoluteEofPos - 1);
+                }
+                if (lineStartsWithEof) {
+                    // Now we want to also include following EOL bytes
+                    file.seek(absoluteEofPos + 5);
+                    // We allow next bytes to be only EOL markers
+                    String remainingBytes = readString(4);
+                    int eolCount = 0;
+                    for (byte b : remainingBytes.getBytes(StandardCharsets.UTF_8)) {
+                        if (b == '\n' || b == '\r') {
+                            eolCount++;
+                        } else {
+                            return absoluteEofPos + eolCount + 5;
+                        }
+                    }
+
+                    // 5 stands for '%%EOF' length
+                    return absoluteEofPos + eolCount + 5;
+                }
+
+                searchFrom = eofPosition + 5;
             }
             // Change current position to ensure '%%EOF' is not cut in half.
             file.seek(file.getPosition() - 4);
@@ -830,5 +880,13 @@ public class PdfTokenizer implements Closeable {
             // empty on purpose
         }
         return null;
+    }
+
+    private boolean isLineEndingAt(long position) throws java.io.IOException {
+        long savedPosition = file.getPosition();
+        file.seek(position);
+        int b = file.read();
+        file.seek(savedPosition);
+        return b == '\n' || b == '\r';
     }
 }

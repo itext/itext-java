@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,13 +24,12 @@ package com.itextpdf.kernel.pdf.filters;
 
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class LZWDecodeFilterTest extends ExtendedITextTest {
 
     @Test
@@ -39,7 +38,7 @@ public class LZWDecodeFilterTest extends ExtendedITextTest {
         String expectedResult = "-----A---B";
 
         String decoded = new String(LZWDecodeFilter.LZWDecode(bytes));
-        Assert.assertEquals(expectedResult, decoded);
+        Assertions.assertEquals(expectedResult, decoded);
     }
 
     @Test
@@ -50,7 +49,7 @@ public class LZWDecodeFilterTest extends ExtendedITextTest {
         LZWDecodeFilter filter = new LZWDecodeFilter();
         String decoded = new String(filter.decode(bytes,null, new PdfDictionary(),
                 new PdfDictionary()));
-        Assert.assertEquals(expectedResult, decoded);
+        Assertions.assertEquals(expectedResult, decoded);
     }
 
 }

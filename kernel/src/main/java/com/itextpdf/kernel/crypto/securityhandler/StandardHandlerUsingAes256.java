@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,6 +22,7 @@
  */
 package com.itextpdf.kernel.crypto.securityhandler;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleSecureRandomHolder;
 import com.itextpdf.io.logs.IoLogMessageConstant;
 import com.itextpdf.io.util.StreamUtil;
 import com.itextpdf.kernel.exceptions.PdfException;
@@ -29,7 +30,6 @@ import com.itextpdf.kernel.crypto.AESCipherCBCnoPad;
 import com.itextpdf.kernel.crypto.AesDecryptor;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.crypto.IDecryptor;
-import com.itextpdf.kernel.crypto.IVGenerator;
 import com.itextpdf.kernel.crypto.OutputStreamAesEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
 
 public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
+
+    private static final BouncyCastleSecureRandomHolder RNG = new BouncyCastleSecureRandomHolder();
 
     private static final int VALIDATION_SALT_OFFSET = 32;
     private static final int KEY_SALT_OFFSET = 40;
@@ -111,10 +113,13 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             }
 
             // first 8 bytes are validation salt; second 8 bytes are key salt
-            byte[] userValAndKeySalt = IVGenerator.getIV(16);
-            byte[] ownerValAndKeySalt = IVGenerator.getIV(16);
+            byte[] userValAndKeySalt = new byte[16];
+            RNG.getSecureRandom().nextBytes(userValAndKeySalt);
+            byte[] ownerValAndKeySalt = new byte[16];
+            RNG.getSecureRandom().nextBytes(ownerValAndKeySalt);
 
-            nextObjectKey = IVGenerator.getIV(32);
+            nextObjectKey = new byte[32];
+            RNG.getSecureRandom().nextBytes(nextObjectKey);
             nextObjectKeySize = 32;
 
             byte[] hash;
@@ -127,7 +132,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             // Algorithm 8.2
             hash = computeHash(userPassword, userValAndKeySalt, 8, 8);
             AESCipherCBCnoPad ac = new AESCipherCBCnoPad(true, hash);
-            ueKey = ac.processBlock(nextObjectKey, 0, nextObjectKey.length);
+            ueKey = ac.processFullBlock(nextObjectKey, 0, nextObjectKey.length);
 
 
             // Algorithm 9.1
@@ -138,11 +143,12 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             // Algorithm 9.2
             hash = computeHash(ownerPassword, ownerValAndKeySalt, 8, 8, userKey);
             ac = new AESCipherCBCnoPad(true, hash);
-            oeKey = ac.processBlock(nextObjectKey, 0, nextObjectKey.length);
+            oeKey = ac.processFullBlock(nextObjectKey, 0, nextObjectKey.length);
 
 
             // Algorithm 10
-            byte[] permsp = IVGenerator.getIV(16);
+            byte[] permsp = new byte[16];
+            RNG.getSecureRandom().nextBytes(permsp);
             permsp[0] = (byte) permissions;
             permsp[1] = (byte) (permissions >> 8);
             permsp[2] = (byte) (permissions >> 16);
@@ -156,7 +162,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             permsp[10] = (byte) 'd';
             permsp[11] = (byte) 'b';
             ac = new AESCipherCBCnoPad(true, nextObjectKey);
-            aes256Perms = ac.processBlock(permsp, 0, permsp.length);
+            aes256Perms = ac.processFullBlock(permsp, 0, permsp.length);
 
             this.permissions = permissions;
             this.encryptMetadata = encryptMetadata;
@@ -227,7 +233,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             if (usedOwnerPassword) {
                 hash = computeHash(password, oValue, KEY_SALT_OFFSET, SALT_LENGTH, uValue);
                 AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, hash);
-                nextObjectKey = ac.processBlock(oeValue, 0, oeValue.length);
+                nextObjectKey = ac.processFullBlock(oeValue, 0, oeValue.length);
             } else {
                 hash = computeHash(password, uValue, VALIDATION_SALT_OFFSET, SALT_LENGTH);
                 if (!compareArray(hash, uValue, 32)) {
@@ -235,12 +241,12 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
                 }
                 hash = computeHash(password, uValue, KEY_SALT_OFFSET, SALT_LENGTH);
                 AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, hash);
-                nextObjectKey = ac.processBlock(ueValue, 0, ueValue.length);
+                nextObjectKey = ac.processFullBlock(ueValue, 0, ueValue.length);
             }
             nextObjectKeySize = 32;
 
             AESCipherCBCnoPad ac = new AESCipherCBCnoPad(false, nextObjectKey);
-            byte[] decPerms = ac.processBlock(perms, 0, perms.length);
+            byte[] decPerms = ac.processFullBlock(perms, 0, perms.length);
             if (decPerms[9] != (byte) 'a' || decPerms[10] != (byte) 'd' || decPerms[11] != (byte) 'b')
                 throw new BadPasswordException(KernelExceptionMessageConstant.BAD_USER_PASSWORD);
             int permissionsDecoded = (decPerms[0] & 0xff) | ((decPerms[1] & 0xff) << 8)
@@ -302,7 +308,7 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
                 // b)
                 AESCipherCBCnoPad cipher = new AESCipherCBCnoPad(true, Arrays.copyOf(k, 16), Arrays.copyOfRange(k, 16, 32));
-                byte[] e = cipher.processBlock(k1, 0, k1.length);
+                byte[] e = cipher.processFullBlock(k1, 0, k1.length);
 
                 // c)
                 MessageDigest md = null;

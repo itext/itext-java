@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,7 +22,6 @@
  */
 package com.itextpdf.kernel.pdf;
 
-import com.itextpdf.commons.utils.SystemUtil;
 import com.itextpdf.io.source.ByteBuffer;
 import com.itextpdf.kernel.crypto.IDecryptor;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
@@ -44,9 +43,8 @@ import com.itextpdf.kernel.security.IExternalDecryptionProcess;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.security.cert.Certificate;
 
 public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
@@ -56,7 +54,7 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
     private static final int AES_256 = 5;
     private static final int DEFAULT_KEY_LENGTH = 40;
 
-    private static long seq = SystemUtil.getTimeBasedSeed();
+    private static final SecureRandom RANDOM_ID_GENERATOR = new SecureRandom();
 
     private int cryptoMode;
 
@@ -253,18 +251,16 @@ public class PdfEncryption extends PdfObjectWrapper<PdfDictionary> {
         }
     }
 
+    /**
+     * Generates random document ID.
+     *
+     * @return document ID
+     */
     public static byte[] generateNewDocumentId() {
-        MessageDigest sha512;
-        try {
-            sha512 = MessageDigest.getInstance("SHA-512");
-        } catch (Exception e) {
-            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
-        }
-        long time = SystemUtil.getTimeBasedSeed();
-        long mem = SystemUtil.getFreeMemory();
-        String s = time + "+" + mem + "+" + (seq++);
+        byte[] bytes = new byte[64];
+        RANDOM_ID_GENERATOR.nextBytes(bytes);
 
-        return sha512.digest(s.getBytes(StandardCharsets.ISO_8859_1));
+        return bytes;
     }
 
     /**

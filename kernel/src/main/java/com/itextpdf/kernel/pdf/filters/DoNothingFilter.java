@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -31,11 +31,9 @@ import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
  * A filter that doesn't modify the stream at all
  */
 public class DoNothingFilter implements IFilterHandler {
-    private PdfName lastFilterName;
 
     @Override
     public byte[] decode(byte[] b, PdfName filterName, PdfObject decodeParams, PdfDictionary streamDictionary) {
-        lastFilterName = filterName;
         return b;
     }
 }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -27,10 +27,12 @@ import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import com.itextpdf.kernel.exceptions.PdfException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.GeneralSecurityException;
 
 /**
  * Creates an AES Cipher with CBC and no padding.
@@ -79,7 +81,59 @@ public class AESCipherCBCnoPad {
         }
     }
 
+    /**
+     * Performs a multiple-part encryption or decryption operation (depending on how this cipher was initialized),
+     * processing another data part.
+     *
+     * @param inp the input buffer
+     * @param inpOff the offset in input where the input starts
+     * @param inpLen the input length
+     *
+     * @return byte array with the result
+     */
     public byte[] processBlock(byte[] inp, int inpOff, int inpLen) {
         return cipher.update(inp, inpOff, inpLen);
+    }
+
+    /**
+     * Finishes a multiple-part encryption or decryption operation, depending on how this cipher was initialized.
+     *
+     * @return byte array with the result
+     */
+    public byte[] doFinal() {
+        try {
+            return cipher.doFinal();
+        } catch (GeneralSecurityException | IllegalArgumentException e) {
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
+        }
+    }
+
+    /**
+     * Performs a multiple-part encryption or decryption operation (depending on how this cipher was initialized),
+     * processing the full block with finalizing.
+     *
+     * @param inp the input buffer
+     * @param inpOff the offset in input where the input starts
+     * @param inpLen the input length
+     *
+     * @return byte array with the result
+     */
+    public byte[] processFullBlock(byte[] inp, int inpOff, int inpLen) {
+        try {
+            ByteArrayOutputStream ba = new ByteArrayOutputStream();
+            byte[] processRes = processBlock(inp, inpOff, inpLen);
+            if (processRes != null) {
+                ba.write(processRes);
+            }
+
+            byte[] doFinalRes = doFinal();
+            if (doFinalRes != null) {
+                ba.write(doFinalRes);
+            }
+
+            return ba.toByteArray();
+        } catch (IOException e) {
+            throw new PdfException(KernelExceptionMessageConstant.PDF_ENCRYPTION, e);
+        }
     }
 }

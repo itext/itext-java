@@ -1,66 +1,39 @@
 /*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
-    Authors: Apryse Software.
-
-    This program is offered under a commercial and under the AGPL license.
-    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
-
-    AGPL licensing:
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+    This file is part of jsoup, see NOTICE.txt in the root of the repository.
+    It may contain modifications beyond the original version.
+*/
 package com.itextpdf.styledxmlparser.jsoup.safety;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
 import com.itextpdf.styledxmlparser.jsoup.TextUtil;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class MultiLocaleTest extends ExtendedITextTest {
 
     private final Locale defaultLocale = Locale.getDefault();
 
-    @Parameterized.Parameters
-    public static Collection<Locale> locales() {
+    public static Collection<Locale> Locales() {
         return Arrays.asList(Locale.ENGLISH, new Locale("tr"));
     }
 
-    @After
+    @AfterEach
     public void setDefaultLocale() {
         Locale.setDefault(defaultLocale);
     }
 
-    private Locale locale;
-
-    public MultiLocaleTest(Locale locale) {
-        this.locale = locale;
-    }
-
-    @Test
-    public void safeListedProtocolShouldBeRetained() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void safeListedProtocolShouldBeRetained(Locale locale) {
         Locale.setDefault(locale);
 
         Whitelist safelist = (Whitelist) Whitelist.none()
@@ -70,11 +43,12 @@ public class MultiLocaleTest extends ExtendedITextTest {
 
         String cleanHtml = Jsoup.clean("<a href=\"SOMETHING://x\"></a>", safelist);
 
-        Assert.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
     }
 
-    @Test
-    public void cleanerSafeListedProtocolShouldBeRetained() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void cleanerSafeListedProtocolShouldBeRetained(Locale locale) {
         Locale.setDefault(locale);
 
         Safelist safelist = Safelist.none()
@@ -84,11 +58,12 @@ public class MultiLocaleTest extends ExtendedITextTest {
 
         String cleanHtml = Jsoup.clean("<a href=\"SOMETHING://x\"></a>", safelist);
 
-        Assert.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
     }
 
-    @Test
-    public void compatibilitySafeListedProtocolShouldBeRetained() {
+    @ParameterizedTest
+    @MethodSource("Locales")
+    public void compatibilitySafeListedProtocolShouldBeRetained(Locale locale) {
         Locale.setDefault(locale);
 
         Whitelist safelist = (Whitelist) Whitelist.none()
@@ -98,6 +73,6 @@ public class MultiLocaleTest extends ExtendedITextTest {
 
         String cleanHtml = Jsoup.clean("<a href=\"SOMETHING://x\"></a>", safelist);
 
-        Assert.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
+        Assertions.assertEquals("<a href=\"SOMETHING://x\"></a>", TextUtil.stripNewlines(cleanHtml));
     }
 }

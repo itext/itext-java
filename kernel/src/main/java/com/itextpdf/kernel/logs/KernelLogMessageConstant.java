@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -97,6 +97,10 @@ public final class KernelLogMessageConstant {
 
     public static final String XOBJECT_STRUCT_PARENT_INDEX_MISSED_AND_RECREATED =
             "XObject has no StructParents index in its stream, so index is recreated";
+
+    //TODO DEVSIX-8490 remove this log message when implemented
+    public static final String DUPLICATE_ENTRIES_IN_ORDER_ARRAY_REMOVED = "Duplicated entries in order array are " +
+            "removed";
 
     private KernelLogMessageConstant() {
         //Private constructor will prevent the instantiation of this class directly

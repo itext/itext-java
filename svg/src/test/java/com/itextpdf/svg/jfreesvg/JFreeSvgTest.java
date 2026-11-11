@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,21 +24,20 @@ package com.itextpdf.svg.jfreesvg;
 
 import com.itextpdf.svg.renderers.SvgIntegrationTest;
 import com.itextpdf.test.ITextTest;
-import com.itextpdf.test.annotations.type.IntegrationTest;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
 import java.io.IOException;
 
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class JFreeSvgTest extends SvgIntegrationTest {
 
     private static final String SOURCE_FOLDER = "./src/test/resources/com/itextpdf/svg/JFreeSvgTest/";
     private static final String DESTINATION_FOLDER = "./target/test/com/itextpdf/svg/JFreeSvgTest/";
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         ITextTest.createDestinationFolder(DESTINATION_FOLDER);
     }

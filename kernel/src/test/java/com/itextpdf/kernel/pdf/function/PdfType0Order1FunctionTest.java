@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,12 +22,11 @@
  */
 package com.itextpdf.kernel.pdf.function;
 
-import com.itextpdf.test.annotations.type.IntegrationTest;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(IntegrationTest.class)
+@Tag("IntegrationTest")
 public class PdfType0Order1FunctionTest extends AbstractPdfType0FunctionTest {
 
     private static final int LINEAR_INTERPOLATION_ORDER = 1;

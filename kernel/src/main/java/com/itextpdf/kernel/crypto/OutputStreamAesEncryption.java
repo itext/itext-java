@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,11 +22,15 @@
  */
 package com.itextpdf.kernel.crypto;
 
+import com.itextpdf.bouncycastleconnector.BouncyCastleSecureRandomHolder;
 import com.itextpdf.kernel.exceptions.PdfException;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
 import java.io.IOException;
 
 public class OutputStreamAesEncryption extends OutputStreamEncryption {
+
+    private static final BouncyCastleSecureRandomHolder RNG = new BouncyCastleSecureRandomHolder();
+
     protected AESCipher cipher;
     private boolean finished;
 
@@ -39,7 +43,10 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
      */
     public OutputStreamAesEncryption(java.io.OutputStream out, byte[] key, int off, int len) {
         super(out);
-        byte[] iv = IVGenerator.getIV();
+
+        byte[] iv = new byte[16];
+        RNG.getSecureRandom().nextBytes(iv);
+
         byte[] nkey = new byte[len];
         System.arraycopy(key, off, nkey, 0, len);
         cipher = new AESCipher(true, nkey, iv);

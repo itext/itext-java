@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,18 +26,17 @@ import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfObject;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class PdfMarkupAnnotationTest extends ExtendedITextTest {
     @Test
     public void externalDataTest() {
         PdfMarkupAnnotation annotation = new PdfCircleAnnotation(new Rectangle(0, 0, 10, 10));
         annotation.setExternalData(new PdfDictionary());
-        Assert.assertEquals(PdfObject.DICTIONARY, annotation.getExternalData().getType());
+        Assertions.assertEquals(PdfObject.DICTIONARY, annotation.getExternalData().getType());
     }
 }

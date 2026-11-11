@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -97,8 +97,6 @@ public class DocumentRevisionsValidator {
     static final String FIELD_NOT_DICTIONARY =
             "Form field \"{0}\" or one of its widgets is not a dictionary. It will not be validated.";
     static final String FIELD_REMOVED = "Form field {0} was removed or unexpectedly modified.";
-    static final String LINEARIZED_NOT_SUPPORTED =
-            "Linearized PDF documents are not supported by DocumentRevisionsValidator.";
     static final String LOCKED_FIELD_KIDS_ADDED =
             "Kids were added to locked form field \"{0}\".";
     static final String LOCKED_FIELD_KIDS_REMOVED =
@@ -127,6 +125,9 @@ public class DocumentRevisionsValidator {
     static final String REVISIONS_RETRIEVAL_FAILED = "Wasn't possible to retrieve document revisions.";
     static final String REVISIONS_RETRIEVAL_FAILED_UNEXPECTEDLY =
             "Unexpected exception while retrieving document revisions.";
+    static final String DATA_AFTER_LAST_REVISION =
+            "PDF document contains data after the last revision's %%EOF marker. "
+            + "This data is not covered by any known revision and may represent hidden modifications.";
     static final String SIGNATURE_MODIFIED = "Signature {0} was unexpectedly modified.";
     static final String SIGNATURE_REVISION_NOT_FOUND =
             "Not possible to identify document revision corresponding to the first signature in the document.";
@@ -217,6 +218,21 @@ public class DocumentRevisionsValidator {
      * @return {@link ValidationReport} which contains detailed validation results.
      */
     public ValidationReport validateAllDocumentRevisions(ValidationContext context, PdfDocument document) {
+        return validateAllDocumentRevisions(context, document, null);
+    }
+
+    /**
+     * Validate all document revisions according to docMDP and fieldMDP transform methods and collect validation report
+     * related to the single signature field checks if specified.
+     *
+     * @param context       the validation context in which to validate document revisions
+     * @param document      the document to be validated
+     * @param signatureName signature field to collect validation result for. If null, all signatures will be checked
+     *
+     * @return {@link ValidationReport} which contains detailed validation results.
+     */
+    ValidationReport validateAllDocumentRevisions(ValidationContext context, PdfDocument document,
+                                                  String signatureName) {
         resetClassFields();
         ValidationContext localContext = context.setValidatorContext(ValidatorContext.DOCUMENT_REVISIONS_VALIDATOR);
         ValidationReport report = new ValidationReport();
@@ -235,50 +251,86 @@ public class DocumentRevisionsValidator {
                             ReportItemStatus.INDETERMINATE));
             return report;
         }
+        mergeRevisionsInLinearizedDocument(document, documentRevisions);
+
+        // Check if there is any non-whitespace data after the last %%EOF
+        if (!documentRevisions.isEmpty()) {
+            try {
+                RandomAccessFileOrArray raf = document.getReader().getSafeFile();
+                long fileLength = raf.length();
+                long lastEofOffset = documentRevisions.get(documentRevisions.size() - 1).getEofOffset();
+                if (lastEofOffset < fileLength && hasNonWhitespaceBytesAfter(raf, lastEofOffset, fileLength)) {
+                    report.addReportItem(
+                            new ReportItem(DOC_MDP_CHECK, DATA_AFTER_LAST_REVISION, ReportItemStatus.INVALID));
+                    if (stopValidation(report, localContext)) {
+                        return report;
+                    }
+                }
+            } catch (IOException | RuntimeException e) {
+                report.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION, e,
+                        ReportItemStatus.INDETERMINATE));
+            }
+        }
+
         SignatureUtil signatureUtil = new SignatureUtil(document);
         List<String> signatures = new ArrayList<>(signatureUtil.getSignatureNames());
         if (signatures.isEmpty()) {
             report.addReportItem(new ReportItem(DOC_MDP_CHECK, DOCUMENT_WITHOUT_SIGNATURES, ReportItemStatus.INFO));
             return report;
         }
-        boolean signatureFound = false;
+        boolean updateAccessPermissions = true;
+        boolean documentSigned = false;
         boolean certificationSignatureFound = false;
-        PdfSignature currentSignature = signatureUtil.getSignature(signatures.get(0));
+        boolean collectRevisionsValidationReport = signatureName == null;
+        String currentSignatureName = signatures.get(0);
+        PdfSignature currentSignature = signatureUtil.getSignature(currentSignatureName);
         for (int i = 0; i < documentRevisions.size(); i++) {
             if (currentSignature != null &&
-                    revisionContainsSignature(documentRevisions.get(i), signatures.get(0), document, report)) {
-                signatureFound = true;
+                    revisionContainsSignature(documentRevisions.get(i), currentSignatureName, document, report)) {
+                documentSigned = true;
                 if (isCertificationSignature(currentSignature)) {
                     if (certificationSignatureFound) {
                         report.addReportItem(new ReportItem(DOC_MDP_CHECK,
                                 TOO_MANY_CERTIFICATION_SIGNATURES, ReportItemStatus.INDETERMINATE));
                     } else {
                         certificationSignatureFound = true;
-                        updateCertificationSignatureAccessPermissions(currentSignature, report);
+                        if (updateAccessPermissions) {
+                            updateCertificationSignatureAccessPermissions(currentSignature, report);
+                        }
                     }
                 }
-                updateApprovalSignatureAccessPermissions(
-                        signatureUtil.getSignatureFormFieldDictionary(signatures.get(0)), report);
-                updateApprovalSignatureFieldLock(documentRevisions.get(i),
-                        signatureUtil.getSignatureFormFieldDictionary(signatures.get(0)), document, report);
+                if (updateAccessPermissions) {
+                    updateApprovalSignatureAccessPermissions(
+                            signatureUtil.getSignatureFormFieldDictionary(currentSignatureName), report);
+                    updateApprovalSignatureFieldLock(documentRevisions.get(i),
+                            signatureUtil.getSignatureFormFieldDictionary(currentSignatureName), document, report);
+                }
+                if (signatureName != null && signatureName.equals(currentSignatureName)) {
+                    updateAccessPermissions = false;
+                    collectRevisionsValidationReport = true;
+                }
                 signatures.remove(0);
                 if (signatures.isEmpty()) {
                     currentSignature = null;
                 } else {
-                    currentSignature = signatureUtil.getSignature(signatures.get(0));
+                    currentSignatureName = signatures.get(0);
+                    currentSignature = signatureUtil.getSignature(currentSignatureName);
                 }
             }
-            if (signatureFound && i < documentRevisions.size() - 1) {
-                validateRevision(documentRevisions.get(i), documentRevisions.get(i + 1),
-                        document, report, localContext);
+            if (documentSigned && i < documentRevisions.size() - 1) {
+                ValidationReport validationReport = new ValidationReport();
+                validateRevision(documentRevisions.get(i), documentRevisions.get(i + 1), document, validationReport,
+                        localContext);
+                if (collectRevisionsValidationReport) {
+                    report.merge(validationReport);
+                }
             }
             if (stopValidation(report, localContext)) {
                 break;
             }
         }
-        if (!signatureFound) {
-            report.addReportItem(
-                    new ReportItem(DOC_MDP_CHECK, SIGNATURE_REVISION_NOT_FOUND, ReportItemStatus.INVALID));
+        if (!documentSigned) {
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, SIGNATURE_REVISION_NOT_FOUND, ReportItemStatus.INVALID));
         }
         return report;
     }
@@ -290,6 +342,28 @@ public class DocumentRevisionsValidator {
                         createDocumentAndPerformOperation(currentRevision, originalDocument, validationReport,
                                 documentWithRevision -> validateRevision(validationReport, context,
                                         documentWithoutRevision, documentWithRevision, currentRevision)));
+    }
+
+    private void mergeRevisionsInLinearizedDocument(PdfDocument document, List<DocumentRevision> documentRevisions) {
+        if (documentRevisions.size() > 1) {
+            // We need to check if document is linearized in first revision
+            // We don't need to populate validation report in case of exceptions, it will happen later
+            createDocumentAndPerformOperation(documentRevisions.get(0), document, new ValidationReport(),
+                    firstRevisionDocument -> {
+                        if (isLinearizedPdf(firstRevisionDocument)) {
+                            Set<PdfIndirectReference> mergedModifiedReferences =
+                                    new HashSet<>(documentRevisions.get(0).getModifiedObjects());
+                            mergedModifiedReferences.addAll(documentRevisions.get(1).getModifiedObjects());
+                            DocumentRevision mergedRevision = new DocumentRevision(
+                                    documentRevisions.get(0).getEofOffset(),
+                                    mergedModifiedReferences);
+                            documentRevisions.add(0, mergedRevision);
+                            documentRevisions.remove(1);
+                            documentRevisions.remove(1);
+                        }
+                        return true;
+                    });
+        }
     }
 
     private boolean validateRevision(ValidationReport validationReport, ValidationContext context,
@@ -346,16 +420,22 @@ public class DocumentRevisionsValidator {
         return new RASInputStream(source);
     }
 
-    private static boolean isLinearizedPdf(PdfDocument originalDocument) {
-        for (int i = 0; i < originalDocument.getNumberOfPdfObjects(); ++i) {
-            PdfObject object = originalDocument.getPdfObject(i);
+    private static boolean isLinearizedPdf(PdfDocument firstRevisionDocument) {
+        // The first revision (0 revision if linearized) must not contain any signatures, not linearized otherwise
+        if (!new SignatureUtil(firstRevisionDocument).getSignatureNames().isEmpty()) {
+            return false;
+        }
+
+        for (int i = 0; i < firstRevisionDocument.getNumberOfPdfObjects(); ++i) {
+            PdfObject object = firstRevisionDocument.getPdfObject(i);
             if (object instanceof PdfDictionary) {
                 PdfDictionary dictionary = (PdfDictionary) object;
-                if (dictionary.containsKey(new PdfName("Linearized"))) {
+                if (dictionary.containsKey(PdfName.Linearized)) {
                     return true;
                 }
             }
         }
+
         return false;
     }
 
@@ -375,6 +455,19 @@ public class DocumentRevisionsValidator {
     private boolean stopValidation(ValidationReport result, ValidationContext validationContext) {
         return !properties.getContinueAfterFailure(validationContext)
                 && result.getValidationResult() == ValidationResult.INVALID;
+    }
+
+    private static boolean hasNonWhitespaceBytesAfter(RandomAccessFileOrArray raf, long from, long to)
+            throws IOException {
+        raf.seek(from);
+        while (raf.getPosition() < to) {
+            int b = raf.read();
+            // PDF whitespace: NUL, TAB, LF, FF, CR, SPACE (ISO 32000 table 1)
+            if (b != 0x00 && b != 0x09 && b != 0x0A && b != 0x0C && b != 0x0D && b != 0x20) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateApprovalSignatureAccessPermissions(PdfDictionary signatureField, ValidationReport report) {
@@ -524,13 +617,8 @@ public class DocumentRevisionsValidator {
                         new DocumentProperties().setEventCountingMetaInfo(metaInfo))) {
             return (boolean) operation.apply(documentWithRevision);
         } catch (IOException | RuntimeException exception) {
-            if (isLinearizedPdf(originalDocument)) {
-                report.addReportItem(new ReportItem(DOC_MDP_CHECK, LINEARIZED_NOT_SUPPORTED, exception,
-                        ReportItemStatus.INDETERMINATE));
-            } else {
-                report.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION, exception,
-                        ReportItemStatus.INDETERMINATE));
-            }
+            report.addReportItem(new ReportItem(DOC_MDP_CHECK, REVISIONS_READING_EXCEPTION, exception,
+                    ReportItemStatus.INDETERMINATE));
             return false;
         }
     }

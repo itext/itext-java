@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -79,6 +79,8 @@ public final class KernelExceptionMessageConstant {
     public static final String CANNOT_RETRIEVE_MEDIA_BOX_ATTRIBUTE = "Invalid PDF. There is no media box attribute "
             + "for page or its parents.";
     public static final String CANNOT_FIND_IMAGE_DATA_OR_EI = "Cannot find image data or EI.";
+    public static final String UNSUPPORTED_ENCODING_FOR_INLINE_IMAGE
+            = "Cannot parse inline image: {0} encoding is unsupported.";
     public static final String CANNOT_FLUSH_DOCUMENT_ROOT_TAG_BEFORE_DOCUMENT_IS_CLOSED = "Cannot flush document root "
             + "tag before document is closed.";
     public static final String CANNOT_FLUSH_OBJECT = "Cannot flush object.";
@@ -208,7 +210,7 @@ public final class KernelExceptionMessageConstant {
     public static final String INCORRECT_NUMBER_OF_COMPONENTS = "Incorrect number of components.";
     public static final String INVALID_CROSS_REFERENCE_ENTRY_IN_THIS_XREF_SUBSECTION = "Invalid cross reference entry "
             + "in this xref subsection.";
-    public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0}.";
+    public static final String INVALID_INDIRECT_REFERENCE = "Invalid indirect reference {0} {1} R.";
 
     public static final String INVALID_INPUT_FOR_TYPE_2_FUNCTION =
             "Invalid input value for PDF Type 2 Function, value should be a single number.";
@@ -359,8 +361,6 @@ public final class KernelExceptionMessageConstant {
             + "operators.";
     public static final String UNBALANCED_LAYER_OPERATORS = "Unbalanced layer operators.";
     public static final String UNBALANCED_SAVE_RESTORE_STATE_OPERATORS = "Unbalanced save restore state operators.";
-    public static final String UNEXPECTED_CHARACTER_FOUND_AFTER_ID_IN_INLINE_IMAGE = "Unexpected character {0} "
-            + "found after ID in inline image.";
     public static final String UNEXPECTED_COLOR_SPACE = "Unexpected ColorSpace: {0}.";
     public static final String UNEXPECTED_END_OF_FILE = "Unexpected end of file.";
     public static final String UNEXPECTED_TOKEN = "unexpected {0} was encountered.";
@@ -384,6 +384,8 @@ public final class KernelExceptionMessageConstant {
     public static final String XREF_SUBSECTION_NOT_FOUND = "xref subsection not found.";
     public static final String XREF_STREAM_HAS_CYCLED_REFERENCES =
             "Xref stream has cycled references. Prev pointer indicates an already visited xref stream.";
+    public static final String XREF_STREAM_HAS_SELF_REFERENCED_OBJECT =
+            "Xref stream has self referenced object. Objet {0} refers to itself.";
     public static final String XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT = "Xref structure contains too many elements "
             + "and may cause OOM exception. You can increase number of elements by setting custom "
             + "MemoryLimitsAwareHandler.";
@@ -445,6 +447,14 @@ public final class KernelExceptionMessageConstant {
     public static final String UNABLE_TO_READ_STREAM_BYTES ="Unable to read stream bytes because stream is null.";
     public static final String INVALID_OBJECT_STREAM_NUMBER = "Unable to read object {0} with object stream " +
             "number {1} and index {2} from object stream.";
+
+    //TODO DEVSIX-8490 remove this exception message when implemented
+    public static final String UNABLE_TO_ADD_SECOND_PARENT_LAYER = "Unable to add second parent layer to " +
+            "{0} ocg layer";
+
+    //TODO DEVSIX-8490 remove this exception message when implemented
+    public static final String UNABLE_TO_REMOVE_DUPLICATE_LAYER = "Unable to remove duplicated layer {0} " +
+            "because it has child layers.";
 
     private KernelExceptionMessageConstant() {
     }

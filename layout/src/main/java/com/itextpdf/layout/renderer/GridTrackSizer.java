@@ -928,7 +928,6 @@ class GridTrackSizer {
             // https://drafts.csswg.org/css-sizing-3/#auto-box-sizes:
             // min-content block size - For block containers, tables, and
             // inline boxes, this is equivalent to the max-content block size.
-            cell.getValue().setProperty(Property.FILL_AVAILABLE_AREA, Boolean.FALSE);
             final LayoutContext layoutContext = new LayoutContext(
                     new LayoutArea(1, new Rectangle(cell.getLayoutArea().getWidth(), AbstractRenderer.INF)));
             LayoutResult inifiniteHeighLayoutResult = cell.getValue().layout(layoutContext);

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,13 +23,12 @@
 package com.itextpdf.kernel.pdf.tagging;
 
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
+import static org.junit.jupiter.api.Assertions.*;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class StandardNamespacesTest extends ExtendedITextTest {
 
     @Test

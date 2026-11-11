@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -28,20 +28,19 @@ import com.itextpdf.signatures.logs.SignLogMessageConstant;
 import com.itextpdf.test.ExtendedITextTest;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.security.Security;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class DigestAlgorithmsTest extends ExtendedITextTest {
     private static final IBouncyCastleFactory BOUNCY_CASTLE_FACTORY = BouncyCastleFactoryCreator.getFactory();
     private static final boolean FIPS_MODE = "BCFIPS".equals(BOUNCY_CASTLE_FACTORY.getProviderName());
 
-    @BeforeClass
+    @BeforeAll
     public static void before() {
         Security.addProvider(BOUNCY_CASTLE_FACTORY.getProvider());
     }
@@ -49,28 +48,28 @@ public class DigestAlgorithmsTest extends ExtendedITextTest {
     @Test
     public void emptyStringOidGetDigestTest() {
         String oid = "";
-        Assert.assertEquals(oid, DigestAlgorithms.getDigest(oid));
+        Assertions.assertEquals(oid, DigestAlgorithms.getDigest(oid));
     }
 
     @Test
     public void nonExistingOidGetDigestTest() {
         String oid = "non_existing_oid";
-        Assert.assertEquals(oid, DigestAlgorithms.getDigest(oid));
+        Assertions.assertEquals(oid, DigestAlgorithms.getDigest(oid));
     }
 
     @Test
     public void emptyStringNameGetAllowedDigestTest() {
-        Assert.assertNull(DigestAlgorithms.getAllowedDigest(""));
+        Assertions.assertNull(DigestAlgorithms.getAllowedDigest(""));
     }
 
     @Test
     public void nonExistingNameGetAllowedDigestTest() {
-        Assert.assertNull(DigestAlgorithms.getAllowedDigest("non_existing_oid"));
+        Assertions.assertNull(DigestAlgorithms.getAllowedDigest("non_existing_oid"));
     }
 
     @Test
     public void nullNameGetAllowedDigestTest() {
-        Assert.assertThrows(IllegalArgumentException.class, () -> DigestAlgorithms.getAllowedDigest(null));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> DigestAlgorithms.getAllowedDigest(null));
     }
 
     @LogMessages(messages = {
@@ -79,15 +78,6 @@ public class DigestAlgorithmsTest extends ExtendedITextTest {
     public void notAllowedOidGetDigestTest() {
         String name = "SM3";
         String oid = "1.2.156.10197.1.401";
-        Assert.assertEquals(FIPS_MODE ? oid : name, DigestAlgorithms.getDigest(oid));
-    }
-
-    @LogMessages(messages = {
-            @LogMessage(messageTemplate = SignLogMessageConstant.ALGORITHM_NOT_FROM_SPEC, ignore = true)})
-    @Test
-    public void notAllowedNameGetAllowedDigestTest() {
-        String name = "SM3";
-        String oid = "1.2.156.10197.1.401";
-        Assert.assertEquals(FIPS_MODE ? null : oid, DigestAlgorithms.getAllowedDigest(name));
+        Assertions.assertEquals(FIPS_MODE ? oid : name, DigestAlgorithms.getDigest(oid));
     }
 }

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -42,7 +42,7 @@ public class ASN1OutputStreamBCFips implements IASN1OutputStream {
      * @param stream OutputStream to create {@link ASN1OutputStream} to be wrapped
      */
     public ASN1OutputStreamBCFips(OutputStream stream) {
-        this.stream = new ASN1OutputStream(stream);
+        this.stream = ASN1OutputStream.create(stream);
     }
 
     /**

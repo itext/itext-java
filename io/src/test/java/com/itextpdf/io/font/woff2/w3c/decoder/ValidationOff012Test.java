@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -23,7 +23,6 @@
 package com.itextpdf.io.font.woff2.w3c.decoder;
 
 import com.itextpdf.io.font.woff2.w3c.W3CWoff2DecodeTest;
-import org.junit.Ignore;
 
 public class ValidationOff012Test extends W3CWoff2DecodeTest {
     @Override

@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -22,29 +22,19 @@
  */
 package com.itextpdf.signatures;
 
-import com.itextpdf.kernel.exceptions.PdfException;
-import com.itextpdf.test.annotations.type.BouncyCastleUnitTest;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 // The behavior is different on .NET
-@Category(BouncyCastleUnitTest.class)
+@Tag("BouncyCastleUnitTest")
 public class PdfPKCS7ManuallyPortedTest extends PdfPKCS7BasicTest {
 
     @Test
     public void verifyEd25519SignatureTest()
             throws IOException, GeneralSecurityException {
-        // ED25519 is not available in FIPS approved mode
-        if (BOUNCY_CASTLE_FACTORY.isInApprovedOnlyMode()) {
-            Assert.assertThrows(PdfException.class,
-                    () -> verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf"));
-        } else {
-            verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf");
-        }
+        verifyIsoExtensionExample("Ed25519", "sample-ed25519-sha512.pdf");
     }
 
     @Test
@@ -67,4 +57,8 @@ public class PdfPKCS7ManuallyPortedTest extends PdfPKCS7BasicTest {
         verifyIsoExtensionExample("RSASSA-PSS", "sample-pss-sha3_256.pdf");
     }
 
+    @Test
+    public void verifyEd448SignatureTest() throws IOException, GeneralSecurityException {
+        verifyIsoExtensionExample("Ed448", "sample-ed448-shake256.pdf");
+    }
 }

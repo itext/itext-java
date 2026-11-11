@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -26,17 +26,16 @@ import com.itextpdf.commons.actions.processors.DefaultProductProcessorFactory;
 import com.itextpdf.commons.actions.processors.IProductProcessorFactory;
 import com.itextpdf.commons.actions.processors.UnderAgplProductProcessorFactory;
 import com.itextpdf.test.ExtendedITextTest;
-import com.itextpdf.test.annotations.type.UnitTest;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Tag;
 
-@Category(UnitTest.class)
+@Tag("UnitTest")
 public class ProductProcessorFactoryKeeperTest extends ExtendedITextTest {
 
-    @After
+    @AfterEach
     public void afterEach() {
         ProductProcessorFactoryKeeper.restoreDefaultProductProcessorFactory();
     }
@@ -44,17 +43,17 @@ public class ProductProcessorFactoryKeeperTest extends ExtendedITextTest {
     @Test
     public void gettingDefaultFactoryFromKeeper() {
         IProductProcessorFactory productProcessorFactory = ProductProcessorFactoryKeeper.getProductProcessorFactory();
-        Assert.assertTrue(productProcessorFactory instanceof DefaultProductProcessorFactory);
+        Assertions.assertTrue(productProcessorFactory instanceof DefaultProductProcessorFactory);
     }
 
     @Test
     public void restoringDefaultFactory() {
         ProductProcessorFactoryKeeper.setProductProcessorFactory(new UnderAgplProductProcessorFactory());
 
-        Assert.assertTrue(ProductProcessorFactoryKeeper.getProductProcessorFactory()
+        Assertions.assertTrue(ProductProcessorFactoryKeeper.getProductProcessorFactory()
                 instanceof UnderAgplProductProcessorFactory);
         ProductProcessorFactoryKeeper.restoreDefaultProductProcessorFactory();
-        Assert.assertTrue(ProductProcessorFactoryKeeper.getProductProcessorFactory()
+        Assertions.assertTrue(ProductProcessorFactoryKeeper.getProductProcessorFactory()
                 instanceof DefaultProductProcessorFactory);
     }
 }

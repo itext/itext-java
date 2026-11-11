@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -672,6 +672,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
     /**
      * Gets document information dictionary.
      * {@link PdfDocument#info} is lazy initialized. It will be initialized during the first call of this method.
+     * The information dictionary values are synchronized with document XMP Metadata.
      *
      * @return document information dictionary.
      */
@@ -2100,7 +2101,7 @@ public class PdfDocument implements IEventDispatcher, Closeable {
             xref.initFreeReferencesList(this);
             if (writer != null) {
                 if (reader != null && reader.hasXrefStm() && writer.properties.isFullCompression == null) {
-                    writer.properties.isFullCompression = true;
+                    writer.properties.isFullCompression = Boolean.TRUE;
                 }
                 if (reader != null && !reader.isOpenedWithFullPermission()) {
                     throw new BadPasswordException(BadPasswordException.PdfReaderNotOpenedWithOwnerPassword);

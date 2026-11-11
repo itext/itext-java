@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -32,6 +32,6 @@ class BouncyCastleFipsTestConstantsFactory implements IBouncyCastleTestConstants
 
     @Override
     public String getCertificateInfoTestConst() {
-        return "DEF length 8 object truncated by 4";
+        return "corrupted stream - out of bounds length found: 8 >= 6";
     }
 }
