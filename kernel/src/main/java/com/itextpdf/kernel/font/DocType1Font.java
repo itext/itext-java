@@ -29,6 +29,7 @@ import com.itextpdf.io.font.FontEncoding;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.Type1Font;
 import com.itextpdf.io.font.cmap.CMapToUnicode;
+import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.font.otf.Glyph;
 import com.itextpdf.kernel.pdf.PdfArray;
 import com.itextpdf.kernel.pdf.PdfDictionary;
@@ -54,7 +55,9 @@ class DocType1Font extends Type1Font implements IDocFontProgram {
     static Type1Font createFontProgram(PdfDictionary fontDictionary, FontEncoding fontEncoding,
             CMapToUnicode toUnicode) {
         final String baseFont = getBaseFont(fontDictionary);
-        if (!fontDictionary.containsKey(PdfName.FontDescriptor)) {
+        // Only standard fonts are looked up by name, other names would be opened as files or URLs
+        if (!fontDictionary.containsKey(PdfName.FontDescriptor)
+                && StandardFonts.isStandardFont(baseFont)) {
             final Type1Font type1StdFont = getType1Font(baseFont, fontEncoding);
             if (type1StdFont != null) {
                 return type1StdFont;
