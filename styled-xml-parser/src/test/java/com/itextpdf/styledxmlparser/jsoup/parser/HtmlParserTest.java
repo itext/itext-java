@@ -1,25 +1,7 @@
 /*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2026 Apryse Group NV
-    Authors: Apryse Software.
-
-    This program is offered under a commercial and under the AGPL license.
-    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
-
-    AGPL licensing:
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+    This file is part of jsoup, see NOTICE.txt in the root of the repository.
+    It may contain modifications beyond the original version.
+*/
 package com.itextpdf.styledxmlparser.jsoup.parser;
 
 import com.itextpdf.io.util.SystemUtil;
@@ -779,7 +761,7 @@ public class HtmlParserTest extends ExtendedITextTest {
         // (as defined in html5.) However in practise that lead to spurious matches against the author's intent.
         String html = "One &clubsuite; &clubsuit;";
         Document doc = Jsoup.parse(html);
-        assertEquals(StringUtil.normaliseWhitespace("One &amp;clubsuite; ♣"), doc.body().html());
+        assertEquals(StringUtil.normaliseWhitespace("One &amp;clubsuite; â™£"), doc.body().html());
     }
 
     @Test public void relaxedBaseEntityMatchAndStrictExtendedMatch() {
@@ -919,16 +901,16 @@ public class HtmlParserTest extends ExtendedITextTest {
     }
 
     @Test public void testSupportsNonAsciiTags() {
-        String body = "<進捗推移グラフ>Yes</進捗推移グラフ><русский-тэг>Correct</<русский-тэг>";
+        String body = "<é€²æ—æŽ¨ç§»ã‚°ãƒ©ãƒ•>Yes</é€²æ—æŽ¨ç§»ã‚°ãƒ©ãƒ•><Ñ€ÑƒÑÑÐºÐ¸Ð¹-Ñ‚ÑÐ³>Correct</<Ñ€ÑƒÑÑÐºÐ¸Ð¹-Ñ‚ÑÐ³>";
         Document doc = Jsoup.parse(body);
-        Elements els = doc.select("進捗推移グラフ");
+        Elements els = doc.select("é€²æ—æŽ¨ç§»ã‚°ãƒ©ãƒ•");
         assertEquals("Yes", els.text());
-        els = doc.select("русский-тэг");
+        els = doc.select("Ñ€ÑƒÑÑÐºÐ¸Ð¹-Ñ‚ÑÐ³");
         assertEquals("Correct", els.text());
     }
 
     @Test public void testSupportsPartiallyNonAsciiTags() {
-        String body = "<div>Check</divá>";
+        String body = "<div>Check</divÃ¡>";
         Document doc = Jsoup.parse(body);
         Elements els = doc.select("div");
         assertEquals("Check", els.text());

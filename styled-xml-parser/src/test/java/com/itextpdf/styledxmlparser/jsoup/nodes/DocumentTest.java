@@ -1,25 +1,7 @@
 /*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2026 Apryse Group NV
-    Authors: Apryse Software.
-
-    This program is offered under a commercial and under the AGPL license.
-    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
-
-    AGPL licensing:
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+    This file is part of jsoup, see NOTICE.txt in the root of the repository.
+    It may contain modifications beyond the original version.
+*/
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
@@ -84,9 +66,9 @@ public class DocumentTest extends ExtendedITextTest {
 
     @Test
     public void testOutputEncoding() {
-        Document doc = Jsoup.parse("<p title=π>π & < > </p>");
+        Document doc = Jsoup.parse("<p title=Ï€>Ï€ & < > </p>");
         // default is utf-8
-        assertEquals("<p title=\"π\">π &amp; &lt; &gt; </p>", doc.body().html());
+        assertEquals("<p title=\"Ï€\">Ï€ &amp; &lt; &gt; </p>", doc.body().html());
         assertEquals("UTF-8", doc.outputSettings().charset().name());
 
         doc.outputSettings().charset("ascii");
@@ -101,7 +83,7 @@ public class DocumentTest extends ExtendedITextTest {
     public void testXhtmlReferences() {
         Document doc = Jsoup.parse("&lt; &gt; &amp; &quot; &apos; &times;");
         doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
-        assertEquals("&lt; &gt; &amp; \" ' ×", doc.body().html());
+        assertEquals("&lt; &gt; &amp; \" ' Ã—", doc.body().html());
     }
 
     @Test

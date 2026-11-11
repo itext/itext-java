@@ -1,25 +1,7 @@
 /*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2026 Apryse Group NV
-    Authors: Apryse Software.
-
-    This program is offered under a commercial and under the AGPL license.
-    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
-
-    AGPL licensing:
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+    This file is part of jsoup, see NOTICE.txt in the root of the repository.
+    It may contain modifications beyond the original version.
+*/
 package com.itextpdf.styledxmlparser.jsoup.nodes;
 
 import com.itextpdf.test.ExtendedITextTest;
@@ -35,7 +17,7 @@ import static org.junit.Assert.*;
 @Category(UnitTest.class)
 public class EntitiesTest extends ExtendedITextTest {
     @Test public void escape() {
-        String text = "Hello &<> Å å π 新 there ¾ © »";
+        String text = "Hello &<> Ã… Ã¥ Ï€ æ–° there Â¾ Â© Â»";
         String escapedAscii = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(Entities.EscapeMode.base));
         String escapedAsciiFull = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(Entities.EscapeMode.extended));
         String escapedAsciiXhtml = Entities.escape(text, new OutputSettings().charset("ascii").escapeMode(Entities.EscapeMode.xhtml));
@@ -45,8 +27,8 @@ public class EntitiesTest extends ExtendedITextTest {
         assertEquals("Hello &amp;&lt;&gt; &Aring; &aring; &#x3c0; &#x65b0; there &frac34; &copy; &raquo;", escapedAscii);
         assertEquals("Hello &amp;&lt;&gt; &angst; &aring; &pi; &#x65b0; there &frac34; &copy; &raquo;", escapedAsciiFull);
         assertEquals("Hello &amp;&lt;&gt; &#xc5; &#xe5; &#x3c0; &#x65b0; there &#xbe; &#xa9; &#xbb;", escapedAsciiXhtml);
-        assertEquals("Hello &amp;&lt;&gt; Å å π 新 there ¾ © »", escapedUtfFull);
-        assertEquals("Hello &amp;&lt;&gt; Å å π 新 there ¾ © »", escapedUtfMin);
+        assertEquals("Hello &amp;&lt;&gt; Ã… Ã¥ Ï€ æ–° there Â¾ Â© Â»", escapedUtfFull);
+        assertEquals("Hello &amp;&lt;&gt; Ã… Ã¥ Ï€ æ–° there Â¾ Â© Â»", escapedUtfMin);
         // odd that it's defined as aring in base but angst in full
 
         // round trip
@@ -67,7 +49,7 @@ public class EntitiesTest extends ExtendedITextTest {
 
     @Test public void unescape() {
         String text = "Hello &amp;&LT&gt; &reg &angst; &angst &#960; &#960 &#x65B0; there &! &frac34; &copy; &COPY;";
-        assertEquals("Hello &<> ® Å &angst π π 新 there &! ¾ © ©", Entities.unescape(text));
+        assertEquals("Hello &<> Â® Ã… &angst Ï€ Ï€ æ–° there &! Â¾ Â© Â©", Entities.unescape(text));
 
         assertEquals("&0987654321; &unknown", Entities.unescape("&0987654321; &unknown"));
     }
@@ -81,12 +63,12 @@ public class EntitiesTest extends ExtendedITextTest {
 
     
     @Test public void caseSensitive() {
-        String unescaped = "Ü ü & &";
+        String unescaped = "Ãœ Ã¼ & &";
         assertEquals("&Uuml; &uuml; &amp; &amp;",
                 Entities.escape(unescaped, new OutputSettings().charset("ascii").escapeMode(Entities.EscapeMode.extended)));
         
         String escaped = "&Uuml; &uuml; &amp; &AMP";
-        assertEquals("Ü ü & &", Entities.unescape(escaped));
+        assertEquals("Ãœ Ã¼ & &", Entities.unescape(escaped));
     }
     
     @Test public void quoteReplacements() {
@@ -102,9 +84,9 @@ public class EntitiesTest extends ExtendedITextTest {
         doc.outputSettings().charset("ascii");
         Element p = doc.select("p").first();
         assertEquals("&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;", p.html());
-        assertEquals("¹²³¼½¾", p.text());
+        assertEquals("Â¹Â²Â³Â¼Â½Â¾", p.text());
         doc.outputSettings().charset("UTF-8");
-        assertEquals("¹²³¼½¾", p.html());
+        assertEquals("Â¹Â²Â³Â¼Â½Â¾", p.html());
     }
 
     @Test public void noSpuriousDecodes() {

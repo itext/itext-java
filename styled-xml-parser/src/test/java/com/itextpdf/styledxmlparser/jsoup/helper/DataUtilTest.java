@@ -1,25 +1,7 @@
 /*
-    This file is part of the iText (R) project.
-    Copyright (c) 1998-2026 Apryse Group NV
-    Authors: Apryse Software.
-
-    This program is offered under a commercial and under the AGPL license.
-    For commercial licensing, contact us at https://itextpdf.com/sales.  For AGPL licensing, see below.
-
-    AGPL licensing:
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+    This file is part of jsoup, see NOTICE.txt in the root of the repository.
+    It may contain modifications beyond the original version.
+*/
 package com.itextpdf.styledxmlparser.jsoup.helper;
 
 import com.itextpdf.styledxmlparser.jsoup.Jsoup;
@@ -95,7 +77,7 @@ public class DataUtilTest extends ExtendedITextTest {
 
     @Test
     public void shouldReturnNullForIllegalCharsetNames() {
-        assertEquals(null, DataUtil.getCharsetFromContentType("text/html; charset=$HJKDF§$/("));
+        assertEquals(null, DataUtil.getCharsetFromContentType("text/html; charset=$HJKDFÂ§$/("));
     }
 
     @Test
@@ -135,21 +117,21 @@ public class DataUtilTest extends ExtendedITextTest {
         File in = ParseTest.getFile("/bomtests/bom_utf16be.html");
         Document doc = Jsoup.parse(in, null, "http://example.com");
         assertTrue(doc.title().contains("UTF-16BE"));
-        assertTrue(doc.text().contains("가각갂갃간갅"));
+        assertTrue(doc.text().contains("ê°€ê°ê°‚ê°ƒê°„ê°…"));
 
         in = ParseTest.getFile("/bomtests/bom_utf16le.html");
         doc = Jsoup.parse(in, null, "http://example.com");
         assertTrue(doc.title().contains("UTF-16LE"));
-        assertTrue(doc.text().contains("가각갂갃간갅"));
+        assertTrue(doc.text().contains("ê°€ê°ê°‚ê°ƒê°„ê°…"));
 
         in = ParseTest.getFile("/bomtests/bom_utf32be.html");
         doc = Jsoup.parse(in, null, "http://example.com");
         assertTrue(doc.title().contains("UTF-32BE"));
-        assertTrue(doc.text().contains("가각갂갃간갅"));
+        assertTrue(doc.text().contains("ê°€ê°ê°‚ê°ƒê°„ê°…"));
 
         in = ParseTest.getFile("/bomtests/bom_utf32le.html");
         doc = Jsoup.parse(in, null, "http://example.com");
         assertTrue(doc.title().contains("UTF-32LE"));
-        assertTrue(doc.text().contains("가각갂갃간갅"));
+        assertTrue(doc.text().contains("ê°€ê°ê°‚ê°ƒê°„ê°…"));
     }
 }
