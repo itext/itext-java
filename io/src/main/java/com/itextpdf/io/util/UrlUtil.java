@@ -22,6 +22,7 @@
  */
 package com.itextpdf.io.util;
 
+import com.itextpdf.commons.utils.StringNormalizer;
 import com.itextpdf.io.exceptions.IoExceptionMessageConstant;
 
 import java.io.BufferedOutputStream;
@@ -47,6 +48,7 @@ import javax.net.ssl.SSLContext;
 public final class UrlUtil {
     private static final int DEFAULT_CONNECT_TIMEOUT = 300000;
     private static final int DEFAULT_READ_TIMEOUT = 300000;
+    private static final int MAX_REDIRECTS = 20;
 
     private UrlUtil() {
     }
@@ -288,6 +290,7 @@ public final class UrlUtil {
                                             Map<String, String> requestHeaders) throws IOException {
         URL nextUrl = initialUrl;
         URLConnection connection = null;
+        int redirectCount = 0;
         while (nextUrl != null) {
             connection = nextUrl.openConnection();
             if (requestHeaders != null) {
@@ -305,8 +308,23 @@ public final class UrlUtil {
             if (nextUrl != null) {
                 // close input stream deliberately to close the handle which is created during getHeaderField invocation
                 connection.getInputStream().close();
+                if (!isHttpProtocol(nextUrl)) {
+                    throw new com.itextpdf.io.exceptions.IOException(
+                            IoExceptionMessageConstant.REDIRECT_PROTOCOL_IS_NOT_ALLOWED)
+                            .setMessageParams(nextUrl.getProtocol());
+                }
+                if (++redirectCount > MAX_REDIRECTS) {
+                    throw new com.itextpdf.io.exceptions.IOException(
+                            IoExceptionMessageConstant.TOO_MANY_REDIRECTS)
+                            .setMessageParams(MAX_REDIRECTS);
+                }
             }
         }
         return connection;
+    }
+
+    private static boolean isHttpProtocol(URL url) {
+        final String protocol = StringNormalizer.toLowerCase(url.getProtocol());
+        return "http".equals(protocol) || "https".equals(protocol);
     }
 }
