@@ -131,7 +131,10 @@ public class CRLVerifier extends RootStoreVerifier {
         if (crl.getIssuerX500Principal().equals(signCert.getIssuerX500Principal())
                 && signDate.before(crl.getNextUpdate())) {
             // the signing certificate may not be revoked
-            if (isSignatureValid(crl, issuerCert) && crl.isRevoked(signCert)) {
+            if (!isSignatureValid(crl, issuerCert)) {
+                return false;
+            }
+            if (crl.isRevoked(signCert)) {
                 throw new VerificationException(signCert, "The certificate has been revoked.");
             }
             return true;
