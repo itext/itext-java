@@ -299,6 +299,40 @@ public class BlockRendererTest extends ExtendedITextTest {
         Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
     }
 
+    @Test
+    public void absolutePositionedChildIsAnchoredToFirstFragmentWhenFloatSplitsTest() throws Exception {
+        String cmpFileName = SOURCE_FOLDER + "cmp_absolutePositionedChildIsAnchoredToFirstFragmentWhenFloatSplits.pdf";
+        String outFile = DESTINATION_FOLDER + "absolutePositionedChildIsAnchoredToFirstFragmentWhenFloatSplits.pdf";
+
+        try (PdfDocument pdfDoc = new PdfDocument(CompareTool.createTestPdfWriter(outFile));
+                Document doc = new Document(pdfDoc)) {
+            Div container = new Div();
+            container.setProperty(Property.POSITION, LayoutPosition.RELATIVE);
+
+            // Float that is taller than a page, so it is split and its remainder overflows to the next page
+            StringBuilder floatText = new StringBuilder();
+            for (int i = 0; i < 150; ++i) {
+                floatText.append("Float line ").append(i).append(". ");
+            }
+            Div floatingDiv = new Div().add(new Paragraph(floatText.toString()));
+            floatingDiv.setProperty(Property.FLOAT, FloatPropertyValue.LEFT);
+            floatingDiv.setWidth(100);
+
+            Div positioned = new Div().add(new Paragraph("PositionedMarker"));
+            positioned.setProperty(Property.POSITION, LayoutPosition.ABSOLUTE);
+            positioned.setProperty(Property.RIGHT, 6f);
+            positioned.setProperty(Property.TOP, 6f);
+
+            container.add(floatingDiv);
+            container.add(new Paragraph("Short text next to the float"));
+            container.add(positioned);
+
+            doc.add(container);
+        }
+
+        Assertions.assertNull(new CompareTool().compareByContent(outFile, cmpFileName, DESTINATION_FOLDER));
+    }
+
     public static class WrongParentTreeDivRenderer extends DivRenderer {
         public WrongParentTreeDivRenderer(Div modelElement) {
             super(modelElement);
