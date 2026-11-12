@@ -2075,6 +2075,22 @@ public class PdfReaderTest extends ExtendedITextTest {
     }
 
     @Test
+    public void headerWithoutVersionTest() throws IOException {
+        PdfReader pdfReader = new PdfReader(new ByteArrayInputStream("%PDF-".getBytes(StandardCharsets.ISO_8859_1)));
+        Exception exception = Assertions.assertThrows(PdfException.class,
+                () -> pdfReader.readPdf());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_VERSION_IS_NOT_VALID, exception.getMessage());
+    }
+
+    @Test
+    public void headerWithTruncatedVersionTest() throws IOException {
+        PdfReader pdfReader = new PdfReader(new ByteArrayInputStream("%PDF-1.".getBytes(StandardCharsets.ISO_8859_1)));
+        Exception exception = Assertions.assertThrows(PdfException.class,
+                () -> pdfReader.readPdf());
+        Assertions.assertEquals(KernelExceptionMessageConstant.PDF_VERSION_IS_NOT_VALID, exception.getMessage());
+    }
+
+    @Test
     public void startxrefIsNotFollowedByANumberTest() throws IOException {
         PdfReader pdfReader = new PdfReader(SOURCE_FOLDER + "startxrefIsNotFollowedByANumber.pdf");
         Exception exception = Assertions.assertThrows(PdfException.class,
