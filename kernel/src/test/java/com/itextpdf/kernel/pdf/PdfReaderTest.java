@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is free software; you can redistribute it and/or modify
@@ -2738,6 +2738,38 @@ public class PdfReaderTest extends ExtendedITextTest {
             Assert.assertEquals(goodTrailer.get(PdfName.ID).toString(), badTrailer.get(PdfName.ID).toString());
             Assert.assertEquals(goodTrailer.get(PdfName.Info).toString(), badTrailer.get(PdfName.Info).toString());
             Assert.assertEquals(goodTrailer.get(PdfName.Root).toString(), badTrailer.get(PdfName.Root).toString());
+        }
+    }
+
+    @Test
+    public void xrefStreamObjectPointsItselfTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "xrefObjPointsItself.pdf";
+
+        try (PdfReader pdfReader = new PdfReader(fileName)) {
+            Exception exception = Assert.assertThrows(XrefCycledReferencesException.class,
+                    () -> new PdfDocument(pdfReader));
+
+            // 2 0 R refers to 8 0 R, which refers to 8 0 R
+            Assert.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assert.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.XREF_STREAM_HAS_SELF_REFERENCED_OBJECT, 8),
+                    exception.getMessage());
+        }
+    }
+
+    @Test
+    public void xrefStreamObjectPointsLoopTest() throws IOException {
+        String fileName = SOURCE_FOLDER + "xrefObjPointsLoop.pdf";
+
+        try (PdfReader pdfReader = new PdfReader(fileName)) {
+            Exception exception = Assert.assertThrows(XrefCycledReferencesException.class,
+                    () -> new PdfDocument(pdfReader));
+
+            // 2 0 R refers to 8 0 R, which refers to 7 0 R which refers to 2 0 R
+            Assert.assertEquals(StrictnessLevel.LENIENT, pdfReader.getStrictnessLevel());
+            Assert.assertEquals(
+                    MessageFormatUtil.format(KernelExceptionMessageConstant.XREF_STREAM_HAS_SELF_REFERENCED_OBJECT, 2),
+                    exception.getMessage());
         }
     }
 

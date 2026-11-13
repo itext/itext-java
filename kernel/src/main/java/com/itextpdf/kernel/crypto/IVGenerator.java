@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -49,9 +49,9 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * An initialization vector generator for a CBC block encryption. It's a random generator based on ARCFOUR.
- *
- * @author Paulo Soares
+ * @deprecated internal class is no longer used
  */
+@Deprecated
 public final class IVGenerator {
 
     private static final ARCFOUREncryption arcfour;

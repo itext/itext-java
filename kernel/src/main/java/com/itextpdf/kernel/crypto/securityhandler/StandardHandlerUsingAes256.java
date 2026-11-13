@@ -1,7 +1,7 @@
 /*
 
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Bruno Lowagie, Paulo Soares, et al.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,6 @@ import com.itextpdf.kernel.crypto.AESCipherCBCnoPad;
 import com.itextpdf.kernel.crypto.AesDecryptor;
 import com.itextpdf.kernel.exceptions.BadPasswordException;
 import com.itextpdf.kernel.crypto.IDecryptor;
-import com.itextpdf.kernel.crypto.IVGenerator;
 import com.itextpdf.kernel.crypto.OutputStreamAesEncryption;
 import com.itextpdf.kernel.crypto.OutputStreamEncryption;
 import com.itextpdf.kernel.exceptions.KernelExceptionMessageConstant;
@@ -64,12 +63,14 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
+    private static final SecureRandom RNG = new SecureRandom();
 
     private static final int VALIDATION_SALT_OFFSET = 32;
     private static final int KEY_SALT_OFFSET = 40;
@@ -132,10 +133,13 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
             }
 
             // first 8 bytes are validation salt; second 8 bytes are key salt
-            byte[] userValAndKeySalt = IVGenerator.getIV(16);
-            byte[] ownerValAndKeySalt = IVGenerator.getIV(16);
+            byte[] userValAndKeySalt = new byte[16];
+            RNG.nextBytes(userValAndKeySalt);
+            byte[] ownerValAndKeySalt = new byte[16];
+            RNG.nextBytes(ownerValAndKeySalt);
 
-            nextObjectKey = IVGenerator.getIV(32);
+            nextObjectKey = new byte[32];
+            RNG.nextBytes(nextObjectKey);
             nextObjectKeySize = 32;
 
             byte[] hash;
@@ -163,7 +167,8 @@ public class StandardHandlerUsingAes256 extends StandardSecurityHandler {
 
 
             // Algorithm 10
-            byte[] permsp = IVGenerator.getIV(16);
+            byte[] permsp = new byte[16];
+            RNG.nextBytes(permsp);
             permsp[0] = (byte) permissions;
             permsp[1] = (byte) (permissions >> 8);
             permsp[2] = (byte) (permissions >> 16);

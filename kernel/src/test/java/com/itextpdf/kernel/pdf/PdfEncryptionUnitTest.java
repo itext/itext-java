@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2024 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -93,5 +93,15 @@ public class PdfEncryptionUnitTest extends ExtendedITextTest {
         cryptDictionary.put(PdfName.CF, cfDictionary);
 
         Assert.assertFalse(PdfEncryption.readEmbeddedFilesOnlyFromEncryptDictionary(cryptDictionary));
+    }
+
+    @Test
+    public void generateNewDocumentIdIsRandomTest() {
+        byte[] first = PdfEncryption.generateNewDocumentId();
+        byte[] second = PdfEncryption.generateNewDocumentId();
+
+        Assert.assertEquals(16, first.length);
+        Assert.assertEquals(16, second.length);
+        Assert.assertFalse(java.util.Arrays.equals(first, second));
     }
 }
