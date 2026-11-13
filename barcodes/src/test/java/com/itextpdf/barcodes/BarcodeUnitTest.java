@@ -48,6 +48,7 @@ public class BarcodeUnitTest extends ExtendedITextTest {
         Rectangle barcodeSize = barcode.getBarcodeSize();
         Assertions.assertEquals(33.656, barcodeSize.getHeight(), EPS);
         Assertions.assertEquals(101.6, barcodeSize.getWidth(), EPS);
+        System.out.println("Test action PR");
     }
 
     @Test
