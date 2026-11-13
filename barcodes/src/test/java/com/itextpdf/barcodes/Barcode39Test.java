@@ -65,6 +65,7 @@ public class Barcode39Test extends ExtendedITextTest {
         PdfPage page = document.addNewPage();
         PdfCanvas canvas = new PdfCanvas(page);
 
+        System.out.println("Test PR");
         Barcode1D barcode = new Barcode39(document);
         barcode.setCode("9781935182610");
 
