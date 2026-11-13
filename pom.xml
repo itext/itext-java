@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.itextpdf</groupId>
   <artifactId>root</artifactId>
-  <version>7.1.19</version>
+  <version>7.1.20</version>
   <packaging>pom</packaging>
   <name>iText 7</name>
   <description>A Free Java-PDF library</description>
@@ -71,7 +71,7 @@
 
   <properties>
     <argLine>-Xmx1024m</argLine>
-    <bouncycastle.version>1.75</bouncycastle.version>
+    <bouncycastle.version>1.86</bouncycastle.version>
     <dependencyCheck.version>6.0.3</dependencyCheck.version>
     <failsafe.version>3.0.0-M3</failsafe.version>
     <integrationtests>com.itextpdf.test.annotations.type.IntegrationTest</integrationtests>
@@ -480,7 +480,7 @@
           <plugin>
             <groupId>com.github.siom79.japicmp</groupId>
             <artifactId>japicmp-maven-plugin</artifactId>
-            <version>0.14.4</version>
+            <version>0.23.1</version>
             <executions>
               <execution>
                 <phase>verify</phase>
@@ -494,6 +494,13 @@
                 <onlyModified>true</onlyModified>
                 <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
                 <ignoreMissingClasses>true</ignoreMissingClasses>
+                <excludes>
+                  <!--
+                   Temporary exclude to be able to cleanup code.
+                   This class is not intended to be used by our users directly.
+                  -->
+                  <exclude>com.itextpdf.kernel.xmp.impl.FixASCIIControlsReader</exclude>
+                </excludes>
               </parameter>
             </configuration>
           </plugin>

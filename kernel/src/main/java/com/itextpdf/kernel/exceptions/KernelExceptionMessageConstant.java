@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -337,6 +337,8 @@ public final class KernelExceptionMessageConstant {
     public static final String XREF_SUBSECTION_NOT_FOUND = "xref subsection not found.";
     public static final String XREF_STREAM_HAS_CYCLED_REFERENCES =
             "Xref stream has cycled references. Prev pointer indicates an already visited xref stream.";
+    public static final String XREF_STREAM_HAS_SELF_REFERENCED_OBJECT =
+            "Xref stream has self referenced object. Objet {0} refers to itself.";
     public static final String XREF_STRUCTURE_SIZE_EXCEEDED_THE_LIMIT = "Xref structure contains too many elements "
             + "and may cause OOM exception. You can increase number of elements by setting custom "
             + "MemoryLimitsAwareHandler.";

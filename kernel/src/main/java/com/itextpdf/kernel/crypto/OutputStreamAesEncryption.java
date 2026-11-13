@@ -1,6 +1,6 @@
 /*
     This file is part of the iText (R) project.
-    Copyright (c) 1998-2023 Apryse Group NV
+    Copyright (c) 1998-2026 Apryse Group NV
     Authors: Apryse Software.
 
     This program is offered under a commercial and under the AGPL license.
@@ -24,8 +24,12 @@ package com.itextpdf.kernel.crypto;
 
 import com.itextpdf.kernel.PdfException;
 import java.io.IOException;
+import java.security.SecureRandom;
 
 public class OutputStreamAesEncryption extends OutputStreamEncryption {
+
+    private static final SecureRandom RNG = new SecureRandom();
+
     protected AESCipher cipher;
     private boolean finished;
 
@@ -38,7 +42,10 @@ public class OutputStreamAesEncryption extends OutputStreamEncryption {
      */
     public OutputStreamAesEncryption(java.io.OutputStream out, byte[] key, int off, int len) {
         super(out);
-        byte[] iv = IVGenerator.getIV();
+
+        byte[] iv = new byte[16];
+        RNG.nextBytes(iv);
+
         byte[] nkey = new byte[len];
         System.arraycopy(key, off, nkey, 0, len);
         cipher = new AESCipher(true, nkey, iv);
