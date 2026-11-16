@@ -12,5 +12,6 @@ on:
   
 jobs:
     call-licensecheck:
+      if: github.repository_owner == 'XodoDocs'
       uses: XodoDocs/itext-github-workflows/.github/workflows/licensecheck.yml@master
       secrets: inherit

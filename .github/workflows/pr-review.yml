@@ -10,6 +10,7 @@ on:
 
 jobs:
   review:
+    if: github.repository_owner == 'XodoDocs'
     uses: pdf-tools/ai-code-reviewer/.github/workflows/claude-pr-review.yml@v1
     permissions:
       contents: read
