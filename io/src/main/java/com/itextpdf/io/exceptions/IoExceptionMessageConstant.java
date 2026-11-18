@@ -190,4 +190,7 @@ public final class IoExceptionMessageConstant {
             "be less than zero.";
 
     public static final String INVALID_HTTP_RESPONSE = "Invalid http response {0}.";
+    public static final String REDIRECT_PROTOCOL_IS_NOT_ALLOWED =
+            "Redirect to the \"{0}\" protocol is not allowed.";
+    public static final String TOO_MANY_REDIRECTS = "Resource was redirected more than {0} times.";
 }
