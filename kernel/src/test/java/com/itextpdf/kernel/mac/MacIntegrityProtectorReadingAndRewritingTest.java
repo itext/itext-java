@@ -44,7 +44,12 @@ import com.itextpdf.test.TestUtil;
 import com.itextpdf.test.annotations.LogMessage;
 import com.itextpdf.test.annotations.LogMessages;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.Certificate;
@@ -341,6 +346,37 @@ public class MacIntegrityProtectorReadingAndRewritingTest extends ExtendedITextT
             try (PdfDocument ignored = new PdfDocument(
                     new PdfReader(SOURCE_FOLDER + "thirdPartyMacProtectedDocumentTampered.pdf",
                     new ReaderProperties().setPassword(PASSWORD)))) {
+            }
+        }).getMessage();
+        Assertions.assertEquals(KernelExceptionMessageConstant.MAC_VALIDATION_FAILED, message);
+    }
+
+    @Test
+    @LogMessages(messages = @LogMessage(messageTemplate = KernelLogMessageConstant.MD5_IS_NOT_FIPS_COMPLIANT,
+            ignore = true))
+    public void incrementalUpdateReusingAuthCodeTest() throws IOException {
+        byte[] original = Files.readAllBytes(Paths.get(SOURCE_FOLDER + "macProtectedDocument.pdf"));
+        String originalString = new String(original, StandardCharsets.ISO_8859_1);
+        int trailerStart = originalString.lastIndexOf("trailer");
+        int trailerEnd = originalString.lastIndexOf(">>", originalString.lastIndexOf("startxref"));
+        String trailer = originalString.substring(trailerStart, trailerEnd);
+        String prevXref = originalString.substring(originalString.lastIndexOf("startxref") + "startxref".length(),
+                originalString.lastIndexOf("%%EOF")).trim();
+
+        // Append an incremental update which modifies the page and copies the original /AuthCode into its trailer.
+        String page = "\n4 0 obj\n<</Contents 5 0 R/MediaBox[0 0 100 100]/Parent 2 0 R/Resources<<>>/Type/Page>>"
+                + "\nendobj\n";
+        int pageOffset = original.length + 1;
+        int xrefOffset = original.length + page.length();
+        String update = page + "xref\n0 1\n0000000000 65535 f \n4 1\n" + String.format("%010d", pageOffset)
+                + " 00000 n \n" + trailer + "/Prev " + prevXref + ">>\nstartxref\n" + xrefOffset + "\n%%EOF\n";
+        ByteArrayOutputStream tampered = new ByteArrayOutputStream();
+        tampered.write(original);
+        tampered.write(update.getBytes(StandardCharsets.ISO_8859_1));
+
+        String message = Assertions.assertThrows(PdfException.class, () -> {
+            try (PdfDocument ignored = new PdfDocument(new PdfReader(
+                    new ByteArrayInputStream(tampered.toByteArray()), new ReaderProperties().setPassword(PASSWORD)))) {
             }
         }).getMessage();
         Assertions.assertEquals(KernelExceptionMessageConstant.MAC_VALIDATION_FAILED, message);
