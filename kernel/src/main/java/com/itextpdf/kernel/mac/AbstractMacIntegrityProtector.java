@@ -130,6 +130,9 @@ public abstract class AbstractMacIntegrityProtector {
             long[] byteRange = macContainerReader.getByteRange();
             byte[] dataDigest;
             IRandomAccessSource randomAccessSource = document.getReader().getSafeFile().createSourceView();
+            if (!isByteRangeCoveringWholeDocument(byteRange, randomAccessSource.length())) {
+                throw new MacValidationException(KernelExceptionMessageConstant.MAC_VALIDATION_FAILED);
+            }
             try (InputStream rg = new RASInputStream(
                     new RandomAccessSourceFactory().createRanged(randomAccessSource, byteRange))) {
                 dataDigest = digestBytes(rg);
@@ -370,6 +373,13 @@ public abstract class AbstractMacIntegrityProtector {
         byte[] randomBytes = new byte[length];
         BC_FACTORY.getSecureRandom().nextBytes(randomBytes);
         return randomBytes;
+    }
+
+    private static boolean isByteRangeCoveringWholeDocument(long[] byteRange, long documentLength) {
+        // MAC shall cover the whole file except for the MAC value itself, otherwise any content appended after
+        // the protected range, e.g. an incremental update, wouldn't be detected.
+        return byteRange.length == 4 && byteRange[0] == 0 && byteRange[1] >= 0 && byteRange[2] >= byteRange[1]
+                && byteRange[3] >= 0 && byteRange[2] + byteRange[3] == documentLength;
     }
 
     private static MacDigestAlgorithm getMacDigestAlgorithm(String oid) {
