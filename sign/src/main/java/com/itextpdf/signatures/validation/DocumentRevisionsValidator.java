@@ -175,6 +175,7 @@ public class DocumentRevisionsValidator {
     private Set<PdfDictionary> removedTaggedObjects;
     private Set<PdfDictionary> addedTaggedObjects;
     private Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedObjects;
+    private Tuple2<Set<PdfIndirectReference>, Set<PdfIndirectReference>> usuallyModifiedPageTreeObjects;
 
     /**
      * Creates new instance of {@link DocumentRevisionsValidator}.
@@ -395,8 +396,11 @@ public class DocumentRevisionsValidator {
 
     private boolean validateRevision(ValidationReport validationReport, ValidationContext context,
             PdfDocument documentWithoutRevision, PdfDocument documentWithRevision, DocumentRevision currentRevision) {
-        usuallyModifiedObjects = new Tuple2<>(createUsuallyModifiedObjectsSet(documentWithoutRevision),
-                createUsuallyModifiedObjectsSet(documentWithRevision));
+        usuallyModifiedObjects = new Tuple2<>(createUsuallyModifiedObjectsSet(documentWithoutRevision, true),
+                createUsuallyModifiedObjectsSet(documentWithRevision, true));
+        usuallyModifiedPageTreeObjects = new Tuple2<>(
+                createUsuallyModifiedObjectsSet(documentWithoutRevision, false),
+                createUsuallyModifiedObjectsSet(documentWithRevision, false));
         if (!compareCatalogs(documentWithoutRevision, documentWithRevision, validationReport, context)) {
             return false;
         }
@@ -1492,7 +1496,9 @@ public class DocumentRevisionsValidator {
         PdfDictionary currentPagesCopy = new PdfDictionary(currPages);
         currentPagesCopy.remove(PdfName.Kids);
         currentPagesCopy.remove(PdfName.Parent);
-        if (!comparePdfObjects(previousPagesCopy, currentPagesCopy, usuallyModifiedObjects) ||
+        // Structure elements are compared separately and may be removed and re-added, so page tree entries
+        // referring to them (e.g. resources shared with a structure element) are compared by value here.
+        if (!comparePdfObjects(previousPagesCopy, currentPagesCopy, usuallyModifiedPageTreeObjects) ||
                 !compareIndirectReferencesObjNums(prevPages.get(PdfName.Parent), currPages.get(PdfName.Parent), report,
                         "Page tree node parent")) {
             report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGES_MODIFIED, ReportItemStatus.INVALID));
@@ -1525,7 +1531,7 @@ public class DocumentRevisionsValidator {
                 currentPageCopy.remove(PdfName.Parent);
                 currentPageCopy.remove(PdfName.StructParents);
                 currentPageCopy.remove(PdfName.Tabs);
-                if (!comparePdfObjects(previousPageCopy, currentPageCopy, usuallyModifiedObjects) ||
+                if (!comparePdfObjects(previousPageCopy, currentPageCopy, usuallyModifiedPageTreeObjects) ||
                         !compareIndirectReferencesObjNums(previousKid.get(PdfName.Parent),
                                 currentKid.get(PdfName.Parent), report, "Page parent")) {
                     report.addReportItem(new ReportItem(DOC_MDP_CHECK, PAGE_MODIFIED, ReportItemStatus.INVALID));
@@ -1786,7 +1792,8 @@ public class DocumentRevisionsValidator {
     //
     //
 
-    private Set<PdfIndirectReference> createUsuallyModifiedObjectsSet(PdfDocument document) {
+    private Set<PdfIndirectReference> createUsuallyModifiedObjectsSet(PdfDocument document,
+            boolean includeStructTree) {
         Set<PdfIndirectReference> usuallyModifiedObjectsSet = new HashSet<>();
         usuallyModifiedObjectsSet.add(document.getCatalog().getPdfObject().getIndirectReference());
         PdfDictionary catalog = document.getCatalog().getPdfObject();
@@ -1797,7 +1804,7 @@ public class DocumentRevisionsValidator {
                 addPageEntriesToSet(catalog.getAsDictionary(PdfName.Pages), usuallyModifiedObjectsSet);
             }
         }
-        if (catalog.get(PdfName.StructTreeRoot) != null) {
+        if (includeStructTree && catalog.get(PdfName.StructTreeRoot) != null) {
             usuallyModifiedObjectsSet.add(catalog.get(PdfName.StructTreeRoot).getIndirectReference());
             if (catalog.getAsDictionary(PdfName.StructTreeRoot) != null &&
                     catalog.getAsDictionary(PdfName.StructTreeRoot).get(PdfName.K) != null) {
