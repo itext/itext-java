@@ -24,11 +24,21 @@ package com.itextpdf.signatures.validation;
 
 import com.itextpdf.bouncycastleconnector.BouncyCastleFactoryCreator;
 import com.itextpdf.commons.bouncycastle.IBouncyCastleFactory;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.DocumentRevision;
+import com.itextpdf.kernel.pdf.PdfArray;
+import com.itextpdf.kernel.pdf.PdfDictionary;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfName;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfRevisionsReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.StampingProperties;
+import com.itextpdf.kernel.pdf.annot.PdfAnnotation;
+import com.itextpdf.kernel.pdf.annot.PdfSquareAnnotation;
+import com.itextpdf.kernel.pdf.xobject.PdfImageXObject;
 import com.itextpdf.signatures.AccessPermissions;
 import com.itextpdf.signatures.validation.context.CertificateSource;
 import com.itextpdf.signatures.validation.context.CertificateSources;
@@ -41,7 +51,10 @@ import com.itextpdf.signatures.validation.report.ValidationReport;
 import com.itextpdf.signatures.validation.report.ValidationReport.ValidationResult;
 import com.itextpdf.test.ExtendedITextTest;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
@@ -688,5 +701,89 @@ public class DocumentRevisionsValidatorTest extends ExtendedITextTest {
             AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.VALID)
                     .hasNumberOfFailures(0).hasNumberOfLogs(0));
         }
+    }
+
+    @ParameterizedTest(name = "Continue validation after failure: {0}")
+    @MethodSource("createParameters")
+    public void pageResourcesSharedWithStructElementModifiedTest(boolean continueValidationAfterFail)
+            throws IOException {
+        setUp(continueValidationAfterFail);
+        try (PdfDocument document = new PdfDocument(new PdfReader(new ByteArrayInputStream(
+                createDocumentWithReplacedPageImage())))) {
+            DocumentRevisionsValidator validator = builder.buildDocumentRevisionsValidator();
+            validator.setAccessPermissions(AccessPermissions.ANNOTATION_MODIFICATION);
+            PdfRevisionsReader revisionsReader = new PdfRevisionsReader(document.getReader());
+            List<DocumentRevision> documentRevisions = revisionsReader.getAllRevisions();
+
+            ValidationReport validationReport = new ValidationReport();
+            validator.validateRevision(documentRevisions.get(0), documentRevisions.get(1), document, validationReport,
+                    validationContext);
+
+            // The page resources dictionary is also a structure element. Replacing the only annotation tagged by it
+            // must not make the image drawn on the page modifiable.
+            AssertValidationReport.assertThat(validationReport, a -> a.hasStatus(ValidationResult.INVALID)
+                    .hasLogItem(l -> l.withCheckName(DocumentRevisionsValidator.DOC_MDP_CHECK)
+                            .withMessage(DocumentRevisionsValidator.PAGE_MODIFIED)
+                            .withStatus(ReportItemStatus.INVALID)));
+        }
+    }
+
+    private static byte[] createDocumentWithReplacedPageImage() throws IOException {
+        ByteArrayOutputStream firstRevision = new ByteArrayOutputStream();
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfWriter(firstRevision))) {
+            PdfPage page = pdfDocument.addNewPage();
+            PdfAnnotation annotation = new PdfSquareAnnotation(new Rectangle(10, 10, 20, 20));
+            page.addAnnotation(annotation);
+
+            PdfDictionary structTreeRoot = new PdfDictionary();
+            structTreeRoot.put(PdfName.Type, PdfName.StructTreeRoot);
+            structTreeRoot.makeIndirect(pdfDocument);
+
+            PdfDictionary objectReference = new PdfDictionary();
+            objectReference.put(PdfName.Type, PdfName.OBJR);
+            objectReference.put(PdfName.Obj, annotation.getPdfObject());
+
+            PdfDictionary xObjects = new PdfDictionary();
+            xObjects.put(new PdfName("Im0"), createImage(pdfDocument, (byte) 0xFF, (byte) 0x00));
+            PdfDictionary resources = new PdfDictionary();
+            resources.put(PdfName.XObject, xObjects);
+            resources.put(PdfName.S, PdfName.Figure);
+            resources.put(PdfName.P, structTreeRoot);
+            resources.put(PdfName.K, objectReference);
+            resources.makeIndirect(pdfDocument);
+
+            structTreeRoot.put(PdfName.K, new PdfArray(resources));
+            pdfDocument.getCatalog().put(PdfName.StructTreeRoot, structTreeRoot);
+
+            page.getPdfObject().put(PdfName.Resources, resources);
+            page.getFirstContentStream().setData(
+                    "q 100 0 0 100 50 50 cm /Im0 Do Q".getBytes(StandardCharsets.ISO_8859_1));
+        }
+
+        ByteArrayOutputStream secondRevision = new ByteArrayOutputStream();
+        try (PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(
+                firstRevision.toByteArray())), new PdfWriter(secondRevision),
+                new StampingProperties().useAppendMode())) {
+            PdfDictionary page = pdfDocument.getPage(1).getPdfObject();
+            PdfDictionary newAnnotation = new PdfSquareAnnotation(new Rectangle(40, 40, 20, 20)).getPdfObject();
+            newAnnotation.put(PdfName.P, page);
+            newAnnotation.makeIndirect(pdfDocument);
+            page.put(PdfName.Annots, new PdfArray(newAnnotation));
+            page.setModified();
+
+            PdfDictionary resources = page.getAsDictionary(PdfName.Resources);
+            resources.getAsDictionary(PdfName.K).put(PdfName.Obj, newAnnotation);
+            resources.getAsDictionary(PdfName.XObject).put(new PdfName("Im0"),
+                    createImage(pdfDocument, (byte) 0x00, (byte) 0xFF));
+            resources.setModified();
+        }
+        return secondRevision.toByteArray();
+    }
+
+    private static PdfDictionary createImage(PdfDocument pdfDocument, byte red, byte blue) {
+        PdfImageXObject image = new PdfImageXObject(ImageDataFactory.create(1, 1, 3, 8,
+                new byte[] {red, (byte) 0x00, blue}, null));
+        image.makeIndirect(pdfDocument);
+        return image.getPdfObject();
     }
 }
