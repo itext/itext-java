@@ -354,7 +354,7 @@ public class PdfTokenizer implements Closeable {
     /**
      * Validates a PDF header at offset zero and returns its version text.
      *
-     * @return the header text without its percent sign
+     * @return the header text without its percent sign, truncated if the source ends before a full version
      *
      * @throws java.io.IOException if the header is absent or the source cannot be read
      */
@@ -364,7 +364,8 @@ public class PdfTokenizer implements Closeable {
         int idx = str.indexOf("%PDF-");
         if (idx != 0)
             throw new IOException(IoExceptionMessageConstant.PDF_HEADER_NOT_FOUND, this);
-        return str.substring(idx + 1, idx + 8);
+        // The source may end right after "%PDF-"; the caller rejects the incomplete version.
+        return str.substring(idx + 1, Math.min(str.length(), idx + 8));
     }
 
     /**
